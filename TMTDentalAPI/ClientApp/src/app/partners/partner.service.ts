@@ -50,6 +50,9 @@ export class PartnerInfoFilter {
     dateFrom?: string;
     dateTo?: string;
     isActive?: boolean;
+    cityCodeIsNull: boolean;
+    districtCodeIsNull: boolean;
+    wardCodeIsNull: boolean;
 }
 
 export class SaleOrderLineBasic {

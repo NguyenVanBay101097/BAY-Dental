@@ -623,6 +623,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// mã phường/ xã
         /// </summary>
         public string WardCode { get; set; }
+
+        public bool? CityCodeIsNull { get; set; }
+
+        public bool? DistrictCodeIsNull { get; set; }
+
+        public bool? WardCodeIsNull { get; set; }
     }
 
     public class PartnerCustomerReportOutput

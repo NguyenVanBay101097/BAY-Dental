@@ -2543,8 +2543,6 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var partnerSourceObj = GetService<IPartnerSourceService>();
 
-
-
             var mainQuery = partnerObj.SearchQuery(x => x.Active && x.Customer);
 
             if (val.CompanyId.HasValue)
@@ -2553,11 +2551,35 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.CityCode))
                 mainQuery = mainQuery.Where(x => x.CityCode == val.CityCode);
 
+            if (val.CityCodeIsNull.HasValue)
+            {
+                if (val.CityCodeIsNull.Value)
+                    mainQuery = mainQuery.Where(x => x.CityCode == null);
+                else
+                    mainQuery = mainQuery.Where(x => x.CityCode != null);
+            }
+
             if (!string.IsNullOrEmpty(val.DistrictCode))
                 mainQuery = mainQuery.Where(x => x.DistrictCode == val.DistrictCode);
 
+            if (val.DistrictCodeIsNull.HasValue)
+            {
+                if (val.DistrictCodeIsNull.Value)
+                    mainQuery = mainQuery.Where(x => x.DistrictCode == null);
+                else
+                    mainQuery = mainQuery.Where(x => x.DistrictCode != null);
+            }
+
             if (!string.IsNullOrEmpty(val.WardCode))
                 mainQuery = mainQuery.Where(x => x.WardCode == val.WardCode);
+
+            if (val.WardCodeIsNull.HasValue)
+            {
+                if (val.WardCodeIsNull.Value)
+                    mainQuery = mainQuery.Where(x => x.WardCode == null);
+                else
+                    mainQuery = mainQuery.Where(x => x.WardCode != null);
+            }
 
             if (val.IsActive.HasValue)
                 mainQuery = mainQuery.Where(x => x.Active == val.IsActive);

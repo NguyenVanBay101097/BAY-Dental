@@ -5,7 +5,9 @@ import { AccountCommonPartnerReportService } from '../account-common-partner-rep
 interface TreeNode {
   name: string;
   value: number;
-  code: string;
+  cityCode: string;
+  districtCode: string;
+  wardCode: string;
   type: string;
   children?: TreeNode[];
 }
@@ -39,6 +41,7 @@ export class PartnerReportAreaComponent implements OnInit {
     } as TreeNode;
     let val = Object.assign({}, this.filter) as PartnerInfoFilter;
     this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
+      console.log(res);
       res.forEach(el1 => {
         let cityData = Object.assign({});
         if (el1.districts) {
@@ -48,26 +51,26 @@ export class PartnerReportAreaComponent implements OnInit {
               el2.wards.forEach(el3 => {
                 let wardsData = Object.assign({});
                 wardsData['$count'] = el3.count;
-                wardsData['$code'] = el3.wardCode;
+                districtsData['$cityCode'] = el2.cityCode;
+                districtsData['$districtCode'] = el2.districtCode;
+                wardsData['$wardCode'] = el3.wardCode;
                 wardsData['$type'] = 'ward';
-                districtsData[el3.wardName] = wardsData;
+                districtsData[el3.wardName || 'Chưa xác định'] = wardsData;
               });
             }
-            districtsData['$code'] = el2.districtCode;
+            districtsData['$cityCode'] = el2.cityCode;
+            districtsData['$districtCode'] = el2.districtCode;
             districtsData['$type'] = 'district';
-            cityData[el2.districtName] = districtsData;
+            districtsData['$count'] = el2.count;
+            cityData[el2.districtName || 'Chưa xác định'] = districtsData;
           });
         }
 
-        if(!el1.cityCode){
-          cityData['$count'] = el1.count;
-        }
-
-        cityData['$code'] = el1.cityCode;
-        cityData['$type'] = 'city';      
-        this.dataSet[el1.cityName] = cityData;
-      });    
-      
+        cityData['$cityCode'] = el1.cityCode;
+        cityData['$type'] = 'city';
+        cityData['$count'] = el1.count;
+        this.dataSet[el1.cityName || 'Chưa xác định'] = cityData;
+      });
       this.loadChartOption();
     }, error => console.log(error));
   }
@@ -100,38 +103,29 @@ export class PartnerReportAreaComponent implements OnInit {
           name: key
         } as TreeNode;
         if (typeof source[key] === 'object') {
-          child.code = source[key].$code;
+          child.cityCode = source[key].$cityCode;
+          child.districtCode = source[key].$districtCode;
+          child.wardCode = source[key].$wardCode;
           child.type = source[key].$type;
+          child.value = source[key].$count;
         }
         target.children.push(child);
         this.convert(source[key], child, key);
       }
-    }
-
-    if (!target.children) {
-      target.value = source.$count || 1;
-      target.code = source.$code || '';
-      target.type = source.$type || '';
-    } else {
-      target.children.push({
-        name: basePath,
-        value: source.$count,
-        code: source.$code,
-        type: source.$type,
-      });
     }
   }
 
   onChartClick(event) {
     let res;
     if (event.dataType && event.dataType == 'main') {
-      // this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
       event.treePathInfo.forEach(element => {
-        const isDuplicate = this.echartsInstance.map(s => s.dataIndex).includes(event.dataIndex);
+        const isDuplicate = this.echartsInstance.map(s => s.element.dataIndex).includes(event.dataIndex);
         if (element.dataIndex === event.dataIndex && !isDuplicate) {
-          const data = { ...element };
-          data['code'] = event.data.code;
-          data['type'] = event.data.type;
+          const data = {
+            element: element,
+            data: event.data
+          };
+
           this.echartsInstance.push(data);
         }
       });
@@ -139,17 +133,14 @@ export class PartnerReportAreaComponent implements OnInit {
     }
 
     if (event.selfType && event.selfType == 'breadcrumb') {
-      // this.echartsInstance = this.echartsInstance.filter(val => !event.treePathInfo.map(s => s.dataIndex).includes(val.dataIndex));
-      res = this.echartsInstance.find(s => s.dataIndex == event.nodeData.dataIndex);
+      var item = this.echartsInstance.find(s => s.element.dataIndex == event.nodeData.dataIndex);
+      if (item) {
+        res = item.data;
+      }
     }
 
-    let dataEmit;
     if (res) {
-      dataEmit = {
-        type: res ? res.type : '',
-        code: res ? res.code : ''
-      }
-      this.filterEmit.emit(dataEmit);
+      this.filterEmit.emit(res);
     }
     else {
       this.filterEmit.emit(false);

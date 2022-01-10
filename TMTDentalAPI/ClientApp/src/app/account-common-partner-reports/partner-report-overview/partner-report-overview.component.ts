@@ -311,31 +311,62 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   filterEmit(val) {
     if (val) {
       if (val.type === 'city') {
-        this.filter.cityCode = val.code;
+        if (val.cityCode) {
+          delete this.filter['cityCodeIsNull'];
+          this.filter.cityCode = val.cityCode;
+        } else {
+          delete this.filter['cityCode'];
+          this.filter.cityCodeIsNull = true;
+        }
+
         this.filter.districtCode = null;
         this.filter.wardCode = null;
+        delete this.filter['districtCodeIsNull'];
+        delete this.filter['wardCodeIsNull'];
       }
       else if (val.type === 'district') {
-        this.filter.cityCode = null;
-        this.filter.districtCode = val.code;
+        this.filter.cityCode = val.cityCode;
+
+        if (val.districtCode) {
+          delete this.filter['districtCodeIsNull'];
+          this.filter.districtCode = val.districtCode;
+        } else {
+          delete this.filter['districtCode'];
+          this.filter.districtCodeIsNull = true;
+        }
+
         this.filter.wardCode = null;
+        delete this.filter['wardCodeIsNull'];
       }
       else if (val.type === 'ward') {
-        this.filter.cityCode = null;
-        this.filter.districtCode = null;
-        this.filter.wardCode = val.code;
+        this.filter.cityCode = val.cityCode;
+        this.filter.districtCode = val.districtCode;
+        if (val.wardCode) {
+          delete this.filter['wardCodeIsNull'];
+          this.filter.wardCode = val.wardCode;
+        } else {
+          delete this.filter['wardCode'];
+          this.filter.wardCodeIsNull = true;
+        }
       }
       else {
         this.filter.cityCode = null;
         this.filter.districtCode = null;
         this.filter.wardCode = null;
+        delete this.filter['cityCodeIsNull'];
+        delete this.filter['districtCodeIsNull'];
+        delete this.filter['wardCodeIsNull'];
       }
     }
     else {
       this.filter.cityCode = null;
       this.filter.districtCode = null;
       this.filter.wardCode = null;
+      delete this.filter['cityCodeIsNull'];
+      delete this.filter['districtCodeIsNull'];
+      delete this.filter['wardCodeIsNull'];
     }
+
     this.loadReportSource();
     this.loadReportAgeGender();
     this.loadListPartner();
