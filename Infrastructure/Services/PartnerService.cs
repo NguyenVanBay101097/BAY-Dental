@@ -2688,13 +2688,14 @@ namespace Infrastructure.Services
 
             if (val.RevenueFrom.HasValue || val.RevenueTo.HasValue)
             {
+                var types = new string[] { "out_invoice", "out_refund" };
                 var PartnerRevenueQr = (from s in amlObj._QueryGet(state: "posted", companyId: val.CompanyId)
-                                        where s.AccountInternalType == "receivable"
+                                        where s.AccountInternalType != "receivable" && types.Contains(s.Move.Type)
                                         group s by s.PartnerId into g
                                         select new
                                         {
                                             PartnerId = g.Key.Value,
-                                            TotalPaid = Math.Abs(g.Sum(x => x.PriceSubtotal ?? 0))
+                                            TotalPaid = g.Sum(x => -x.Balance)
                                         });
 
                 if (val.RevenueFrom.HasValue)
