@@ -119,7 +119,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public Guid? CompanyId { get; set; }
-        public string UoMName { get; set; }
     }
 
     public class RevenueEmployeeReportDisplay
@@ -176,7 +175,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal PriceSubTotal { get; set; }
-        public string UoMName { get; set; }
+        public string ProductUoMName { get; set; }
     }
   
     public class SumRevenueReportPar

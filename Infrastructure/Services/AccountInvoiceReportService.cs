@@ -317,13 +317,12 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.ProductId == val.ProductId);
             }
-            var queryRes = query.GroupBy(x => new { x.ProductId, x.Product.Name, x.ProductUoMId, x.UoMName });
+            var queryRes = query.GroupBy(x => new { x.ProductId, x.Product.Name });
 
             var res = await queryRes.Select(x => new RevenueServiceReportDisplay
             {
                 ProductId = x.Key.ProductId.Value,
                 ProductName = x.Key.Name,
-                UoMName = x.Key.UoMName,
                 PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                 DateTo = val.DateTo,
                 DateFrom = val.DateFrom,
@@ -421,8 +420,7 @@ namespace Infrastructure.Services
                 PriceSubTotal = Math.Abs(x.PriceSubTotal),
                 ProductName = x.Product.Name,
                 ProductId = x.ProductId,
-                UoMName = x.UoMName
-                
+                ProductUoMName = x.ProductUoM.Name
             }).ToListAsync();
 
             return new PagedResult2<RevenueReportDetailDisplay>(count, val.Offset, val.Limit)

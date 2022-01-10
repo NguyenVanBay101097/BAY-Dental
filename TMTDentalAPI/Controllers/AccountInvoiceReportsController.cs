@@ -407,7 +407,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 5].Value = line.EmployeeName;
                         worksheet.Cells[row, 6].Value = line.AssistantName;
                         worksheet.Cells[row, 7].Value = line.ProductName;
-                        worksheet.Cells[row, 8].Value = line.UoMName;
+                        worksheet.Cells[row, 8].Value = line.ProductUoMName;
                         worksheet.Cells[row, 9].Value = line.PriceSubTotal;
                         worksheet.Cells[row, 9].Style.Numberformat.Format = "#,###,###";
                         row++;

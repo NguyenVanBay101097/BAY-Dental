@@ -51,7 +51,8 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? AssistantId { get; set; }
         public Employee Assistant { get; set; }
-        public string UoMName { get; set; }
+
+        public UoM ProductUoM { get; set; }
         public Guid? ProductUoMId { get; set; }
     }
 }
