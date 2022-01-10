@@ -23,7 +23,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
   };
   @Input() partnerId: string;
   filter: GetThreadMessageForPartnerRequest = new GetThreadMessageForPartnerRequest();
-  listMessages: {date: any, logs:MailMessageFormat[] }[] = [];
+  listMessages: { date: any, logs: MailMessageFormat[] }[] = [];
   today = this.intl.formatDate(new Date(), "dd/MM/yyyy");
   listMessageSubType = [];
   constructor(
@@ -31,7 +31,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
     private modalService: NgbModal,
     private messageService: MailMessageService,
     private messageSubTypeService: MailMessageSubTypeService,
-    private notifyService : NotifyService,
+    private notifyService: NotifyService,
     private partnerSerivce: PartnerService
   ) { }
 
@@ -41,29 +41,28 @@ export class PartnerActivityHistoryComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  loadListMessageSubType(){
+  loadListMessageSubType() {
     this.messageSubTypeService.get().subscribe(res => {
       this.listMessageSubType = res;
     })
   }
 
-  loadDataFromApi(){
+  loadDataFromApi() {
     var val = Object.assign({}, this.filter);
     val.dateFrom = val.dateFrom ? this.intl.formatDate(val.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = val.dateTo ? this.intl.formatDate(val.dateTo, 'yyyy-MM-dd') : null;
-    this.partnerSerivce.getThreadMessages(this.partnerId,val).subscribe((res:GetPartnerThreadMessageResponse) => {
-      this.listMessages = [];
+    this.partnerSerivce.getThreadMessages(this.partnerId, val).subscribe((res: GetPartnerThreadMessageResponse) => {
       res.messages.forEach(e => {
-        var f = this.listMessages.find(x=> new Date(x.date).setHours(0, 0, 0, 0) == new Date(e.date).setHours(0, 0, 0, 0));
-        if(f)
-        f.logs.push(e);
-        else
-        {
-          f = {
+        var groupExist = this.listMessages.find(x => new Date(x.date).setHours(0, 0, 0, 0) == new Date(e.date).setHours(0, 0, 0, 0));
+        if (groupExist) {
+          groupExist.logs.push(e);
+        }
+        else {
+          groupExist = {
             date: e.date,
             logs: [e]
           }
-          this.listMessages.push(f);
+          this.listMessages.push(groupExist);
         }
 
       });
@@ -87,7 +86,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  onCreateAppointment(){
+  onCreateAppointment() {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.defaultVal = {
       partnerId: this.partnerId
@@ -101,11 +100,11 @@ export class PartnerActivityHistoryComponent implements OnInit {
     });
   }
 
-  onCreateComment(){
+  onCreateComment() {
     const modalRef = this.modalService.open(CommentCuDialogComponent, { size: 'sm', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     (modalRef.componentInstance.onSaveSubj as Subject<any>).pipe(
-      switchMap((val : any) => {
-      return this.partnerSerivce.createComment(this.partnerId, val);
+      switchMap((val: any) => {
+        return this.partnerSerivce.createComment(this.partnerId, val);
       })
     ).subscribe(res => {
       modalRef.componentInstance.activeModal.close(true);
@@ -129,7 +128,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
       })
     }, () => {
     });
-   
+
   }
 
   onChangeSubType(e) {
