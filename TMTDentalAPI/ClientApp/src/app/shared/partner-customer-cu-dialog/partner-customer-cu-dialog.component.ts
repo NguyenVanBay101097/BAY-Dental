@@ -44,7 +44,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   formGroup: FormGroup;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
-  title: string;
+  title: string = 'Thêm: Khách hàng';
   addressCheck: AddressCheckApi[] = [];
   filteredSources: PartnerSourceSimple[] = [];
   filteredReferralUsers: UserSimple[] = [];

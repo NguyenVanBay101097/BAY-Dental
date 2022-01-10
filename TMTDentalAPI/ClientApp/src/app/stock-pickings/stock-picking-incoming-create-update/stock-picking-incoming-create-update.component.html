@@ -71,7 +71,7 @@
                                             [textField]="'name'" [filterable]="true" #partnerCbx
                                             formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
-                                        <a data-toggle="dropdown" class="btn btn-sm btn-light"><span
+                                        <a *ngIf="state != 'done'" data-toggle="dropdown" class="btn btn-sm btn-light"><span
                                                 class="k-icon k-i-plus"></span></a>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a href="javascript: void(0);" (click)="onCreatePartner(item.value)"
