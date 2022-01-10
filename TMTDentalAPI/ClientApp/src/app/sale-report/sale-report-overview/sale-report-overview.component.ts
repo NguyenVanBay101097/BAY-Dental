@@ -3,11 +3,14 @@ import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
+import { CompanyBasic, CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { SaleReportItem, SaleReportSearch, SaleReportService } from '../sale-report.service';
+import { SaleReportItem, SaleReportSearch, SaleReportService, ServiceReportReq } from '../sale-report.service';
 
 @Component({
   selector: 'app-sale-report-overview',
@@ -18,59 +21,31 @@ import { SaleReportItem, SaleReportSearch, SaleReportService } from '../sale-rep
   }
 })
 export class SaleReportOverviewComponent implements OnInit {
-  loading = false;
-  public monthStart: Date = new Date(new Date(new Date().setDate(1)).toDateString());
-  public monthEnd: Date = new Date(new Date(new Date().setDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())).toDateString());
-  items: SaleReportItem[] = [];
   gridData: GridDataResult;
   limit = 20;
   skip = 0;
   pagerSettings: any;
-  dateFrom: Date;
-  dateTo: Date;
-  groupBy = "date";
-  groupBy2 = "month";
-  search: string;
+
   searchUpdate = new Subject<string>();
-  isQuotation = false;
-  viewType = 'list';
+  search: string;
 
-  groups: { text: string, value: string }[] = [
-    { text: 'Ngày', value: 'date' },
-    { text: 'Khách hàng', value: 'customer' },
-    { text: 'Nhân viên', value: 'employee' },
-    { text: 'Dịch vụ', value: 'product' },
-  ];
-
-  group2s: {}[] = [
-    { text: 'Ngày', value: 'day' },
-    { text: 'Tuần', value: 'week' },
-    { text: 'Tháng', value: 'month' },
-    { text: 'Quý', value: 'quarter' },
-  ];
-
-  states: {}[] = [
-    { text: 'Tất cả trạng thái', value: '' },
-    { text: 'Đơn hàng', value: 'sale,done' },
-    { text: 'Nháp', value: 'draft,cancel' },
-  ];
-
-  public total: any;
-  public aggregates: any[] = [
-    { field: 'productUOMQty', aggregate: 'sum' },
-    { field: 'priceTotal', aggregate: 'sum' },
-  ];
-
-  listCompanies: CompanyBasic[] = [];
-  companyFilter: CompanyBasic;
-
-  constructor(private intlService: IntlService, private saleReportService: SaleReportService, private companyService: CompanyService,
+  listCompanies: CompanySimple[] = [];
+  listEmployees: EmployeeSimple[] = [];
+  items: any[] = [];
+  filter = new ServiceReportReq();
+  sumAmountTotal: number = 0;
+  sumAmountPaid: number = 0;
+  sumAmountResidual: number = 0;
+  constructor(
+    private intlService: IntlService,
+    private saleReportService: SaleReportService,
+    private companyService: CompanyService,
+    private employeeService: EmployeeService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
-    this.dateFrom = new Date(this.monthStart);
-    this.dateTo = new Date(this.monthEnd);
+    this.initFilterData();
     this.loadDataFromApi();
 
     this.searchUpdate.pipe(
@@ -82,65 +57,64 @@ export class SaleReportOverviewComponent implements OnInit {
       });
 
     this.loadCompanies();
+    this.loadEmployees();
+
   }
 
-  getTitle() {
-    var item = _.find(this.groups, o => o.value == this.groupBy);
-    return item.text;
+  initFilterData() {
+    const date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    this.filter = <ServiceReportReq>{
+      state: 'sale,done,cancel',
+      dateFrom: new Date(y, m, 1),
+      dateTo: new Date(y, m + 1, 0)
+    };
   }
 
-  setViewType(type) {
-    this.viewType = type;
+  searchCompany$(search?) {
+    var val = new CompanyPaged();
+    val.active = true;
+    val.search = search || '';
+    return this.companyService.getPaged(val);
   }
 
   loadCompanies() {
-    var val = new CompanyPaged();
-    val.active = true;
-    this.companyService.getPaged(val)
-      .subscribe(res => {
-        this.listCompanies = res.items;
-      })
-  }
-
-  changeCompany(event) {
-    this.companyFilter = event;
-    this.skip = 0;
-    this.loadDataFromApi();
-  }
-
-  loadDataFromApi() {
-    var val = new SaleReportSearch();
-    val.isQuotation = this.isQuotation;
-    val.state = "sale,done";
-
-    if (this.dateFrom) {
-      val.dateFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
-    }
-    if (this.dateTo) {
-      val.dateTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
-    }
-    if (this.search) {
-      val.search = this.search;
-    }
-    val.groupBy = this.groupBy;
-    if (this.groupBy2 && this.groupBy == 'date') {
-      val.groupBy = val.groupBy + ":" + this.groupBy2;
-    }
-
-    val.companyId = this.companyFilter ? this.companyFilter.id : null;
-
-    this.loading = true;
-    this.saleReportService.getReport(val).subscribe(result => {
-      this.items = result;
-      this.total = aggregateBy(this.items, this.aggregates);
-      this.loadItems();
-      this.loading = false;
-    }, () => {
-      this.loading = false;
+    this.searchCompany$().subscribe(res => {
+      this.listCompanies = res.items;
     });
   }
 
-  public pageChange(event: PageChangeEvent): void {
+  searchEmployee$(q?: string) {
+    let val = new EmployeePaged();
+    val.search = q;
+    val.isDoctor = true;
+    return this.employeeService.getEmployeeSimpleList(val);
+  }
+
+  loadEmployees() {
+    this.searchEmployee$().subscribe((res: any) => {
+      this.listEmployees = res;
+    });
+  }
+
+  loadDataFromApi() {
+    let val = Object.assign({}, this.filter) as ServiceReportReq;
+    val.dateFrom = this.filter.dateFrom ? moment(this.filter.dateFrom).format('YYYY-MM-DD') : '';
+    val.dateTo = this.filter.dateTo ? moment(this.filter.dateTo).format('YYYY-MM-DD') : '';
+
+    if (this.search) {
+      val.search = this.search;
+    }
+
+    this.saleReportService.getServiceOverviewReport(val).subscribe((result: any) => {
+      console.log(result);
+      this.items = result;
+      this.loadItems();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.limit = event.take;
     this.loadItems();
@@ -151,25 +125,47 @@ export class SaleReportOverviewComponent implements OnInit {
       data: this.items.slice(this.skip, this.skip + this.limit),
       total: this.items.length
     };
+
+    const aggregates = aggregateBy(this.items, [
+      { aggregate: "sum", field: "amountTotal" },
+      { aggregate: "sum", field: "amountPaid" },
+      { aggregate: "sum", field: "amountResidual" },
+    ]);
+    console.log(aggregates);
+    this.sumAmountTotal = aggregates.amountTotal ? aggregates.amountTotal.sum : 0;
+    this.sumAmountPaid = aggregates.amountPaid ? aggregates.amountPaid.sum : 0;
+    this.sumAmountResidual = aggregates.amountResidual ? aggregates.amountResidual.sum : 0;
   }
 
   onSearchDateChange(data) {
-    this.dateFrom = data.dateFrom;
-    this.dateTo = data.dateTo;
+    this.filter.dateFrom = data.dateFrom;
+    this.filter.dateTo = data.dateTo;
     this.skip = 0;
     this.loadDataFromApi();
   }
 
-  setGroupBy(groupBy) {
-    this.groupBy = groupBy;
+  onSelectEmployee(event) {
+    this.filter.employeeId = event ? event.id : '';
     this.skip = 0;
     this.loadDataFromApi();
   }
 
-  setGroupBy2(groupBy) {
-    this.groupBy2 = groupBy;
+  onSelectCompany(event) {
+    this.filter.companyId = event ? event.id : '';
     this.skip = 0;
     this.loadDataFromApi();
+  }
+
+  exportExcel() {
+
+  }
+
+  onExportPDF() {
+
+  }
+
+  onPrint() {
+
   }
 }
 

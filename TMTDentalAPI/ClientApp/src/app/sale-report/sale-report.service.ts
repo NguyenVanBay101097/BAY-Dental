@@ -234,4 +234,8 @@ export class SaleReportService {
             { responseType: "blob" }
         );
     }
+
+    getServiceOverviewReport(val: ServiceReportReq){
+        return this.http.post(this.baseApi + this.apiUrl + '/GetServiceOverviewReport', val);
+    }
 }
