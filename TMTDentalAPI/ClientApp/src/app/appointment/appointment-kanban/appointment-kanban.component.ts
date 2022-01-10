@@ -52,6 +52,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // appointmentByDate: { [id: string]: AppointmentBasic[]; } = {};
 
   states: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
     { text: 'Đang hẹn', value: 'confirmed' },
     { text: 'Đã đến', value: 'done' },
     { text: 'Hủy hẹn', value: 'cancel' },
@@ -60,6 +61,7 @@ export class AppointmentKanbanComponent implements OnInit {
   stateSelected: string = '';
 
   types: { text: string, value: string }[] = [
+    { text: 'Tất cả', value: '' },
     { text: 'Tái khám', value: 'repeat' },
     { text: 'Khám mới', value: 'new' }
   ];
@@ -167,6 +169,7 @@ export class AppointmentKanbanComponent implements OnInit {
   // }
 
   onChangeState(state) {
+    this.stateSelected = state;
     if (state == 'overdue') {
       this.state = 'confirmed';
       this.isLateFilter = true;
@@ -180,6 +183,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   onChangeType(type) {
+    this.typeSelected = type;
     if (type === 'repeat') {
       this.isRepeatCustomer = true;
     } else if (type === 'new') {
@@ -268,6 +272,7 @@ export class AppointmentKanbanComponent implements OnInit {
     val.doctorId = this.employeeSelected || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    val.doctorIsNull = this.employeeSelected == undefined ? true : false;
     // if (this.isRepeatCustomer != undefined) {
     //   val.isRepeatCustomer = this.isRepeatCustomer;
     // }

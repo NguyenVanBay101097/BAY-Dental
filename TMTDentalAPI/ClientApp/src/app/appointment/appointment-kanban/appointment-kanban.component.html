@@ -254,19 +254,21 @@
                                 </div>
                                 <div class="filter-content">
                                     <div class="btn-group btn-group-employee">
-                                        <input checked class="btn-check" type="radio" name="employee"
-                                            [id]="'employee-default'" [value]="''" (change)="onChangeEmployee('')">
-                                        <label class="btn btn-label btn-filter-all" [for]="'employee-default'">
+                                        <li class="list-group-item" [class.active]="employeeSelected === ''"
+                                            (click)="onChangeEmployee('')">
                                             Tất cả
-                                        </label>
-
+                                        </li>
                                         <ng-container *ngFor="let employee of listEmployees; index as i">
-                                            <input class="btn-check" type="radio" name="employee" [id]="'employee-' + i"
-                                                [value]="employee.id" (change)="onChangeEmployee(employee.id)">
-                                            <label class="btn btn-label" [for]="'employee-' + i">
+                                            <li class="list-group-item"
+                                                [class.active]="employeeSelected === employee.id"
+                                                (click)="onChangeEmployee(employee.id)">
                                                 {{employee.name}}
-                                            </label>
+                                            </li>
                                         </ng-container>
+                                        <li class="list-group-item" [class.active]="employeeSelected === undefined"
+                                            (click)="onChangeEmployee(undefined)">
+                                            Chưa xác định
+                                        </li>
                                     </div>
                                 </div>
                             </div>
@@ -277,18 +279,10 @@
                             </div> -->
                             <div class="filter-label">Trạng thái</div>
                             <div class="w-100">
-                                <div class="btn-group" role="group">
-                                    <input class="btn-check" type="radio" (change)="onChangeState('')" name="state"
-                                        [id]="'state-default'" [value]="''" [(ngModel)]="stateSelected">
-                                    <label class="btn btn-label btn-filter-all" [for]="'state-default'">
-                                        <span>Tất cả</span>
-                                        <span>{{onCountState('')}}</span>
-                                    </label>
+                                <ul class="list-group">
                                     <ng-container *ngFor="let state of states; index as i">
-                                        <input class="btn-check" type="radio" (change)="onChangeState(state.value)"
-                                            name="state" [id]="'state-' + i" [value]="state.value"
-                                            [(ngModel)]="stateSelected">
-                                        <label class="btn btn-label" [for]="'state-' + i">
+                                        <li class="list-group-item" [class.active]="stateSelected === state.value"
+                                            (click)="onChangeState(state.value)">
                                             <div class="d-flex-between">
                                                 <span class="badge-status bg-confirmed"
                                                     *ngIf="state.value === 'confirmed'"></span>
@@ -300,34 +294,26 @@
                                                     *ngIf="state.value === 'overdue'"></span>
                                                 <span>{{state.text}}</span>
                                             </div>
-                                            <span>{{onCountState(state.value)}}</span>
-                                        </label>
+                                            <span>
+                                                {{onCountState(state.value)}}
+                                            </span>
+                                        </li>
                                     </ng-container>
-                                </div>
+                                </ul>
                             </div>
                             <div class="filter-label">Loại khám</div>
                             <div class="w-100">
-                                <div class="btn-group" role="group">
-                                    <input class="btn-check" type="radio" (change)="onChangeType('')" name="type"
-                                        [id]="'type-default'" [value]="''" [(ngModel)]="typeSelected">
-                                    <label class="btn btn-label btn-filter-all" [for]="'type-default'">
-                                        <span>Tất cả</span>
-                                        <span>
-                                            {{onCountType('')}}
-                                        </span>
-                                    </label>
+                                <ul class="list-group">
                                     <ng-container *ngFor="let type of types; index as i">
-                                        <input class="btn-check" type="radio" (change)="onChangeType(type.value)"
-                                            name="type" [id]="'type-' + i" [value]="type.value"
-                                            [(ngModel)]="typeSelected">
-                                        <label class="btn btn-label" [for]="'type-' + i">
-                                            <span>{{type.text}}</span>
+                                        <li class="list-group-item" [class.active]="typeSelected === type.value"
+                                            (click)="onChangeType(type.value)">
+                                            {{type.text}}
                                             <span>
                                                 {{onCountType(type.value)}}
                                             </span>
-                                        </label>
+                                        </li>
                                     </ng-container>
-                                </div>
+                                </ul>
                             </div>
                         </div>
                     </div>

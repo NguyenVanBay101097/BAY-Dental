@@ -41,7 +41,7 @@
 
 .filter-content {
     /* padding: 0 0.5rem; */
-    height: 300px;
+    height: 286px;
     overflow: hidden;
 }
 
@@ -666,7 +666,7 @@ input[type=number] {
     align-items: center;
     padding: 7px;
     margin-bottom: 10px;
-    width: 128px;
+    width: 48%;
 }
 
 .box-icon {
@@ -694,7 +694,7 @@ input[type=number] {
 .btn-group-employee {
     overflow: auto;
     height: 100%;
-    border: 1px solid #E2E7ED;
+    /* border: 1px solid #E2E7ED; */
 }
 
 .badge-status {
@@ -708,4 +708,20 @@ input[type=number] {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.list-group-item {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 36px !important;
+    height: 100%;
+}
+
+.list-group-item.active {
+    background-color: #E6F2FF;
+    border-color: #dfdfdf;
+    color: #007bff;
+    font-weight: 600;
 }

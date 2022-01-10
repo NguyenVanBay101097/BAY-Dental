@@ -67,6 +67,7 @@ export class AppointmentPaged {
     isLate: boolean;
     doctorId: string;
     isRepeatCustomer: boolean;
+    doctorIsNull: boolean;
 }
 
 export class AppointmentSearch {
