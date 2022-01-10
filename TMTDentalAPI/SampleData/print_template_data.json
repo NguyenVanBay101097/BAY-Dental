@@ -46,7 +46,9 @@
           "PriceSubTotal": 1350000.00,
           "PriceTotal": 0.0,
           "Sequence": 10,
-          "AmountDiscountTotal": 150000.00000000003
+          "AmountDiscountTotal": 150000.00000000003,
+          "PriceReduce": 1350000.00,
+          "TotalDiscountAmount": 150000.00 
         },
         {
           "Product": {
@@ -61,7 +63,9 @@
           "PriceSubTotal": 4000000.00,
           "PriceTotal": 0.0,
           "Sequence": 10,
-          "AmountDiscountTotal": 500000.0
+          "AmountDiscountTotal": 500000.0,
+          "PriceReduce": 1500000.00,
+          "TotalDiscountAmount": 1000000.00
         }
       ],
       "SaleOrderPayments": [

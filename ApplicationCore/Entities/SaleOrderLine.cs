@@ -168,8 +168,12 @@ namespace ApplicationCore.Entities
 
         public decimal? DiscountFixed { get; set; }
 
-        public decimal? PriceReduce { get; set; }
-
+        public decimal? PriceReduce
+        {
+            get { return PriceUnit - (decimal)(AmountDiscountTotal ?? 0); }
+                
+            set { }
+        }
         /// <summary>
         /// Không sử dụng
         /// </summary>
