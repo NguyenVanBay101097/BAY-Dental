@@ -2688,13 +2688,13 @@ namespace Infrastructure.Services
 
             if (val.RevenueFrom.HasValue || val.RevenueTo.HasValue)
             {
-                var PartnerRevenueQr = (from s in saleOrderLineObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                        where s.State == "sale" || s.State == "done"
-                                        group s by s.OrderPartnerId into g
+                var PartnerRevenueQr = (from s in amlObj._QueryGet(state: "posted", companyId: val.CompanyId)
+                                        where s.AccountInternalType == "receivable"
+                                        group s by s.PartnerId into g
                                         select new
                                         {
                                             PartnerId = g.Key.Value,
-                                            TotalPaid = g.Sum(x => x.AmountInvoiced)
+                                            TotalPaid = Math.Abs(g.Sum(x => x.PriceSubtotal ?? 0))
                                         });
 
                 if (val.RevenueFrom.HasValue)
@@ -2790,10 +2790,10 @@ namespace Infrastructure.Services
 
             if (val.AgeFrom.HasValue || val.AgeTo.HasValue)
             {
-                if (val.AgeFrom.HasValue && val.AgeFrom > 0)
+                if (val.AgeFrom.HasValue)
                     mainQuery = mainQuery.Where(x => (DateTime.Now.Year - x.BirthYear) >= val.AgeFrom.Value);
 
-                if (val.AgeTo.HasValue && val.AgeTo > 0)
+                if (val.AgeTo.HasValue)
                     mainQuery = mainQuery.Where(x => (DateTime.Now.Year - x.BirthYear) <= val.AgeTo.Value);
             }
 
