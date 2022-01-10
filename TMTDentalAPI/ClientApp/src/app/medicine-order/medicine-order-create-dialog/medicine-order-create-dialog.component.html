@@ -179,7 +179,7 @@
                                         </span>
                                         <input class="form-control text-right" formControlName="quantity" 
                                         *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
-                                        tmtautonumeric [options]="{minimumValue: 0,decimalPlaces:0}" (input)="computeTotalAmount()" />
+                                        tmtautonumeric [options]="{minimumValue: 0,decimalPlaces:0}" (input)="computeTotalAmount()" minlength="1" />
                                         <!-- <input [min]="0"
                                             *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
                                             type="number" class="form-control text-right" formControlName="quantity"
@@ -192,6 +192,7 @@
                                         <input class="form-control text-right" formControlName="price" 
                                         *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'"
                                         tmtautonumeric [options]="{minimumValue: 0,decimalPlaces:0}" (input)="computeTotalAmount()"/>
+                                       
                                     </td>
                                     <td class="text-right">{{computeAmountOfLine(line) | number}}</td>
                                     <td class="text-center cursor-pointer" *ngIf="precscriptPayment.state != 'confirmed' && precscriptPayment.state != 'cancel'">

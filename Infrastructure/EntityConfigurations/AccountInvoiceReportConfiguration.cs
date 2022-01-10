@@ -45,6 +45,10 @@ namespace Infrastructure.EntityConfigurations
             builder.HasOne(x => x.InvoiceUser)
             .WithMany()
             .HasForeignKey(x => x.InvoiceUserId);
+
+            builder.HasOne(x => x.ProductUoM)
+                .WithMany()
+                .HasForeignKey(x => x.ProductUoMId);
         }
     }
 }

@@ -53,29 +53,50 @@ namespace Umbraco.Web.Models.ContentEditing
         }
         public DateTime? DateCreated { get; set; }
         public string TitleName { get; set; }
-        public  bool Active { get; set; }
+        public bool Active { get; set; }
     }
     public class PartnerInfoDisplay
     {
         public Guid Id { get; set; }
+
         public string Ref { get; set; }
+
         public string Avatar { get; set; }
+
         public string DisplayName { get; set; }
+
         public string Name { get; set; }
+
         public string Phone { get; set; }
+
         public string Email { get; set; }
+
+        public string CityName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string WardName { get; set; }
+
         public int? BirthYear { get; set; }
+
         public int? BirthMonth { get; set; }
+
         public int? BirthDay { get; set; }
+
         public string OrderState { get; set; }
+
         public decimal? OrderResidual { get; set; }
+
         public decimal? TotalDebit { get; set; }
-        public MemberLevelBasic MemberLevel { get; set; }
+
+        public string JobTitle { get; set; }
 
         /// <summary>
         /// thẻ thành viên
         /// </summary>
         public string CardTypeName { get; set; }
+
+        public string SourceName { get; set; }
 
         public string CompanyName { get; set; }
 
@@ -88,6 +109,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// ngày điều trị gần nhất
         /// </summary>
         public DateTime? SaleOrderDate { get; set; }
+
+        public MemberLevelBasic MemberLevel { get; set; }
 
         public IEnumerable<PartnerCategoryBasic> Categories { get; set; } = new List<PartnerCategoryBasic>();
         public string DateOfBirth
@@ -118,6 +141,22 @@ namespace Umbraco.Web.Models.ContentEditing
             set
             {
             }
+        }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
         }
 
         public bool Active { get; set; }

@@ -314,7 +314,7 @@ namespace Infrastructure.Services
                 Count = x.Count()
             }).ToListAsync();
 
-            var cityCodes = cityResults.Select(x => x.CityCode).ToList();
+            var cityCodes = cityResults.Where(x => !x.CityCode.IsNullOrWhiteSpace()).Select(x => x.CityCode).ToList();
 
             var districtResults = await query.Where(x => cityCodes.Contains(x.CityCode))
                 .GroupBy(x => new
@@ -331,7 +331,7 @@ namespace Infrastructure.Services
                     Count = x.Count()
                 }).ToListAsync();
 
-            var districtCodes = districtResults.Select(x => x.DistrictCode).ToList();
+            var districtCodes = districtResults.Where(x => !x.DistrictCode.IsNullOrWhiteSpace()).Select(x => x.DistrictCode).ToList();
 
             var wardResult = await query.Where(x => cityCodes.Contains(x.CityCode) && districtCodes.Contains(x.DistrictCode))
                 .GroupBy(x => new

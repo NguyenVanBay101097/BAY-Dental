@@ -567,9 +567,9 @@ namespace Infrastructure.Services
             return result;
         }
 
-        public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerInfoPaged val)
+        public async Task<IEnumerable<PartnerCustomerExportExcelVM>> GetExcel(PartnerQueryableFilter val)
         {
-            var query = await GetQueryPartnerInfoPaged2(val);
+            var query = GetQueryablePartnerFilter(val);
             if (val.CategIds.Any())
             {
                 //filter query
@@ -596,8 +596,7 @@ namespace Infrastructure.Services
                 Email = x.Email,
                 Note = x.Comment,
                 Id = x.Id,
-                SourceName = x.SourceName,
-                TitleName = x.TitleName
+                SourceName = x.Source.Name
             }).ToListAsync();
 
             var historyRelObj = GetService<IHistoryService>();
@@ -2544,8 +2543,6 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var partnerSourceObj = GetService<IPartnerSourceService>();
 
-           
-
             var mainQuery = partnerObj.SearchQuery(x => x.Active && x.Customer);
 
             if (val.CompanyId.HasValue)
@@ -2554,12 +2551,74 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.CityCode))
                 mainQuery = mainQuery.Where(x => x.CityCode == val.CityCode);
 
+            if (val.CityCodeIsNull.HasValue)
+            {
+                if (val.CityCodeIsNull.Value)
+                    mainQuery = mainQuery.Where(x => x.CityCode == null);
+                else
+                    mainQuery = mainQuery.Where(x => x.CityCode != null);
+            }
+
             if (!string.IsNullOrEmpty(val.DistrictCode))
                 mainQuery = mainQuery.Where(x => x.DistrictCode == val.DistrictCode);
+
+            if (val.DistrictCodeIsNull.HasValue)
+            {
+                if (val.DistrictCodeIsNull.Value)
+                    mainQuery = mainQuery.Where(x => x.DistrictCode == null);
+                else
+                    mainQuery = mainQuery.Where(x => x.DistrictCode != null);
+            }
 
             if (!string.IsNullOrEmpty(val.WardCode))
                 mainQuery = mainQuery.Where(x => x.WardCode == val.WardCode);
 
+            if (val.WardCodeIsNull.HasValue)
+            {
+                if (val.WardCodeIsNull.Value)
+                    mainQuery = mainQuery.Where(x => x.WardCode == null);
+                else
+                    mainQuery = mainQuery.Where(x => x.WardCode != null);
+            }
+
+            if (val.IsActive.HasValue)
+                mainQuery = mainQuery.Where(x => x.Active == val.IsActive);
+
+            if (!string.IsNullOrEmpty(val.Gender))
+                mainQuery = mainQuery.Where(x => x.Gender == val.Gender);
+
+            if (val.DateFrom.HasValue)
+                mainQuery = mainQuery.Where(x => x.Date >= val.DateFrom);
+
+            if (val.DateTo.HasValue)
+                mainQuery = mainQuery.Where(x => x.Date <= val.DateTo);
+
+            if (!string.IsNullOrEmpty(val.Search))
+            {
+                IQueryable<Guid> partnersByKeywords;
+
+                partnersByKeywords =
+                      from p in mainQuery
+                      where p.Name.Contains(val.Search) || p.NameNoSign.Contains(val.Search)
+                || p.Ref.Contains(val.Search) || p.Phone.Contains(val.Search)
+                      select p.Id;
+
+                partnersByKeywords = partnersByKeywords.Union(
+                        from card in cardCardObj.SearchQuery()
+                        where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                        select card.PartnerId.Value
+                    );
+
+                partnersByKeywords = partnersByKeywords.Union(
+                       from card in serviceCardCardObj.SearchQuery()
+                       where card.Barcode.Contains(val.Search) && card.PartnerId.HasValue
+                       select card.PartnerId.Value
+                   );
+
+                mainQuery = from a in mainQuery
+                            join pbk in partnersByKeywords on a.Id equals pbk
+                            select a;
+            }
 
             if (val.CategIds.Any())
             {
@@ -2602,12 +2661,22 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrEmpty(val.OrderState))
             {
-                var partnerOrderStateQr = from v in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                          group v by v.PartnerId into g
+                var orderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == val.CompanyId)
+                                   group v by v.PartnerId into g
+                                   select new
+                                   {
+                                       PartnerId = g.Key,
+                                       CountSale = g.Sum(x => x.State == "sale" ? 1 : 0),
+                                       CountDone = g.Sum(x => x.State == "done" ? 1 : 0),
+                                       Date = g.Max(x => x.DateOrder)
+                                   };
+
+                var partnerOrderStateQr = from a in mainQuery
+                                          from pos in orderStateQr.Where(x => x.PartnerId == a.Id).DefaultIfEmpty()
                                           select new
                                           {
-                                              PartnerId = g.Key,
-                                              OrderState = g.Sum(x => x.State == "sale" ? 1 : 0) > 0 ? "sale" : (g.Sum(x => x.State == "done" ? 1 : 0) > 0 ? "done" : "draft"),
+                                              PartnerId = a.Id,
+                                              OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                                           };
 
                 mainQuery = from a in mainQuery
@@ -2619,13 +2688,14 @@ namespace Infrastructure.Services
 
             if (val.RevenueFrom.HasValue || val.RevenueTo.HasValue)
             {
-                var PartnerRevenueQr = (from s in saleOrderLineObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                        where s.State == "sale" || s.State == "done"
-                                        group s by s.OrderPartnerId into g
+                var types = new string[] { "out_invoice", "out_refund" };
+                var PartnerRevenueQr = (from s in amlObj._QueryGet(state: "posted", companyId: val.CompanyId)
+                                        where s.AccountInternalType != "receivable" && types.Contains(s.Move.Type)
+                                        group s by s.PartnerId into g
                                         select new
                                         {
                                             PartnerId = g.Key.Value,
-                                            TotalPaid = g.Sum(x => x.AmountInvoiced)
+                                            TotalPaid = g.Sum(x => -x.Balance)
                                         });
 
                 if (val.RevenueFrom.HasValue)
@@ -2640,6 +2710,31 @@ namespace Infrastructure.Services
                             select a;
 
             }
+
+            if (val.AmountTotalFrom.HasValue || val.AmountTotalTo.HasValue)
+            {
+                var PartnerAmountTotalQr = (from s in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
+                                            where s.State == "sale" || s.State == "done"
+                                            group s by s.PartnerId into g
+                                            select new
+                                            {
+                                                PartnerId = g.Key,
+                                                AmountTotal = g.Sum(x => x.AmountTotal)
+                                            });
+
+                if (val.AmountTotalFrom.HasValue)
+                    PartnerAmountTotalQr = PartnerAmountTotalQr.Where(x => x.AmountTotal >= val.AmountTotalFrom);
+
+                if (val.AmountTotalTo.HasValue)
+                    PartnerAmountTotalQr = PartnerAmountTotalQr.Where(x => x.AmountTotal <= val.AmountTotalTo);
+
+
+                mainQuery = from a in mainQuery
+                            join pbk in PartnerAmountTotalQr on a.Id equals pbk.PartnerId
+                            select a;
+
+            }
+
 
             var partnerRevenueExpectQr = (from pre in saleOrderLineObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
                                           where pre.State == "sale" || pre.State == "done"
@@ -2661,22 +2756,6 @@ namespace Infrastructure.Services
                              TotalDebt = g.Sum(x => x.Balance)
                          };
 
-
-            if (val.RevenueExpectFrom.HasValue || val.RevenueExpectTo.HasValue)
-            {
-
-                if (val.RevenueExpectFrom.HasValue)
-                    partnerRevenueExpectQr = partnerRevenueExpectQr.Where(x => x.OrderResidual >= val.RevenueExpectFrom);
-
-                if (val.RevenueExpectTo.HasValue)
-                    partnerRevenueExpectQr = partnerRevenueExpectQr.Where(x => x.OrderResidual <= val.RevenueExpectTo);
-
-                mainQuery = from a in mainQuery
-                            join pbk in partnerRevenueExpectQr on a.Id equals pbk.PartnerId
-                            select a;
-
-            }
-
             if (val.IsRevenueExpect.HasValue)
             {
                 IQueryable<Guid> partnersByKeywords;
@@ -2693,21 +2772,6 @@ namespace Infrastructure.Services
                             select a;
             }
 
-
-            if (val.DebtFrom.HasValue || val.DebtTo.HasValue)
-            {
-
-
-                if (val.DebtFrom.HasValue)
-                    debtQr = debtQr.Where(x => x.TotalDebt >= val.DebtFrom);
-
-                if (val.DebtTo.HasValue)
-                    debtQr = debtQr.Where(x => x.TotalDebt <= val.DebtTo);
-
-                mainQuery = from a in mainQuery
-                            join pbk in debtQr on a.Id equals pbk.PartnerId
-                            select a;
-            }
 
             if (val.IsDebt.HasValue)
             {
@@ -2727,12 +2791,14 @@ namespace Infrastructure.Services
 
             if (val.AgeFrom.HasValue || val.AgeTo.HasValue)
             {
-                if (val.AgeFrom.HasValue && val.AgeFrom > 0)
+                if (val.AgeFrom.HasValue)
                     mainQuery = mainQuery.Where(x => (DateTime.Now.Year - x.BirthYear) >= val.AgeFrom.Value);
 
-                if (val.AgeTo.HasValue && val.AgeTo > 0)
+                if (val.AgeTo.HasValue)
                     mainQuery = mainQuery.Where(x => (DateTime.Now.Year - x.BirthYear) <= val.AgeTo.Value);
             }
+
+
 
             return mainQuery;
         }
@@ -3212,26 +3278,65 @@ namespace Infrastructure.Services
 
             return ResponseQr;
         }
-        public async Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged2(PartnerInfoPaged val)
+        public async Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged2(PartnerQueryableFilter val)
         {
-            var memberLevelObj = GetService<IMemberLevelService>();
-            var cateObj = GetService<IPartnerCategoryService>();
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var appointmentObj = GetService<IAppointmentService>();
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
             var cardCardObj = GetService<ICardCardService>();
+            var amlObj = GetService<IAccountMoveLineService>();
 
-            var ResponseQr = await GetQueryPartnerInfoPaged2(val);
-            var count = await ResponseQr.CountAsync();
-            var res = await ResponseQr.OrderByDescending(x => x.DateCreated).Skip(val.Offset).Take(val.Limit).ToListAsync();
+            var query = GetQueryablePartnerFilter(val);
+            var total = await query.CountAsync();
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var res = await query.Include(x => x.Source).Include(x => x.Company).OrderByDescending(x => x.DateCreated).ToListAsync();
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
-            foreach (var item in res)
+
+            var partnerOrderStateDict = saleOrderObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).GroupBy(x => x.PartnerId).Select(s => new
+            {
+                PartnerId = s.Key,
+                CountSale = s.Sum(x => x.State == "sale" ? 1 : 0),
+                CountDone = s.Sum(x => x.State == "done" ? 1 : 0),
+                AmountRevenueExpect = s.Sum(x => x.AmountTotal - x.TotalPaid),
+                Date = s.Max(x => x.DateOrder)
+            }).ToDictionary(g => g.PartnerId, x => x);
+
+            var partnerDebitDict = amlObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH").GroupBy(x => x.PartnerId).Select(s => new
+            {
+                PartnerId = s.Key,
+                AmountTotalDebit = s.Sum(x => x.Balance)
+            }).ToDictionary(g => g.PartnerId, x => x);
+
+            var partnerCardTypeDict = cardCardObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value)).Select(s => new
+            {
+                PartnerId = s.PartnerId,
+                CardTypeName = s.Type.Name
+            }).ToDictionary(g => g.PartnerId, x => x);
+
+            var partnerAppointmentDict = appointmentObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).GroupBy(x => x.PartnerId).Select(s => new
+            {
+                PartnerId = s.Key,
+                AppointmentDate = s.Max(g => g.Date)
+            }).ToDictionary(g => g.PartnerId, x => x);
+
+            var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
+            foreach (var item in items)
             {
                 item.Categories = _mapper.Map<List<PartnerCategoryBasic>>(categDict.ContainsKey(item.Id) ? categDict[item.Id] : new List<PartnerCategory>());
+                item.OrderState = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].CountSale > 0 ? "sale" : (partnerOrderStateDict[item.Id].CountDone > 0 ? "done" : "draft") : "draft";
+                item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
+                item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
+                item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
+                item.SaleOrderDate = partnerOrderStateDict.ContainsKey(item.Id) ? (DateTime?)partnerOrderStateDict[item.Id].Date : null;
+                item.AppointmentDate = partnerAppointmentDict.ContainsKey(item.Id) ? (DateTime?)partnerAppointmentDict[item.Id].AppointmentDate : null;
             }
-            var items = _mapper.Map<IEnumerable<PartnerInfoDisplay>>(res);
 
-            return new PagedResult2<PartnerInfoDisplay>(count, val.Offset, val.Limit)
+            return new PagedResult2<PartnerInfoDisplay>(total, val.Offset, val.Limit)
             {
                 Items = items
             };

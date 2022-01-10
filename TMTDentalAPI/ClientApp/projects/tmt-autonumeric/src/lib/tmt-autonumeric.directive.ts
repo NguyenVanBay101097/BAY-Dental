@@ -86,7 +86,7 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
     var options = this.getOptions();
     this.instance = new AutoNumeric(
       this.elm.nativeElement,
-      this.initialValue || 0,
+      this.initialValue,
       options
     );
     this.setDisabledState(this.isDisabled);
@@ -94,7 +94,7 @@ export class TmtAutonumericDirective implements OnInit, AfterViewInit, OnChanges
       this.formatted.emit($event);
     });
     this.unsubscribeRawValueModified = this.renderer.listen(this.elm.nativeElement, 'autoNumeric:rawValueModified', ($event) => {
-      this.onChangeFn($event.detail.aNElement.getNumber());
+      this.onChangeFn($event.detail.newRawValue ? $event.detail.aNElement.getNumber() : null);
       this.rawValueModified.emit($event);
     });
   }

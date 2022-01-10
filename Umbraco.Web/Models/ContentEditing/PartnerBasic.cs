@@ -540,15 +540,24 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerQueryableFilter
     {
+        public PartnerQueryableFilter()
+        {
+            Limit = 20;
+        }
+
+        public int Limit { get; set; }
+        public int Offset { get; set; }
+
+        public string Search { get; set; }
+
         /// <summary>
         /// chi nhanh
         /// </summary>
         public Guid? CompanyId { get; set; }
 
-        /// <summary>
-        /// chi nhánh tạo khách hàng
-        /// </summary>
-        public Guid? PartnerCompanyId { get; set; }
+        public DateTime? DateFrom { get; set; }
+
+        public DateTime? DateTo { get; set; }
 
         /// <summary>
         /// tuổi 
@@ -560,11 +569,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal? RevenueFrom { get; set; }
         public decimal? RevenueTo { get; set; }
 
-        public decimal? RevenueExpectFrom { get; set; }
-        public decimal? RevenueExpectTo { get; set; }
-
-        public decimal? DebtFrom { get; set; }
-        public decimal? DebtTo { get; set; }
+        /// <summary>
+        /// loc theo tong tien dieu tri
+        /// </summary>
+        public decimal? AmountTotalFrom { get; set; }
+        public decimal? AmountTotalTo { get; set; }
 
         /// <summary>
         /// cong no
@@ -583,11 +592,21 @@ namespace Umbraco.Web.Models.ContentEditing
         /// </summary>
         public string OrderState { get; set; }
 
+        /// <summary>
+        /// gioi tinh
+        /// </summary>
+        public string Gender { get; set; }
+
         public IEnumerable<Guid> CategIds { get; set; } = new List<Guid>();
 
         public IEnumerable<Guid> PartnerSourceIds { get; set; } = new List<Guid>();
 
         public IEnumerable<Guid> CardTypeIds { get; set; } = new List<Guid>();
+
+        /// <summary>
+        /// theo doi
+        /// </summary>
+        public bool? IsActive { get; set; }
 
 
         /// <summary>
@@ -604,6 +623,12 @@ namespace Umbraco.Web.Models.ContentEditing
         /// mã phường/ xã
         /// </summary>
         public string WardCode { get; set; }
+
+        public bool? CityCodeIsNull { get; set; }
+
+        public bool? DistrictCodeIsNull { get; set; }
+
+        public bool? WardCodeIsNull { get; set; }
     }
 
     public class PartnerCustomerReportOutput

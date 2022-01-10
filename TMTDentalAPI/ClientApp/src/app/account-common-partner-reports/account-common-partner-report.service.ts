@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PartnerInfoFilter } from '../partners/partner.service';
 
 export class AccountCommonPartnerReportItem {
     partnerId: string;
@@ -166,6 +167,11 @@ export class AccountCommonPartnerReportOverviewFilter {
     cityCode: string;
     districtCode: string;
     wardCode: string;
+    priceSubTotalFrom?: number;
+    priceSubTotalTo?: number;
+    gender: string;
+    dateFrom?: string;
+    dateTo?: string;
 }
 
 export class AccountCommonPartnerReportOverview {
@@ -266,19 +272,19 @@ export class AccountCommonPartnerReportService {
         return this.http.post(this.baseApi + "AccountCommonPartnerReport/ReportPartnerAdvance", val,{ responseType: "text" });
     }
 
-    getPartnerReportSumaryOverview(val: AccountCommonPartnerReportOverviewFilter): Observable<AccountCommonPartnerReportOverview> {
+    getPartnerReportSumaryOverview(val: PartnerInfoFilter): Observable<AccountCommonPartnerReportOverview> {
         return this.http.post<AccountCommonPartnerReportOverview>(this.baseApi + this.apiUrl + "/GetPartnerReportSumaryOverview", val);
     }
 
-    getPartnerReportSourceOverview(val: AccountCommonPartnerReportOverviewFilter) {
+    getPartnerReportSourceOverview(val: PartnerInfoFilter) {
         return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportSourceOverview", val);
     }
 
-    getPartnerReportGenderOverview(val: AccountCommonPartnerReportOverviewFilter) {
+    getPartnerReportGenderOverview(val: PartnerInfoFilter) {
         return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportGenderOverview", val);
     }
 
-    getPartnerReportTreeMapOverview(val: AccountCommonPartnerReportOverviewFilter) {
+    getPartnerReportTreeMapOverview(val: PartnerInfoFilter) {
         return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportTreeMapOverview", val);
     }
 }

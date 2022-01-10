@@ -609,7 +609,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Export")]
-        public async Task<IActionResult> ExportExcelFile(PartnerInfoPaged val)
+        public async Task<IActionResult> ExportExcelFile(PartnerQueryableFilter val)
         {
             var stream = new MemoryStream();
             var data = await _partnerService.GetExcel(val);
@@ -790,7 +790,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerInfoPaged val) // giao diện list khách hàng
+        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerQueryableFilter val) // giao diện list khách hàng
         {
             var result = await _partnerService.GetPartnerInfoPaged2(val);
 

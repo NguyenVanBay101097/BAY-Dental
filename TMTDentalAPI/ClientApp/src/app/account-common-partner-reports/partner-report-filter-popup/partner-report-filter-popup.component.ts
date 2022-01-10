@@ -2,12 +2,11 @@ import { AfterViewInit, Component, EventEmitter, OnInit, Output, ViewChild } fro
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MultiSelectComponent, PopupSettings } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
-import { debounceTime, switchMapTo, tap } from 'rxjs/operators';
 import { CardTypeBasic, CardTypePaged, CardTypeService } from 'src/app/card-types/card-type.service';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { AccountCommonPartnerReportOverviewFilter } from '../account-common-partner-report.service';
+import { PartnerInfoFilter } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-partner-report-filter-popup',
@@ -23,7 +22,7 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
 
   formGroup: FormGroup;
   dataFilterObj = Object.create({});
-  filter = new AccountCommonPartnerReportOverviewFilter();
+  filter = new PartnerInfoFilter();
 
   listPartnerCategory: PartnerCategoryBasic[] = [];
   listCardType: CardTypeBasic[] = [];
@@ -31,7 +30,11 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
   popupSettings: PopupSettings = {
     appendTo: "component",
   };
-
+  listGender: { text: string, value: string }[] = [
+    { text: 'Nam', value: 'male' },
+    { text: 'Nữ', value: 'female' },
+    { text: 'Khác', value: 'other' },
+  ]
   constructor(
     private fb: FormBuilder,
     private partnerCategoryService: PartnerCategoryService,
@@ -49,10 +52,9 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
       ageTo: null,
       revenueFrom: null,
       revenueTo: null,
-      revenueExpectFrom: null,
-      revenueExpectTo: null,
-      debtFrom: null,
-      debtTo: null,
+      amountTotalFrom: null,
+      amountTotalTo: null,
+      gender: null,
     });
     setTimeout(() => {
       this.loadListCardType();
@@ -126,14 +128,19 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
       this.formGroup.get('revenueFrom').setValue(null);
       this.formGroup.get('revenueTo').setValue(null);
     }
-    else if (key === 'revenueExpect') {
-      this.formGroup.get('revenueExpectFrom').setValue(null);
-      this.formGroup.get('revenueExpectTo').setValue(null);
+    else if (key === 'amountTotal') {
+      this.formGroup.get('amountTotalFrom').setValue(null);
+      this.formGroup.get('amountTotalTo').setValue(null);
     }
-    else if (key === 'debt') {
-      this.formGroup.get('debtFrom').setValue(null);
-      this.formGroup.get('debtTo').setValue(null);
-    } else {
+    // else if (key === 'revenueExpect') {
+    //   this.formGroup.get('revenueExpectFrom').setValue(null);
+    //   this.formGroup.get('revenueExpectTo').setValue(null);
+    // }
+    // else if (key === 'debt') {
+    //   this.formGroup.get('debtFrom').setValue(null);
+    //   this.formGroup.get('debtTo').setValue(null);
+    // }
+    else {
       this.formGroup.get(key).setValue(null);
     }
     this.onApply();
