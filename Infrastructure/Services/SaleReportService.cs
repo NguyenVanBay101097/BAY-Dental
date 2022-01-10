@@ -744,6 +744,7 @@ namespace Infrastructure.Services
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
             var query = orderLineObj.SearchQuery();
+
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
@@ -771,6 +772,7 @@ namespace Infrastructure.Services
 
             return query;
         }
+
         public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
         {
             var res = await GetServiceReportQuery(val).GroupBy(x => x.Date.Value.Date).OrderByDescending(x => x.Key).Select(x => new ServiceReportRes()
@@ -831,6 +833,52 @@ namespace Infrastructure.Services
 
                 return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
+        }
+
+        public async Task<IEnumerable<ServiceOverviewResponse>> ServiceOverviewReport(ServiceReportReq val)
+        {
+            var query = GetServiceReportQuery(val);
+
+            query = query.OrderByDescending(x => x.Date);
+
+            var items = await query.Select(x => new ServiceOverviewResponse
+            {
+                Date = x.Date,
+                Name = x.Name,
+                OrderId = x.Order.Id,
+                OrderName = x.Order.Name,
+                PartnerId = x.OrderPartnerId.HasValue ? x.OrderPartner.Id : Guid.Empty,
+                PartnerName = x.OrderPartnerId.HasValue ? x.OrderPartner.Name : null,
+                ProductUOMQty = x.ProductUOMQty,
+                EmployeeName = x.EmployeeId.HasValue ? x.Employee.Name : null,
+                AmountTotal = x.PriceTotal,
+                AmountPaid = x.AmountInvoiced ?? 0,
+                AmountResidual = x.PriceTotal - (x.AmountInvoiced ?? 0),
+                State = x.State
+            }).ToListAsync();
+
+            return items;
+        }
+
+        public async Task<PrintServiceOverviewResponse> PrintServiceOverviewReport(ServiceReportReq val)
+        {
+            var data = await ServiceOverviewReport(val);         
+            var companyObj = GetService<ICompanyService>();
+            var res = new PrintServiceOverviewResponse()
+            {              
+                data = data,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+
+            return res;
         }
 
         public async Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val)
