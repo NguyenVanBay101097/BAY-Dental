@@ -17,7 +17,10 @@ import { GetPartnerThreadMessageResponse, GetThreadMessageForPartnerRequest, Mai
   styleUrls: ['./partner-activity-history.component.css']
 })
 export class PartnerActivityHistoryComponent implements OnInit {
-
+  public options: any = {
+    locale: { format: 'YYYY-MM-DD' },
+    alwaysShowCalendars: false,
+  };
   @Input() partnerId: string;
   filter: GetThreadMessageForPartnerRequest = new GetThreadMessageForPartnerRequest();
   listMessages: {date: any, logs:MailMessageFormat[] }[] = [];

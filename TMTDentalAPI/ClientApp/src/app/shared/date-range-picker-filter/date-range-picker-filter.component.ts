@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { DaterangepickerDirective } from './config/daterangepicker.directive';
-
+import { DaterangepickerComponent } from 'ng2-daterangepicker';
 @Component({
   selector: 'app-date-range-picker-filter',
   templateUrl: './date-range-picker-filter.component.html',
@@ -17,7 +17,6 @@ export class DateRangePickerFilterComponent implements OnInit {
   @Input() title: string = 'Thời gian';
   @Input() showClearButton: boolean = true;
 
-  @Input() selected: any;
   @Input() showDropdowns = true;
   @Input() ranges: any = {
     'Hôm nay': [moment(new Date()), moment(new Date())],
@@ -28,45 +27,105 @@ export class DateRangePickerFilterComponent implements OnInit {
     'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
   }
 
-  public options: any = {
-    locale: { format: 'YYYY-MM-DD' },
-    alwaysShowCalendars: false,
-  }
 
+  public options: any = {
+    locale: {
+      format: 'DD/MM/YYYY',
+      customRangeLabel: "Chọn ngày",
+      applyLabel: "Áp dụng",
+      cancelLabel: "Đóng",
+      monthNames: [
+        "Tháng 1",
+        "Tháng 2",
+        "Tháng 3",
+        "Tháng 4",
+        "Tháng 5",
+        "Tháng 6",
+        "Tháng 7",
+        "Tháng 8",
+        "Tháng 9",
+        "Tháng 10",
+        "Tháng 11",
+        "Tháng 12"
+      ]
+    },
+    cancelClass: " btn-light",
+    showDropdowns: true,
+    alwaysShowCalendars: true,
+    ranges: this.ranges,
+    // startDate: undefined,
+    // endDate: undefined,
+    autoUpdateInput: true,
+    opens: this.opens,
+    drops: this.drops,
+
+  };
+
+  oldStartDate: any;
+  oldEndDate: any;
   @ViewChild(DaterangepickerDirective) inputDr: DaterangepickerDirective;
-  constructor() {
+  @ViewChild(DaterangepickerComponent)
+  private picker: DaterangepickerComponent;
+  constructor(
+    private elm: ElementRef,
+    private renderer: Renderer2,
+  ) {
 
   }
 
   ngOnInit() {
-    this.selected = this.selected || (
-      (!this.startDate && !this.endDate) ? null :
-        {
-          startDate: moment(this.startDate),
-          endDate: moment(this.endDate)
-        })
-  }
-  ngAfterViewInit() {
-  }
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-  //   //Add '${implements OnChanges}' to the class.
-  //   for (const change in changes) {
-  //     if (changes.hasOwnProperty(change)) {
-  //         if (['startDate','endDate'].indexOf(change) !== -1) {
-  //           this.selected = 
-  //               {
-  //                 startDate: moment(this.startDate),
-  //                 endDate: moment(this.endDate)
-  //               };   
-  //         }
-  //     }
-  // }
+        this.startDate = this.startDate ? moment(this.startDate): null;
+        this.endDate = this.endDate ? moment(this.endDate): null;
 
-  // }
+    if (this.opens) {
+      this.options.opens = this.opens;
+    }
+    if (this.drops) {
+      this.options.drops = this.drops;
+    }
+  }
+
+  ngAfterViewInit() {
+
+
+    var daterangepickerEl = (this.renderer as any).engine.bodyNode.querySelector(".daterangepicker");
+    var btns = daterangepickerEl.querySelector('.drp-buttons') as HTMLElement;
+    var applyBtn = daterangepickerEl.querySelector('.drp-buttons .applyBtn')
+
+    btns.insertBefore(applyBtn, btns.firstChild.nextSibling);
+    if (this.showClearButton) {
+      var clearEl = this.renderer.createElement(`button`);
+      clearEl.innerHTML = "Hủy";
+      clearEl.classList.add("btn", "btn-sm", "btn-secondary", "clearBtn");
+      var cancelBtn = daterangepickerEl.querySelector('.cancelBtn');
+      this.renderer.appendChild(daterangepickerEl, clearEl);
+      this.renderer.listen(clearEl, 'click', (event) => {
+        this.clear()
+        cancelBtn.click();
+      });
+      applyBtn.after(clearEl);
+    }
+
+    if (this.startDate || this.endDate) {
+      this.picker.datePicker.setStartDate(this.startDate);
+      this.picker.datePicker.setEndDate(this.endDate);
+    } else {
+      // this.picker.datePicker.startDate= null;
+      // this.picker.datePicker.endDate= null;
+    }
+  }
+
+  public selectedDate(value: any) {
+
+    // use passed valuable to update state
+      this.startDate= value.start,
+      this.endDate= value.end
+    this.onApply();
+  }
 
   clear() {
-    this.selected = null;
+    this.startDate = null;
+    this.endDate = null;
     this.onApply();
   }
 
@@ -74,19 +133,16 @@ export class DateRangePickerFilterComponent implements OnInit {
     // this.inputDr.open();
   }
 
-  onApply() {
-    var value = { dateFrom: null, dateTo: null };
-    if (!this.selected) {
-      this.searchChange.emit(value);
-      return;
-    }
-    if (this.selected.startDate) {
-      value.dateFrom = this.selected.startDate.toDate();
-    }
+  onShowDateRangePicker(e) {
+    this.oldStartDate = this.startDate;
+    this.oldEndDate = this.endDate;
+  }
 
-    if (this.selected.endDate) {
-      value.dateTo = this.selected.endDate.toDate();
+  onApply() {
+    if ((this.startDate == null && this.oldStartDate != null) ||!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate) )
+    {
+      var value = { dateFrom: this.startDate ? this.startDate.toDate() : null, dateTo: this.endDate ? this.endDate.toDate() : null };
+      this.searchChange.emit(value);
     }
-    this.searchChange.emit(value);
   }
 }

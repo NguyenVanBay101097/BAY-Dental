@@ -102,7 +102,7 @@ import { PartnerExistListDialogComponent } from './partner-exist-list-dialog/par
 import { PartnerActivityHistoryComponent } from './partner-activity-history/partner-activity-history.component';
 import { PartnerOtherInfoComponent } from './partner-other-info/partner-other-info.component';
 // import { CatalogModule } from '../catalog/catalog.module';
-
+import { Daterangepicker } from 'ng2-daterangepicker';
 
 
 @NgModule({
@@ -207,6 +207,7 @@ import { PartnerOtherInfoComponent } from './partner-other-info/partner-other-in
     PartnerAdvancesModule,
     HistoryModule,
     CardCardsModule,
+    
     // CatalogModule
   ],
   entryComponents: [
