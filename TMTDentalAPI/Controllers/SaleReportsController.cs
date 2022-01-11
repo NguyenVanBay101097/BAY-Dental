@@ -414,6 +414,22 @@ namespace TMTDentalAPI.Controllers
                     row++;
                 }
 
+                worksheet.Cells[row, 1, row, 6].Value = "Tổng";
+                worksheet.Cells[row, 1, row, 6].Merge = true;
+
+                worksheet.Cells[row, 7].Value = data.Sum(x => x.AmountTotal);
+                worksheet.Cells[row, 8].Value = data.Sum(x => x.AmountPaid);
+                worksheet.Cells[row, 9].Value = data.Sum(x => x.AmountResidual);
+                worksheet.Cells[row, 10].Value = "";
+                worksheet.Cells[row, 1, row, 10].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Font.Bold = true;
+                worksheet.Cells[row, 7, row, 9].Style.Numberformat.Format = "#,##0";
+
+
+
                 worksheet.Cells.AutoFitColumns();
 
                 package.Save();
