@@ -64,7 +64,7 @@
           "PriceTotal": 0.0,
           "Sequence": 10,
           "AmountDiscountTotal": 500000.0,
-          "PriceReduce": 1500000.00,
+          "PriceWithDiscount": 1500000.00,
           "TotalDiscountAmount": 1000000.00
         }
       ],
