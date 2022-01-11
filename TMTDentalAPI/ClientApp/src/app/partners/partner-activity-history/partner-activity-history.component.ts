@@ -52,6 +52,7 @@ export class PartnerActivityHistoryComponent implements OnInit {
     val.dateFrom = val.dateFrom ? this.intl.formatDate(val.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = val.dateTo ? this.intl.formatDate(val.dateTo, 'yyyy-MM-dd') : null;
     this.partnerSerivce.getThreadMessages(this.partnerId, val).subscribe((res: GetPartnerThreadMessageResponse) => {
+      this.listMessages = [];
       res.messages.forEach(e => {
         var groupExist = this.listMessages.find(x => new Date(x.date).setHours(0, 0, 0, 0) == new Date(e.date).setHours(0, 0, 0, 0));
         if (groupExist) {
