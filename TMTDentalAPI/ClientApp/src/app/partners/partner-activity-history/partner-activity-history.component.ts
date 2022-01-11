@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IntlService } from '@progress/kendo-angular-intl';
-import { Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { groupBy, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CommentCuDialogComponent } from 'src/app/mail-messages/comment-cu-dialog/comment-cu-dialog.component';
 import { MailMessageSubTypeService } from 'src/app/mail-messages/mail-message-subType.service';
 import { LogForPartnerRequest, LogForPartnerResponse, MailMessageService, TimeLineLogForPartnerResponse } from 'src/app/mail-messages/mail-message.service';
@@ -51,22 +51,18 @@ export class PartnerActivityHistoryComponent implements OnInit {
     var val = Object.assign({}, this.filter);
     val.dateFrom = val.dateFrom ? this.intl.formatDate(val.dateFrom, 'yyyy-MM-dd') : null;
     val.dateTo = val.dateTo ? this.intl.formatDate(val.dateTo, 'yyyy-MM-dd') : null;
-    this.partnerSerivce.getThreadMessages(this.partnerId, val).subscribe((res: GetPartnerThreadMessageResponse) => {
-      this.listMessages = [];
-      res.messages.forEach(e => {
-        var groupExist = this.listMessages.find(x => new Date(x.date).setHours(0, 0, 0, 0) == new Date(e.date).setHours(0, 0, 0, 0));
-        if (groupExist) {
-          groupExist.logs.push(e);
-        }
-        else {
-          groupExist = {
-            date: e.date,
-            logs: [e]
-          }
-          this.listMessages.push(groupExist);
-        }
-
-      });
+    this.partnerSerivce.getThreadMessages(this.partnerId, val).pipe(
+      mergeMap(res => res.messages),
+      groupBy((item: any) => {
+        return item.date.split('T')[0];
+      }),
+      mergeMap(group => group.pipe(toArray())),
+      map((arr: any) => ({date: arr[0].date, logs: arr.slice() })),
+      toArray()
+    ).subscribe((res: any) => {
+      console.log(res);
+      
+      this.listMessages = res;
     });
   }
 
