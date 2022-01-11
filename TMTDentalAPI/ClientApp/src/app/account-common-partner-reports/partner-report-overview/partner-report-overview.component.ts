@@ -25,8 +25,6 @@ import { PartnerReportFilterPopupComponent } from '../partner-report-filter-popu
 export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   @ViewChild("companyCbx", { static: false }) companyCbx: ComboBoxComponent;
   @ViewChild("reportAreaComp", { static: false }) reportAreaComp: PartnerReportAreaComponent;
-  @ViewChild("reportFilterPopup", { static: false }) reportFilterPopup: PartnerReportFilterPopupComponent;
-  @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
 
   formGroup: FormGroup
   gridData: GridDataResult;
@@ -131,7 +129,6 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
 
   loadReportSource() {
     let val = Object.assign({}, this.filter) as PartnerInfoFilter;
-
     this.accountCommonPartnerReportService.getPartnerReportSourceOverview(val).subscribe((res: any) => {
       this.dataReportSource = res;
     }, error => console.log(error));
@@ -174,7 +171,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   exportExcelFile() {
-    var val = new PartnerInfoPaged();
+    var val = Object.assign({}, this.filter) as PartnerInfoFilter;
     this.partnerService.exportPartnerExcelFile(val).subscribe((rs) => {
       let filename = "DanhSachKhachang";
       let newBlob = new Blob([rs], {
@@ -194,28 +191,18 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onApplyEmit(event) {
+  onApplyEmit(data) {
     this.resetFilterCode();
-    this.onFilterAdvance(event);
-    this.myDrop.toggle();
-  }
-
-  onFilterAdvance(data) {
+    this.filter = Object.assign(this.filter, data);
     const categIds = (data && data.categs != null) ? data.categs.map(val => val.id) : [];
     const partnerSourceIds = (data && data.partnerSources != null) ? data.partnerSources.map(val => val.id) : [];
     const cardTypeIds = (data && data.cardTypes != null) ? data.cardTypes.map(val => val.id) : [];
-    this.filter.ageFrom = data.ageFrom;
-    this.filter.ageTo = data.ageTo;
-    this.filter.revenueFrom = data.revenueFrom;
-    this.filter.revenueTo = data.revenueTo;
-    this.filter.amountTotalFrom = data.amountTotalFrom;
-    this.filter.amountTotalTo = data.amountTotalTo;
-    this.filter.gender = data.gender;
     this.filter.categIds = categIds;
     this.filter.partnerSourceIds = partnerSourceIds;
     this.filter.cardTypeIds = cardTypeIds;
+    this.filter = { ... this.filter };
     this.loadAllData();
-    this.showFilterInfo(data);
+    this.showFilterInfo(this.filter);
   }
 
   showFilterInfo(data) {
@@ -296,16 +283,35 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   onRemoveFilter(key: string) {
-    this.reportFilterPopup?.onRemoveFilter(key);
-    this.myDrop.toggle();
-  }
+    if (key === 'age') {
+      this.filter.ageFrom = null;
+      this.filter.ageTo = null;
+    }
+    else if (key === 'revenue') {
+      this.filter.revenueFrom = null;
+      this.filter.revenueTo = null;
+    }
+    else if (key === 'amountTotal') {
+      this.filter.amountTotalFrom = null;
+      this.filter.amountTotalTo = null;
+    }
+    else if (key === 'categs') {
+      this.filter.categIds = [];
+    }
+    else if (key === 'partnerSources') {
+      this.filter.partnerSourceIds = [];
+    }
+    else if (key === 'cardTypes') {
+      this.filter.cardTypeIds = [];
+    }
 
-  onCloseEmit() {
-    this.myDrop.toggle();
-  }
-
-  onToggleDropdown(event) {
-    this.reportFilterPopup.onUpdateFormValue(event);
+    this.filter[key] = null;
+    this.filter.cityCode = null;
+    this.filter.districtCode = null;
+    this.filter.wardCode = null;
+    this.filter = { ... this.filter };
+    this.showFilterInfo(this.filter);
+    this.loadAllData();
   }
 
   filterEmit(val) {
