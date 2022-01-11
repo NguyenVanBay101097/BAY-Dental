@@ -2,15 +2,15 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
-import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { CompanyBasic, CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { SaleReportItem, SaleReportSearch, SaleReportService, ServiceReportReq } from '../sale-report.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { SaleReportService, ServiceReportReq } from '../sale-report.service';
 
 @Component({
   selector: 'app-sale-report-overview',
@@ -41,6 +41,7 @@ export class SaleReportOverviewComponent implements OnInit {
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
+    private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -157,15 +158,61 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   exportExcel() {
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.saleReportService.exportServiceOverviewReportExcel(val).subscribe((rs) => {
+      let filename = "BaoCaoDichVu_TongQuan";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
 
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   onExportPDF() {
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
 
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.saleReportService.printPdfServiceOverviewReport(val).subscribe(res => {
+      let filename = "BaoCaoDichVuTongQuan";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
   }
 
   onPrint() {
+    var val = Object.assign({}, this.filter) as ServiceReportReq;
 
+    val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
+    val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    this.saleReportService.printServiceOverviewReport(val).subscribe((result: any) => {
+      this.printService.printHtml(result);
+    });
   }
 }
 

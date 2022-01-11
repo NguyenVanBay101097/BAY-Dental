@@ -104,30 +104,30 @@ export class GetSummarySaleReportRequest {
 }
 
 export class ServiceReportReq {
-	dateFrom: any;
-	dateTo: any;
-	employeeId: string;
-	companyId: string;
-	state: string;
-	search: string; 
+    dateFrom: any;
+    dateTo: any;
+    employeeId: string;
+    companyId: string;
+    state: string;
+    search: string;
     active?: boolean;
 }
 
 export class ServiceReportRes {
-	date: string;
-	name?: any;
-	quantity: number;
-	totalAmount: number;
+    date: string;
+    name?: any;
+    quantity: number;
+    totalAmount: number;
     productId: string;
 }
 
 export class ServiceReportDetailReq {
-	dateFrom: any;
-	dateTo: any;
-	employeeId: string;
-	companyId: string;
-	state: string;
-	search: string; 
+    dateFrom: any;
+    dateTo: any;
+    employeeId: string;
+    companyId: string;
+    state: string;
+    search: string;
     productId: string;
     offset: number;
     limit: number;
@@ -135,16 +135,16 @@ export class ServiceReportDetailReq {
 }
 
 export class ServiceReportDetailRes {
-	date: string;
-	orderPartnerName: string;
-	name: string;
-	employeeName?: any;
+    date: string;
+    orderPartnerName: string;
+    name: string;
+    employeeName?: any;
     toothType: string;
-	teeth: any[];
-	productUOMQty: number;
-	priceSubTotal: number;
-	state: string;
-	orderName: string;
+    teeth: any[];
+    productUOMQty: number;
+    priceSubTotal: number;
+    state: string;
+    orderName: string;
     isActive: boolean;
 }
 
@@ -193,32 +193,32 @@ export class SaleReportService {
         return this.http.post(this.baseApi + this.apiUrl + '/GetSummary', val);
     }
 
-    getServiceReportByTime(val: ServiceReportReq){
+    getServiceReportByTime(val: ServiceReportReq) {
         return this.http.post<ServiceReportRes[]>(this.baseApi + this.apiUrl + '/GetServiceReportByTime', val);
     }
 
-    getServiceReportByService(val: ServiceReportReq){
+    getServiceReportByService(val: ServiceReportReq) {
         return this.http.post<ServiceReportRes[]>(this.baseApi + this.apiUrl + '/GetServiceReportByService', val);
     }
 
-    getServiceReportDetailPaged(val: any){
-        return this.http.get<PagedResult2<ServiceReportDetailRes>>(this.baseApi + this.apiUrl + '/GetServiceReportDetailPaged', {params: new HttpParams({fromObject: val})});
+    getServiceReportDetailPaged(val: any) {
+        return this.http.get<PagedResult2<ServiceReportDetailRes>>(this.baseApi + this.apiUrl + '/GetServiceReportDetailPaged', { params: new HttpParams({ fromObject: val }) });
 
     }
 
     serviceReportByServicePrint(val) {
-        return this.http.get(this.baseApi + 'SaleReport/ServiceReportByServicePrint', {params: new HttpParams({fromObject: val}), responseType:'text'});
+        return this.http.get(this.baseApi + 'SaleReport/ServiceReportByServicePrint', { params: new HttpParams({ fromObject: val }), responseType: 'text' });
     }
 
     serviceReportByTimePrint(val) {
-        return this.http.get(this.baseApi + 'SaleReport/ServiceReportByTimePrint', {params: new HttpParams({fromObject: val}), responseType:'text'});
+        return this.http.get(this.baseApi + 'SaleReport/ServiceReportByTimePrint', { params: new HttpParams({ fromObject: val }), responseType: 'text' });
     }
 
-    getServiceReportByServicePdf(val){
-        return this.http.post(this.baseApi + this.apiUrl+ '/GetServiceReportByServicePdf',val, {responseType:'blob'});
+    getServiceReportByServicePdf(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetServiceReportByServicePdf', val, { responseType: 'blob' });
     }
-    getServiceReportByTimePdf(val){
-        return this.http.post(this.baseApi + this.apiUrl+ '/GetServiceReportByTimePdf',val, {responseType:'blob'});
+    getServiceReportByTimePdf(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/GetServiceReportByTimePdf', val, { responseType: 'blob' });
     }
 
     exportServiceReportByTimeExcel(paged) {
@@ -235,7 +235,22 @@ export class SaleReportService {
         );
     }
 
-    getServiceOverviewReport(val: ServiceReportReq){
+    getServiceOverviewReport(val: ServiceReportReq) {
         return this.http.post(this.baseApi + this.apiUrl + '/GetServiceOverviewReport', val);
+    }
+
+    exportServiceOverviewReportExcel(paged) {
+        return this.http.post(
+            this.baseApi + this.apiUrl + "/ExportServiceOverviewReportExcel", paged,
+            { responseType: "blob" }
+        );
+    }
+
+    printPdfServiceOverviewReport(val) {
+        return this.http.post(this.baseApi + this.apiUrl + '/PrintPdfServiceOverviewReport', val, { responseType: 'blob' });
+    }
+
+    printServiceOverviewReport(val) {
+        return this.http.post(this.baseApi + 'SaleReport/PrintServiceOverviewReport', val, { responseType: 'text' });
     }
 }
