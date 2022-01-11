@@ -68,7 +68,7 @@
                                 <td colspan="1" style="width: 100%;">
                                     <div class="d-flex">
                                         <kendo-combobox [hidden]="state == 'done'" [data]="filteredPartners"
-                                            [textField]="'name'" [filterable]="true" #partnerCbx
+                                            [textField]="'displayName'" [filterable]="true" #partnerCbx
                                             formControlName="partner" [valueField]="'id'">
                                         </kendo-combobox>
                                         <a *ngIf="state != 'done'" data-toggle="dropdown" class="btn btn-sm btn-light"><span
@@ -83,7 +83,7 @@
                                     <div *ngIf="f.partner.errors && submitted" class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
                                     </div>
-                                    <label *ngIf="state == 'done'">{{partner?.name}}</label>
+                                    <label *ngIf="state == 'done'">{{partner?.displayName}}</label>
                                 </td>
                             </tr>
                             <tr>

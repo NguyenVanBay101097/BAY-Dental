@@ -100,7 +100,8 @@ namespace TMTDentalAPI.Endpoints.PartnerEndpoints
             return new CreateCustomerResponse()
             {
                 Id = partner.Id,
-                Name = partner.Name
+                Name = partner.Name,
+                DisplayName = partner.DisplayName,
             };
         }
     }

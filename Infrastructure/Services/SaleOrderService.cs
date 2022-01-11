@@ -272,7 +272,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items =  _mapper.Map<IEnumerable<SaleOrderBasic>>(await query.ToListAsync());
+            var items = await _mapper.ProjectTo<SaleOrderBasic>(query).ToListAsync();
 
             return new PagedResult2<SaleOrderBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -3164,10 +3164,12 @@ namespace Infrastructure.Services
 
         public async Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val)
         {
+            var saleLineObj = GetService<ISaleOrderLineService>();
             val.Limit = 0;
             var data = await GetPagedResultAsync(val);
             var allData = _mapper.Map<IEnumerable<GetPrintManagementItemRes>>(data.Items);
-            var allLines = await GetSaleOrderLineBySaleOrder(null);
+            var saleIds = data.Items.Select(x => x.Id).ToList();
+            var allLines = await _mapper.ProjectTo<SaleOrderLineBasic>(saleLineObj.SearchQuery(x => saleIds.Contains(x.OrderId))).ToListAsync();
             foreach (var item in allData)
             {
                 item.Lines = allLines.Where(x => x.OrderId == item.Id).ToList();

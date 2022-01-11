@@ -51,7 +51,10 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderLine, SaleOrderLinePrintTemplate>();
 
             CreateMap<SaleOrderLine, SaleOrderLineBasic>()
-                .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))
+                .ForMember(x => x.Teeth2, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth.Name)));
+
+            CreateMap<SaleOrderLine, SaleOrderLineForLabo>()
+                .ForMember(x => x.Teeth2, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth.Name)))
                 .ForMember(x => x.IsListLabo, x => x.MapFrom(s => s.Labos.Any()));
 
             CreateMap<SaleOrderLine, SaleOrderLineBasicViewModel>()
@@ -76,8 +79,7 @@ namespace Umbraco.Web.Mapping
             CreateMap<SaleOrderLine, ServiceReportDetailRes>()
                 .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)));
 
-            CreateMap<SaleOrderLineBasic, ServiceSaleReportExcel>()
-                .ForMember(x => x.Teeth, x => x.MapFrom(s => string.Join(", ", s.Teeth.Select(x => x.Name))));
+            CreateMap<SaleOrderLineBasic, ServiceSaleReportExcel>();
 
             CreateMap<SaleOrderLine, SaleOrderLinePublic>()
               .ForMember(x => x.Teeth, x => x.MapFrom(s => s.SaleOrderLineToothRels.Select(m => m.Tooth)))

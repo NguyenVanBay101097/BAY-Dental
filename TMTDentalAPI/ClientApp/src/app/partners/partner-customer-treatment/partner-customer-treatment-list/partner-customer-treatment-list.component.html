@@ -76,14 +76,14 @@
                     <kendo-grid-column title="Dịch vụ" field="name" width="200">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <div>
-                                <a class="text-primary" (click)="getFormSaleOrder(dataItem.order.id)">{{dataItem.name}}</a>
-                                <div>{{dataItem.order.name}}</div>
+                                <div>{{dataItem.name}}</div>
+                                <a class="text-primary" [routerLink]="['/sale-orders', dataItem.orderId]">{{dataItem.orderName}}</a>
                             </div>
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Ngày tạo" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.dateCreated | date:'shortDate'}}
+                            {{dataItem.date | date:'shortDate'}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Răng" field="teethDisplay" width="150">
@@ -95,10 +95,7 @@
                             {{dataItem.employee ? dataItem.employee.name : ''}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column title="Đơn vị tính" width="120">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.productUOM ? dataItem.productUOM.name : ''}}
-                        </ng-template>
+                    <kendo-grid-column title="Đơn vị tính" width="120" field="productUOMName">
                     </kendo-grid-column>
                     <kendo-grid-column title="Số lượng" field="productUOMQty" width="100" class="text-right">
                     </kendo-grid-column>
@@ -114,12 +111,12 @@
                     </kendo-grid-column>
                     <kendo-grid-column title="Còn lại" class="text-right" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.priceSubTotal - dataItem.amountInvoiced | number}}
+                            {{dataItem.amountResidual | number}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Trạng thái" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            <span class="badge" [ngStyle]="{'background-color':getColor(dataItem.state)}">{{getState(dataItem.state)}}</span>
+                            <span class="badge" [ngStyle]="{'background-color':getColor(dataItem.state)}">{{dataItem.stateDisplay}}</span>
                         </ng-template>
                     </kendo-grid-column>
                 </kendo-grid>

@@ -16,16 +16,15 @@
         </div>
         <div>
             <kendo-grid [height]="350" [data]="gridData" [loading]="loading">
-                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="name" title="Dịch vụ" width="150">
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="productName" title="Dịch vụ" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column [headerClass]="{'text-center font-weight-bold':true}" field="order.name"
-                    title="Phiếu điều trị" class="text-center" width="150">
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderName"
+                    title="Phiếu điều trị" width="150">
                     <ng-template kendoGridCellTemplate let-dataItem>
-                        <a class="text-primary cursor-pointer" title="Chuyển đến phiếu điều trị {{dataItem.order.name}}"
-                            (click)="redirectSaleOrder(dataItem.order)">{{dataItem.order.name}}</a>
+                        <a class="text-primary" [routerLink]="['/sale-orders', dataItem.orderId]">{{dataItem.orderName}}</a>
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartner.displayName"
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartnerDisplayName"
                     title="Khách hàng" width="200">
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="productUOMQty"
@@ -34,14 +33,11 @@
                         {{dataItem.productUOMQty | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employee.name" title="Bác sĩ"
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employeeName" title="Bác sĩ"
                     width="150">
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}"
-                    title="ĐVT" width="120">
-                    <ng-template kendoGridCellTemplate let-dataItem>
-                        {{dataItem.productUOM ? dataItem.productUOM.name : ''}}
-                    </ng-template>
+                    title="ĐVT" width="120" field="productUOMName">
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="teethDisplay" title="Răng" width="120">
                 </kendo-grid-column>
@@ -66,7 +62,7 @@
                         {{dataItem.amountResidual | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column class="text-center" [headerClass]="{'text-center font-weight-bold':true}"
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}"
                     field="stateDisplay" title="Trạng thái" width="150">
                 </kendo-grid-column>
                 <kendo-grid-excel fileName="Danh_sach_dich_vu.xlsx"></kendo-grid-excel>

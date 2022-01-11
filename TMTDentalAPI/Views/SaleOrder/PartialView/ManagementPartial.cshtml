@@ -58,19 +58,22 @@
                 <tbody>
                     @foreach (var line in item.Lines)
                     {
-                    <tr>
-                        <td colspan="1" style="width: 180px">@(line.Name)</td>
-                        <td colspan="1" style="width: 100px">@(line.ProductUOM != null ? line.ProductUOM.Name : "")</td>
-                        <td style="width: 80px">@string.Format(culture, "{0:N0}", @line.ProductUOMQty)</td>
-                        <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", @line.PriceSubTotal)</td>
-                        <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountPaid)</td>
-                        <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountResidual)</td>
-                    </tr>
+                        <tr>
+                            <td colspan="1" style="width: 180px">@(line.Name)</td>
+                            <td colspan="1" style="width: 100px">@(line.ProductUOMName)</td>
+                            <td style="width: 80px">@string.Format(culture, "{0:N0}", @line.ProductUOMQty)</td>
+                            <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.PriceSubTotal)</td>
+                            <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountInvoiced)</td>
+                            <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountResidual)</td>
+                        </tr>
                     }
 
                 </tbody>
             }
-            <tr><td colspan="6"></td></tr>
+            @if (Array.IndexOf(Model.Data.ToArray(), item) != Model.Data.Count() - 1)
+            {
+                <tr><td colspan="6">&nbsp;</td></tr>
+            }
         </table>
         }
     </div>

@@ -459,8 +459,10 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
 
 
   onCreatePartner(type) {
-    var onModal = (comp) => {
+    var onModal = (comp, title) => {
       let modalRef = this.modalService.open(comp, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = title;
+
       modalRef.result.then((res: any) => {
         var resPartner = type == "employee"? res.partner: res;
           this.pickingForm.get("partner").patchValue(resPartner);
@@ -470,13 +472,13 @@ export class StockPickingIncomingCreateUpdateComponent implements OnInit {
     }
     switch (type) {
       case "customer":
-        onModal(PartnerCustomerCuDialogComponent);
+        onModal(PartnerCustomerCuDialogComponent, 'Thêm khách hàng');
         break;
       case "supplier":
-        onModal(PartnerSupplierCuDialogComponent);
+        onModal(PartnerSupplierCuDialogComponent, 'Thêm nhà cung cấp');
         break;
       case "employee":
-        onModal(EmployeeCreateUpdateComponent);
+        onModal(EmployeeCreateUpdateComponent, 'Thêm nhân viên');
         break;
       default:
         break;

@@ -17,8 +17,8 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Khách hàng
         /// </summary>
         public string PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
         public Guid PartnerId { get; set; }
-        public PartnerSimple Partner { get; set; }
 
         public decimal? AmountTotal { get; set; }
         /// <summary>
@@ -32,12 +32,27 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        public string UserName { get; set; }
-
         public decimal? Residual { get; set; }
 
         public decimal? TotalPaid { get; set; }
-        public decimal? AmountDiscountTotal { get; set; }
+
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "sale":
+                        return "Đang điều trị";
+                    case "cancel":
+                        return "Ngừng điều trị";
+                    case "done":
+                        return "Hoàn thành";
+                    default:
+                        return "Nháp";
+                }
+            }
+        }
     }
 
     public class SaleOrderSimple

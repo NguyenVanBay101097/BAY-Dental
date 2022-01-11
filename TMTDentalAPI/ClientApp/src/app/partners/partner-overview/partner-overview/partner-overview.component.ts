@@ -75,7 +75,6 @@ export class PartnerOverviewComponent implements OnInit {
       this.partnerId = params.id;
       this.GetPartner();
       this.loadCustomerAppointment();
-      this.getDotkhams();
       this.loadReport();
       this.loadPreferentialCards();
       this.loadMemberCard();

@@ -2,20 +2,17 @@
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="name"
         title="Dịch vụ" width="150">
     </kendo-grid-column>
-    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="teeth"
-        title="Thông tin bổ sung" width="200">
-        <ng-template kendoGridCellTemplate let-dataItem>
-            <span>{{getInfor(dataItem)}}</span>
-        </ng-template>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="teethDisplay"
+        title="Răng" width="150">
+    </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="diagnostic"
+        title="Chuẩn đoán" width="150">
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="employee.name" title="Bác sĩ" width="120">
+        field="employeeName" title="Bác sĩ" width="120">
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-    title="Đơn vị tính" width="120">
-        <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.product.uom ? dataItem.product.uom.name : ''}}
-        </ng-template>
+    title="Đơn vị tính" field="productUOMName" width="120">
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
         field="productUOMQty" title="Số lượng" width="100">
@@ -27,9 +24,9 @@
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
-        field="amountPaid" title="Thanh toán" width="150">
+        field="amountInvoiced" title="Thanh toán" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{dataItem.amountPaid | number}}
+            {{dataItem.amountInvoiced | number}}
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column class="text-right" [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"

@@ -53,7 +53,7 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   isChange: boolean = false;
   formCreate: FormGroup;
   windowOpened: boolean = false;
-  title = 'Thêm: Nhân viên';
+  title = 'Nhân viên';
   isDoctor: boolean;
   isAssistant: boolean;
   isShowSalary = false;
