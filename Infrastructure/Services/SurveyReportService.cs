@@ -93,11 +93,18 @@ namespace Infrastructure.Services
 
             res.QuestionNames = listQuestions.Select(x => x.Name);
 
-            res.Data = query.OrderBy(x => x.Score).AsEnumerable().GroupBy(x => x.Score.Value).Select(x => new ReportSatifyScoreRatingByQuestionResponseItem
+            var listCountByScoreQuestion = await query.OrderBy(x => x.Score).GroupBy(x => new { QuestionId = x.QuestionId, Score = x.Score.Value }).Select(x => new
+            {
+                QuestionId = x.Key.QuestionId,
+                Score = x.Key.Score,
+                Count = x.Count()
+            }).ToListAsync();
+
+            res.Data = listCountByScoreQuestion.GroupBy(x => x.Score).Select(x => new ReportSatifyScoreRatingByQuestionResponseItem()
             {
                 Score = x.Key,
-                Data = listQuestions.Select(z => x.Count(i => i.QuestionId == z.QuestionId))
-            }).ToList();
+                Data = listQuestions.Select(z => x.Where(i => i.QuestionId == z.QuestionId).Sum(o=> o.Count))
+            });
 
             return res;
         }
