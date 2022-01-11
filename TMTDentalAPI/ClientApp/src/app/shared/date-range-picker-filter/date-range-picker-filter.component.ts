@@ -75,8 +75,8 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   ngOnInit() {
-        this.startDate = this.startDate ? moment(this.startDate): null;
-        this.endDate = this.endDate ? moment(this.endDate): null;
+    this.startDate = this.startDate ? moment(this.startDate) : null;
+    this.endDate = this.endDate ? moment(this.endDate) : null;
 
     if (this.opens) {
       this.options.opens = this.opens;
@@ -84,7 +84,7 @@ export class DateRangePickerFilterComponent implements OnInit {
     if (this.drops) {
       this.options.drops = this.drops;
     }
-    if(this.parentEl){
+    if (this.parentEl) {
       this.options.parentEl = this.parentEl;
     }
   }
@@ -95,6 +95,10 @@ export class DateRangePickerFilterComponent implements OnInit {
     var daterangepickerEl = (this.renderer as any).engine.bodyNode.querySelector(".daterangepicker");
     var btns = daterangepickerEl.querySelector('.drp-buttons') as HTMLElement;
     var applyBtn = daterangepickerEl.querySelector('.drp-buttons .applyBtn')
+    this.renderer.listen(applyBtn, 'click', (event) => {
+      if (!this.startDate && !this.endDate)
+        this.selectedDate({ start: this.picker.datePicker.startDate, end: this.picker.datePicker.endDate });
+    });
 
     btns.insertBefore(applyBtn, btns.firstChild.nextSibling);
     if (this.showClearButton) {
@@ -122,8 +126,8 @@ export class DateRangePickerFilterComponent implements OnInit {
   public selectedDate(value: any) {
 
     // use passed valuable to update state
-      this.startDate= value.start,
-      this.endDate= value.end
+    this.startDate = value.start,
+      this.endDate = value.end
     this.onApply();
   }
 
@@ -143,8 +147,9 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   onApply() {
-    if ((this.startDate == null && this.oldStartDate != null) ||!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate) )
-    {
+    if (this.startDate == null && this.oldStartDate == null)
+      return;
+    if ((this.startDate == null && this.oldStartDate != null) || !this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate)) {
       var value = { dateFrom: this.startDate ? this.startDate.toDate() : null, dateTo: this.endDate ? this.endDate.toDate() : null };
       this.searchChange.emit(value);
     }
