@@ -37,7 +37,6 @@ export class SaleReportOverviewComponent implements OnInit {
   sumAmountPaid: number = 0;
   sumAmountResidual: number = 0;
   constructor(
-    private intlService: IntlService,
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
@@ -107,7 +106,6 @@ export class SaleReportOverviewComponent implements OnInit {
     }
 
     this.saleReportService.getServiceOverviewReport(val).subscribe((result: any) => {
-      console.log(result);
       this.items = result;
       this.loadItems();
     }, (error) => {
@@ -132,7 +130,7 @@ export class SaleReportOverviewComponent implements OnInit {
       { aggregate: "sum", field: "amountPaid" },
       { aggregate: "sum", field: "amountResidual" },
     ]);
-    console.log(aggregates);
+
     this.sumAmountTotal = aggregates.amountTotal ? aggregates.amountTotal.sum : 0;
     this.sumAmountPaid = aggregates.amountPaid ? aggregates.amountPaid.sum : 0;
     this.sumAmountResidual = aggregates.amountResidual ? aggregates.amountResidual.sum : 0;

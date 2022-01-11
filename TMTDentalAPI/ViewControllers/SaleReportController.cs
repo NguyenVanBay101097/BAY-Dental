@@ -40,7 +40,7 @@ namespace TMTDentalAPI.ViewControllers
         public async Task<IActionResult> PrintServiceOverviewReport([FromBody] ServiceReportReq val)
         {
             var data = await _saleReportService.PrintServiceOverviewReport(val);
-            return View("ServiceOverviewReport/ServiceOverviewReportPrint", data);
+            return View("ServiceOverviewReportPrint", data);
         }
     }
 }

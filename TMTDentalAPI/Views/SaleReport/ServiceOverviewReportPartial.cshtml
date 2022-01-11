@@ -46,6 +46,14 @@
 
                 </tr>
             }
+
+            <tr>
+                <td colspan="6" class="font-semibold">Tổng</td>
+                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", Model.data.Sum(x => x.AmountTotal)))</td>
+                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", Model.data.Sum(x => x.AmountPaid)))</td>
+                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", Model.data.Sum(x => x.AmountResidual)))</td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 

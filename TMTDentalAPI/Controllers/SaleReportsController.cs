@@ -206,7 +206,7 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> PrintPdfServiceOverviewReport(ServiceReportReq val)
         {
             var data = await _saleReportService.PrintServiceOverviewReport(val);
-            var html = _viewRenderService.Render("SaleReport/ServiceOverviewReport/ServiceReportPdf", data);
+            var html = _viewRenderService.Render("SaleReport/ServiceOverviewReportPdf", data);
 
             var globalSettings = new GlobalSettings
             {
