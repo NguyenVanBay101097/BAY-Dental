@@ -9,6 +9,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Infrastructure.Services;
@@ -744,7 +745,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ExportManagementExcel(SaleOrderPaged val)
         {
-            var data = await _saleOrderService.ExportManagementExcel(val);
+            val.Limit = 0;
+            var salePaged = await _saleOrderService.GetPagedResultAsync(val);
+            var saleIds = salePaged.Items.Select(x => x.Id).ToList();
+            var allLines = await _mapper.ProjectTo<SaleOrderLineBasic>(_saleLineService.SearchQuery(x => saleIds.Contains(x.OrderId))).ToListAsync();
 
             var stream = new MemoryStream();
             byte[] fileContent;
@@ -776,7 +780,7 @@ namespace TMTDentalAPI.Controllers
 
 
                 var row = 4;
-                foreach (var item in data)
+                foreach (var item in salePaged.Items)
                 {
                     worksheet.Cells[row, 1].Value = item.DateOrder;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
@@ -784,11 +788,13 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 3].Value = "";
+                    worksheet.Cells[row, 2, row, 3].Merge = true;
                     worksheet.Cells[row, 4].Value = item.PartnerName;
                     worksheet.Cells[row, 5].Value = item.AmountTotal;
                     worksheet.Cells[row, 6].Value = item.TotalPaid;
-                    worksheet.Cells[row, 2, row, 3].Merge = true;
-                    worksheet.Cells[row, 4, row, 6].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 7].Value = item.Residual;
+                    worksheet.Cells[row, 5, row, 7].Style.Numberformat.Format = "#,##0";
+
                     row++;
                     worksheet.Cells[row, 1].Value = "";
                     worksheet.Cells[row, 2].Value = "Dịch vụ";
@@ -808,18 +814,20 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2, row, 7].Style.Fill.PatternType = ExcelFillStyle.Solid;
                     worksheet.Cells[row, 2, row, 7].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
                     worksheet.Cells[row, 2, row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    var rowEnd = row + item.Lines.Count();
+                    var saleLines = allLines.Where(x => x.OrderId == item.Id).ToList();
+                    var rowEnd = row + saleLines.Count();
                     worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                     row++;
 
-                    foreach (var line in item.Lines)
+
+                    foreach (var line in saleLines)
                     {
                         worksheet.Cells[row, 1].Value = "";
                         worksheet.Cells[row, 2].Value = line.Name;
-                        worksheet.Cells[row, 3].Value = line.ProductUOM != null ? line.ProductUOM.Name : "";
+                        worksheet.Cells[row, 3].Value = line.ProductUOMName;
                         worksheet.Cells[row, 4].Value = line.ProductUOMQty;
                         worksheet.Cells[row, 5].Value = line.PriceSubTotal;
-                        worksheet.Cells[row, 6].Value = line.AmountPaid;
+                        worksheet.Cells[row, 6].Value = line.AmountInvoiced;
                         worksheet.Cells[row, 7].Value = line.AmountResidual;
                         worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
@@ -827,7 +835,7 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 4, row, 7].Style.Numberformat.Format = "#,###,###";
+                        worksheet.Cells[row, 4, row, 7].Style.Numberformat.Format = "#,##0";
                         row++;
                     }
 

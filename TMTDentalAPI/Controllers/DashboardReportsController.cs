@@ -192,7 +192,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet1.Cells[4, 1, 4, 2].Value = "Dịch vụ";
                 worksheet1.Cells[4, 3, 4, 5].Value = "Số khách hàng";
                 worksheet1.Cells[4, 6, 4, 8].Value = "Tổng tiền điều trị";
-                worksheet1.Cells[4, 9, 4, 10].Value = "Thanh toàn";
+                worksheet1.Cells[4, 9, 4, 10].Value = "Thanh toán";
 
                 worksheet1.Cells["A5:B5"].Value = data.Items.Count();
                 worksheet1.Cells["C5:E5"].Value = data.Items.Select(x => x.OrderPartnerId).Distinct().Count();
@@ -253,16 +253,16 @@ namespace TMTDentalAPI.Controllers
                 var row = 8;
                 foreach (var item in data.Items)
                 {
-                    worksheet1.Cells[row, 1].Value = item.Name;
-                    worksheet1.Cells[row, 2].Value = item.Order.Name;
-                    worksheet1.Cells[row, 3].Value = item.OrderPartner.Name;
-                    worksheet1.Cells[row, 4].Value = item.ProductUOM != null ? item.ProductUOM.Name : "";
+                    worksheet1.Cells[row, 1].Value = item.ProductName;
+                    worksheet1.Cells[row, 2].Value = item.OrderName;
+                    worksheet1.Cells[row, 3].Value = item.OrderPartnerDisplayName;
+                    worksheet1.Cells[row, 4].Value = item.ProductUOMName;
                     worksheet1.Cells[row, 5].Value = item.ProductUOMQty;
-                    worksheet1.Cells[row, 6].Value = item.Employee != null ? item.Employee.Name : null;
+                    worksheet1.Cells[row, 6].Value = item.EmployeeName;
                     worksheet1.Cells[row, 7].Value = item.PriceSubTotal;
                     worksheet1.Cells[row, 8].Value = (item.AmountInvoiced ?? 0);
                     worksheet1.Cells[row, 9].Value = (item.AmountResidual ?? 0);
-                    worksheet1.Cells[row, 10].Value = item.State == "sale" ? "Đang điều trị" : (item.State == "done" ? "Hoàn thành" : "Ngừng điều trị");
+                    worksheet1.Cells[row, 10].Value = item.StateDisplay;
 
                     //worksheet1.Cells[row, 1, row, 9].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                     worksheet1.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
@@ -350,8 +350,8 @@ namespace TMTDentalAPI.Controllers
                 worksheet2.Cells["A11:E11"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells["A11:E11"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 worksheet2.Cells["A11:E11"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                worksheet1.Cells["A11:E11"].Style.Border.Bottom.Color.SetColor(Color.White);
                 worksheet2.Cells["A11:E11"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet2.Cells["A11:E11"].Style.Border.Bottom.Color.SetColor(Color.White);
                 worksheet2.Cells["A11:E11"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
                 worksheet2.Cells["A11:E11"].Style.Font.Color.SetColor(Color.White);
 

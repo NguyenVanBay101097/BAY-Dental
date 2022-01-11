@@ -28,10 +28,10 @@
                       <a class="text-primary" [routerLink]="['/sale-orders', item?.orderId]">Chi tiết</a>
                     </span>
                   </p>
-                  <p class="opacity-8">Răng: {{viewTeeth(item)}} </p>
+                  <p class="opacity-8">Răng: {{item.teethDisplay}} </p>
                   <p class="opacity-8">Bác sĩ: {{item?.employeeName}}</p>
                   <p class="opacity-8">Chuẩn đoán: {{item?.diagnostic}}</p>
-                  <p class="opacity-8">Trạng thái: {{getStateDisplay(item.state)}}</p>
+                  <p class="opacity-8">Trạng thái: {{item.stateDisplay}}</p>
                 </div>
               </div>
             </div>

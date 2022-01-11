@@ -550,8 +550,8 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
   onCreateSupplier(){
     let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.result.then((res : any) => {
+      this.filteredPartners = _.unionBy(this.filteredPartners, [res], "id");
       this.formGroup.get("partner").patchValue(res);
-        this.filteredPartners = _.unionBy(this.filteredPartners, [res], "id");
     }, () => {
     });
   }

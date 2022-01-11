@@ -35,7 +35,7 @@ namespace TMTDentalAPI.Controllers
         private readonly ISaleOrderService _saleOrderService;
 
         private IConverter _converter;
-        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper,IExportExcelService exportExcelService,
+        public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper, IExportExcelService exportExcelService,
         IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService, IConverter converter, ISaleOrderService saleOrderService)
         {
             _saleLineService = saleLineService;
@@ -244,25 +244,21 @@ namespace TMTDentalAPI.Controllers
                     query = query.Where(x => x.Labos.Any(s => s.State == "confirmed"));
             }
 
-            if(val.CompanyId.HasValue)
-                query = query.Where(x=> x.CompanyId == val.CompanyId);
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.OrderPartner)
-                .Include(x => x.Order)
-                .Include(x => x.Employee)
-                .Include(x => x.Labos)
-                .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
-                .Include(x => x.ProductUOM);
-
             query = query.OrderByDescending(x => x.DateCreated);
 
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
 
-            var paged = new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
+            var items = await _mapper.ProjectTo<SaleOrderLineForLabo>(query).ToListAsync();
+
+            var paged = new PagedResult2<SaleOrderLineForLabo>(totalItems, val.Offset, val.Limit)
             {
-                Items = _mapper.Map<IEnumerable<SaleOrderLineBasic>>(items)
+                Items = _mapper.Map<IEnumerable<SaleOrderLineForLabo>>(items)
             };
 
             return Ok(paged);
@@ -284,7 +280,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetHistory([FromQuery]SaleOrderLineHistoryReq val)
+        public async Task<IActionResult> GetHistory([FromQuery] SaleOrderLineHistoryReq val)
         {
             var res = await _saleLineService.GetHistory(val);
             return Ok(res);
@@ -321,13 +317,13 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 1, 1, 9].Style.Font.Bold = true;
 
                 //insert title
-                worksheet.InsertRow(1,3);
-                worksheet.Cells[1,1,1,worksheet.Dimension.Columns].Merge = true;
+                worksheet.InsertRow(1, 3);
+                worksheet.Cells[1, 1, 1, worksheet.Dimension.Columns].Merge = true;
                 worksheet.Cells[1, 1].Value = "BÁO CÁO DỊCH VỤ ĐANG ĐIỀU TRỊ";
                 worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 worksheet.Cells[1, 1].Style.Font.Bold = true;
                 worksheet.Cells[1, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells[2,1,2,worksheet.Dimension.Columns].Merge = true;
+                worksheet.Cells[2, 1, 2, worksheet.Dimension.Columns].Merge = true;
                 worksheet.Cells[2, 1].Value = (val.DateOrderFrom.HasValue ? "Từ ngày " + val.DateOrderFrom.Value.ToString("dd/MM/yyyy") : "") +
                                                (val.DateOrderTo.HasValue ? " đến ngày " + val.DateOrderTo.Value.ToString("dd/MM/yyyy") : "");
                 worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
@@ -336,19 +332,19 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
 
                 worksheet.Cells.AutoFitColumns();
-                
+
                 await _exportExcelService.AddToHeader(package.GetAsByteArray());
             }
 
             return Ok();
-          
+
         }
 
         [HttpPut("{id}/[action]")]
         public async Task<IActionResult> UpdateState(Guid id, string state)
         {
             await _unitOfWork.BeginTransactionAsync();
-            await _saleLineService.UpdateState(id,state);
+            await _saleLineService.UpdateState(id, state);
             _unitOfWork.Commit();
 
             return Ok();

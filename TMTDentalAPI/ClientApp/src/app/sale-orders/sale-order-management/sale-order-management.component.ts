@@ -217,7 +217,7 @@ export class SaleOrderManagementComponent implements OnInit {
               { value: product.name },
               { value: product.productUOMQty, format: '#,##0' },
               { value: product.priceTotal, format: '#,##0' },
-              { value: product.amountPaid, format: '#,##0' },
+              { value: product.amountInvoiced, format: '#,##0' },
               { value: product.amountResidual, format: '#,##0' },
             ],
           });

@@ -151,10 +151,10 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 9].Value = "% Hoa hồng";
                 worksheet.Cells[1, 10].Value = "Tiền hoa hồng";
 
-                worksheet.Cells["A1:P1"].Style.Font.Bold = true;
-                worksheet.Cells["A1:P1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A1:P1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["A1:P1"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:J1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A1:J1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(Color.White);
 
                 var row = 2;
                 foreach (var item in data.Items)
