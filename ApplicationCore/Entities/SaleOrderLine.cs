@@ -168,8 +168,10 @@ namespace ApplicationCore.Entities
 
         public decimal? DiscountFixed { get; set; }
 
+        /// <summary>
+        /// Không sử dụng
+        /// </summary>
         public decimal? PriceReduce { get; set; }
-
         /// <summary>
         /// Không sử dụng
         /// </summary>
@@ -292,6 +294,15 @@ namespace ApplicationCore.Entities
             get
             {
                 return ProductUOMQty * PriceUnit;
+            }
+        }
+
+        [NotMapped]
+        public decimal PriceWithDiscount
+        {
+            get
+            {
+                return PriceUnit - (decimal)FloatUtils.FloatRound((AmountDiscountTotal ?? 0), precisionDigits: 0);
             }
         }
     }

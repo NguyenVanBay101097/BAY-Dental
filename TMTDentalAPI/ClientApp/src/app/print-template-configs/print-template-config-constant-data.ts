@@ -576,11 +576,12 @@ const keyWorDatas =
                 { text: 'Tên dịch vụ', value: '{{line.product?.name}}' },
                 { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
-                { text: 'Đơn giá', value: '{{line.price_unit}}' },
+                { text: 'Đơn giá gốc', value: '{{line.price_unit}}' },
+                { text: 'Đơn giá đã giảm', value: '{{line.price_with_discount}}' },
                 { text: 'Giảm giá', value: '{{line.amount_discount_total}}' },
+                { text: 'Tổng giảm giá', value: '{{line.total_discount_amount}}' },
                 { text: 'Thành tiền (đã giảm giá)', value: '{{line.price_sub_total}}' },
                 { text: 'Thành tiền (chưa giảm giá)', value: '{{line.total_undiscount_amount}}' },
-                { text: 'Tiền giảm', value: '{{line.total_discount_amount}}' },
             ]
         },
         {
