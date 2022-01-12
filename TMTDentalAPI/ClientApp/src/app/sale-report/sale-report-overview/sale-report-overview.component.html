@@ -42,10 +42,10 @@
                 <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+        <kendo-grid-column field="orderPartnerDisplayName" title="Khách hàng" width="150">
             <ng-template kendoGridCellTemplate let-dataItem>
                 <a class="text-primary"
-                    [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerName}}</a>
+                    [routerLink]="['/partners/customer/', dataItem.orderPartnerId]">{{dataItem.orderPartnerDisplayName}}</a>
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="productUOMQty" title="Số lượng" class="text-right" width="110">
