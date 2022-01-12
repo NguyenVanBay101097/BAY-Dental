@@ -40,8 +40,8 @@ export class PartnerReportAreaComponent implements OnInit {
       children: [] as TreeNode[]
     } as TreeNode;
     let val = Object.assign({}, this.filter) as PartnerInfoFilter;
+    // debugger;
     this.accountCommonPartnerReportService.getPartnerReportTreeMapOverview(val).subscribe((res: any) => {
-      console.log(res);
       res.forEach(el1 => {
         let cityData = Object.assign({});
         if (el1.districts) {
