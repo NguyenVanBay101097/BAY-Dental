@@ -31,7 +31,7 @@
         <img  class="m-auto d-block" src="../../../assets/icons/NoData.svg" alt="">
       </ng-container>
       <ng-template #elseTemplate>
-        <ul class="messages h-100">
+        <ul class="messages">
           <li class="message" *ngFor="let message of listMessages ">
             <div class="time"> {{formatDate(message.date)==today ? 'Hôm nay' : formatDate(message.date)}}
             </div>
