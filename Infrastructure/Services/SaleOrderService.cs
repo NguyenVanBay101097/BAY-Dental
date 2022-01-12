@@ -272,7 +272,7 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items =  _mapper.Map<IEnumerable<SaleOrderBasic>>(await query.ToListAsync());
+            var items = _mapper.Map<IEnumerable<SaleOrderBasic>>(await query.Include(x => x.Doctor).ToListAsync());
 
             return new PagedResult2<SaleOrderBasic>(totalItems, val.Offset, val.Limit)
             {
@@ -1234,7 +1234,7 @@ namespace Infrastructure.Services
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
             var saleOrder = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner).Include(x=> x.Doctor)
+                .Include(x => x.Partner).Include(x => x.Doctor)
                 .FirstOrDefaultAsync();
 
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
@@ -3209,7 +3209,7 @@ namespace Infrastructure.Services
             var attObj = GetService<IIrAttachmentService>();
             var dotkhamObj = GetService<IDotKhamService>();
 
-            var attQr = attObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var attQr = attObj.SearchQuery(x => x.CompanyId == CompanyId);
             var dotkhamQr = dotkhamObj.SearchQuery();
 
             var resQr = from att in attQr

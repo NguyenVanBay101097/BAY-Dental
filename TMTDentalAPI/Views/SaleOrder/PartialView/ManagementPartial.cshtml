@@ -12,6 +12,7 @@
     table.border-top-0 thead th {
         border-top: none;
     }
+
 </style>
 <div class="text-center mb-3">
     <div class="text-3xl font-semibold">BÁO CÁO QUẢN LÝ ĐIỀU TRỊ CHƯA HOÀN THÀNH</div>
@@ -20,12 +21,13 @@
     <div class="h-60 w-100 pt-3">
         @foreach (var item in Model.Data)
         {
-        <table class="table table-sm table-bordered @(item.Lines.Count()  == 0 ? "mb-2":"mb-0") " )>
+        <table class="table table-sm table-bordered @(item.Lines.Count()  == 0 ? "mb-2":"mb-0") " ) style="border: 0px !important">
             <thead>
                 <tr>
                     <th style="width: 100px">Ngày lập phiếu</th>
                     <th class="" style="width: 80px"> Số phiếu</th>
                     <th class="" style="width: 150px">Khách hàng</th>
+                    <th class="" style="width: 150px">Bác sĩ đại diện</th>
                     <th class="text-right" style="width: 100px">Tiền điều trị</th>
                     <th class="text-right" style="width: 100px">Thanh toán</th>
                     <th class="text-right" style="width: 100px">Còn lại</th>
@@ -36,6 +38,7 @@
                     <td style="width: 100px">@(item.DateOrder.ToString("dd/MM/yyyy"))</td>
                     <td class="" style="width: 80px">@item.Name</td>
                     <td class="" style="width: 150px">@item.PartnerName</td>
+                    <td class="" style="width: 150px">@(item.Doctor != null ? item.Doctor.Name : "")</td>
                     <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.AmountTotal)</td>
                     <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.TotalPaid)</td>
                     <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.Residual)</td>
@@ -47,6 +50,7 @@
             {
                 <thead>
                     <tr class="border-top-0">
+                        <th style= "border: none !important;"></th>
                         <th colspan="1" style="width: 180px">Dịch vụ</th>
                         <th colspan="1" style="width: 100px">Đơn vị tính</th>
                         <th style="width:80px">Số lượng</th>
@@ -55,10 +59,11 @@
                         <th class="text-right" style="width: 100px">Còn lại</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="border: 0px !important">
                     @foreach (var line in item.Lines)
                     {
                     <tr>
+                        <td style= "border: none !important;"></td>
                         <td colspan="1" style="width: 180px">@(line.Name)</td>
                         <td colspan="1" style="width: 100px">@(line.ProductUOM != null ? line.ProductUOM.Name : "")</td>
                         <td style="width: 80px">@string.Format(culture, "{0:N0}", @line.ProductUOMQty)</td>
@@ -70,7 +75,6 @@
 
                 </tbody>
             }
-            <tr><td colspan="6"></td></tr>
         </table>
         }
     </div>

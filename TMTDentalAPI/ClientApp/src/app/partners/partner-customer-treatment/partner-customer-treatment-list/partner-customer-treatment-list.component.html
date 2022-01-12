@@ -36,6 +36,11 @@
                             {{dataItem.dateOrder | date:'short'}}
                         </ng-template>
                     </kendo-grid-column>
+                    <kendo-grid-column class="" field="doctor" title="Bác sĩ đại diện" width="110">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.doctor?.name}}
+                        </ng-template>
+                    </kendo-grid-column>
                     <kendo-grid-column class="text-right" field="AmountTotal" title="Tổng tiền" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.amountTotal | number}}
