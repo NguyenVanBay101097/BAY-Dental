@@ -26,7 +26,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<ServiceReportDetailRes>> GetServiceReportDetailPaged(ServiceReportDetailReq val);
 
         Task<IEnumerable<ServiceOverviewResponse>> ServiceOverviewReport(ServiceReportReq val);
-        Task<PrintServiceOverviewResponse> PrintServiceOverviewReport(ServiceReportReq val);
+        Task<PrintServiceOverviewResponse> PrintServiceOverviewReport(SaleOrderLinesPaged val);
         Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val);
         Task<ServiceReportPrint> ServiceReportByTimePrint(ServiceReportReq val);
         Task<IEnumerable<ServiceReportResExcel>> ServiceReportByTimeExcel(ServiceReportReq val);

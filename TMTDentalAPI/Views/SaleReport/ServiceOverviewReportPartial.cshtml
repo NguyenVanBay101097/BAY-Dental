@@ -2,6 +2,7 @@
 @using Umbraco.Web.Models.ContentEditing;
 @{
     var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    dynamic aggregates = Model.Aggregates;
 
 }
 
@@ -36,11 +37,11 @@
                     <td width="120">@(!item.Date.HasValue ? "" : item.Date.Value.ToString("dd/MM/yyyy"))</td>
                     <td width="150">@item.Name</td>
                     <td width="150">@item.OrderName</td>
-                    <td width="150">@item.PartnerName</td>
+                    <td width="150">@item.OrderPartnerName</td>
                     <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.ProductUOMQty)</td>
                     <td width="120" class="text-right">@item.EmployeeName</td>
-                    <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.AmountTotal)</td>
-                    <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.AmountPaid)</td>
+                    <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.PriceSubTotal)</td>
+                    <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.AmountInvoiced)</td>
                     <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.AmountResidual)</td>
                     <td width="120">@item.StateDisplay</td>
 
@@ -49,9 +50,9 @@
 
             <tr>
                 <td colspan="6" class="font-semibold">Tổng</td>
-                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", Model.data.Sum(x => x.AmountTotal)))</td>
-                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", Model.data.Sum(x => x.AmountPaid)))</td>
-                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", Model.data.Sum(x => x.AmountResidual)))</td>
+                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", aggregates.PriceSubTotal.sum))</td>
+                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", aggregates.AmountInvoiced.sum))</td>
+                <td class="text-right font-semibold">@(string.Format(culture, "{0:N0}", (aggregates.PriceSubTotal.sum - aggregates.AmountInvoiced.sum)))</td>
                 <td></td>
             </tr>
         </tbody>
