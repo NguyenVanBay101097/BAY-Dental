@@ -52,31 +52,31 @@
         </kendo-grid-column>
         <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
         </kendo-grid-column>
-        <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right"
+        <kendo-grid-column field="priceSubTotal" title="Thành tiền" class="text-right"
             footerClass="text-right font-weight-600" width="110">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.amountTotal || 0 | number}}
+                {{dataItem.priceSubTotal || 0 | number}}
             </ng-template>
             <ng-template kendoGridFooterTemplate>
-                {{sumAmountTotal || 0 | number}}
+                {{aggregates?.PriceSubTotal.sum | number}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="amountPaid" title="Thanh toán" class="text-right"
+        <kendo-grid-column field="amountInvoiced" title="Thanh toán" class="text-right"
             footerClass="text-right font-weight-600" width="110">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.amountPaid || 0 | number}}
+                {{dataItem.amountInvoiced || 0 | number}}
             </ng-template>
             <ng-template kendoGridFooterTemplate>
-                {{sumAmountPaid || 0 | number}}
+                {{aggregates?.AmountInvoiced.sum | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="amountResidual" title="Còn lại" class="text-right"
             footerClass="text-right font-weight-600" width="110">
             <ng-template kendoGridCellTemplate let-dataItem>
-                {{dataItem.amountResidual || 0 | number}}
+                {{dataItem.amountResidual | number}}
             </ng-template>
             <ng-template kendoGridFooterTemplate>
-                {{sumAmountResidual || 0 | number}}
+                {{(aggregates?.PriceSubTotal.sum - aggregates?.AmountInvoiced.sum) | number}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="stateDisplay" title="Trạng thái" width="110">

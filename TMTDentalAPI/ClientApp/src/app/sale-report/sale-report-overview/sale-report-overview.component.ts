@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -36,12 +37,14 @@ export class SaleReportOverviewComponent implements OnInit {
   sumAmountTotal: number = 0;
   sumAmountPaid: number = 0;
   sumAmountResidual: number = 0;
+  aggregates: any;
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private printService: PrintService,
-    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
+    private saleOrderLineService: SaleOrderLineService,
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -97,17 +100,25 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   loadDataFromApi() {
-    let val = Object.assign({}, this.filter) as ServiceReportReq;
+    let val = Object.assign({}, this.filter) as any;
     val.dateFrom = this.filter.dateFrom ? moment(this.filter.dateFrom).format('YYYY-MM-DD') : '';
     val.dateTo = this.filter.dateTo ? moment(this.filter.dateTo).format('YYYY-MM-DD') : '';
+    val.limit = this.limit;
+    val.offset = this.skip;
+    val.search = this.search || '';
+    val.aggregate = [
+      { field: 'PriceSubTotal', aggregate: 'sum'},
+      { field: 'AmountInvoiced', aggregate: 'sum'}
+    ];
 
-    if (this.search) {
-      val.search = this.search;
-    }
+    this.saleOrderLineService.getGrid(val).subscribe((result: any) => {
+      this.gridData = (<GridDataResult>{
+        data: result.items,
+        total: result.totalItems
+      });
 
-    this.saleReportService.getServiceOverviewReport(val).subscribe((result: any) => {
-      this.items = result;
-      this.loadItems();
+      this.aggregates = result.aggregates;
+      console.log(result);
     }, (error) => {
       console.log(error);
     });
@@ -115,8 +126,7 @@ export class SaleReportOverviewComponent implements OnInit {
 
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.limit = event.take;
-    this.loadItems();
+    this.loadDataFromApi();
   }
 
   loadItems(): void {
