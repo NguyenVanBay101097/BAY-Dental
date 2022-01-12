@@ -2543,7 +2543,7 @@ namespace Infrastructure.Services
             var partnerObj = GetService<IPartnerService>();
             var partnerSourceObj = GetService<IPartnerSourceService>();
 
-            var mainQuery = partnerObj.SearchQuery(x => x.Active && x.Customer);
+            var mainQuery = partnerObj.SearchQuery(x => x.Customer);
 
             if (val.CompanyId.HasValue)
                 mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId);
