@@ -38,6 +38,10 @@ export class SaleReportOverviewComponent implements OnInit {
   sumAmountPaid: number = 0;
   sumAmountResidual: number = 0;
   aggregates: any;
+  filterAggregates: [
+    { field: 'PriceSubTotal', aggregate: 'sum' },
+    { field: 'AmountInvoiced', aggregate: 'sum' }
+  ];
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
@@ -106,19 +110,13 @@ export class SaleReportOverviewComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.search = this.search || '';
-    val.aggregate = [
-      { field: 'PriceSubTotal', aggregate: 'sum'},
-      { field: 'AmountInvoiced', aggregate: 'sum'}
-    ];
-
+    val.aggregate = this.filterAggregates;
     this.saleOrderLineService.getGrid(val).subscribe((result: any) => {
       this.gridData = (<GridDataResult>{
         data: result.items,
         total: result.totalItems
       });
-
       this.aggregates = result.aggregates;
-      console.log(result);
     }, (error) => {
       console.log(error);
     });
@@ -127,23 +125,6 @@ export class SaleReportOverviewComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     this.loadDataFromApi();
-  }
-
-  loadItems(): void {
-    this.gridData = {
-      data: this.items.slice(this.skip, this.skip + this.limit),
-      total: this.items.length
-    };
-
-    const aggregates = aggregateBy(this.items, [
-      { aggregate: "sum", field: "amountTotal" },
-      { aggregate: "sum", field: "amountPaid" },
-      { aggregate: "sum", field: "amountResidual" },
-    ]);
-
-    this.sumAmountTotal = aggregates.amountTotal ? aggregates.amountTotal.sum : 0;
-    this.sumAmountPaid = aggregates.amountPaid ? aggregates.amountPaid.sum : 0;
-    this.sumAmountResidual = aggregates.amountResidual ? aggregates.amountResidual.sum : 0;
   }
 
   onSearchDateChange(data) {
@@ -166,9 +147,10 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   exportExcel() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    var val = Object.assign({}, this.filter) as any;
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.aggregate = this.filterAggregates;
     this.saleReportService.exportServiceOverviewReportExcel(val).subscribe((rs) => {
       let filename = "BaoCaoDichVu_TongQuan";
       let newBlob = new Blob([rs], {
@@ -189,10 +171,12 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   onExportPDF() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
+    var val = Object.assign({}, this.filter) as any;
 
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.aggregate = val.aggregate = this.filterAggregates;
+
     this.saleReportService.printPdfServiceOverviewReport(val).subscribe(res => {
       let filename = "BaoCaoDichVuTongQuan";
 
@@ -214,10 +198,11 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   onPrint() {
-    var val = Object.assign({}, this.filter) as ServiceReportReq;
-
+    var val = Object.assign({}, this.filter) as any;
     val.dateFrom = val.dateFrom ? moment(val.dateFrom).format('YYYY/MM/DD') : '';
     val.dateTo = val.dateTo ? moment(val.dateTo).format('YYYY/MM/DD') : '';
+    val.aggregate = this.filterAggregates;
+
     this.saleReportService.printServiceOverviewReport(val).subscribe((result: any) => {
       this.printService.printHtml(result);
     });
