@@ -3,10 +3,18 @@
 }
 
 .card-body-item {
-    background-color: #F9FBFF;
     border-left: 4px solid #2395FF;
     border-radius: 6px;
-    padding:10px
+    padding:10px;
+    margin-top: 9px;
+}
+
+.card-body-item.active {
+    border-left: 4px solid #2395FF;
+}
+
+.card-body-item.inactive {
+    border-left: 4px solid #A1ACB8;
 }
 
 .card-body-item:not(:first) {
@@ -19,4 +27,13 @@
 
 .text-gray{
     color: #929CA9;
+}
+
+.bg-active{
+    background-color: #F9FBFF;
+}
+
+
+.bg-inactive{
+    background-color: #EBEDEF;
 }

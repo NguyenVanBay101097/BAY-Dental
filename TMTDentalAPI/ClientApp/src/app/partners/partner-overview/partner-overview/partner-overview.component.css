@@ -56,8 +56,6 @@
 }
 
 .activity-history{
-    max-height: 500px ;
-    min-height: 300px;
     border-radius: 6px;
     border: 1px solid #E2E7ED;
 }
@@ -83,6 +81,9 @@
     .container-body.row>div {
         height: auto;
         width: 100% !important;
+    }
+    .activity-history{
+        max-height: 500px ;
     }
   }
 
