@@ -113,6 +113,10 @@ export class SaleOrderLineService {
         return this.http.get<SaleOrderLineDisplay[]>(this.baseApi + this.apiUrl + '/GetDisplayBySaleOrder/' + id);
     }
 
+    getGrid(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/Grid', val);
+    }
+
     cancelOrderLine(ids: string[]) {
         return this.http.post(this.baseApi + this.apiUrl + '/CancelSaleOrderLine', ids);
     }

@@ -103,6 +103,13 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Get([FromQuery] SaleOrderLinesPaged val)
         {
             var result = await _saleLineService.GetPagedResultAsync(val);
+            return Ok(result);
+        }
+
+        [HttpPost("Grid")]
+        public async Task<IActionResult> GetGrid([FromBody] SaleOrderLinesPaged val)
+        {
+            var result = await _saleLineService.GetPagedResultAsync(val);
 
             return Ok(result);
         }

@@ -25,6 +25,60 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
     }
 
+    public class ServiceOverviewResponse
+    {
+        public DateTime? Date { get; set; }
+
+        public string Name { get; set; }
+
+        public Guid OrderId { get; set; }
+        public string OrderName { get; set; }
+
+        public Guid? PartnerId { get; set; }
+        public string PartnerName { get; set; }
+
+        public decimal ProductUOMQty { get; set; }
+
+        public string EmployeeName { get; set; }
+
+        public decimal AmountTotal { get; set; }
+
+        public decimal AmountPaid { get; set; }
+
+        public decimal AmountResidual { get; set; }
+
+        public string State { get; set; }
+
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "sale":
+                        return "Đang điều trị";
+                    case "cancel":
+                        return "Ngừng điều trị";
+                    case "done":
+                        return "Hoàn thành";
+                    default:
+                        return "Nháp";
+                }
+            }
+        }
+
+
+    }
+
+    public class PrintServiceOverviewResponse
+    {
+        public IEnumerable<ServiceOverviewResponse> data { get; set; } = new List<ServiceOverviewResponse>();
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+    }
+
     public class ServiceReportDetailReq
     {
         public ServiceReportDetailReq()
@@ -100,9 +154,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
     }
 
-    public class ServiceReportResPrint: ServiceReportRes
+    public class ServiceReportResPrint : ServiceReportRes
     {
-      public IEnumerable<ServiceReportDetailRes> Lines { get; set; } =  new List<ServiceReportDetailRes>();
+        public IEnumerable<ServiceReportDetailRes> Lines { get; set; } = new List<ServiceReportDetailRes>();
     }
 
     public class ServiceReportPrint

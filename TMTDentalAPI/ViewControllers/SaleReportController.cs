@@ -16,7 +16,7 @@ namespace TMTDentalAPI.ViewControllers
         private readonly ISaleReportService _saleReportService;
         private readonly IViewToStringRenderService _viewToStringRenderService;
 
-        public SaleReportController(ISaleReportService saleReportService ,IViewToStringRenderService viewToStringRenderService)
+        public SaleReportController(ISaleReportService saleReportService, IViewToStringRenderService viewToStringRenderService)
         {
             _saleReportService = saleReportService;
             _viewToStringRenderService = viewToStringRenderService;
@@ -34,6 +34,13 @@ namespace TMTDentalAPI.ViewControllers
         {
             var res = await _saleReportService.ServiceReportByTimePrint(val);
             return View("ServiceReportPrint", res);
+        }
+
+        [PrinterNameFilterAttribute(Name = AppConstants.ServiceOverviewReport)]
+        public async Task<IActionResult> PrintServiceOverviewReport([FromBody] ServiceReportReq val)
+        {
+            var data = await _saleReportService.PrintServiceOverviewReport(val);
+            return View("ServiceOverviewReportPrint", data);
         }
     }
 }

@@ -42,6 +42,7 @@ namespace ApplicationCore.Constants
         public const string PartnerOldNewReport = "PartnerOldNewReport";
         public const string ReportPartnerDebit = "ReportPartnerDebit";
         public const string ReportInsuranceDebt = "ReportInsuranceDebt";
+        public const string ServiceOverviewReport = "ServiceOverviewReport";
 
 
         public static PrintTemplateType[] PrintTemplateTypeDemo = new PrintTemplateType[] {

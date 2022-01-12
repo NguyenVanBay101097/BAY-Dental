@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
+using Kendo.DynamicLinqCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,12 @@ using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using Kendo.DynamicLinqCore;
 
 namespace Infrastructure.Services
 {
@@ -459,6 +463,9 @@ namespace Infrastructure.Services
 
             var totalItems = await query.CountAsync();
 
+            // Calculate the aggregates
+            var aggregate = query.ProcessAggregates(val.Aggregate);
+
             query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
@@ -469,7 +476,8 @@ namespace Infrastructure.Services
 
             return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = items,
+                Aggregates = aggregate
             };
         }
 

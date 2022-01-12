@@ -48,7 +48,7 @@ namespace TMTDentalAPI.ViewControllers
         {
             var data = await _accountInvoiceReportService.GetRevenueServiceReportPrint(val);
             return View(data);
-        }
+        }       
 
         [PrinterNameFilterAttribute(Name = AppConstants.RevenueEmployeeReport)]
         [CheckAccess(Actions = "Report.Revenue")]

@@ -475,7 +475,7 @@ namespace Infrastructure.Services
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
             var empObj = GetService<IEmployeeService>();
-            var empl_dict = await empObj.SearchQuery(x => x.HrJobId.HasValue && x.PartnerId.HasValue).Include(x => x.HrJob).Include(x => x.User).ThenInclude(x => x.Partner).Distinct().ToDictionaryAsync(x => x.PartnerId, x => x.HrJob.Name);
+            var empl_dict = empObj.SearchQuery(x => x.HrJobId.HasValue && x.PartnerId.HasValue).Include(x => x.HrJob).ToDictionary(x => x.PartnerId, x => x.HrJob.Name);
             var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, initBal: true, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -484,7 +484,7 @@ namespace Infrastructure.Services
             }
             query = query.Where(x => x.Account.Code.Equals("334"));
 
-            var list = await query
+            var list = await query.Where(x => x.PartnerId.HasValue)
                .GroupBy(x => new
                {
                    PartnerId = x.Partner.Id,
@@ -500,7 +500,6 @@ namespace Infrastructure.Services
                    PartnerRef = x.Key.PartnerRef,
                    PartnerPhone = x.Key.PartnerPhone,
                    JobName = empl_dict.ContainsKey(x.Key.PartnerId) ? empl_dict[x.Key.PartnerId] : null,
-                   x.Key.Type,
                    InitialBalance = x.Sum(s => s.Debit - s.Credit),
                }).ToListAsync();
 

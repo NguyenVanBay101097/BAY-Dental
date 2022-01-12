@@ -85,6 +85,7 @@ export class SaleOrderLinePaged {
     companyId: string;
     dateFrom: string;
     dateTo: string;
+    aggregate: any;
 }
 
 export class PartnerReportLocationCitySearch {
