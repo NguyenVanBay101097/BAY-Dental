@@ -35,36 +35,30 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();
 
-                var Subtypes = new[]
+                if (!context.MailMessageSubtypes.Any())
                 {
-                 new { Name =  "Phiếu điều trị" , IRModelName = "subtype_sale_order" },
-                 new { Name =  "Dịch vụ" , IRModelName = "subtype_sale_order_line" },
-                 new { Name =  "Thanh toán" , IRModelName = "subtype_sale_order_payment" },
-                 new { Name =  "Lịch hẹn" , IRModelName = "subtype_appointment" },
-                 new { Name =  "Tiếp nhận" , IRModelName = "subtype_receive" },
-                 new { Name =  "Đợt khám" , IRModelName = "subtype_dotkham" },
-                 new { Name =  "Ghi chú" , IRModelName = "subtype_comment" },
+                    var Subtypes = new[]
+                    {
+                         new { Name =  "Phiếu điều trị" , IRModelName = "subtype_sale_order" },
+                         new { Name =  "Dịch vụ" , IRModelName = "subtype_sale_order_line" },
+                         new { Name =  "Thanh toán" , IRModelName = "subtype_sale_order_payment" },
+                         new { Name =  "Lịch hẹn" , IRModelName = "subtype_appointment" },
+                         new { Name =  "Tiếp nhận" , IRModelName = "subtype_receive" },
+                         new { Name =  "Đợt khám" , IRModelName = "subtype_dotkham" },
+                         new { Name =  "Ghi chú" , IRModelName = "subtype_comment" },
+                    };
 
-                };
-
-
-                foreach (var type in Subtypes)
-                {
-                    var iRmodelData = context.IRModelDatas.Where(x => x.Name == type.IRModelName && x.Module == "mail" && x.Model == "mail.message.subtype").FirstOrDefault();
-                    if (iRmodelData == null)
+                    foreach (var type in Subtypes)
                     {
                         var mailMessageSubtype = new MailMessageSubtype { Name = type.Name };
                         context.MailMessageSubtypes.Add(mailMessageSubtype);
                         context.SaveChanges();
 
-                        iRmodelData = new IRModelData { Name = type.IRModelName, Module = "mail", ResId = mailMessageSubtype.Id.ToString(), Model = "mail.message.subtype" };
+                        var iRmodelData = new IRModelData { Name = type.IRModelName, Module = "mail", ResId = mailMessageSubtype.Id.ToString(), Model = "mail.message.subtype" };
                         context.IRModelDatas.Add(iRmodelData);
                         context.SaveChanges();
                     }
-
                 }
-
-
             }
 
             return Task.CompletedTask;

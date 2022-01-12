@@ -3312,11 +3312,11 @@ namespace Infrastructure.Services
                 AmountTotalDebit = s.Sum(x => x.Balance)
             }).ToDictionary(g => g.PartnerId, x => x);
 
-            var partnerCardTypeDict = cardCardObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value)).Select(s => new
-            {
-                PartnerId = s.PartnerId,
-                CardTypeName = s.Type.Name
-            }).ToDictionary(g => g.PartnerId, x => x);
+            //var partnerCardTypeDict = cardCardObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value)).Select(s => new
+            //{
+            //    PartnerId = s.PartnerId,
+            //    CardTypeName = s.Type.Name
+            //}).ToDictionary(g => g.PartnerId, x => x);
 
             var partnerAppointmentDict = appointmentObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).GroupBy(x => x.PartnerId).Select(s => new
             {
@@ -3331,7 +3331,7 @@ namespace Infrastructure.Services
                 item.OrderState = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].CountSale > 0 ? "sale" : (partnerOrderStateDict[item.Id].CountDone > 0 ? "done" : "draft") : "draft";
                 item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
                 item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
-                item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
+                //item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
                 item.SaleOrderDate = partnerOrderStateDict.ContainsKey(item.Id) ? (DateTime?)partnerOrderStateDict[item.Id].Date : null;
                 item.AppointmentDate = partnerAppointmentDict.ContainsKey(item.Id) ? (DateTime?)partnerAppointmentDict[item.Id].AppointmentDate : null;
             }

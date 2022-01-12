@@ -14,7 +14,5 @@ namespace Infrastructure.Services
         Task<IEnumerable<MailMessageFormat>> MessageFormat(IEnumerable<Guid> ids);
 
         Task<IEnumerable<MailMessage>> GetLogsForPartner(LogForPartnerRequest val);
-
-        Task<MailMessage> CreateActionLog(string body = null, Guid? threadId = null, string threadModel = null, string messageType = "notification", string subtype = "subtype_comment");
     }
 }

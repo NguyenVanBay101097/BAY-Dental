@@ -116,22 +116,22 @@ namespace Infrastructure.Services
             return items;
         }
 
-        public async Task<MailMessage> CreateActionLog(string body = null, Guid? threadId = null, string threadModel = null, string messageType = "notification", string subtype = "subtype_comment")
-        {
-            var iRModelDataObj = GetService<IIRModelDataService>();
-            var userObj = GetService<IUserService>();
-            var user = await userObj.GetCurrentUser();
-            var refSubtype = await iRModelDataObj.GetRef<MailMessageSubtype>($"mail.{subtype}");
-            return await CreateAsync(new MailMessage
-            {
-                Body = body,
-                ResId = threadId,
-                Model = threadModel,
-                MessageType = messageType,
-                SubtypeId = refSubtype?.Id,
-                AuthorId = user?.PartnerId
-            });
-        }
+        //public async Task<MailMessage> CreateActionLog(string body = null, Guid? threadId = null, string threadModel = null, string messageType = "notification", string subtype = "subtype_comment")
+        //{
+        //    var iRModelDataObj = GetService<IIRModelDataService>();
+        //    var userObj = GetService<IUserService>();
+        //    var user = await userObj.GetCurrentUser();
+        //    var refSubtype = await iRModelDataObj.GetRef<MailMessageSubtype>($"mail.{subtype}");
+        //    return await CreateAsync(new MailMessage
+        //    {
+        //        Body = body,
+        //        ResId = threadId,
+        //        Model = threadModel,
+        //        MessageType = messageType,
+        //        SubtypeId = refSubtype?.Id,
+        //        AuthorId = user?.PartnerId
+        //    });
+        //}
 
     }
 }
