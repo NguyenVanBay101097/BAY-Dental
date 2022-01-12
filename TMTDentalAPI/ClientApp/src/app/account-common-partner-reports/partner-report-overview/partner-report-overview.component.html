@@ -13,27 +13,8 @@
                 </button>
             </div>
             <div class="filter-right">
-                <!-- <kendo-combobox [placeholder]="'Tình trạng điều trị'" [valueField]="'value'"
-                    [data]="orderStates" [textField]="'text'" [filterable]="true"
-                    (selectionChange)="onSelectOrderStates($event)">
-                </kendo-combobox>
-                <kendo-combobox [placeholder]="'Công nợ'" class="ml-2" [valueField]="'value'" [textField]="'text'"
-                    [data]="totalDebits" [filterable]="true" (selectionChange)="onSelectTotalDebits($event)">
-                </kendo-combobox>
-                <kendo-combobox [placeholder]="'Dự kiến thu'" class="ml-2 revenue-cmp" [valueField]="'value'" [textField]="'text'"
-                    [data]="revenueExpect" [filterable]="true" (selectionChange)="onSelectOrderResiduals($event)">
-                </kendo-combobox> -->
-                <div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right" class="filter-dropdown"
-                    (openChange)="onToggleDropdown($event)">
-                    <button type="button" id="filteredAdvance" ngbDropdownToggle class="btn btn-outline-secondary">
-                        <i class="fas fa-filter mr-2"></i>
-                        <span>Bộ lọc</span>
-                    </button>
-                    <div ngbDropdownMenu aria-labelledby="filteredAdvance" class="filter-container p-0">
-                        <app-partner-report-filter-popup #reportFilterPopup (onCloseEmit)="onCloseEmit()"
-                            (onApplyEmit)="onApplyEmit($event)"></app-partner-report-filter-popup>
-                    </div>
-                </div>
+                <app-partner-report-filter-popup [filter]="filter" (onApplyEmit)="onApplyEmit($event)">
+                </app-partner-report-filter-popup>
             </div>
         </div>
 

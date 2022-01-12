@@ -23,24 +23,6 @@
     flex-wrap: wrap;
 }
 
-#filteredAdvance {
-    font-weight: 500;
-}
-
-.filter-container {
-    width: 450px;
-}
-
-.filter-title {
-    font-size: 1.05rem;
-    font-weight: 500;
-    width: 100%;
-    background: #f2f7ff;
-    padding: 0.5rem;
-    height: 36px;
-}
-
-
 .filter-info {
     width: fit-content;
     margin: 0 10px 10px 0;

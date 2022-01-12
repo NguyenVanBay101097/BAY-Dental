@@ -1,28 +1,28 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSelectComponent, PopupSettings } from '@progress/kendo-angular-dropdowns';
 import * as _ from 'lodash';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { CardTypeBasic, CardTypePaged, CardTypeService } from 'src/app/card-types/card-type.service';
 import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
 import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
 import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
-import { PartnerInfoFilter } from 'src/app/partners/partner.service';
 
 @Component({
   selector: 'app-partner-report-filter-popup',
   templateUrl: './partner-report-filter-popup.component.html',
   styleUrls: ['./partner-report-filter-popup.component.css']
 })
-export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit {
-  @Output() onCloseEmit = new EventEmitter();
+export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit, OnChanges {
+  @Input() filter: any;
   @Output() onApplyEmit = new EventEmitter();
   @ViewChild('partnerCategoryMultiSelect', { static: false }) partnerCategoryMultiSelect: MultiSelectComponent;
   @ViewChild('partnerSourcesMultiSelect', { static: false }) partnerSourcesMultiSelect: MultiSelectComponent;
   @ViewChild('cardTypesMultiSelect', { static: false }) cardTypesMultiSelect: MultiSelectComponent;
+  @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
 
   formGroup: FormGroup;
-  dataFilterObj = Object.create({});
-  filter = new PartnerInfoFilter();
 
   listPartnerCategory: PartnerCategoryBasic[] = [];
   listCardType: CardTypeBasic[] = [];
@@ -35,27 +35,34 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
     { text: 'Nữ', value: 'female' },
     { text: 'Khác', value: 'other' },
   ]
+
   constructor(
     private fb: FormBuilder,
     private partnerCategoryService: PartnerCategoryService,
     private cardTypeService: CardTypeService,
     private partnerSourceService: PartnerSourceService,
-
   ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.formGroup) {
+      this.formGroup.patchValue(this.filter);
+    }
+  }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
-      categs: [null],
-      partnerSources: [null],
-      cardTypes: [null],
-      ageFrom: null,
-      ageTo: null,
-      revenueFrom: null,
-      revenueTo: null,
-      amountTotalFrom: null,
-      amountTotalTo: null,
-      gender: null,
+      categs: this.filter?.categs || [null],
+      partnerSources: this.filter?.partnerSources || [null],
+      cardTypes: this.filter?.cardTypes || [null],
+      ageFrom: this.filter?.ageFrom,
+      ageTo: this.filter?.ageTo,
+      revenueFrom: this.filter?.revenueFrom,
+      revenueTo: this.filter?.revenueTo,
+      amountTotalFrom: this.filter?.amountTotalFrom,
+      amountTotalTo: this.filter?.amountTotalTo,
+      gender: this.filter?.gender,
     });
+
     setTimeout(() => {
       this.loadListCardType();
       this.loadSourceList();
@@ -64,19 +71,37 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
   }
 
   ngAfterViewInit(): void {
-
+    this.filterMultiSelect();
   }
 
-  // filterMultiSelect() {
-  //   this.partnerCategoryMultiSelect.filterChange.asObservable().pipe(
-  //     debounceTime(300),
-  //     tap(() => (this.partnerCategoryMultiSelect.loading = true)),
-  //     switchMapTo(value => this.searchPartnerCategory(value))
-  //   ).subscribe((result: any) => {
-  //     this.listPartnerCategory = result;
-  //     this.partnerCategoryMultiSelect.loading = false;
-  //   });
-  // }
+  filterMultiSelect() {
+    this.partnerCategoryMultiSelect.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerCategoryMultiSelect.loading = true)),
+      switchMap(value => this.searchPartnerCategory(value))
+    ).subscribe((result: any) => {
+      this.listPartnerCategory = result;
+      this.partnerCategoryMultiSelect.loading = false;
+    });
+
+    this.partnerSourcesMultiSelect.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.partnerSourcesMultiSelect.loading = true)),
+      switchMap(value => this.searchSources(value))
+    ).subscribe((result: any) => {
+      this.listPartnerSource = result;
+      this.partnerSourcesMultiSelect.loading = false;
+    });
+
+    this.cardTypesMultiSelect.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.cardTypesMultiSelect.loading = true)),
+      switchMap(value => this.searchCardTypes(value))
+    ).subscribe((result: any) => {
+      this.listCardType = result;
+      this.cardTypesMultiSelect.loading = false;
+    });
+  }
 
   loadPartnerCategoryList() {
     this.searchPartnerCategory().subscribe((result) => {
@@ -115,39 +140,9 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
   }
 
   onApply() {
-    this.dataFilterObj = { ...this.formGroup.value };
-    this.onApplyEmit.emit(this.dataFilterObj);
-  }
-
-  onRemoveFilter(key: string) {
-    if (key === 'age') {
-      this.formGroup.get('ageFrom').setValue(null);
-      this.formGroup.get('ageTo').setValue(null);
-    }
-    else if (key === 'revenue') {
-      this.formGroup.get('revenueFrom').setValue(null);
-      this.formGroup.get('revenueTo').setValue(null);
-    }
-    else if (key === 'amountTotal') {
-      this.formGroup.get('amountTotalFrom').setValue(null);
-      this.formGroup.get('amountTotalTo').setValue(null);
-    }
-    // else if (key === 'revenueExpect') {
-    //   this.formGroup.get('revenueExpectFrom').setValue(null);
-    //   this.formGroup.get('revenueExpectTo').setValue(null);
-    // }
-    // else if (key === 'debt') {
-    //   this.formGroup.get('debtFrom').setValue(null);
-    //   this.formGroup.get('debtTo').setValue(null);
-    // }
-    else {
-      this.formGroup.get(key).setValue(null);
-    }
-    this.onApply();
-  }
-
-  onUpdateFormValue(event?: boolean) {
-    this.formGroup.patchValue(this.dataFilterObj);
+    const dataFilterObj = { ...this.formGroup.value };
+    this.onApplyEmit.emit(dataFilterObj);
+    this.myDrop.close();
   }
 
   onRemoveAllFilters() {
@@ -155,6 +150,10 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit 
   }
 
   onClose() {
-    this.onCloseEmit.emit(true);
+    this.myDrop.close();
+  }
+
+  onToggleDropdown(event?: boolean) {
+    this.formGroup.patchValue(this.filter);
   }
 }
