@@ -1,10 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { IntlService } from '@progress/kendo-angular-intl';
 import { EChartsOption } from 'echarts';
 import * as moment from 'moment';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
+import { EmployeeSimple } from 'src/app/employees/employee';
+import { EmployeeService } from 'src/app/employees/employee.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { PrintService } from 'src/app/shared/services/print.service';
 import { GetReportAssignmentQueryRequest, SurveReportService } from '../survey-report.service';
+import { SurveyTagPaged, SurveyTagService } from '../survey-tag.service';
+import { SurveyAssignmentPaged, SurveyAssignmentService } from '../survey.service';
 
 @Component({
   selector: 'app-survey-report',
@@ -16,16 +25,36 @@ export class SurveyReportComponent implements OnInit {
   filter = new GetReportAssignmentQueryRequest();
   companies: CompanySimple[] = [];
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
+  @ViewChild("surveyMst", { static: true }) surveyMst: MultiSelectComponent;
+
   empChartOption: EChartsOption;
   scoreChartOption: EChartsOption;
   questionChartOption: EChartsOption;
   dataScroreReport: any;
   dataEmpReport: any = [];
   dataQuestionReport: any = [];
+  employeesData: EmployeeSimple[] = [];
+  gridData: GridDataResult;
+  loading = false;
+  limit = 20;
+  offset = 0;
+  employeeId = '';
+  pagerSettings: any;
+  filteredSurveyTags: any[] = [];
+  surveyTagId: '';
   constructor(
     private companyService: CompanyService,
-    private surveReportService: SurveReportService
-  ) { }
+    private surveReportService: SurveReportService,
+    private employeeService: EmployeeService,
+    private intlService: IntlService,
+    private surveyAssignmentService: SurveyAssignmentService,
+    private surveyTagService: SurveyTagService,
+    private printService: PrintService,
+    private router: Router,
+
+
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+  ) {this.pagerSettings = config.pagerSettings }
 
   ngOnInit(): void {
 
@@ -44,7 +73,22 @@ export class SurveyReportComponent implements OnInit {
         this.companyVC.loading = false;
       });
 
+      this.surveyMst.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.surveyMst.loading = true)),
+        switchMap((value) => this.searchServeyTag(value))
+      )
+      .subscribe((result: any) => {
+        this.filteredSurveyTags = result;
+        this.surveyMst.loading = false;
+      });
+
     this.loadDataFromApi();
+    this.getSurveyEmployees();
+    this.getServeyTagsList();
+    this.getDoneServeyAssignments();
   }
 
   initFilter() {
@@ -112,6 +156,11 @@ export class SurveyReportComponent implements OnInit {
         },
         xAxis: {
           data: xAxisData,
+          axisLabel: {
+            interval: 0,
+            // rotate: 25 //If the label names are too long you can manage this by rotating the label.
+            
+          },
           axisLine: {
             onZero: true,
             lineStyle: {
@@ -300,11 +349,14 @@ export class SurveyReportComponent implements OnInit {
     this.filter.dateFrom = value.dateFrom;
     this.filter.dateTo = value.dateTo;
     this.loadDataFromApi();
+    this.getDoneServeyAssignments();
   }
 
   onSelectCompany(e) {
     this.filter.companyId = e ? e.id : '';
     this.loadDataFromApi();
+    this.getDoneServeyAssignments();
+
   }
 
   loadCompanies() {
@@ -320,4 +372,109 @@ export class SurveyReportComponent implements OnInit {
     return this.companyService.getPaged(val);
   }
 
+  getSurveyEmployees() {
+    this.employeeService.getAllowSurveyList().subscribe((result: EmployeeSimple[]) => {
+      this.employeesData = result
+    })
+  }
+
+  onSelectEmployee(e){
+    this.employeeId = e ? e.id : null;
+    this.offset = 0;
+    this.getDoneServeyAssignments();
+  }
+
+  getDoneServeyAssignments() {
+    var paged = this.getDoneSurveyAssignmentPagedFilter();
+    paged.limit = this.limit;
+    paged.offset = this.offset;
+    this.loading = true;
+    this.surveyAssignmentService.getPaged(paged).pipe(
+      map(response => (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.gridData = res;
+      this.loading = false;
+    }, err => {
+      this.loading = false;
+    })
+  }
+
+  pageChange(e) {
+    this.offset = e.skip;
+    this.limit = e.take;
+    this.getDoneServeyAssignments();
+  }
+
+  searchServeyTag(q? : string) {
+    var val = new SurveyTagPaged();
+    val.search = q || '';
+    val.limit = 0;
+    val.offset = 0;
+    return this.surveyTagService.getPaged(val);
+  }
+
+  getServeyTagsList() {
+    this.searchServeyTag().subscribe((result: any) => {
+      this.filteredSurveyTags = result.items;
+    })
+  }
+
+  onSurveyChange(value) {
+    var surveyTagId = value.map(x => x.id);
+    this.surveyTagId = surveyTagId;
+    this.offset = 0;
+    this.getDoneServeyAssignments();
+  }
+
+  exportDoneSurveyListExcel() {
+    var paged = this.getDoneSurveyAssignmentPagedFilter();
+
+    this.surveyAssignmentService.exportDoneSurveyAssignmentExcel(paged).subscribe((rs) => {
+      let filename = "DanhSachKhaoSatHoanThanh";
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+  printDoneSurveyList() {
+    var paged = this.getDoneSurveyAssignmentPagedFilter();
+
+    this.surveyAssignmentService.printDoneSurvey(paged).subscribe(result => {
+      this.printService.printHtml(result);
+    })
+  }
+
+  getDoneSurveyAssignmentPagedFilter() {
+    var paged = new SurveyAssignmentPaged();
+    paged.limit = 0;
+    paged.offset = 0;
+    paged.employeeId = this.employeeId ? this.employeeId : '';
+    paged.dateFrom = this.filter.dateFrom ? moment(this.filter.dateFrom).format('YYYY/MM/DD') : '';
+    paged.dateTo = this.filter.dateTo ? moment(this.filter.dateTo).format('YYYY/MM/DD') : '';
+    paged.status = 'done';
+    paged.surveyTagId = this.surveyTagId ? this.surveyTagId : '';
+    paged.companyId = this.filter.companyId ? this.filter.companyId : '';
+
+    return paged;
+  }
+
+  clickItem(item) {
+    var id = item.dataItem.id;
+    this.router.navigate(['/surveys/form'], { queryParams: { id: id } });
+  }
 }

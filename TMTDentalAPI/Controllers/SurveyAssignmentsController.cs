@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Entities;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
 using Umbraco.Web.Models.ContentEditing;
 
@@ -230,5 +233,69 @@ namespace TMTDentalAPI.Controllers
             return NoContent();
         }
 
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Survey.Assignment.Read")]
+        public async Task<IActionResult> ExportDoneSurveyAssignmentExcel([FromBody] SurveyAssignmentPaged val)
+        {
+            var result = await _surveyAssignmentService.GetPagedResultAsync(val);
+            var data = result.Items;
+            var stream = new MemoryStream();
+            var sheetName = "DanhSachKhaoSatHoanThanh";
+            byte[] fileContent;
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add(sheetName);
+                worksheet.Cells["A1:H1"].Value = "DANH SÁCH KHẢO SÁT HOÀN THÀNH";
+                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:H1"].Merge = true;
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:H2"].Value = $"Từ ngày {val.DateFrom.Value.ToString("dd/MM/yyyy")} đến ngày {val.DateTo.Value.ToString("dd/MM/yyyy")}"; ;
+                worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:H2"].Merge = true;
+                worksheet.Cells["A3:H3"].Value = "";
+
+                var row = 4;
+                worksheet.Cells[row, 1].Value = "Khách hàng";
+                worksheet.Cells[row, 2].Value = "Tuổi";
+                worksheet.Cells[row, 3].Value = "Phiếu điều trị";
+                worksheet.Cells[row, 4].Value = "Nhân viên khảo sát";
+                worksheet.Cells[row, 5].Value = "Ngày phân việc";
+                worksheet.Cells[row, 6].Value = "Ngày hoàn thành";
+                worksheet.Cells[row, 7].Value = "Nhãn khảo sát";
+                worksheet.Cells[row, 8].Value = "Điểm khảo sát";
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
+                worksheet.Cells["A4:H4"].Style.Font.Bold = true;
+
+                row = 5;
+                foreach (var item in data)
+                {
+                    worksheet.Cells[row, 1].Value = item.PartnerName;
+                    worksheet.Cells[row, 2].Value = item.Age;
+                    worksheet.Cells[row, 3].Value = item.SaleOrder.Name;
+                    worksheet.Cells[row, 4].Value = item.Employee.Name;
+                    worksheet.Cells[row, 5].Value = item.AssignDate;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 6].Value = item.CompleteDate;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 7].Value = item.SurveyTags;
+                    worksheet.Cells[row, 8].Value = (item.UserInputScore.HasValue && item.UserInputMaxScore.HasValue) ? item.UserInputScore.Value+"/"+item.UserInputMaxScore.Value : "";
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
     }
 }

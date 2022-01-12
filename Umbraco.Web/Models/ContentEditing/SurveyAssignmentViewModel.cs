@@ -20,6 +20,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
         public Guid? EmployeeId { get; set; }
         public Guid? UserId { get; set; }
+        public Guid? SurveyTagId { get; set; }
+        public Guid? CompanyId { get; set; }
     }
 
     public class SurveyAssignmentGridItem
@@ -382,4 +384,11 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Count { get; set; }
     }
 
+    public class DoneSurveyAssignmentPrintVM
+    {
+        public CompanyPrintVM Company { get; set; }
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+        public IEnumerable<SurveyAssignmentGridItem> Data { get; set; } = new List<SurveyAssignmentGridItem>();
+    }
 }
