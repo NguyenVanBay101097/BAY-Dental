@@ -1746,7 +1746,7 @@ namespace Infrastructure.Services
 
                 ///Create log saleorderline
                 var bodySaleOrderLine = string.Format("Sử dụng dịch vụ <b>{0}</b> - phiếu điều trị <b>{1}</b>", string.Join(",", order.OrderLines.Select(s => s.Name).ToList()), order.Name);
-                await threadMessageObj.MessagePost(order.Partner, bodySaleOrder, subjectTypeId: "mail.subtype_sale_order_line");
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrderLine, subjectTypeId: "mail.subtype_sale_order_line");
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
