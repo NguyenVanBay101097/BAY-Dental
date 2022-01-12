@@ -199,6 +199,12 @@ namespace Infrastructure.Services
                                 var toothCate = await service.GetByIdAsync(data.ResId);
                                 return (T)(object)toothCate;
                             }
+                        case "mail.message.subtype":
+                            {
+                                var service = GetService<IMailMessageSubtypeService>();
+                                var mailMessageSubtype = await service.GetByIdAsync(data.ResId);
+                                return (T)(object)mailMessageSubtype;
+                            }
                         default:
                             {
                                 return null;

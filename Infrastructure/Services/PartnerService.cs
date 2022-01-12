@@ -3452,6 +3452,13 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Customer == val.Customer);
             return _mapper.Map<IEnumerable<PartnerSimple>>(await query.ToListAsync());
         }
+
+        public async Task<decimal> GetTotalAmountOfSaleOrder(Guid id)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var query = orderObj.SearchQuery(x => x.State != "draft" && x.PartnerId == id);
+            return await query.SumAsync(x=> x.AmountTotal ?? 0);
+        }
     }
 
     public class PartnerCreditDebitItem

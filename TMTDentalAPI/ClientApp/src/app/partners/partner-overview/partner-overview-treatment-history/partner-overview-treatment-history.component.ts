@@ -1,11 +1,14 @@
 import { KeyValue } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as _ from 'lodash';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SaleOrderLineHistoryReq, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
+import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
+import { SaleOrderLinePaged } from '../../partner.service';
 
 @Component({
   selector: 'app-partner-overview-treatment-history',
@@ -17,32 +20,65 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
   listTime: any[] = [];
   listTreatments: any;
   today: any;
+  
   toothType = [
     { name: "Hàm trên", value: "upper_jaw" },
     { name: "Nguyên hàm", value: "whole_jaw" },
     { name: "Hàm dưới", value: "lower_jaw" },
     { name: "Chọn răng", value: "manual" },
   ];
+  stateDisplay= {
+    sale:"Đang điều trị",
+    done: "Hoàn thành"
+  }
+  
+  gridData: GridDataResult;
+  loading = false;
+  filter = new SaleOrderLinePaged();
+  pagerSettings: any;
   constructor(
     private authService: AuthService,
     private saleOrderLineService: SaleOrderLineService,
     private intl: IntlService,
     private router: Router,
-    private saleOrderService: SaleOrderService
-  ) { }
-
+    private intlService: IntlService,
+    private saleOrderService: SaleOrderService,
+    @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
+    ) { this.pagerSettings = config.pagerSettings }
   ngOnInit() {
+    this.initFilter();
     this.loadDataFromApi();
     this.today = this.intl.formatDate(new Date(), "dd/MM/yyyy");
   }
 
-  loadDataFromApi() {
-    var val = new SaleOrderLineHistoryReq()
+  getDataApiParam() {
+    var val = new SaleOrderLinePaged();
+    val.limit = this.filter.limit;
+    val.offset = this.filter.offset;
     val.partnerId = this.partnerId;
     val.companyId = this.authService.userInfo.companyId;
-    this.saleOrderLineService.getHistories(val).subscribe((res: any) => {
-      this.listTreatments = res;
-    })
+    val.state = 'sale,done,cancel';
+    return val;
+  }
+
+  initFilter() {
+    this.filter.limit = 20;
+    this.filter.offset = 0;
+  } 
+  
+  loadDataFromApi() {
+    var val = this.getDataApiParam();
+    this.loading = true;
+    this.saleOrderLineService.getPaged(val).subscribe(res => {
+      this.gridData = <GridDataResult>{
+        data: res.items,
+        total: res.totalItems
+      }
+      this.loading = false;
+    },
+      err => {
+        this.loading = false;
+      });
   }
 
   createNewSaleOrder() {
@@ -91,4 +127,11 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
         return 'Nháp';
     }
   }
+
+  pageChange(event: PageChangeEvent): void {
+    this.filter.limit = event.take;
+    this.filter.offset = event.skip;
+    this.loadDataFromApi();
+  }
+
 }

@@ -1,4 +1,4 @@
-<a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" [popoverTitle]="popTitle" #popOver="ngbPopover" [placement]="popOverPlace" data-container="body" triggers="manual" (click)="toggleWithTags(popOver, tags)">
+<a [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" container="body" [popoverTitle]="popTitle" #popOver="ngbPopover" [placement]="popOverPlace" data-container="body" triggers="manual" (click)="toggleWithTags(popOver, tags)">
     <span *ngFor="let tag of tags" class="badge badge-secondary mr-1" [ngClass]="'o_tag_color_' + tag.color">
         {{tag.name}}
     </span>

@@ -1,52 +1,90 @@
-.o_history_treatment_report_container {
+.info-boxs{
     display: flex;
+    margin: 0 -5px;
+    flex-wrap: wrap;
+}
+.info-boxs .box{
+    border-radius: 8px;
+    border: 1px solid #EEEEEE;
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    padding:12px;
+    text-align: center;
+    margin: 0 5px;
+    margin-bottom: 1rem;
+    min-width: 200px;
+}
+
+.box-icon{
+    border-radius: 50%;
+    padding: 14px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+}
+
+.bg-prime {
+    background: rgba(0, 123, 255, 0.1);
+}
+.bg-succ{
+    background: #EAFFEF;
+}
+.bg-light-blue{
+    background: #E6F1FB;
+}
+.bg-yell{
+    background: #FFFBF0;
+}
+
+.icon-img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.icon-img-active {
+    filter:  invert(30%) sepia(51%) saturate(3516%) hue-rotate(200deg) brightness(103%) contrast(107%);
+}
+
+.img-fill-succ{
+    filter:  invert(49%) sepia(67%) saturate(452%) hue-rotate(82deg) brightness(94%) contrast(102%);
+}
+
+.activity-history{
+    border-radius: 6px;
+    border: 1px solid #E2E7ED;
+}
+
+.border-prime{
+    border: 1px solid #2395FF;
+    border-radius: 6px;
+}
+
+.container-body.row {
+    overflow: hidden;
+}
+
+.container-body.row>div {
     height: 100%;
-    overflow: auto;
-    border-left: 1px solid #ccc;
-    min-width: 480px;
 }
 
-.o_report_appointment_container {
-    flex: 1;
-}
-
-.o_history_treatment_container {
-    flex: 1;
-}
-
-.o_report_appointment_container_scroll {
-    height: 100%;
-    overflow: auto;
-    padding: 15px;
-    border-left: 1px solid #ccc;
-}
-
-.o_partner_info_left {
-    flex: 0 0 auto;
-    width: 545px;
-}
-
-.o_partner_info_right {
-    flex: 1 1 auto;
-}
-
-@media (max-width: 1200px) {
-    .o_history_treatment_report_container {
-        flex-direction: column;
+@media (max-width: 1400px) {
+    .container-body.row {
+        overflow: auto;
     }
 
-    .o_partner_info_left {
-        width: 483px;
+    .container-body.row>div {
+        height: auto;
+        width: 100% !important;
     }
-}
+    .activity-history{
+        max-height: 500px ;
+    }
+  }
 
-@media (min-width: 992px) and (max-width: 1533.98px) {
-	.o_history_treatment_report_container {
-        flex-direction: column;
-    }
-
-    .o_report_appointment_container_scroll {
-        border-left: 0;
-    }
-}
 

@@ -255,7 +255,7 @@ namespace Infrastructure.Services
             {
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ActivatedDate.Value.Date <= val.ActivatedDateTo.Value.Date));
             }
-            
+
             if (val.DateFrom.HasValue)
             {
                 spec = spec.And(new InitialSpecification<ServiceCardCard>(x => x.ExpiredDate.Value.Date >= val.DateFrom.Value.Date));
@@ -364,10 +364,10 @@ namespace Infrastructure.Services
                                 errors.Add($"Dòng {row}: Không tìm thấy hạng thẻ");
 
                             var barcode = worksheet.Cells[row, 1].Text.Trim();
-                            if(string.IsNullOrEmpty(barcode))
+                            if (string.IsNullOrEmpty(barcode))
                             {
                                 errors.Add($"Dòng {row}: Số ID thẻ không được bỏ trống");
-                            }    
+                            }
                             else if (barcode.Length < 5 || barcode.Length > 15)
                             {
                                 errors.Add($"Dòng {row}: Số ID tối thiểu 5 và tối đa 15 ký tự");
@@ -401,6 +401,20 @@ namespace Infrastructure.Services
             await CreateAsync(list);
 
             return new ImportExcelResponse { Success = true };
+        }
+
+        public async Task<ServiceCardCard> GetNewestCreatedRequest(GetServiceCardCardNewestCreatedRequest val)
+        {
+            var query = SearchQuery();
+            if (val.PartnerId.HasValue)
+            {
+                query = query.Where(x => x.PartnerId == val.PartnerId);
+            }
+
+            if (!string.IsNullOrEmpty(val.State))
+                query = query.Where(x => x.State == val.State);
+
+            return await query.OrderByDescending(x=> x.DateCreated).Include(x => x.CardType).FirstOrDefaultAsync();
         }
     }
 }

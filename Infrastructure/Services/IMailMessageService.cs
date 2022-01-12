@@ -12,5 +12,9 @@ namespace Infrastructure.Services
         Task<MailMessage> GenerateMessageCreatedAppointment(Guid appointmentId);
         Task<IEnumerable<MailMessageFormat>> MessageFetch(MailMessageFetch val);
         Task<IEnumerable<MailMessageFormat>> MessageFormat(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<MailMessage>> GetLogsForPartner(LogForPartnerRequest val);
+
+        Task<MailMessage> CreateActionLog(string body = null, Guid? threadId = null, string threadModel = null, string messageType = "notification", string subtype = "subtype_comment");
     }
 }

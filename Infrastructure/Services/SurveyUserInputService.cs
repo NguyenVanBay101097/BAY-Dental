@@ -198,9 +198,9 @@ namespace Infrastructure.Services
 
             //update UserInputId cho assignment va status
             var assignmentObj = GetService<ISurveyAssignmentService>();
-            var assignment = await assignmentObj.SearchQuery(x => x.Id == val.AssignmentId).FirstOrDefaultAsync();
+            var assignment = await assignmentObj.SearchQuery(x => x.Id == val.AssignmentId).Include(x => x.SaleOrder).FirstOrDefaultAsync();
 
-            if (assignment == null) 
+            if (assignment == null)
                 throw new Exception("Không tìm thấy Khảo sát!");
 
             var now = DateTime.Now;
@@ -208,6 +208,11 @@ namespace Infrastructure.Services
             assignment.UserInputId = userinput.Id;
             assignment.Status = "done";
             assignment.CompleteDate = now;
+
+            ///Create log saleorder
+            var mailMessageObj = GetService<IMailMessageService>();
+            var bodySaleOrder = string.Format($"<p>Đánh giá phiếu điều trị <b>{0}</b> - số điểm <b>{1}/{2}</b></p>", assignment.SaleOrder.Name, userinput.Score, userinput.MaxScore);
+            await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: assignment.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
 
             await assignmentObj.UpdateAsync(assignment);
         }

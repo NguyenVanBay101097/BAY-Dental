@@ -205,5 +205,14 @@ namespace TMTDentalAPI.Controllers
             var res = await _cardCardService.ActionImport(file);
             return Ok(res);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetNewestCreated(GetServiceCardCardNewestCreatedRequest val)
+        {
+            var res = await _cardCardService.GetNewestCreatedRequest(val);
+            if (res == null)
+                return Ok();
+            return Ok(_mapper.Map<ServiceCardCardDisplay>(res));
+        }
     }
 }

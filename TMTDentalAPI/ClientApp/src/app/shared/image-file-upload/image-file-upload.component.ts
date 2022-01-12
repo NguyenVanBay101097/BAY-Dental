@@ -12,8 +12,7 @@ import { IrAttachmentBasic } from '../shared';
   styleUrls: ['./image-file-upload.component.css'],
 })
 export class ImageFileUploadComponent implements OnInit, OnChanges {
-
-  placeholder = '/assets/images/placeholder.png';
+  placeholder = '/assets/icons/none_person_square.svg';
   @Input() imageId: string;
   uploading = false;
   @Output() uploaded = new EventEmitter<any>();

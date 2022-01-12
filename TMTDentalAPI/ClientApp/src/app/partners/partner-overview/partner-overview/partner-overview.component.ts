@@ -52,6 +52,7 @@ export class PartnerOverviewComponent implements OnInit {
   debtStatistics: number = 0;
   advanceBalance: number = 0;
   sumRevenue: number = 0;
+  totalAmountSaleOrder = 0;
   constructor(
     private authService: AuthService,
     private activeRoute: ActivatedRoute,
@@ -82,6 +83,7 @@ export class PartnerOverviewComponent implements OnInit {
     this.loadAmountDebtTotal();
     this.loadAmountAdvanceBalance();
     this.loadSumRevenue();
+    this.loadAmountTotalOfSaleOrder();
   }
 
   GetPartner() {
@@ -199,12 +201,13 @@ export class PartnerOverviewComponent implements OnInit {
   }
 
   loadPreferentialCards() {
-    let val = new ServiceCardCardPaged();
+    let val = {partnerId : null, state: null};
     val.partnerId = this.partnerId;
-    this.cardCardService.getPaged(val).pipe(
+    val.state = "in_use";
+    this.cardCardService.GetNewestCreated(val).pipe(
       map((response: any) => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
+        data: response ? [response] : [],
+        total: 1
       }))
     ).subscribe((res) => {
       this.preferentialCards = res.data;
@@ -225,6 +228,12 @@ export class PartnerOverviewComponent implements OnInit {
       console.log(err);
     });
 
+  }
+
+  loadAmountTotalOfSaleOrder(){
+    this.partnerService.getTotalAmountOfSaleOrder(this.partnerId).subscribe((res : any) => {
+      this.totalAmountSaleOrder = res.value;
+    });
   }
 
 }

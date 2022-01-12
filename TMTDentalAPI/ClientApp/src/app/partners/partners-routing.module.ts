@@ -28,6 +28,7 @@ import { PartnerCustomerDebtManagementComponent } from './partner-customer-debt-
 import { PartnerAdvanceManagementComponent } from '../partner-advances/partner-advance-management/partner-advance-management.component';
 import { PartnerAdvanceHistoryListComponent } from '../partner-advances/partner-advance-history-list/partner-advance-history-list.component';
 import { PartnerSupplierListComponent } from '../catalog/partner-supplier-list/partner-supplier-list.component';
+import { PartnerOtherInfoComponent } from './partner-other-info/partner-other-info.component';
 
 const routes: Routes = [
   {
@@ -76,7 +77,7 @@ const routes: Routes = [
           { path: 'debt-histories', component: PartnerCustomerDebtPaymentHistoryListComponent },
         ]
       },
-
+      { path: 'other-info', component: PartnerOtherInfoComponent },
     ]
   },
   {
