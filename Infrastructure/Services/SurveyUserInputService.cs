@@ -210,9 +210,9 @@ namespace Infrastructure.Services
             assignment.CompleteDate = now;
 
             ///Create log saleorder
-            var mailMessageObj = GetService<IMailMessageService>();
+            var mailMessageObj = GetService<IMailThreadMessageService>();
             var bodySaleOrder = string.Format($"<p>Đánh giá phiếu điều trị <b>{0}</b> - số điểm <b>{1}/{2}</b></p>", assignment.SaleOrder.Name, userinput.Score, userinput.MaxScore);
-            await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: assignment.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
+            await mailMessageObj.MessagePost(typeof(Partner).Name, assignment.PartnerId, body: bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
 
             await assignmentObj.UpdateAsync(assignment);
         }

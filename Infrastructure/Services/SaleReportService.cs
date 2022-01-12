@@ -861,13 +861,15 @@ namespace Infrastructure.Services
             return items;
         }
 
-        public async Task<PrintServiceOverviewResponse> PrintServiceOverviewReport(ServiceReportReq val)
+        public async Task<PrintServiceOverviewResponse> PrintServiceOverviewReport(SaleOrderLinesPaged val)
         {
-            var data = await ServiceOverviewReport(val);         
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var data = await saleOrderLineObj.GetPagedResultAsync(val);
             var companyObj = GetService<ICompanyService>();
             var res = new PrintServiceOverviewResponse()
-            {              
-                data = data,
+            {
+                data = data.Items,
+                Aggregates = data.Aggregates,
                 DateFrom = val.DateFrom,
                 DateTo = val.DateTo,
                 User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))

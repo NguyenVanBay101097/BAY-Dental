@@ -935,8 +935,7 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("{id}/[action]")]
         public async Task<IActionResult> CreateComment([FromRoute] Guid id, [FromBody] CreateCommentForPartnerRequest val)
         {         
-            var partner = await _partnerService.GetByIdAsync(id);
-            await _threadMessageService.MessagePost(partner, body: val.body, subjectTypeId: "mail.subtype_comment", messageType: "comment");
+            var message = await _threadMessageService.MessagePost(typeof(Partner).Name, id, val.body, messageType: "comment");
             return Ok();
         }
     }

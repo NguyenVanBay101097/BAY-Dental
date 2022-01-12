@@ -37,7 +37,7 @@ namespace TMTDentalAPI.ViewControllers
         }
 
         [PrinterNameFilterAttribute(Name = AppConstants.ServiceOverviewReport)]
-        public async Task<IActionResult> PrintServiceOverviewReport([FromBody] ServiceReportReq val)
+        public async Task<IActionResult> PrintServiceOverviewReport([FromBody] SaleOrderLinesPaged val)
         {
             var data = await _saleReportService.PrintServiceOverviewReport(val);
             return View("ServiceOverviewReportPrint", data);

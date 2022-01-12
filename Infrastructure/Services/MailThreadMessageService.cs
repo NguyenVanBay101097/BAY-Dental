@@ -44,5 +44,27 @@ namespace Infrastructure.Services
             await _mailMessageRepository.InsertAsync(msg);
             return msg;
         }
+
+        public async Task<MailMessage> MessagePost(string model,
+            Guid? resId,
+            string body,
+            string subjectTypeId = "mail.subtype_comment",
+            string messageType = "notification")
+        {
+            MailMessageSubtype subtype = await _modelDataService.GetRef<MailMessageSubtype>(subjectTypeId);
+            var user = await _userService.GetByIdAsync(_currentUser.Id);
+            var msg = new MailMessage()
+            {
+                MessageType = messageType,
+                Model = model,
+                ResId = resId,
+                Body = body,
+                SubtypeId = subtype.Id,
+                AuthorId = user.PartnerId,
+            };
+
+            await _mailMessageRepository.InsertAsync(msg);
+            return msg;
+        }
     }
 }

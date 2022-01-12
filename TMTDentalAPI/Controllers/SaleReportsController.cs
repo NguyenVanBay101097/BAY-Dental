@@ -8,9 +8,11 @@ using ApplicationCore.Utilities;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Infrastructure.Services;
+using Kendo.DynamicLinqCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
@@ -205,7 +207,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Sale")]
-        public async Task<IActionResult> PrintPdfServiceOverviewReport(ServiceReportReq val)
+        public async Task<IActionResult> PrintPdfServiceOverviewReport(SaleOrderLinesPaged val)
         {
             var data = await _saleReportService.PrintServiceOverviewReport(val);
             var html = _viewRenderService.Render("SaleReport/ServiceOverviewReportPdf", data);
@@ -338,10 +340,10 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Report.Sale")]
-        public async Task<IActionResult> ExportServiceOverviewReportExcel(ServiceReportReq val)
+        public async Task<IActionResult> ExportServiceOverviewReportExcel(SaleOrderLinesPaged val)
         {
             var stream = new MemoryStream();
-            var data = await _saleReportService.ServiceOverviewReport(val);
+            var data = await _saleOrderLineService.GetPagedResultAsync(val);
             var dateToDate = "";
             if (val.DateFrom.HasValue && val.DateTo.HasValue)
             {
@@ -391,18 +393,18 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
 
                 var row = 5;
-                foreach (var item in data)
+                foreach (var item in data.Items)
                 {
                     worksheet.Cells[row, 1].Value = item.Date;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.OrderName;
-                    worksheet.Cells[row, 4].Value = item.PartnerName;
+                    worksheet.Cells[row, 4].Value = item.OrderPartnerName;
                     worksheet.Cells[row, 5].Value = item.ProductUOMQty;
                     worksheet.Cells[row, 6].Value = item.EmployeeName;
-                    worksheet.Cells[row, 7].Value = item.AmountTotal;
+                    worksheet.Cells[row, 7].Value = item.PriceSubTotal;
                     worksheet.Cells[row, 7].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 8].Value = item.AmountPaid;
+                    worksheet.Cells[row, 8].Value = item.AmountInvoiced;
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 9].Value = item.AmountResidual;
                     worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
@@ -416,12 +418,12 @@ namespace TMTDentalAPI.Controllers
                     row++;
                 }
 
+                dynamic aggregates = data.Aggregates;
                 worksheet.Cells[row, 1, row, 6].Value = "Tổng";
-                worksheet.Cells[row, 1, row, 6].Merge = true;
-
-                worksheet.Cells[row, 7].Value = data.Sum(x => x.AmountTotal);
-                worksheet.Cells[row, 8].Value = data.Sum(x => x.AmountPaid);
-                worksheet.Cells[row, 9].Value = data.Sum(x => x.AmountResidual);
+                worksheet.Cells[row, 1, row, 6].Merge = true;    
+                worksheet.Cells[row, 7].Value = aggregates.PriceSubTotal.sum; 
+                worksheet.Cells[row, 8].Value = aggregates.AmountInvoiced.sum;
+                worksheet.Cells[row, 9].Value = (aggregates.PriceSubTotal.sum - aggregates.AmountInvoiced.sum);
                 worksheet.Cells[row, 10].Value = "";
                 worksheet.Cells[row, 1, row, 10].Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 worksheet.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
@@ -429,8 +431,6 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[row, 1, row, 10].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 worksheet.Cells[row, 1, row, 10].Style.Font.Bold = true;
                 worksheet.Cells[row, 7, row, 9].Style.Numberformat.Format = "#,##0";
-
-
 
                 worksheet.Cells.AutoFitColumns();
 

@@ -72,7 +72,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PrintServiceOverviewResponse
     {
-        public IEnumerable<ServiceOverviewResponse> data { get; set; } = new List<ServiceOverviewResponse>();
+        public IEnumerable<SaleOrderLineBasic> data { get; set; } = new List<SaleOrderLineBasic>();
+        public object Aggregates { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public CompanyPrintVM Company { get; set; }

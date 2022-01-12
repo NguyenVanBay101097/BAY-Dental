@@ -140,16 +140,16 @@
         <!-- <kendo-grid-column field="Ref" title="Mã KH" width="120"></kendo-grid-column> -->
         <kendo-grid-column field="age" [hidden]="visibleColumns.indexOf('age') == -1" title="Tuổi" width="60">
         </kendo-grid-column>
-        <kendo-grid-column field="saleOrderDate" [hidden]="visibleColumns.indexOf('appointmentDate') == -1"
+        <kendo-grid-column field="appointmentDate" [hidden]="visibleColumns.indexOf('appointmentDate') == -1"
             title="Ngày hẹn gần nhất" width="160">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.saleOrderDate | date: 'shortDate'}}
+                {{dataItem.appointmentDate | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
-        <kendo-grid-column field="appointmentDate" [hidden]="visibleColumns.indexOf('saleOrderDate') == -1"
+        <kendo-grid-column field="saleOrderDate" [hidden]="visibleColumns.indexOf('saleOrderDate') == -1"
             title="Ngày điều trị gần nhất" width="200">
             <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                {{dataItem.appointmentDate | date: 'shortDate'}}
+                {{dataItem.saleOrderDate | date: 'shortDate'}}
             </ng-template>
         </kendo-grid-column>
         <kendo-grid-column field="orderState" [hidden]="visibleColumns.indexOf('orderState') == -1"

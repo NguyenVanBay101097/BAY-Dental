@@ -19,31 +19,20 @@
       </kendo-grid-column>
       <kendo-grid-column field="date" title="Phiếu điều trị" width="110">
         <ng-template kendoGridCellTemplate let-dataItem>
-           <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.order.id ]">{{dataItem.order?.name}}</a>
+           <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="name" title="Dịch vụ" width="200">
     </kendo-grid-column>
-    <kendo-grid-column title="Đơn vị tính" width="100">
-      <ng-template kendoGridCellTemplate let-dataItem>
-          {{dataItem.productUOM ? dataItem.productUOM.name : ""}}
-      </ng-template>
+    <kendo-grid-column title="Đơn vị tính" field="productUOMName" width="100">
     </kendo-grid-column>
     <kendo-grid-column field="teethDisplay" title="Răng" width="80">
     </kendo-grid-column>
-      <kendo-grid-column field="employee" title="Bác sĩ" width="150">
-          <ng-template kendoGridCellTemplate let-dataItem>
-              {{dataItem.employee?.name}}
-          </ng-template>
+      <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
       </kendo-grid-column>
       <kendo-grid-column field="diagnostic" title="Chẩn đoán" width="100">
       </kendo-grid-column>
-      <kendo-grid-column field="state" title="Trạng thái" width="120">
-          <ng-template kendoGridCellTemplate let-dataItem>
-              <span [ngClass]="dataItem.state == 'sale' ? 'text-primary' : 'text-success'">
-                {{stateDisplay[dataItem.state] || "Đang điều trị"}}
-              </span>
-          </ng-template>
+      <kendo-grid-column field="stateDisplay" title="Trạng thái" width="120">
       </kendo-grid-column>
     </kendo-grid>
   </div>

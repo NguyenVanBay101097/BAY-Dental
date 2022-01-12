@@ -383,12 +383,12 @@ namespace Infrastructure.Services
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
 
-            var mailMessageObj = GetService<IMailMessageService>();
+            var mailThreadObj = GetService<IMailThreadMessageService>();
             foreach (var sale in self)
             {
                 ///Create log saleorder
                 var bodySaleOrder = string.Format("Hủy phiếu điều trị <b>{0}</b>", sale.Name);
-                await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: sale.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
+                await mailThreadObj.MessagePost(typeof(Partner).Name, sale.PartnerId, body: bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
             }
 
             foreach (var sale in self)
