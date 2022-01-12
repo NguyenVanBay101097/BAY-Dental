@@ -87,6 +87,6 @@ namespace Infrastructure.Services
 
         Task<IEnumerable<PartnerSimple>> GetExist(PartnerGetExistReq val);
         IQueryable<Partner> GetQueryablePartnerFilter(PartnerQueryableFilter val);
-
+        Task<decimal> GetTotalAmountOfSaleOrder(Guid id);
     }
 }

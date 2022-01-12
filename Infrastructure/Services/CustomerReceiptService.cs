@@ -96,6 +96,13 @@ namespace Infrastructure.Services
 
             await CreateAsync(customerReceipt);
 
+            ///Create Log
+            var threadMessageObj = GetService<IMailThreadMessageService>();
+            var partnerObj = GetService<IPartnerService>();
+            var partner = await partnerObj.GetByIdAsync(customerReceipt.PartnerId);
+            var bodyContent = string.Format("Thực hiện thủ tục tiếp nhận <b>{0}</b>", customerReceipt.IsRepeatCustomer ? "tái khám" : "khám mới");
+            await threadMessageObj.MessagePost(partner, body: bodyContent, subjectTypeId: "mail.subtype_receive");
+
             return customerReceipt;
         }
 

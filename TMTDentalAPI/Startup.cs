@@ -397,6 +397,9 @@ namespace TMTDentalAPI
             services.AddScoped<ISaleProductionLineService, SaleProductionLineService>();
             services.AddScoped<ISurveyReportService, SurveyReportService>();
 
+            services.AddScoped<IMailMessageSubtypeService, MailMessageSubtypeService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IMailThreadMessageService, MailThreadMessageService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -606,6 +609,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PaymentProfile());
                 mc.AddProfile(new SaleProductionProfile());
                 mc.AddProfile(new SaleProductionLineProfile());
+                mc.AddProfile(new MailMessageSubtypeProfile());
             };
 
             #endregion

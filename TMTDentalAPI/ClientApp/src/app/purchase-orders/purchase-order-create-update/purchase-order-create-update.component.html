@@ -99,7 +99,7 @@
                                         [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx
                                         formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
-                                    <a (click)="onCreateSupplier()" class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></a>
+                                    <a (click)="onCreateSupplier()" [class.d-none]="purchaseOrder?.state != 'draft'" class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></a>
                                     </div>
                                     <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">

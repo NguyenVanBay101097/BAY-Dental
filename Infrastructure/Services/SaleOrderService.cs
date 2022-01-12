@@ -383,6 +383,13 @@ namespace Infrastructure.Services
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
 
+            var mailMessageObj = GetService<IMailMessageService>();
+            foreach (var sale in self)
+            {
+                ///Create log saleorder
+                var bodySaleOrder = string.Format("Hủy phiếu điều trị <b>{0}</b>", sale.Name);
+                await mailMessageObj.CreateActionLog(body: bodySaleOrder, threadId: sale.PartnerId, threadModel: "res.partner", subtype: "subtype_sale_order");
+            }
 
             foreach (var sale in self)
             {
@@ -459,8 +466,12 @@ namespace Infrastructure.Services
                 await cardObj.UpdateAsync(card);
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
 
-                //tạo 1 message chờ gửi
+                var threadMessageObj = GetService<IMailThreadMessageService>();
+                ///Create log saleorder
+                var bodySaleOrder = string.Format("Hoàn thành phiếu điều trị <b>{0}</b>", sale.Name);
+                await threadMessageObj.MessagePost(sale.Partner, body: bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
 
+                //tạo 1 message chờ gửi
 
             }
 
@@ -1694,7 +1705,9 @@ namespace Infrastructure.Services
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var mailMessageObj = GetService<IMailMessageService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Partner)
                 .Include(x => x.OrderLines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
@@ -1723,6 +1736,17 @@ namespace Infrastructure.Services
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
                 await saleLineObj.CreateSaleProduction(order.OrderLines);
+
+
+                ///Create log saleorder
+                var threadMessageObj = GetService<IMailThreadMessageService>();
+                var bodySaleOrder = string.Format("Tạo phiếu điều trị <b>{0}</b>", order.Name);
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
+
+
+                ///Create log saleorderline
+                var bodySaleOrderLine = string.Format("Sử dụng dịch vụ <b>{0}</b> - phiếu điều trị <b>{1}</b>", string.Join(",", order.OrderLines.Select(s => s.Name).ToList()), order.Name);
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrderLine, subjectTypeId: "mail.subtype_sale_order_line");
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
@@ -1745,6 +1769,8 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             await _GenerateDotKhamSteps(self);
+
+
 
         }
 
@@ -3211,7 +3237,7 @@ namespace Infrastructure.Services
             var attObj = GetService<IIrAttachmentService>();
             var dotkhamObj = GetService<IDotKhamService>();
 
-            var attQr = attObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var attQr = attObj.SearchQuery(x => x.CompanyId == CompanyId);
             var dotkhamQr = dotkhamObj.SearchQuery();
 
             var resQr = from att in attQr

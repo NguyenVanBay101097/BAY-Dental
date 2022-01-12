@@ -50,6 +50,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateTo { get; set; }
 
         public IEnumerable<Aggregator> Aggregate { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 
     public class SaleOrderLinesLaboPaged

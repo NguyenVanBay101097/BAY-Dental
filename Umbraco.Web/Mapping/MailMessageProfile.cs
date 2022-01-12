@@ -13,6 +13,12 @@ namespace Umbraco.Web.Mapping
         public MailMessageProfile()
         {
             CreateMap<MailMessage, MailMessageFormat>();
+
+            CreateMap<MailMessage, MailMessageBasic>();
+
+            CreateMap<MailMessage, MailMessageSave>();
+
+            CreateMap<MailMessageSave, MailMessage>();
         }
     }
 }
