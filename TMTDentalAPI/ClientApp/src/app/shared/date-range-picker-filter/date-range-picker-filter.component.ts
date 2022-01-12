@@ -90,9 +90,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-
-
-    var daterangepickerEl = (this.renderer as any).engine.bodyNode.querySelector(".daterangepicker");
+    var daterangepickerEl = this.picker.datePicker.container[0];
     var btns = daterangepickerEl.querySelector('.drp-buttons') as HTMLElement;
     var applyBtn = daterangepickerEl.querySelector('.drp-buttons .applyBtn')
     this.renderer.listen(applyBtn, 'click', (event) => {
