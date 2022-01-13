@@ -23,21 +23,21 @@
                     {{dataItem.date | date: 'dd/MM/yyyy'}}
                 </ng-template>
             </kendo-grid-column>
-            <kendo-grid-column field="orderPartner" title="Khách hàng" width="150">
+            <kendo-grid-column title="Khách hàng" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.orderPartner?.name}}
+                    {{dataItem.orderPartnerDisplayName || ''}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="name" title="Dịch vụ" width="200">
             </kendo-grid-column>
             <kendo-grid-column field="employee" title="Bác sĩ" width="150">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.employee?.name}}
+                    {{dataItem.employeeName || ''}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column title="ĐVT" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.productUOM ? dataItem.productUOM.name : ""}}
+                    {{dataItem.productUOMName || ''}}
                 </ng-template>
             </kendo-grid-column>
             <kendo-grid-column field="teethDisplay" title="Răng" width="80">
@@ -56,7 +56,7 @@
             </kendo-grid-column>
             <kendo-grid-column field="order" title="Phiếu điều trị" width="120">
                 <ng-template kendoGridCellTemplate let-dataItem>
-                    {{dataItem.order?.name}}
+                    {{dataItem.orderName || ''}}
                 </ng-template>
             </kendo-grid-column>
         </kendo-grid>

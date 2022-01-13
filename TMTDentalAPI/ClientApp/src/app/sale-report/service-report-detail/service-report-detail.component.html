@@ -10,7 +10,10 @@
     </kendo-grid-column>
     <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
     </kendo-grid-column>
-    <kendo-grid-column title="ĐVT" width="120" field="productUOMName">
+    <kendo-grid-column title="ĐVT" width="120">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.productUOM ? dataItem.productUOM.name : ''}}
+        </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="teethDisplay" title="Răng" width="100">
     </kendo-grid-column>
