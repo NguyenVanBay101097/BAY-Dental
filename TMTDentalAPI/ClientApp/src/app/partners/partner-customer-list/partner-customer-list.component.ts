@@ -123,7 +123,7 @@ export class PartnerCustomerListComponent implements OnInit {
     'draft': 'Chưa phát sinh'
   };
   filterState = [
-    { name: 'Theo dõi', value: true },
+    { name: 'Đang theo dõi', value: true },
     { name: 'Ngưng theo dõi', value: false }
   ];
 
