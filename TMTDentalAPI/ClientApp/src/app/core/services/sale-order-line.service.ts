@@ -44,7 +44,7 @@ export class SaleOrderLinesLaboPaged {
 export class SaleOrderLineViewModel {
     id: string;
     name: string;
-    state:string;
+    state: string;
     orderId: string;
     order: SaleOrderBasic;
     productId: string;
@@ -90,7 +90,7 @@ export class SaleOrderLinePagging {
     offset: number;
     totalItems: number;
     items: SaleOrderLineBasic[];
-  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class SaleOrderLineService {
@@ -101,7 +101,7 @@ export class SaleOrderLineService {
         return this.http.post<SaleOrderLineOnChangeProductResult>(this.baseApi + this.apiUrl + '/OnChangeProduct', val);
     }
 
-    getPaged(val): Observable<PagedResult2<SaleOrderLinePagging>> {    
+    getPaged(val): Observable<PagedResult2<SaleOrderLinePagging>> {
         return this.http.get<PagedResult2<SaleOrderLinePagging>>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
     }
 
@@ -173,19 +173,31 @@ export class SaleOrderLineService {
     }
 
     getSaleReportExportExcel(val) {
-        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportExcel', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportExcel', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
     }
 
-    updateState(id,state){
-        return this.http.put(this.baseApi + this.apiUrl + '/'+id+ '/UpdateState?State=' + state, null);
+    updateState(id, state) {
+        return this.http.put(this.baseApi + this.apiUrl + '/' + id + '/UpdateState?State=' + state, null);
     }
 
-    SaleReportPrint(val){
-        return this.http.get(this.baseApi + 'SaleOrderLine/SaleReportPrint', { params: new HttpParams({ fromObject: val }), responseType: 'text'});
+    actionDone(ids) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionDone', ids);
+    }
+
+    actionCancel(ids) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionCancel', ids);
+    }
+
+    actionUnlock(ids) {
+        return this.http.post(this.baseApi + this.apiUrl + '/ActionUnlock', ids);
+    }
+
+    SaleReportPrint(val) {
+        return this.http.get(this.baseApi + 'SaleOrderLine/SaleReportPrint', { params: new HttpParams({ fromObject: val }), responseType: 'text' });
     }
 
     getSaleReportExportPdf(val) {
-        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportPdf', { params: new HttpParams({ fromObject: val }),  responseType: 'blob'  });
+        return this.http.get(this.baseApi + this.apiUrl + '/GetSaleReportExportPdf', { params: new HttpParams({ fromObject: val }), responseType: 'blob' });
     }
 
     updateSteps(val) {
@@ -193,15 +205,15 @@ export class SaleOrderLineService {
     }
 
     getTeethList(id) {
-        return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetTeethList');
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetTeethList');
     }
 
-    getListServiceCardCardApplyable(id){
-        return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetListServiceCardCardApplyable');
+    getListServiceCardCardApplyable(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetListServiceCardCardApplyable');
     }
 
-    getListCardCardApplyable(id){
-        return this.http.get(this.baseApi + this.apiUrl + '/'+ id + '/GetListCardCardApplyable');
+    getListCardCardApplyable(id) {
+        return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetListCardCardApplyable');
     }
 
     applyServiceCardCard(val) {
@@ -213,6 +225,6 @@ export class SaleOrderLineService {
     }
 
     debtPayment(id) {
-        return this.http.post(this.baseApi + this.apiUrl + "/" +id +  '/DebtPayment', null);
+        return this.http.post(this.baseApi + this.apiUrl + "/" + id + '/DebtPayment', null);
     }
 }

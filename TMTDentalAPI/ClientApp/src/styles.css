@@ -2363,3 +2363,6 @@ kendo-pager-page-sizes select{
     -webkit-transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
+.popover {
+    font-size: 1rem!important;
+}
