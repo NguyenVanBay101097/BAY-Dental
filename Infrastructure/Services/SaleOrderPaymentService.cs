@@ -583,7 +583,7 @@ namespace Infrastructure.Services
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
-                .Include(x => x.Order)
+                .Include(x => x.Order).ThenInclude(s => s.Partner)
                 .Include(x => x.Lines)
                 .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
                 .ToListAsync();
@@ -651,6 +651,10 @@ namespace Infrastructure.Services
                     await insurancePaymentObj.Unlink(insurancePaymentIds);
 
                 saleOrderPayment.State = "cancel";
+
+                //Create Log SaleOrderPayment
+                var insuranceId = saleOrderPayment.PaymentRels.Any(s => s.Payment.InsuranceId.HasValue) ? saleOrderPayment.PaymentRels.Select(s => s.Payment.InsuranceId).FirstOrDefault() : null;
+                await GenerateLogSaleOrderPayment(saleOrderPayment, insuranceId);
             }
 
             await UpdateAsync(saleOrderPayments);

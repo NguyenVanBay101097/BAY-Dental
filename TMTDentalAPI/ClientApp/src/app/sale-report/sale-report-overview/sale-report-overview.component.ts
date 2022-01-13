@@ -38,7 +38,7 @@ export class SaleReportOverviewComponent implements OnInit {
   sumAmountPaid: number = 0;
   sumAmountResidual: number = 0;
   aggregates: any;
-  filterAggregates: [
+  filterAggregates: any[] = [
     { field: 'PriceSubTotal', aggregate: 'sum' },
     { field: 'AmountInvoiced', aggregate: 'sum' }
   ];

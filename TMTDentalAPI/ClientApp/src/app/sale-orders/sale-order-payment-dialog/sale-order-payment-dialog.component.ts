@@ -53,7 +53,8 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   partnerCash = 0;
   returnCash = 0;
   maxAmount: number = 0;
-  partner: any;
+  partnerId: string;
+  partnerName: string;
 
   isPaymentForService = false;
 
@@ -88,7 +89,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       debtJournal: null,
       debtAmount: 0,
       debtNote: null,
-      partnerId: this.partner.id,
+      partnerId: this.partnerId || '',
       isPaymentForService: false
     });
 
@@ -119,7 +120,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   }
 
   getAmountAdvanceBalance() {
-    this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+    this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe(result => {
       this.advanceAmount = result;
     })
   }
@@ -249,7 +250,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         backdrop: "static",
       });
       modalRef.componentInstance.title = "Thanh toán thành công";
-      modalRef.componentInstance.name = this.partner?.name;
+      modalRef.componentInstance.name = this.partnerName || '';
       modalRef.componentInstance.amountPayment = this.paymentFC.isDebtPayment.value ? this.getAmountTotalPayment() : this.paymentForm.get('amount').value;
       modalRef.result.then(
         res => {
@@ -435,7 +436,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     );
     if (index == -1) {
       if (journal.type == 'advance') {
-        this.partnerService.getAmountAdvanceBalance(this.partner.id).subscribe(result => {
+        this.partnerService.getAmountAdvanceBalance(this.partnerId).subscribe(result => {
           var soTienConLai = this.amount - this.laySoTienThanhToanExceptCashAndIndex(index);
           var g = this.fb.group({
             journalId: journal.id,
