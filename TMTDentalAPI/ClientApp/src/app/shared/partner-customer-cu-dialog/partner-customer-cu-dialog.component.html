@@ -17,7 +17,7 @@
                                 <div>
                                     <div><a [routerLink]="['/partners/customer/' + dataItem.id]"><b>{{dataItem.name}}</b></a></div>
                                   <div class="text-black-50">{{ dataItem.dateOfBirth }}</div>
-                                  <div class="text-black-50">{{ dataItem.phone ? dataItem.phone + ' - ': '' }}{{dataItem.email}}</div>
+                                  <div class="text-black-50">{{ dataItem.phone }}{{dataItem.phone && dataItem.email ? ' - ': ''}}{{dataItem.email}}</div>
                                 </div>
                             </ng-template>
                           </kendo-autocomplete>
