@@ -40,6 +40,9 @@
                         [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onDeleteEvent)="onDeleteLine(i)"
                         (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
                         (onActiveEvent)="onActiveLine($event, line)" (onUpdateStateEvent)="onUpdateStateLine(i, $event)"
+                        (actionDoneEvent)="onLineActionDone(i)"
+                        (actionCancelEvent)="onLineActionCancel(i)"
+                        (actionUnlockEvent)="onLineActionUnlock(i)"
                         [orderState]="saleOrder?.state">
                     </app-sale-order-line-cu>
                 </ng-container>
@@ -201,56 +204,43 @@
                                         <span>{{saleOrder.dateOrder | date: 'short'}}</span>
                                         <button *ngIf="saleOrder.state != 'done'" class="text-success"
                                             #popover="ngbPopover" triggers="manual"
+                                            popoverClass="mw-100"
                                             (click)="openUpdateOrderPopover(popover)" title="Sửa"
                                             style="outline: none;background: none;border: none;" data-container="body"
-                                            [ngbPopover]="popContent" placement="bottom-right" [autoClose]="'outside'">
+                                            [ngbPopover]="popContent" placement="top-right" [autoClose]="'outside'">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </div>
                                     <ng-template #popContent>
                                         <div [formGroup]="formGroup" class="o_form_view" [class.ng-submitted]="submitted">
-                                            <table class="o_group m-0 o_group_col_12">
-                                               <tbody>
-                                                <tr>
-                                                    <td colspan="1" class="o_td_label o_td_label_sm">
-                                                        <label class="o_form_label">
-                                                            Ngày lập phiếu
-                                                        </label>
-                                                    </td>
-                                                    <td colspan="1" style="width: 100%;">
-                                                        <kendo-datepicker [disabled]="saleOrder.state != 'draft'"
-                                                            style="width: 100%" format="dd/MM/yyyy HH:mm"
-                                                            formControlName="dateOrder"
-                                                            [popupSettings]="{appendTo: 'component'}">
-                                                        </kendo-datepicker>
-                                                        <div *ngIf="f.dateOrder.errors && submitted"
-                                                            class="text-danger">
-                                                            <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu
-                                                            </div>
+                                            <div class="mb-2">
+                                                <label>Ngày lập phiếu</label>
+                                                <div>
+                                                    <kendo-datepicker [disabled]="saleOrder.state != 'draft'"
+                                                        style="width: 100%" format="dd/MM/yyyy HH:mm"
+                                                        formControlName="dateOrder"
+                                                        [popupSettings]="{appendTo: 'component'}">
+                                                    </kendo-datepicker>
+                                                    <div *ngIf="f.dateOrder.errors && submitted"
+                                                        class="text-danger">
+                                                        <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="1" class="o_td_label o_td_label_sm">
-                                                        <label class="o_form_label">
-                                                            Bác sĩ đại diện
-                                                        </label>
-                                                    </td>
-                                                    <td colspan="1" style="width: 100%;">
-                                                        <kendo-combobox [popupSettings]="{appendTo: 'component'}"  #doctorCbx formControlName="doctor" [data]="doctors" [textField]="'name'" [valueField]="'id'"
-                                                         [filterable]="true" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }"></kendo-combobox>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="o_td_label">
-                                                        <button type="button" class="btn btn-primary"
-                                                            (click)="saveSaleOrderInfo();">
-                                                            Lưu
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                               </tbody>
-                                            </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label>Bác sĩ đại diện</label>
+                                                <div>
+                                                    <kendo-combobox [popupSettings]="{appendTo: 'component'}"  #doctorCbx formControlName="doctor" [data]="doctors" [textField]="'name'" [valueField]="'id'"
+                                                    [filterable]="true" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }"></kendo-combobox>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-primary"
+                                                    (click)="saveSaleOrderInfo();">
+                                                    Lưu
+                                                </button>
+                                            </div>
                                         </div>
                                     </ng-template>
 

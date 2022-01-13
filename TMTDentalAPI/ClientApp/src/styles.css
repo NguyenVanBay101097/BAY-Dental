@@ -2351,3 +2351,6 @@ kendo-pager-page-sizes select{
     margin-top: var(--bs-gutter-y);
 }
 
+.popover {
+    font-size: 1rem!important;
+}

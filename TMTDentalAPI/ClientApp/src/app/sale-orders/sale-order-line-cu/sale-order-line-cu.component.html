@@ -17,8 +17,9 @@
                         <img src="../../../assets/icons/icon-state-swich.svg" alt="chuyển đổi trạng thái">
                     </div>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a href="javascript: void(0);" (click)="onSWitchState(item.value)"
-                            *ngFor="let item of getListSwitchState(line.state)" class="dropdown-item">{{item.text}}</a>
+                        <button type="button" *ngIf="line.state == 'done' || line.state == 'cancel'" (click)="actionUnlock()" class="dropdown-item">Đang điều trị</button>
+                        <button type="button" *ngIf="line.state == 'sale'" (click)="actionDone()" class="dropdown-item">Hoàn thành</button>
+                        <button type="button" *ngIf="line.state == 'sale'" (click)="actionCancel()" class="dropdown-item">Ngừng điều trị</button>
                     </div>
                 </div>
             </div>

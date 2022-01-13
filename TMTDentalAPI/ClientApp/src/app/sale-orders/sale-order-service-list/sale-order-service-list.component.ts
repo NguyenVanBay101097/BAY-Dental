@@ -755,7 +755,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
           this.orderLines.some(x => x.state == 'done')
         ) {
           this.saleOrder.state = 'done';
-        } else if(this.orderLines.some(x => x.state == 'sale')) {
+        } else if (this.orderLines.some(x => x.state == 'sale')) {
           this.saleOrder.state = 'sale';
         }
 
@@ -777,6 +777,100 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
           })
 
         }
+      })
+    }).catch(() => { });
+  }
+
+  computeOrderState() {
+    if (this.orderLines.every(x => x.state == 'done' || x.state == 'cancel') &&
+      this.orderLines.some(x => x.state == 'done')
+    ) {
+      this.saleOrder.state = 'done';
+    } else if (this.orderLines.some(x => x.state == 'sale')) {
+      this.saleOrder.state = 'sale';
+    }
+  }
+
+  onLineActionDone(lineIndex) {
+    if (this.lineSelected != null && this.lineSelected != line) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+      return;
+    }
+
+    var line = this.orderLines[lineIndex];
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = `Hoàn thành dịch vụ ${line.name}`;
+    modalRef.componentInstance.body = `Bạn có xác nhận hoàn thành dịch vụ không?`;
+    modalRef.componentInstance.body2 = "(Lưu ý: Sau khi hoàn thành không thể chỉnh sửa, xóa dịch vụ)";
+    modalRef.result.then(() => {
+      this.saleOrderLineService.actionDone([line.id]).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
+        line.state = 'done';
+
+        this.computeOrderState();
+
+        if (line.priceSubTotal - line.amountInvoiced > 0) {
+          let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+          modalRef.componentInstance.title = `Ghi công nợ số tiền ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ`;
+          modalRef.componentInstance.body = `Dịch vụ ${line.name} còn ${this._decimalPipe.transform((line.priceSubTotal - line.amountInvoiced))}đ chưa được thanh toán. Bạn có muốn ghi công nợ số tiền này?`;
+          modalRef.componentInstance.confirmText = "Đồng ý";
+          modalRef.componentInstance.closeText = "Không đồng ý";
+          modalRef.componentInstance.closeClass = "btn-danger";
+          modalRef.result.then(() => {
+            this.saleOrderLineService.debtPayment(line.id)
+              .subscribe(r => {
+                this.notify('success', 'Ghi nợ thành công');
+                this.saleOrder.totalPaid = this.saleOrder.totalPaid + (line.priceSubTotal - line.amountInvoiced);
+                this.loadPartnerDebt();
+                line.amountInvoiced = line.priceSubTotal;
+              });
+          })
+
+        }
+      })
+    }).catch(() => { });
+  }
+
+  onLineActionCancel(lineIndex) {
+    if (this.lineSelected != null && this.lineSelected != line) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+      return;
+    }
+
+    var line = this.orderLines[lineIndex];
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = `Ngừng dịch vụ ${line.name}`;
+    modalRef.componentInstance.body = `Bạn có xác nhận ngừng dịch vụ không?`;
+    modalRef.componentInstance.body2 = "(Lưu ý: Sau khi ngừng không thể chỉnh sửa, xóa dịch vụ)";
+    modalRef.result.then(() => {
+      this.saleOrderLineService.actionCancel([line.id]).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
+        line.state = 'cancel';
+
+        this.computeOrderState();
+      })
+    }).catch(() => { });
+  }
+
+  onLineActionUnlock(lineIndex) {
+    if (this.lineSelected != null && this.lineSelected != line) {
+      this.notify('error', 'Vui lòng hoàn thành dịch vụ hiện tại để chỉnh sửa dịch vụ khác');
+      return;
+    }
+
+    var line = this.orderLines[lineIndex];
+
+    let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal' });
+    modalRef.componentInstance.title = `Tiếp tục dịch vụ ${line.name}`;
+    modalRef.componentInstance.body = `Bạn có xác nhận tiếp tục dịch vụ không?`;
+    modalRef.result.then(() => {
+      this.saleOrderLineService.actionUnlock([line.id]).subscribe(() => {
+        this.notify('success', 'Lưu thành công');
+        line.state = 'sale';
+
+        this.computeOrderState();
       })
     }).catch(() => { });
   }

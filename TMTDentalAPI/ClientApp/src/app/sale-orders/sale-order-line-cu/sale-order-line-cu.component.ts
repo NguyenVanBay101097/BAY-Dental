@@ -30,6 +30,9 @@ export class SaleOrderLineCuComponent implements OnInit {
   @Output() onCancelEvent = new EventEmitter<any>();
   @Output() onActiveEvent = new EventEmitter<any>();
   @Output() onUpdateStateEvent = new EventEmitter<any>();
+  @Output() actionDoneEvent = new EventEmitter<any>();
+  @Output() actionCancelEvent = new EventEmitter<any>();
+  @Output() actionUnlockEvent = new EventEmitter<any>();
 
   onUpdateSignSubject = new Subject<boolean>();//emit true: đã update xong, false: fail update
 
@@ -472,6 +475,18 @@ export class SaleOrderLineCuComponent implements OnInit {
 
   onSWitchState(state) {
     this.onUpdateStateEvent.next(state);
+  }
+
+  actionDone() {
+    this.actionDoneEvent.emit(true);
+  }
+
+  actionCancel() {
+    this.actionCancelEvent.emit(true);
+  }
+
+  actionUnlock() {
+    this.actionUnlockEvent.emit(true);
   }
 
   getListSwitchState(state) {

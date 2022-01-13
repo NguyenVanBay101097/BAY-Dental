@@ -354,6 +354,36 @@ namespace TMTDentalAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionDone(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ActionDone(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionCancel(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ActionCancel(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnlock(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _saleLineService.ActionUnlock(ids);
+            _unitOfWork.Commit();
+
+            return NoContent();
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSaleReportExportPdf([FromQuery] SaleOrderLinesPaged val)
         {
