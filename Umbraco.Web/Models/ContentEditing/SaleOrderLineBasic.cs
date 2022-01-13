@@ -94,6 +94,8 @@ namespace Umbraco.Web.Models.ContentEditing
                 }
             }
         }
+
+        public bool IsActive { get; set; }
     }
 
     public class SaleOrderLineSmsSimple
@@ -107,23 +109,15 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ServiceSaleReportExcel// mẫu xuất excel báo cáo dịch vụ đang điều trị dựa vào saleorderlinebasic
     {
         [EpplusDisplay("Ngày tạo")]
-        public DateTime DateCreated { get; set; }
+        public DateTime Date { get; set; }
         [EpplusDisplay("Khách hàng")]
         public string OrderPartnerName { get; set; }
         [EpplusDisplay("Dịch vụ")]
         public string Name { get; set; }
         [EpplusDisplay("Bác sĩ")]
         public string EmployeeName { get; set; }
-        [EpplusIgnore]
-        public UoMBasic ProductUOM { get; set; }
         [EpplusDisplay("Đơn vị tính")]
-        public string ProductUOMName { 
-            get
-            {
-                return ProductUOM != null ? ProductUOM.Name : "";
-            }
-            set { }
-        }
+        public string ProductUOMName { get; set; }
         [EpplusIgnore]
         public string ToothType { get; set; }
         [EpplusIgnore]
