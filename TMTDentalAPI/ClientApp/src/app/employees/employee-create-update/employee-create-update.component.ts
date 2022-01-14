@@ -121,6 +121,8 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       this.loadListCommissions();
+      this.loadListcommissionAssistants();
+      this.loadListcommissionCounselors();
       this.getEmployeeInfo();
       // this.loadUsers();
       // this.loadstructureTypes();
