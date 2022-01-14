@@ -47,6 +47,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IIRModelDataService _iRModelDataService;
         private readonly IMailMessageService _mailMessageService;
         private readonly IMailThreadMessageService _threadMessageService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IIRModelDataService _modelDataService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly ISaleOrderLineService _saleOrderLineService;
+        private readonly ICompanyService _companyService;
+
+
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -61,7 +68,12 @@ namespace TMTDentalAPI.Controllers
             IIRModelDataService iRModelDataService,
             IAccountCommonPartnerReportService accReportService,
             IMailMessageService mailMessageService,
-            IMailThreadMessageService threadMessageService)
+            IMailThreadMessageService threadMessageService,
+            IPrintTemplateConfigService printTemplateConfigService,
+            IIRModelDataService modelDataService,
+            IPrintTemplateService printTemplateService,
+            ISaleOrderLineService saleOrderLineService,
+            ICompanyService companyService)
         {
             _accReportService = accReportService;
             _partnerService = partnerService;
@@ -78,6 +90,11 @@ namespace TMTDentalAPI.Controllers
             _iRModelDataService = iRModelDataService;
             _mailMessageService = mailMessageService;
             _threadMessageService = threadMessageService;
+            _printTemplateConfigService = printTemplateConfigService;
+            _modelDataService = modelDataService;
+            _printTemplateService = printTemplateService;
+            _saleOrderLineService = saleOrderLineService;
+            _companyService = companyService;
         }
 
         [HttpGet]
@@ -937,6 +954,66 @@ namespace TMTDentalAPI.Controllers
         {         
             var message = await _threadMessageService.MessagePost(typeof(Partner).Name, id, val.body, messageType: "comment");
             return Ok();
+        }
+
+        [HttpPost("PrintTreatmentHistories")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Print")]
+        public async Task<IActionResult> GetPrintTreatmentHistories(PartnerTreatmentHistoriesPrintRequest val)
+        {
+            //Lấy mẫu in
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_treatment_histories" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.tmp_treatment_histories");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+            var states = new string[] { "sale", "done","cancel"};
+            var companyId = CompanyId;
+            var saleOrderLines = await _saleOrderLineService.SearchQuery(x => x.OrderPartnerId == val.Id && states.Contains(x.State) && x.CompanyId == companyId).ToListAsync();
+            var company = await _companyService.GetByIdAsync(companyId);
+            var partner = await _partnerService.GetByIdAsync(val.Id);
+
+            //lấy data
+
+            //render
+
+            //return
+
+            ////tim trong bảng config xem có dòng nào để lấy ra template
+            //var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_treatment_histories" && x.IsDefault)
+            //    .Include(x => x.PrintPaperSize)
+            //    .Include(x => x.PrintTemplate)
+            //    .FirstOrDefaultAsync();
+
+            //PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            //PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            //if (template == null)
+            //{
+            //    //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+            //    template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_treatment_histories");
+            //    if (template == null)
+            //        throw new Exception("Không tìm thấy mẫu in mặc định");
+            //}
+
+            ////lấy object đầy đủ
+            //var saleOrderlines = await _saleOrderLineService.GetPagedResultAsync(val);
+            //if (val.CompanyId.HasValue)
+            //{
+
+            //}
+
+            var result = await _printTemplateService.GeneratePrintHtml(template, saleOrders);
+
+            return Ok(new PrintData() { html = result });
         }
     }
 }

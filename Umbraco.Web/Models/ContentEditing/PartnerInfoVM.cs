@@ -197,4 +197,17 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? Customer { get; set; }
     }
 
+    public class PartnerTreatmentHistoriesPrintRequest
+    {
+        public Guid Id { get; set; }
+    }
+
+    public class PartnerTreatmentHistoriesPrintResponse
+    {
+        public string DisplayName { get; set; }
+        public IEnumerable<SaleOrderLineBasic> SaleOrderLines { get; set; } = new List<SaleOrderLineBasic>();
+        public CompanyPrintVM Company { get; set; }
+        public IEnumerable<HistorySimple> HistorySimples { get; set; } = new List<HistorySimple>();
+    }
+
 }
