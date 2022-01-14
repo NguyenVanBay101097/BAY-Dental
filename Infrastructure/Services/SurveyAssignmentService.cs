@@ -103,6 +103,10 @@ namespace Infrastructure.Services
         private IQueryable<SurveyAssignment> GetAllQuery(SurveyAssignmentPaged val)
         {
             var query = SearchQuery();
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Ref.Contains(val.Search) || x.SaleOrder.Name.Contains(val.Search)
