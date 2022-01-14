@@ -254,19 +254,19 @@
                                 </div>
                                 <div class="filter-content">
                                     <div class="btn-group btn-group-employee">
-                                        <li class="list-group-item" [class.active]="employeeSelected === ''"
-                                            (click)="onChangeEmployee('')">
+                                        <li class="list-group-item" [class.active]="!filterEmployeeId"
+                                            (click)="onChangeEmployee()">
                                             Tất cả
                                         </li>
                                         <ng-container *ngFor="let employee of listEmployees; index as i">
                                             <li class="list-group-item"
-                                                [class.active]="employeeSelected === employee.id"
+                                                [class.active]="filterEmployeeId === employee.id"
                                                 (click)="onChangeEmployee(employee.id)">
                                                 {{employee.name}}
                                             </li>
                                         </ng-container>
-                                        <li class="list-group-item" [class.active]="employeeSelected === undefined"
-                                            (click)="onChangeEmployee(undefined)">
+                                        <li class="list-group-item" [class.active]="filterDoctorIsNull"
+                                            (click)="onFilterDoctorIsNull()">
                                             Chưa xác định
                                         </li>
                                     </div>

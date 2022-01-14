@@ -366,10 +366,6 @@
     z-index: 2;
 }
 
-.list-data-event-day .date-event-v2:hover {
-    /* box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5); */
-}
-
 .list-data-event-day {
     position: relative;
     z-index: 2;
@@ -406,10 +402,6 @@
     margin-top: .75rem;
     position: relative;
     z-index: 2;
-}
-
-.list-data-event-week .date-event-v2:hover {
-    /* box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5); */
 }
 
 .list-data-event-week .date-event-v2:first-child {
@@ -606,8 +598,6 @@
     color: tomato;
     cursor: pointer;
 }
-
-.dialog-calendar .body {}
 
 /* Hide Arrows From Input Number */
 /* Chrome, Safari, Edge, Opera */

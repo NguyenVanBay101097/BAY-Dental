@@ -70,7 +70,8 @@ export class AppointmentKanbanComponent implements OnInit {
   isRepeatCustomer: boolean;
 
   listEmployees: EmployeeBasic[] = [];
-  employeeSelected: string = '';
+  filterEmployeeId: string; //id bác sĩ filter, undefined thì là tất cả, có giá trị là lọc bác sĩ
+  filterDoctorIsNull: any; //lọc bác sĩ chưa xác định, undefined là ko lọc, true/false là lọc chưa xác định
 
   viewKanban: string = "calendar"; // "calendar", "list"
   gridData: GridDataResult;
@@ -135,13 +136,18 @@ export class AppointmentKanbanComponent implements OnInit {
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
-      .subscribe(() => {
-        this.clientFilter = true;
-        this.renderCalendar(); // Render Calendar
+      .subscribe((value) => {
+         this.processSearch(value);
       });
 
     this.loadListEmployees();
     // this.loadDoctorList();
+  }
+
+  processSearch(value: string) {
+    //  lọc theo từ khóa tìm kiếm
+    this.search = value;
+    this.filterDataClient(); // Render Calendar
   }
 
   processDates() {
@@ -181,30 +187,32 @@ export class AppointmentKanbanComponent implements OnInit {
     });
   }
 
-  onChangeEmployee(employeeId) {
-    this.employeeSelected = employeeId;
-    this.renderCalendar(); // Render Calendar
+  onChangeEmployee(employeeId = undefined) {
+    this.filterEmployeeId = employeeId;
+    this.filterDoctorIsNull = undefined;
+    this.loadDataFromApi(); // Render Calendar
   }
 
-  // onChangeDate(e) {
-  //   this.dateFrom = e.dateFrom;
-  //   this.dateTo = e.dateTo;
-  //   this.loadData();
-  //   this.loadGridData();
-  // }
+  onFilterDoctorIsNull() {
+    this.filterEmployeeId = undefined;
+    this.filterDoctorIsNull = true;
+    this.loadDataFromApi();
+  }
 
   onChangeState(state) {
     this.stateSelected = state;
     if (state == 'overdue') {
       this.state = 'confirmed';
       this.isLateFilter = true;
+    } else if (state == 'confirmed') {
+      this.state = 'confirmed';
+      this.isLateFilter = false;
     } else {
       this.state = state;
       this.isLateFilter = undefined;
     }
-    this.clientFilter = true;
 
-    this.renderCalendar(); // Render Calendar
+    this.filterDataClient();
   }
 
   onChangeType(type) {
@@ -216,9 +224,8 @@ export class AppointmentKanbanComponent implements OnInit {
     } else {
       this.isRepeatCustomer = undefined;
     }
-    this.clientFilter = true;
 
-    this.renderCalendar(); // Render Calendar
+    this.filterDataClient();
   }
 
   // createAppointment() {
@@ -230,59 +237,49 @@ export class AppointmentKanbanComponent implements OnInit {
   // }
 
   refreshData() {
-    this.renderCalendar(); // Render Calendar
+    this.loadDataFromApi(); // Render Calendar
   }
 
-  loadData() {
-    // this.resetData();
-    // this.loading = true;
-    if (this.clientFilter) {
-      this.loadItems();
-    } else {
-      this.loadDataFromApi();
+  filterDataClient() {
+    let sourceAppoinments = this.appointments.slice();
+    if (this.state) {
+      sourceAppoinments = sourceAppoinments.filter(x => x.state == this.state);
     }
-  }
 
-  loadItems() {
-    this.dataAppointmentsForFilter = [...this.dataAppointments];
+    if (this.isLateFilter != undefined) {
+      sourceAppoinments = sourceAppoinments.filter(x => x.isLate == this.isLateFilter);
+    }
 
-    // lọc theo trạng thái
-    this.dataAppointmentsForFilter = this.state ? this.dataAppointmentsForFilter.filter(x => {
-      return this.isLateFilter ?
-        (this.state === x.state && Boolean(x.isLate)) :
-        (this.state === x.state && Boolean(!x.isLate));
-    }) : [...this.dataAppointments];
-
-    // lọc theo loại khám
     if (this.isRepeatCustomer != undefined) {
-      this.dataAppointmentsForFilter = this.dataAppointmentsForFilter.filter(x => {
-        return this.isRepeatCustomer === x.isRepeatCustomer;
+      sourceAppoinments = sourceAppoinments.filter(x => x.isRepeatCustomer == this.isRepeatCustomer);
+    }
+
+    if (this.search) {
+      sourceAppoinments = sourceAppoinments.filter(x => {
+        return _.includes(x.partnerName.toLowerCase(), this.search.toLowerCase()) || _.includes(x.partnerPhone.toLowerCase(), this.search.toLowerCase());
       });
     }
 
-    //  lọc theo từ khóa tìm kiếm
-    const search = this.search ? this.search.toLowerCase() : '';
-    if (search) {
-      this.dataAppointmentsForFilter = this.dataAppointmentsForFilter.filter(x => {
-        return _.includes(x.partnerName.toLowerCase(), search) || _.includes(x.partnerPhone.toLowerCase(), search);
-      });
-    }
-
-    this.loadAppointmentToCalendar();
-    this.clientFilter = false;
+    this.filterAppointments = sourceAppoinments;
+    this.renderCalendar();
   }
 
-  onCountState(data: any): number {
-    return data ? this.dataAppointments.filter(x => {
-      return data === 'overdue' ? (x.state === 'confirmed' && Boolean(x.isLate)) : (x.state === data && Boolean(!x.isLate))
-    }).length || 0 : this.dataAppointments.length;
+  onCountState(state: string): number {
+    if (state === 'overdue') {
+      return this.appointments.filter(x => x.state == 'confirmed' && x.isLate).length;
+    } else if (state == 'confirmed') {
+      return this.appointments.filter(x => x.state == state && !x.isLate).length;
+    } else if (state) {
+      return this.appointments.filter(x => x.state == state).length;
+    } else {
+      return this.appointments.length;
+    }
   }
 
   onCountType(value: any): number {
-    return value ? this.dataAppointments.filter(x => {
+    return value ? this.appointments.filter(x => {
       return value === 'repeat' ? Boolean(x.isRepeatCustomer) : Boolean(!x.isRepeatCustomer)
-    }).length : this.dataAppointments.length || 0;
-
+    }).length : this.appointments.length;
   }
 
   loadDataFromApi() {
@@ -294,10 +291,10 @@ export class AppointmentKanbanComponent implements OnInit {
     //   val.isLate = this.isLateFilter;
     // }
     val.search = this.search || '';
-    val.doctorId = this.employeeSelected || '';
+    val.doctorId = this.filterEmployeeId || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-    val.doctorIsNull = this.employeeSelected == undefined ? true : false;
+    val.doctorIsNull = this.filterDoctorIsNull || '';
     // if (this.isRepeatCustomer != undefined) {
     //   val.isRepeatCustomer = this.isRepeatCustomer;
     // }
@@ -312,8 +309,7 @@ export class AppointmentKanbanComponent implements OnInit {
       this.gridData = result;
       this.loading = false;
       this.appointments = result.data;
-      this.filterAppointments = this.appointments.slice();
-      this.renderCalendar();
+      this.filterDataClient();
     }, (error: any) => {
       console.log(error);
       this.loading = false;
@@ -454,7 +450,7 @@ export class AppointmentKanbanComponent implements OnInit {
       val.isLate = this.isLateFilter;
     }
     val.search = this.search || '';
-    val.doctorId = this.employeeSelected || '';
+    val.doctorId = this.filterEmployeeId || '';
     val.dateTimeFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTimeTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
     if (this.isRepeatCustomer != undefined) {
@@ -1089,7 +1085,7 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.result.then(result => {
-      this.renderCalendar(); // Render Calendar
+      this.loadDataFromApi(); // Render Calendar
     }, () => { });
   }
 
@@ -1103,7 +1099,7 @@ export class AppointmentKanbanComponent implements OnInit {
         modalRef.componentInstance.appointId = id;
         modalRef.componentInstance.receiveAppointmentDisplay = res;
         modalRef.result.then(result => {
-          this.renderCalendar(); // Render Calendar
+          this.loadDataFromApi(); // Render Calendar
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,

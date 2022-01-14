@@ -87,7 +87,7 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
                 dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer, doctorIsNull: val.DoctorIsNull);
 
             var totalItems = await query.CountAsync();
@@ -176,7 +176,7 @@ namespace Infrastructure.Services
         public IQueryable<Appointment> GetSearchQuery(string search = "", Guid? partnerId = null,
             string state = "", DateTime? dateTo = null, DateTime? dateFrom = null, Guid? dotKhamId = null,
             Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null,
-            bool? isRepeatCustomer = null , bool doctorIsNull = false)
+            bool? isRepeatCustomer = null, bool? doctorIsNull = null)
         {
             var query = SearchQuery();
             var today = DateTime.Today;
@@ -239,8 +239,8 @@ namespace Infrastructure.Services
             if (doctorId.HasValue)
                 query = query.Where(x => x.DoctorId == doctorId.Value);
 
-            if(doctorIsNull == true)
-                query = query.Where(x => x.DoctorId == null);
+            if (doctorIsNull.HasValue)
+                query = query.Where(x => !x.DoctorId.HasValue == doctorIsNull.Value);
 
             return query;
         }
