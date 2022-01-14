@@ -57,6 +57,12 @@
                 {{dataItem.partnerName}}
             </ng-template>
         </kendo-grid-column>
+        <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        field="doctor" title="Bác sĩ đại diện" width="100">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.doctor?.name}}
+        </ng-template>
+    </kendo-grid-column>
         <kendo-grid-column class="text-right"
             [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="amountTotal"
             title="Tiền điều trị" width="120" format="{0:n0}">

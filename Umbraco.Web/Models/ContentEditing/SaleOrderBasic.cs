@@ -53,6 +53,9 @@ namespace Umbraco.Web.Models.ContentEditing
                 }
             }
         }
+        public decimal? AmountDiscountTotal { get; set; }
+
+        public string DoctorName { get; set; }
     }
 
     public class SaleOrderSimple

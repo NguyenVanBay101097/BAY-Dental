@@ -96,7 +96,7 @@ export class SaleOrderManagementComponent implements OnInit {
       this.saleOrdersData = res;
       this.loading = false;
     }, err => {
-      console.log(err);
+      console.log(err); 
       this.loading = false;
     })
   }

@@ -44,7 +44,7 @@ export class OrderLaboListComponent implements OnInit {
   constructor(
     private laboOrderService: LaboOrderService,
     private modalService: NgbModal,
-    private notificationService: NotificationService, 
+    private notificationService: NotificationService,
     private checkPermissionService: CheckPermissionService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
@@ -140,8 +140,8 @@ export class OrderLaboListComponent implements OnInit {
       this.loadDataFromApi();
     }, er => { });
   }
-  
-  editLabo(item){
+
+  editLabo(item) {
     console.log(item);
     const modalRef = this.modalService.open(LaboOrderCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = 'Cập nhật phiếu Labo';
