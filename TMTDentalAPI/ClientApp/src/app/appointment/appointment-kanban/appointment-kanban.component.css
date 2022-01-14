@@ -41,8 +41,8 @@
 
 .filter-content {
     /* padding: 0 0.5rem; */
-    height: 286px;
-    overflow: hidden;
+    overflow: auto;
+    max-height: 300px;
 }
 
 .cont-calendar {
