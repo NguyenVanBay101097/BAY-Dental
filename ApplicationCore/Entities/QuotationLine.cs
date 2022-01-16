@@ -59,7 +59,7 @@ namespace ApplicationCore.Entities
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
         /// </summary>
         public ToothCategory ToothCategory { get; set; }
-        public Guid ToothCategoryId { get; set; }
+        public Guid? ToothCategoryId { get; set; }
 
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 

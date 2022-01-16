@@ -22,7 +22,8 @@ export class ToothSelectionDialogComponent implements OnInit {
   hamList: { [key: string]: {} };
 
   teethSelected: ToothDisplay[] = [];
-  filteredToothCategories: any[] = [];
+  @Input() filteredToothCategories: any[] = [];
+  listToothCategories = [];
   listTeeths: any[] = [];
   filterTeeths: any[] = [];
   cateId: string;
@@ -50,7 +51,15 @@ export class ToothSelectionDialogComponent implements OnInit {
     });
 
     this.toothSelectedIds = this.toothDataInfo.teeth.map(x => x.id);
-    this.loadTeethMap(this.toothDataInfo.toothCategory);
+    // this.loadTeethMap(this.toothDataInfo.toothCategory);
+    this.listToothCategories = Object.assign([],
+      this.filteredToothCategories.map(x => ({ ...x, teeth: [this.listTeeths.filter(el => el.categoryId == x.id)] })));
+    this.listToothCategories.push({
+      name: "Cả hai",
+      id: null,
+      Value: this.filteredToothCategories.map(x => x.id),
+      teeth: this.listToothCategories.map(x => x.teeth[0])
+    });
   }
 
   loadTeethMap(categ: ToothCategoryBasic) {
@@ -59,7 +68,11 @@ export class ToothSelectionDialogComponent implements OnInit {
   }
 
   onChangeToothCategory(value: any) {
-    this.loadTeethMap(value);
+    // this.loadTeethMap(value);
+    if (value.id == null) {
+      this.myForm.get('toothType').setValue('manual');
+      this.myForm.updateValueAndValidity();
+    }
     this.toothSelectedIds = [];
   }
 
@@ -111,7 +124,7 @@ export class ToothSelectionDialogComponent implements OnInit {
     var val = this.myForm.value;
     var result = {
       toothType: val.toothType,
-      toothCategory: this.filteredToothCategories.find(x => x.id == val.toothCategoryId),
+      toothCategory: this.listToothCategories.find(x => x.id == val.toothCategoryId),
       teeth: this.listTeeths.filter(x => this.toothSelectedIds.indexOf(x.id) !== -1)
     };
 
