@@ -31,6 +31,8 @@ namespace Infrastructure.Services
         {
             MailMessageSubtype subtype = await _modelDataService.GetRef<MailMessageSubtype>(subjectTypeId);
             var user = await _userService.GetByIdAsync(_currentUser.Id);
+            if (subtype == null)
+                return null;
             var msg = new MailMessage()
             {
                 MessageType = messageType,
