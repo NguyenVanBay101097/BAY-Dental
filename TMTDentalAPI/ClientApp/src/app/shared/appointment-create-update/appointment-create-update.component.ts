@@ -83,7 +83,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     private sessionInfoStorageService: SessionInfoStorageService,
     private authService: AuthService,
     private notifyService: NotifyService
-   ) { }
+  ) { }
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -103,7 +103,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       reason: null,
       saleOrderId: null,
       services: [],
-      isRepeatCustomer:false,
+      isRepeatCustomer: false,
       isNotExamination: false,
       showReason: false
     })
@@ -193,29 +193,29 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return this.employeeService.getEmployeePaged(val);
   }
 
-  onSavePrint(){
+  onSavePrint() {
     this.submitted = true;
     if (!this.formGroup.valid)
       return false;
     var appoint = this.dataSave();
     this.appointmentService.create(appoint)
-    .pipe(
-      mergeMap((rs: any) => {
-        return this.appointmentService.get(rs.id);
-      })).subscribe( (res:any) => {
-        var basic = this.getBasic(res);
-        this.activeModal.close(basic);
-        this.notify("success","Lưu thành công");
-        this.appointId = res.id;
-        this.onPrint();
-      },
-      er => {
-        this.submitted = false;
-      },
-    )
-    }
+      .pipe(
+        mergeMap((rs: any) => {
+          return this.appointmentService.get(rs.id);
+        })).subscribe((res: any) => {
+          var basic = this.getBasic(res);
+          this.activeModal.close(basic);
+          this.notify("success", "Lưu thành công");
+          this.appointId = res.id;
+          this.onPrint();
+        },
+          er => {
+            this.submitted = false;
+          },
+        )
+  }
 
-  dataSave(){
+  dataSave() {
     var appoint = this.formGroup.getRawValue();
     appoint.partnerId = appoint.partner ? appoint.partner.id : null;
     appoint.doctorId = appoint.doctor ? appoint.doctor.id : null;
@@ -223,7 +223,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm');;
     appoint.date = `${apptDate}T${appTime}`;
     appoint.timeExpected = appoint.timeExpected || 0;
-    
+
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
@@ -232,20 +232,20 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   onSave() {
     this.submitted = true;
-    
+
     if (!this.formGroup.valid) {
       return false;
     }
     var appoint = this.dataSave();
 
-    if (this.appointId) {   
+    if (this.appointId) {
       this.appointmentService.update(this.appointId, appoint).subscribe(
         () => {
           appoint.id = this.appointId;
           var basic = this.getBasic(appoint);
           this.activeModal.close(basic);
-          this.notify("success","Lưu thành công");
-          
+          this.notify("success", "Lưu thành công");
+
         },
         er => {
           this.submitted = false;
@@ -253,18 +253,18 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       )
     } else {
       this.appointmentService.create(appoint)
-      .pipe(
-        mergeMap((rs: any) => {
-          return this.appointmentService.get(rs.id);
-        })).subscribe( res => {
-          var basic = this.getBasic(res);
-          this.activeModal.close(basic);
-          this.notify("success","Lưu thành công");
-        },
-        er => {
-          this.submitted = false;
-        },
-      )
+        .pipe(
+          mergeMap((rs: any) => {
+            return this.appointmentService.get(rs.id);
+          })).subscribe(res => {
+            var basic = this.getBasic(res);
+            this.activeModal.close(basic);
+            this.notify("success", "Lưu thành công");
+          },
+            er => {
+              this.submitted = false;
+            },
+          )
     }
   }
 
@@ -283,23 +283,23 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     return basic;
   }
 
-  onDelete(){
+  onDelete() {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'md', windowClass: 'o_technical_modal' });
     modalRef.componentInstance.title = 'Xóa lịch hẹn';
     modalRef.componentInstance.body = 'Bạn chắc chắn muốn xóa lịch hẹn này?';
     modalRef.result.then(() => {
-      this.appointmentService.removeAppointment(this.appointId).subscribe(()=>{
-        this.notify("success","Xóa thành công");
-        this.activeModal.close({id : this.appointId , isDetele: true});       
+      this.appointmentService.removeAppointment(this.appointId).subscribe(() => {
+        this.notify("success", "Xóa thành công");
+        this.activeModal.close({ id: this.appointId, isDetele: true });
       })
-      
+
     });
   }
 
-  onDuplicate(){
+  onDuplicate() {
     this.appointId = null;
-    this.title = 'Đặt lịch hẹn' 
-    var item = this.formGroup.value;  
+    this.title = 'Đặt lịch hẹn'
+    var item = this.formGroup.value;
     var res = this.fb.group({
       name: null,
       partner: item.partner ? item.partner : null,
@@ -328,14 +328,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.formGroup.get('timeObj').patchValue(date);
   }
 
-  onCreateNewAppointment(){
+  onCreateNewAppointment() {
     this.appointId = null;
-    this.title = 'Đặt lịch hẹn' 
+    this.title = 'Đặt lịch hẹn'
     this.defaultGet();
   }
 
-  onChange(){
-    if(this.appointId){
+  onChange() {
+    if (this.appointId) {
       if (this.stateControl == 'cancel') {
         this.formGroup.get("reason").setValidators([Validators.minLength(0), Validators.required]);
         this.formGroup.get("reason").updateValueAndValidity();
@@ -347,12 +347,12 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     }
   }
 
-  eventCheck(value){
-    if (value == true && this.f.isRepeatCustomer.value == false){
+  eventCheck(value) {
+    if (value == true && this.f.isRepeatCustomer.value == false) {
       this.f.reason.setValidators(Validators.required);
       this.f.reason.updateValueAndValidity();
     }
-    else{
+    else {
       this.f.reason.clearValidators();
       this.f.reason.updateValueAndValidity();
     }
@@ -398,16 +398,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   getCustomerList() {
-    var partnerPaged = new PartnerPaged();
-    partnerPaged.employee = false;
-    partnerPaged.customer = true;
-    partnerPaged.supplier = false;
-    partnerPaged.limit = 1000;
-    partnerPaged.offset = 0;
-    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
-      partnerPaged.companyId = this.authService.userInfo.companyId;
-    }
-    this.partnerService.autocompletePartner(partnerPaged).subscribe(
+    this.searchCustomers().subscribe(
       rs => {
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');
       }
@@ -415,10 +406,13 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   filterChangeCombobox() {
+    debugger
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.partnerCbx.loading = true),
-      switchMap(val => this.searchCustomers(val.toString().toLowerCase()))
+      switchMap(val =>
+        this.searchCustomers(val)
+      )
     ).subscribe(
       rs => {
         this.customerSimpleFilter = rs;
@@ -429,7 +423,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.doctorCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.doctorCbx.loading = true),
-      switchMap(val => this.searchEmployees(val.toString().toLowerCase()))
+      switchMap(val => this.searchEmployees(val))
     ).subscribe(
       rs => {
         this.filteredEmployees = rs.items;
@@ -438,12 +432,14 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     )
   }
 
-  searchCustomers(search) {
+  searchCustomers(search?: string) {
     var partnerPaged = new PartnerPaged();
+    partnerPaged.employee = false;
     partnerPaged.customer = true;
-    if (search) {
-      partnerPaged.search = search.toLowerCase();
-    }
+    partnerPaged.supplier = false;
+    partnerPaged.limit = 1000;
+    partnerPaged.offset = 0;
+    partnerPaged.search = search || '';
 
     return this.partnerService.autocompletePartner(partnerPaged);
   }
@@ -550,18 +546,12 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   onChangePartner() {
     if (this.partner) {
-      var expand: any = {
-        $expand: 'Tags'
-      };
-      this.odataPartnerService.get(this.partner.id, expand).subscribe(rs => {
-        this.formGroup.get('partnerAge').patchValue(rs.Age);
-        this.formGroup.get('partnerPhone').patchValue(rs.Phone);
-        this.tags.clear();
-        rs.Tags.forEach(tag => {
-          var g = this.fb.group(tag);
-          this.tags.push(g);
-        });
+      this.partnerService.getPartner(this.partner.id).subscribe(rs => {
+        this.formGroup.get('partnerAge').patchValue(rs.age);
+        this.formGroup.get('partnerPhone').patchValue(rs.phone);
       });
+    }else {
+      this.getCustomerList();
     }
   }
 
