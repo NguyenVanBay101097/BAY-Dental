@@ -290,6 +290,7 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.limit = 20;
     this.filter.offset = 0;
     this.filter.orderState = '';
+    this.filter.isActive = true;
     if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
       this.filter.companyId = this.authService.userInfo.companyId;
     }
@@ -499,7 +500,7 @@ export class PartnerCustomerListComponent implements OnInit {
 
   onClickActive(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `${!item.active ? '' : 'Ngưng'} theo dõi khách hàng ${item.name}`;
+    modalRef.componentInstance.title = `${!item.active ? '' : 'Ngưng'} Theo dõi khách hàng ${item.name}`;
     modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${!item.active ? '' : 'Ngưng'} theo dõi khách hàng này?`;
     modalRef.result.then(() => {
       var res = new PartnerActivePatch();
