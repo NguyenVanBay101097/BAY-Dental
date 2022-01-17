@@ -546,7 +546,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search)
-               || x.Ref.Contains(val.Search) || x.Phone.Contains(val.Search));
+               || x.Ref.Contains(val.Search) || x.DisplayName.Contains(val.Search) || x.Phone.Contains(val.Search));
             }
 
             query = query.OrderBy(s => s.DisplayName);
