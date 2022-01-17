@@ -174,7 +174,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Report.Sale")]
         public async Task<IActionResult> GetSummary(GetSummarySaleReportRequest val)
         {
-            var states = new string[] { "sale", "done" };
+            var states = new string[] { "sale", "done", "cancel" };
             var query = _saleOrderLineService.SearchQuery(x => (!x.Order.IsQuotation.HasValue || x.Order.IsQuotation == false) &&
                 states.Contains(x.State));
             if (val.PartnerId.HasValue)
@@ -185,8 +185,8 @@ namespace TMTDentalAPI.Controllers
             var res = await query.GroupBy(x => 0).Select(x => new GetSummarySaleReportResponse
             {
                 PriceTotal = x.Sum(s => s.PriceTotal),
-                PaidTotal = x.Sum(x => x.AmountPaid),
-                ResidualTotal = x.Sum(x => x.PriceTotal - x.AmountPaid),
+                PaidTotal = x.Sum(x => x.AmountInvoiced),
+                ResidualTotal = x.Sum(x => x.PriceTotal - x.AmountInvoiced),
                 QtyTotal = x.Sum(s => s.ProductUOMQty)
             }).ToListAsync();
 
