@@ -61,6 +61,7 @@ using ApplicationCore.Users;
 using ApplicationCore.Security.Claims;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Identity;
+using ApplicationCore;
 
 namespace TMTDentalAPI
 {
@@ -421,6 +422,7 @@ namespace TMTDentalAPI
             services.AddTransient<ICurrentUser, CurrentUser>();
             services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
             services.AddTransient<IAbpClaimsPrincipalFactory, AbpClaimsPrincipalFactory>();
+            services.AddTransient<IExceptionToErrorConverter, DefaultExceptionToErrorConverter>();
 
             #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
