@@ -1,6 +1,7 @@
 import { KeyValue } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -44,6 +45,7 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     private intlService: IntlService,
     private saleOrderService: SaleOrderService,
     private printService: PrintService,
+    private modalService: NgbModal,
     private partnerService: PartnerService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
     ) { this.pagerSettings = config.pagerSettings }
@@ -137,9 +139,11 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
   }
 
   printTreatmentHistories() {
-    let val;
-    this.partnerService.printTreatmentHistories(val).subscribe((result: any) => {
-      this.printService.printHtml(result.html);
-    })
+    if (this.partnerId) {
+      this.partnerService.printTreatmentHistories({id: this.partnerId}).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
+      });
+    }
   }
+
 }

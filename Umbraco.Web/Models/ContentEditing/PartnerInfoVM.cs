@@ -204,10 +204,116 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class PartnerTreatmentHistoriesPrintResponse
     {
+        public DateTime? Date { get; set; }
         public string DisplayName { get; set; }
-        public IEnumerable<SaleOrderLineBasic> SaleOrderLines { get; set; } = new List<SaleOrderLineBasic>();
+        public string Gender { get; set; }
+        public string JobTitle { get; set; }
+        public string CityName { get; set; }
+        public string DistrictName { get; set; }
+        public string WardName { get; set; }
+        public string Street { get; set; }
+        public int? BirthDay { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthYear { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string MedicalHistory { get; set; }
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+        public string HistoriesString
+        {
+            get
+            {
+                var list = new List<string>();
+                foreach (var item in this.Histories)
+                {
+                    list.Add(item.Name);
+                }
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+        public string DateOfBirth
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue)
+                    return string.Empty;
+
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+            set { }
+        }
+        public decimal PriceTotal { 
+            get {
+                var total = 0.0M;
+                foreach(var line in OrderLines)
+                {
+                    total += line.PriceTotal;
+                }
+                return total;
+            }
+        }
+        public decimal? AmountInvoiced
+        {
+            get
+            {
+                var total = 0.0M;
+                foreach (var line in OrderLines)
+                {
+                    total += line.AmountInvoiced ?? 0;
+                }
+                return total;
+            }
+        }
+        public decimal AmountResidual
+        {
+            get
+            {
+                var total = 0.0M;
+                foreach (var line in OrderLines)
+                {
+                    total += line.AmountResidual ?? 0;
+                }
+                return total;
+            }
+        }
+        public string DisplayGender
+        {
+            get
+            {
+                switch (Gender)
+                {
+                    case "female":
+                        return "Nữ";
+                    case "other":
+                        return "Khác";
+                    default:
+                        return "Nam";
+                }
+            }
+        }
+        public IEnumerable<HistorySimple> Histories { get; set; } = new List<HistorySimple>();
+        public IEnumerable<SaleOrderLineBasic> OrderLines { get; set; } = new List<SaleOrderLineBasic>();
         public CompanyPrintVM Company { get; set; }
-        public IEnumerable<HistorySimple> HistorySimples { get; set; } = new List<HistorySimple>();
+
     }
 
 }

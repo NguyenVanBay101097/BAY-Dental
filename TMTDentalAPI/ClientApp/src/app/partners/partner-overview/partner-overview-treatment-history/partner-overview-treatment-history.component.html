@@ -4,24 +4,19 @@
       <h5 class="mb-0 text-primary">
         Lịch sử điều trị
       </h5>
-      <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
         <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary d-flex mr-2">
           <span class="bg-white border-radius d-flex pd-2px mr-1">
-            <i class="fas fa-plus text-primary"></i>
+          <i class="fas fa-plus text-primary"></i>
           </span>
           <span>Tạo điều trị</span>
         </button>
         <button type="button" (click)="printTreatmentHistories()" class="btn btn-primary d-flex">
-          <span class="bg-white border-radius d-flex pd-2px mr-1">
-            <i class="fas fa-plus text-primary"></i>
-          </span>
           <span>In hồ sơ điều trị</span>
         </button>
       </div>
     </div>
-    <kendo-grid class="grid-data" [resizable]="true" #grid [loading]="loading" [data]="gridData"
-      [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings"
-      (pageChange)="pageChange($event)">
+    <kendo-grid class="grid-data" [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
       <kendo-grid-column field="date" title="Ngày tạo" width="110">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{dataItem.date | date: 'dd/MM/yyyy'}}

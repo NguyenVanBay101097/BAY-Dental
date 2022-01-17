@@ -461,6 +461,8 @@ namespace Infrastructure.Services
                     return await modelDataService.GetRef<PrintTemplate>("base.print_template_advisory");
                 case "tmp_appointment":
                     return await modelDataService.GetRef<PrintTemplate>("base.print_template_appointment");
+                case "tmp_treatment_histories":
+                    return await modelDataService.GetRef<PrintTemplate>("base.print_template_treatment_histories");
                 default:
                     return null;
             }

@@ -26,6 +26,7 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu hẹn', value: 'tmp_appointment' },
     { text: 'Hồ sơ điều trị', value: 'tmp_treatment_histories' },
 
+
 ];
 
 let companyInfo =
@@ -627,44 +628,44 @@ const keyWorDatas =
         {
             text: 'Thông tin hồ sơ',
             value: [
-                { text: 'Ngày in', value: '{{o.date_order.day}}' },
-                { text: 'Tháng in', value: '{{o.date_order.month}}' },
-                { text: 'Năm in', value: '{{o.date_order.year}}' },
+                { text: 'Ngày in', value: '{{o.date.day}}' },
+                { text: 'Tháng in', value: '{{o.date.month}}' },
+                { text: 'Năm in', value: '{{o.date.year}}' },
             ]
         },
         {
             text: 'Thông tin chung',
             value: [
-                { text: 'Họ tên khách hàng', value: '{{o.partner?.name}}' },
-                { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
-                { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
-                { text: 'Tiểu sử bệnh', value: '{{o.partner?.medical_history}}' },
-                { text: 'Giới tính', value: '{{o.partner?.gender}}' },
-                { text: 'Nghề nghiệp', value: '{{o.partner?.job}}' },
-                { text: 'Ngày sinh', value: '{{o.partner?.birthday}}' },
-                { text: 'Email', value: '{{o.partner?.email}}' },
-                { text: 'Tổng tiền', value: '{{o.amount_total}}' },
-                { text: 'Đã thanh toán', value: '{{o.total_paid}}' },
-                { text: 'Số tiền còn lại', value: '{{o.residual}}' },
-                { text: 'Bác sĩ điều trị', value: '{{o.employee.name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.display_name}}' },
+                { text: 'SĐT khách hàng', value: '{{o.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{o.address}}' },
+                { text: 'Tiểu sử bệnh', value: '{{o.histories_string}}' },
+                { text: 'Giới tính', value: '{{o.display_gender}}' },
+                { text: 'Nghề nghiệp', value: '{{o.job_title}}' },
+                { text: 'Ngày sinh', value: '{{o.date_of_birth}}' },
+                { text: 'Email', value: '{{o.email}}' },
+                { text: 'Tổng tiền', value: '{{o.price_total}}' },
+                { text: 'Đã thanh toán', value: '{{o.amount_invoiced}}' },
+                { text: 'Số tiền còn lại', value: '{{o.amount_residual}}' },
+                { text: 'Bác sĩ điều trị', value: '{{u.name}}' },
             ]
         },
         {
             text: 'Thông tin danh sách dịch vụ',
             value: [
                 { text: 'Danh sách dịch vụ', value: '{{o.order_lines}}' },
-                { text: 'Ngày tạo dịch vụ', value: '{{line.product_date}}' },
-                { text: 'Mã phiếu điều trị chứa dịch vụ', value: '{{line.product_date}}' },
-                { text: 'Tên dịch vụ', value: '{{line.product?.name}}' },
+                { text: 'Ngày tạo dịch vụ', value: '{{line.date}}' },
+                { text: 'Mã phiếu điều trị chứa dịch vụ', value: '{{line.order_name}}' },
+                { text: 'Tên dịch vụ', value: '{{line.name}}' },
                 { text: 'Số lượng dịch vụ', value: '{{line.product_uomqty}}' },
-                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uomname}}' },
                 { text: 'Răng', value: '{{line.teeth_display}}' },
                 { text: 'Họ tên bác sĩ', value: '{{o.employee.name}}' },
-                { text: 'Chẩn đoán', value: '{{o.diagnostic}}' },
-                { text: 'Thành tiền', value: '{{line.price_sub_total}}' },
-                { text: 'Thanh toán', value: '{{line.total_paid}}' },
-                { text: 'Còn lại', value: '{{line.residual}}' },
-                { text: 'Trạng thái dịch vụ', value: '{{line.state}}' },
+                { text: 'Chẩn đoán', value: '{{line.diagnostic}}' },
+                { text: 'Thành tiền', value: '{{line.price_total}}' },
+                { text: 'Thanh toán', value: '{{line.amount_invoiced}}' },
+                { text: 'Còn lại', value: '{{line.amount_residual}}' },
+                { text: 'Trạng thái dịch vụ', value: '{{line.state_display}}' },
             ]
         }
     ],
