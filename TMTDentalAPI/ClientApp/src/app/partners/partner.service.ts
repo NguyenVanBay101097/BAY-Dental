@@ -700,4 +700,8 @@ export class PartnerService {
     createComment(id: string,val: CreateCommentForPartnerRequest) {
         return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + `/${id}/CreateComment`, val);
     }
+
+    printTreatmentHistories(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/PrintTreatmentHistories',val);
+    }
 }

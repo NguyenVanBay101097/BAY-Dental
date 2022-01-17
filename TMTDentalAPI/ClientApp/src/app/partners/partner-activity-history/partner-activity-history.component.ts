@@ -60,7 +60,6 @@ export class PartnerActivityHistoryComponent implements OnInit {
       map((arr: any) => ({date: arr[0].date, logs: arr.slice() })),
       toArray()
     ).subscribe((res: any) => {
-      console.log(res);
       
       this.listMessages = res;
     });
