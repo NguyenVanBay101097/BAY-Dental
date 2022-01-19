@@ -40,10 +40,8 @@
                         [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onDeleteEvent)="onDeleteLine(i)"
                         (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
                         (onActiveEvent)="onActiveLine($event, line)" (onUpdateStateEvent)="onUpdateStateLine(i, $event)"
-                        (actionDoneEvent)="onLineActionDone(i)"
-                        (actionCancelEvent)="onLineActionCancel(i)"
-                        (actionUnlockEvent)="onLineActionUnlock(i)"
-                        [orderState]="saleOrder?.state">
+                        (actionDoneEvent)="onLineActionDone(i)" (actionCancelEvent)="onLineActionCancel(i)"
+                        (actionUnlockEvent)="onLineActionUnlock(i)" [orderState]="saleOrder?.state">
                     </app-sale-order-line-cu>
                 </ng-container>
             </div>
@@ -203,8 +201,7 @@
                                     <div class="d-flex justify-content-between">
                                         <span>{{saleOrder.dateOrder | date: 'short'}}</span>
                                         <button *ngIf="saleOrder.state != 'done'" class="text-success"
-                                            #popover="ngbPopover" triggers="manual"
-                                            popoverClass="mw-100"
+                                            #popover="ngbPopover" triggers="manual" popoverClass="mw-100"
                                             (click)="openUpdateOrderPopover(popover)" title="Sửa"
                                             style="outline: none;background: none;border: none;" data-container="body"
                                             [ngbPopover]="popContent" placement="top-right" [autoClose]="'outside'">
@@ -212,7 +209,8 @@
                                         </button>
                                     </div>
                                     <ng-template #popContent>
-                                        <div [formGroup]="formGroup" class="o_form_view" [class.ng-submitted]="submitted">
+                                        <div [formGroup]="formGroup" class="o_form_view"
+                                            [class.ng-submitted]="submitted">
                                             <div class="mb-2">
                                                 <label>Ngày lập phiếu</label>
                                                 <div>
@@ -221,8 +219,7 @@
                                                         formControlName="dateOrder"
                                                         [popupSettings]="{appendTo: 'component'}">
                                                     </kendo-datepicker>
-                                                    <div *ngIf="f.dateOrder.errors && submitted"
-                                                        class="text-danger">
+                                                    <div *ngIf="f.dateOrder.errors && submitted" class="text-danger">
                                                         <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu
                                                         </div>
                                                     </div>
@@ -231,8 +228,11 @@
                                             <div class="mb-2">
                                                 <label>Bác sĩ đại diện</label>
                                                 <div>
-                                                    <kendo-combobox [popupSettings]="{appendTo: 'component'}"  #doctorCbx formControlName="doctor" [data]="doctors" [textField]="'name'" [valueField]="'id'"
-                                                    [filterable]="true" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }"></kendo-combobox>
+                                                    <kendo-combobox [popupSettings]="{appendTo: 'component'}" #doctorCbx
+                                                        formControlName="doctor" [data]="doctors" [textField]="'name'"
+                                                        [valueField]="'id'" [filterable]="true"
+                                                        [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }">
+                                                    </kendo-combobox>
                                                 </div>
                                             </div>
                                             <div>
@@ -253,7 +253,7 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>{{saleOrder?.doctor?.name}}</span>
+                                    <span>{{saleOrder?.doctorName}}</span>
                                 </td>
                             </tr>
                             <tr>
