@@ -423,6 +423,7 @@ namespace TMTDentalAPI
             services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
             services.AddTransient<IAbpClaimsPrincipalFactory, AbpClaimsPrincipalFactory>();
             services.AddTransient<IExceptionToErrorConverter, DefaultExceptionToErrorConverter>();
+            services.AddTransient<IReportRenderService, ReportRenderService>();
 
             #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>

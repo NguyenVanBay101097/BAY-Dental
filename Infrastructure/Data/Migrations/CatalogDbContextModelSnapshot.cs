@@ -6029,6 +6029,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("HeaderLine")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("HeaderSpacing")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsSize")
                         .HasColumnType("bit");
 
@@ -6039,6 +6045,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Orientation")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaperFormat")
