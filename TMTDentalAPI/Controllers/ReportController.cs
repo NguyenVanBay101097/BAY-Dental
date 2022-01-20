@@ -25,7 +25,7 @@ namespace TMTDentalAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{converter}/{reportName}/{id}")]
+        [HttpGet("{converter}/{reportName}/{ids}")]
         public async Task<IActionResult> ReportDownload(string converter, string reportName, string ids)
         {
             PrintTemplateConfig report = _printTemplateConfigService.SearchQuery(x => x.Type == reportName)

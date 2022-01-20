@@ -68,7 +68,7 @@ namespace Infrastructure.Services
 
             foreach (var s in docHtmls)
             {
-                htmlDocument.DocumentNode.SelectSingleNode("//main]").InnerHtml += s;
+                htmlDocument.DocumentNode.SelectSingleNode("//main").InnerHtml += s;
             }
 
             var newHtml = htmlDocument.DocumentNode.OuterHtml;
@@ -168,7 +168,7 @@ namespace Infrastructure.Services
             {
                 body_parent = node.ParentNode;
                 node.ParentNode.RemoveChild(node);
-                header_node.ChildNodes.Add(node);
+                footer_node.ChildNodes.Add(node);
             }
 
             // Retrieve bodies
@@ -231,7 +231,7 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(footer))
             {
                 var foot_file_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.footer.tmp.{Guid.NewGuid().ToString("N")}.html");
-                File.WriteAllText(foot_file_path, header);
+                File.WriteAllText(foot_file_path, footer);
                 temporary_files.Add(foot_file_path);
                 files_command_args = files_command_args.Concat(new string[] { "--footer-html", foot_file_path });
             }
@@ -243,11 +243,15 @@ namespace Infrastructure.Services
                 var prefix = $"report.body.tmp.{i}";
                 var body_file_path = Path.Combine(System.IO.Path.GetTempPath(), $"{prefix}.{Guid.NewGuid().ToString("N")}.html");
                 File.WriteAllText(body_file_path, body);
+                paths.Add(body_file_path);
                 temporary_files.Add(body_file_path);
             }
 
-            var pdf_report_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.tmp.{Guid.NewGuid().ToString("N")}.html");
-            File.Create(pdf_report_path);
+            var pdf_report_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.tmp.{Guid.NewGuid().ToString("N")}.pdf");
+            using (FileStream fs = File.Create(pdf_report_path))
+            {
+                fs.Close();
+            }
             temporary_files.Add(pdf_report_path);
 
             try
