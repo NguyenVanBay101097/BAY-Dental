@@ -469,7 +469,7 @@ namespace Infrastructure.Services
                 var threadMessageObj = GetService<IMailThreadMessageService>();
                 ///Create log saleorder
                 var bodySaleOrder = string.Format("Hoàn thành phiếu điều trị <b>{0}</b>", sale.Name);
-                await threadMessageObj.MessagePost(sale.Partner, body: bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
+                await threadMessageObj.MessagePost(sale.Partner, body: bodySaleOrder, date: sale.DateDone, subjectTypeId: "mail.subtype_sale_order");
 
                 //tạo 1 message chờ gửi
 
@@ -1741,12 +1741,12 @@ namespace Infrastructure.Services
                 ///Create log saleorder
                 var threadMessageObj = GetService<IMailThreadMessageService>();
                 var bodySaleOrder = string.Format("Tạo phiếu điều trị <b>{0}</b>", order.Name);
-                await threadMessageObj.MessagePost(order.Partner, bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrder, date: order.DateOrder, subjectTypeId: "mail.subtype_sale_order");
 
 
                 ///Create log saleorderline
                 var bodySaleOrderLine = string.Format("Sử dụng dịch vụ <b>{0}</b> - phiếu điều trị <b>{1}</b>", string.Join(",", order.OrderLines.Select(s => s.Name).ToList()), order.Name);
-                await threadMessageObj.MessagePost(order.Partner, bodySaleOrderLine, subjectTypeId: "mail.subtype_sale_order_line");
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrderLine, date: order.DateOrder, subjectTypeId: "mail.subtype_sale_order_line");
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 

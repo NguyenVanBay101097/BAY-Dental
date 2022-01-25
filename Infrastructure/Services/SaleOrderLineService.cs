@@ -1606,6 +1606,7 @@ namespace Infrastructure.Services
         public async Task GenerateActionLogSaleOrderLine(SaleOrderLine line, string oldState = null, string orderName = null)
         {
             var threadMessageObj = GetService<IMailThreadMessageService>();
+            var date = DateTime.Now;
             var content = "";
             if ((oldState == "cancel" || oldState == "done") && line.State == "sale")
                 content = "Tiếp tục điều trị dịch vụ";
@@ -1614,10 +1615,14 @@ namespace Infrastructure.Services
             if (oldState == "sale" && line.State == "cancel")
                 content = "Ngừng điều trị dịch vụ";
             if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "sale")
+            {
                 content = "Sử dụng dịch vụ";
+                date = line.Date.Value;
+            }
+
 
             var bodySaleOrderLine = string.Format("{0} <b>{1}</b> - phiếu điều trị <b>{2}</b>", content, line.Name, orderName);
-            await threadMessageObj.MessagePost(line.OrderPartner, body: bodySaleOrderLine, subjectTypeId: "mail.subtype_sale_order_line");
+            await threadMessageObj.MessagePost(line.OrderPartner, body: bodySaleOrderLine, date: date, subjectTypeId: "mail.subtype_sale_order_line");
         }
 
 

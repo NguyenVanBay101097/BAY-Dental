@@ -26,7 +26,7 @@ namespace Infrastructure.Services
             _userService = userService;
         }
 
-        public async Task<MailMessage> MessagePost<T>(T record, string body, string subjectTypeId = "mail.subtype_comment",
+        public async Task<MailMessage> MessagePost<T>(T record, string body, DateTime? date,string subjectTypeId = "mail.subtype_comment",
             string messageType = "notification") where T : BaseEntity
         {
             MailMessageSubtype subtype = await _modelDataService.GetRef<MailMessageSubtype>(subjectTypeId);
@@ -39,6 +39,7 @@ namespace Infrastructure.Services
                 Body = body,
                 SubtypeId = subtype.Id,
                 AuthorId = user.PartnerId,
+                Date = date ?? DateTime.Now /// if date exist get value : default datetime.Now
             };
 
             await _mailMessageRepository.InsertAsync(msg);
@@ -48,6 +49,7 @@ namespace Infrastructure.Services
         public async Task<MailMessage> MessagePost(string model,
             Guid? resId,
             string body,
+            DateTime? date,
             string subjectTypeId = "mail.subtype_comment",
             string messageType = "notification")
         {
@@ -61,6 +63,7 @@ namespace Infrastructure.Services
                 Body = body,
                 SubtypeId = subtype.Id,
                 AuthorId = user.PartnerId,
+                Date = date ?? DateTime.Now /// if date exist get value : default datetime.Now
             };
 
             await _mailMessageRepository.InsertAsync(msg);
