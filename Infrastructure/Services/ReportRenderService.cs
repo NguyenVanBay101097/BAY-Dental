@@ -1,8 +1,13 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Users;
+using ApplicationCore.Utilities;
 using DinkToPdf;
+using DinkToPdf.Contracts;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Runtime;
 using System;
@@ -22,19 +27,42 @@ namespace Infrastructure.Services
     {
         private IAsyncRepository<Appointment> _appointmentRepository;
         private IAsyncRepository<ToaThuoc> _toaThuocRepository;
+        private readonly ILogger<ReportRenderService> _logger;
+        private IConverter _converter;
+        private readonly IViewRenderService _viewRenderService;
+        private readonly IAsyncRepository<Company> _companyRepository;
+        private readonly ICurrentUser _currentUser;
 
         public ReportRenderService(IAsyncRepository<Appointment> appointmentRepository,
-            IAsyncRepository<ToaThuoc> toaThuocRepository)
+            IAsyncRepository<ToaThuoc> toaThuocRepository,
+            ILogger<ReportRenderService> logger,
+            IConverter converter,
+            IViewRenderService viewRenderService,
+            IAsyncRepository<Company> companyRepository,
+            ICurrentUser currentUser)
         {
             _appointmentRepository = appointmentRepository;
             _toaThuocRepository = toaThuocRepository;
+            _logger = logger;
+            _converter = converter;
+            _viewRenderService = viewRenderService;
+            _companyRepository = companyRepository;
+            _currentUser = currentUser;
         }
 
-        private string _GetLayoutHtml()
+        private string _GetReportHtml(PrintTemplateConfig report)
         {
-            //có thể sẽ pass model vào view
-            var layoutHtml = File.ReadAllText("PrintTemplate/Shared/Layout.html");
-            return layoutHtml;
+            //report layout
+            var reportLayoutHtml = _viewRenderService.Render("Shared/ReportLayout", new ReportLayoutViewModel());
+
+            var externalLayout = _viewRenderService.Render("Shared/ExternalLayout", new ExternalLayoutViewModel());
+
+            var printTemplate = report.PrintTemplate;
+            var externalLayoutStandard = externalLayout.Replace("#CONTENT#", _viewRenderService.Render("Shared/ExternalLayoutStandard", new ExternalLayoutViewModel()));
+            var externalLayoutDoc = externalLayoutStandard.Replace("#CONTENT#", printTemplate.Content);
+
+            var result = string.Format(reportLayoutHtml, "{{ for doc in docs }}#CONTENT#{{end}}").Replace("#CONTENT#", externalLayoutDoc);
+            return result;
         }
 
         public async Task<string> RenderHtml(PrintTemplateConfig report, IEnumerable<Guid> docIds)
@@ -50,34 +78,42 @@ namespace Infrastructure.Services
                          .ToListAsync();
             }
 
-            var printTemplate = report.PrintTemplate;
-            var template = Template.Parse(_PrepareDocHtml(printTemplate.Content));
-            var docHtmls = new List<string>();
-            foreach (var doc in docs)
-            {
-                var docHtml = await template.RenderAsync(new { o = doc });
-                docHtmls.Add(docHtml);
-            }
+            ScriptObject data = new ScriptObject();
+            data.Add("docs", docs);
+
+            Company company = await _companyRepository.GetByIdAsync(_currentUser.CompanyId);
+            data.Add("res_company", company); //add user company
+
+            var templateContext = new TemplateContext();
+            templateContext.PushCulture(CultureInfo.CurrentCulture);
+            templateContext.PushGlobal(data);
 
             //Report Layout
-            var layoutHtml = _GetLayoutHtml();
+            var reportHtml = _GetReportHtml(report);
 
-            //Connect
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(layoutHtml);
+            var template = Template.Parse(reportHtml);
+            var result = await template.RenderAsync(templateContext);
 
-            foreach (var s in docHtmls)
-            {
-                htmlDocument.DocumentNode.SelectSingleNode("//main").InnerHtml += s;
-            }
+            return result;
+        }
 
-            var newHtml = htmlDocument.DocumentNode.OuterHtml;
-            return newHtml;
+        public string RenderTemplate(PrintTemplateConfig report, PrintTemplate template, ScriptObject values)
+        {
+            ApplicationUser user = null;
+            values.Add("user", user);
+            values.Add("res_company", user.Company);
+            values.Add("web_base_url", "");
+            return Render(template, values);
+        }
+
+        private string Render(PrintTemplate template, ScriptObject values)
+        {
+            throw new NotImplementedException();
         }
 
         private string _PrepareDocHtml(string html)
         {
-            var externalLayout = File.ReadAllText("PrintTemplate/Shared/ExternalLayout.html");
+            var externalLayout = _viewRenderService.Render("Shared/ExternalLayoutStandard", new ExternalLayoutViewModel());
             return string.Format(externalLayout, html);
         }
 
@@ -200,7 +236,8 @@ namespace Infrastructure.Services
 
         private string _GetMinimalLayout()
         {
-            return File.ReadAllText("PrintTemplate/Shared/MinimalLayout.html");
+            var result = _viewRenderService.Render("Shared/MinimalLayout", new ExternalLayoutViewModel());
+            return result;
         }
 
         private byte[] _run_wkhtmltopdf(PrintTemplateConfig report,
@@ -220,17 +257,19 @@ namespace Infrastructure.Services
             var files_command_args = new List<string>().AsEnumerable();
             var temporary_files = new List<string>();
 
+            string head_file_path = "";
             if (!string.IsNullOrEmpty(header))
             {
-                var head_file_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.header.tmp.{Guid.NewGuid().ToString("N")}.html");
+                head_file_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.header.tmp.{Guid.NewGuid().ToString("N")}.html");
                 File.WriteAllText(head_file_path, header);
                 temporary_files.Add(head_file_path);
                 files_command_args = files_command_args.Concat(new string[] { "--header-html", head_file_path });
             }
 
+            string foot_file_path = "";
             if (!string.IsNullOrEmpty(footer))
             {
-                var foot_file_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.footer.tmp.{Guid.NewGuid().ToString("N")}.html");
+                foot_file_path = Path.Combine(System.IO.Path.GetTempPath(), $"report.footer.tmp.{Guid.NewGuid().ToString("N")}.html");
                 File.WriteAllText(foot_file_path, footer);
                 temporary_files.Add(foot_file_path);
                 files_command_args = files_command_args.Concat(new string[] { "--footer-html", foot_file_path });
@@ -254,34 +293,79 @@ namespace Infrastructure.Services
             }
             temporary_files.Add(pdf_report_path);
 
-            try
+            HtmlToPdfDocument doc = new HtmlToPdfDocument()
             {
-                var allArgs = string.Join(" ", command_args.Concat(files_command_args).Concat(paths).Concat(new string[] { pdf_report_path }));
-                var proc = new Process
+                GlobalSettings = {
+                    PaperSize = PaperKind.A4,
+                    Orientation = Orientation.Portrait,
+                    Margins = new MarginSettings() { Top = 40, Left = 7, Right = 7, Bottom = 28 },
+                },
+            };
+
+            foreach (var path in paths)
+            {
+                var page = new ObjectSettings()
                 {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        Arguments = allArgs,
-                        FileName = _get_wkhtmltopdf_bin(),
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true
-                    }
+                    // PagesCount must be true to use it on header and footer
+                    PagesCount = true,
+                    WebSettings = { DefaultEncoding = "utf-8" },
+                    HtmlContent = File.ReadAllText(path),
+                    HeaderSettings = { HtmUrl = head_file_path },
+                    FooterSettings = { HtmUrl = foot_file_path }
                 };
 
-                proc.Start();
-                while (!proc.StandardOutput.EndOfStream)
-                {
-                    string line = proc.StandardOutput.ReadLine();
-                    // do something with line
-                }
-            }
-            catch
-            {
-
+                doc.Objects.Add(page);
             }
 
-            var pdf_content = File.ReadAllBytes(pdf_report_path);
+            var pdf_content = _converter.Convert(doc);
+
+            //try
+            //{
+            //    var allArgs = string.Join(" ", command_args.Concat(files_command_args).Concat(paths).Concat(new string[] { pdf_report_path }));
+            //    var proc = new Process
+            //    {
+            //        StartInfo = new ProcessStartInfo
+            //        {
+            //            Arguments = allArgs,
+            //            FileName = _get_wkhtmltopdf_bin(),
+            //            UseShellExecute = false,
+            //            CreateNoWindow = true,
+            //            RedirectStandardError = true,
+            //        }
+            //    };
+
+            //    proc.Start();
+            //    string err = proc.StandardError.ReadToEnd();
+            //    proc.WaitForExit(60000);
+
+            //    int returnCode = proc.ExitCode;
+
+            //    if (returnCode != 0 && returnCode != 1)
+            //    {
+            //        string message = "";
+            //        if (returnCode == -11)
+            //        {
+            //            message = $"Wkhtmltopdf failed (error code: {returnCode}). Memory limit too low or maximum file number of subprocess reached.";
+            //        }
+            //        else
+            //        {
+            //            message = $"Wkhtmltopdf failed (error code: {returnCode}).";
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (!string.IsNullOrEmpty(err))
+            //        {
+            //            _logger.LogWarning($"wkhtmltopdf: {err}");
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e;
+            //}
+
+            //var pdf_content = File.ReadAllBytes(pdf_report_path);
             foreach (var temporary_file in temporary_files)
             {
                 try
@@ -290,7 +374,7 @@ namespace Infrastructure.Services
                 }
                 catch
                 {
-
+                    _logger.LogError($"Error when trying to remove file {temporary_file}");
                 }
             }
 
@@ -320,6 +404,18 @@ namespace Infrastructure.Services
                 else
                     command_args = command_args.Concat(new string[] { "--margin-top", paperFormat.TopMargin.ToString() });
 
+                //int? dpi = null;
+                //if (specific_paperformat_args != null && specific_paperformat_args.Contains("data-report-dpi"))
+                //    dpi = (int)specific_paperformat_args["data-report-dpi"];
+                //else
+                //    dpi = 90;
+
+                //if (dpi.HasValue)
+                //{
+                //    command_args = command_args.Concat(new string[] { "--dpi", dpi.ToString() });
+                //    command_args = command_args.Concat(new string[] { "--zoom", (96 / dpi.Value).ToString() });
+                //}
+
                 if (specific_paperformat_args != null && specific_paperformat_args.Contains("data-report-header-spacing"))
                     command_args = command_args.Concat(new string[] { "--header-spacing", (string)specific_paperformat_args["data-report-header-spacing"] });
                 else if (paperFormat.HeaderSpacing > 0)
@@ -343,7 +439,8 @@ namespace Infrastructure.Services
 
         private string _get_wkhtmltopdf_bin()
         {
-            return Path.Combine(Directory.GetCurrentDirectory(), @"LibDirectoryLoad\wkhtmltopdf\wkhtmltopdf.exe");
+            return @"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe";
+            //return Path.Combine(Directory.GetCurrentDirectory(), @"LibDirectoryLoad\wkhtmltopdf\wkhtmltopdf.exe");
         }
 
         private class PrepareHtmlResult

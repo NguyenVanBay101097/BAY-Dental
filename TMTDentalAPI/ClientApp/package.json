@@ -80,6 +80,7 @@
     "ngx-moment": "^3.5.0",
     "pipes-module": "^1.0.1",
     "popper.js": "^1.15.0",
+    "print-js": "^1.6.0",
     "rxjs": "~6.6.7",
     "sprintf-js": "^1.1.2",
     "stream": "0.0.2",

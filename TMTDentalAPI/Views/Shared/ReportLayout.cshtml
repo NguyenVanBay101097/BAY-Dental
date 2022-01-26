@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using ApplicationCore.Models
+@model ReportLayoutViewModel
+
+<!DOCTYPE html>
 <html>
 <head>
     <base href="http://localhost:4200/">
@@ -8,7 +11,10 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
 </head>
 <body class="container">
-    <main>
-    </main>
+    <div id="wrapwrap">
+        <main>
+            {0}
+        </main>
+    </div>
 </body>
 </html>
