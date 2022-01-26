@@ -246,7 +246,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   onUpdateOrder(data) {
     this.saleOrder.dateOrder = data.dateOrder;
-    this.saleOrder.doctor = data.doctor;
+    this.saleOrder.doctorName = data.doctor ? data.doctor.name : null;
   }
 
   printSaleOrder() {

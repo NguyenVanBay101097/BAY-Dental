@@ -50,6 +50,7 @@
                                     <span *ngIf="isEditting">{{showTeethList(formGroupInfo.value)}} </span>
                                     <button *ngIf="isEditting" class="btn btn-link p-0 ml-2" (click)="toothSelection()">
                                         <span class="fas fa-tooth"></span>
+                                        Chọn răng
                                     </button>
                                     <button
                                         *ngIf="line.id  && line.productIsLabo && line.state == 'sale' && !isEditting"

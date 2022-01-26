@@ -2798,8 +2798,6 @@ namespace Infrastructure.Services
                     mainQuery = mainQuery.Where(x => (DateTime.Now.Year - x.BirthYear) <= val.AgeTo.Value);
             }
 
-
-
             return mainQuery;
         }
 
@@ -3287,12 +3285,13 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
 
             var query = GetQueryablePartnerFilter(val);
+            query = query.OrderByDescending(x => x.DateCreated);
             var total = await query.CountAsync();
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var res = await query.Include(x => x.Source).Include(x => x.Company).OrderByDescending(x => x.DateCreated).ToListAsync();
+            var res = await query.Include(x => x.Source).Include(x => x.Company).ToListAsync();
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
