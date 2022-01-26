@@ -136,6 +136,8 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         var type = this.formGroup.get('type').value;
         if (type) {
             this.configService.getDisplay(type).subscribe((res: any) => {
+                // console.log(res);
+                
                 this.formGroup.get('printPaperSizeId').setValue(res.printPaperSizeId);
                 this.formGroup.get('content').setValue(res.printTemplateContent);
                 this.onGenerate();

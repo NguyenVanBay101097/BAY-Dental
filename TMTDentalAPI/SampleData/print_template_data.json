@@ -48,7 +48,7 @@
           "Sequence": 10,
           "AmountDiscountTotal": 150000.00000000003,
           "PriceReduce": 1350000.00,
-          "TotalDiscountAmount": 150000.00 
+          "TotalDiscountAmount": 150000.00
         },
         {
           "Product": {
@@ -1060,7 +1060,7 @@
           "DateOfBirth": "15/10/1995",
           "AppointmnetId": "00000000-0000-0000-0000-000000000000",
           "AppointmnetName": null,
-          "Time": null,
+          "Time": null
         },
         "PartnerType": "customer",
         "PaymentDate": "2021-09-16T09:13:29.685",
@@ -2313,7 +2313,7 @@
       "Note": "SO00006 - Khách hàng thanh toán",
       "State": "posted"
     }
-    
+
   },
   {
     "Type": "tmp_supplier_payment",
@@ -2474,6 +2474,79 @@
         }
       ],
       "Note": "Nội dung cuộc hẹn"
+    }
+  },
+  {
+    "Type": "tmp_treatment_histories",
+    "Data": {
+      "Date": "2022-01-01T00:00:00",
+      "Company": {
+        "Name": "TPP",
+        "Partner": {
+          "CityName": "Thành phố Hồ Chí Minh",
+          "DistrictName": "Quận Tân Phú",
+          "WardName": "Phường Tân Thành",
+          "Street": "54/35 Diệp Minh Châu"
+        },
+        "Phone": "0938551226",
+        "Email": null,
+        "Logo": "http://statics.tdental.vn/images/localhost/210920/1345070036_logo.jpg"
+      },
+      "User": {
+        "Name": "admin"
+      },
+      "DisplayName": "[KH0007] Khách hàng A",
+      "Name": "Khách hàng A",
+      "Gender": "male",
+      "Email": "khachhanga@gmail.com",
+      "Phone": "0369835014",
+      "BirthYear": 1995,
+      "BirthMonth": 12,
+      "BirthDay": 19,
+      "Street": "246/16 Độc Lập",
+      "WardName": "Phường Tân Thành",
+      "DistrictName": "Quận Tân Phú",
+      "CityName": "Thành phố Hồ Chí Minh",
+      "MedicalHistory": "Biến chứng răng khôn, Chảy máu chân răng",
+      "Histories": [
+        { "Name": "Chảy máu lâu" },
+        { "Name": "Dị ứng thuốc" }
+      ],
+      "OrderLines": [
+        {
+          "Date": "2021-08-27T00:00:00",
+          "Name": "Tẩy trắng răng tại nhà",
+          "ProductUOMQty": 1.00,
+          "ProductUOMName": "Cái",
+          "PriceUnit": 1500000.00,
+          "PriceSubTotal": 1350000.00,
+          "PriceTotal": 1500000.00,
+          "AmountInvoiced": 1500000.00,
+          "AmountResidual": 0.0,
+          "TeethDisplay": "Nguyên hàm",
+          "EmployeeName": "Bác sĩ A",
+          "OrderName": "SO00174",
+          "Diagnostic": "Răng khỏe",
+          "StateDisplay": "Đang điều trị"
+        },
+        {
+          "Date": "2021-08-27T00:00:00",
+          "Name": "Tẩy trắng răng bằng đèn Laser Zoom II",
+          "ProductUOMQty": 1.00,
+          "ProductUOMName": "Cái",
+          "PriceUnit": 1500000.00,
+          "PriceSubTotal": 1350000.00,
+          "PriceTotal": 1500000.00,
+          "AmountInvoiced": 1500000.00,
+          "AmountResidual": 0.0,
+          "TeethDisplay": "Hàm trên",
+          "EmployeeName": "Bác sĩ B",
+          "OrderName": "SO00175",
+          "Diagnostic": "Răng sâu",
+          "StateDisplay": "Đang điều trị"
+
+        }
+      ]
     }
   }
 ]

@@ -1,33 +1,38 @@
-<div class= "card">
-  <div class= "card-body">
+<div class="card">
+  <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-2">
       <h5 class="mb-0 text-primary">
         Lịch sử điều trị
       </h5>
-      <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary d-flex">
-        <span class="bg-white border-radius d-flex pd-2px mr-1">
-        <i class="fas fa-plus text-primary"></i>
-        </span>
-        <span>Tạo điều trị</span>
-      </button>
+      <div class="d-flex align-items-center">
+        <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary d-flex mr-2">
+          <span class="bg-white border-radius d-flex pd-2px mr-1">
+          <i class="fas fa-plus text-primary"></i>
+          </span>
+          <span>Tạo điều trị</span>
+        </button>
+        <button type="button" (click)="printTreatmentHistories()" class="btn btn-primary d-flex">
+          <span>In hồ sơ điều trị</span>
+        </button>
+      </div>
     </div>
     <kendo-grid class="grid-data" [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
       <kendo-grid-column field="date" title="Ngày tạo" width="110">
-          <ng-template kendoGridCellTemplate let-dataItem>
-              {{dataItem.date | date: 'dd/MM/yyyy'}}
-          </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.date | date: 'dd/MM/yyyy'}}
+        </ng-template>
       </kendo-grid-column>
       <kendo-grid-column field="date" title="Phiếu điều trị" width="110">
         <ng-template kendoGridCellTemplate let-dataItem>
-           <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
+          <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
         </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="name" title="Dịch vụ" width="200">
-    </kendo-grid-column>
-    <kendo-grid-column title="Đơn vị tính" field="productUOMName" width="100">
-    </kendo-grid-column>
-    <kendo-grid-column field="teethDisplay" title="Răng" width="80">
-    </kendo-grid-column>
+      </kendo-grid-column>
+      <kendo-grid-column field="name" title="Dịch vụ" width="200">
+      </kendo-grid-column>
+      <kendo-grid-column title="Đơn vị tính" field="productUOMName" width="100">
+      </kendo-grid-column>
+      <kendo-grid-column field="teethDisplay" title="Răng" width="80">
+      </kendo-grid-column>
       <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
       </kendo-grid-column>
       <kendo-grid-column field="diagnostic" title="Chẩn đoán" width="100">

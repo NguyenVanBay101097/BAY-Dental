@@ -1,14 +1,15 @@
 import { KeyValue } from '@angular/common';
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
-import * as _ from 'lodash';
 import { AuthService } from 'src/app/auth/auth.service';
-import { SaleOrderLineHistoryReq, SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrderService } from 'src/app/core/services/sale-order.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
-import { SaleOrderLinePaged } from '../../partner.service';
+import { PrintService } from 'src/app/shared/services/print.service';
+import { PartnerService, SaleOrderLinePaged } from '../../partner.service';
 
 @Component({
   selector: 'app-partner-overview-treatment-history',
@@ -43,6 +44,9 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     private router: Router,
     private intlService: IntlService,
     private saleOrderService: SaleOrderService,
+    private printService: PrintService,
+    private modalService: NgbModal,
+    private partnerService: PartnerService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
     ) { this.pagerSettings = config.pagerSettings }
   ngOnInit() {
@@ -132,6 +136,14 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     this.filter.limit = event.take;
     this.filter.offset = event.skip;
     this.loadDataFromApi();
+  }
+
+  printTreatmentHistories() {
+    if (this.partnerId) {
+      this.partnerService.printTreatmentHistories({id: this.partnerId}).subscribe((result: any) => {
+        this.printService.printHtml(result.html);
+      });
+    }
   }
 
 }

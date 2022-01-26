@@ -294,6 +294,11 @@ namespace Infrastructure.Services
                             res.Company = company;
                             return res;
                         }
+                    case "tmp_treatment_histories":
+                        {
+                            var res = JsonConvert.DeserializeObject<PartnerTreatmentHistoriesPrintResponse>(item.Data.ToString());
+                            return res;
+                        }
                     default:
                         return null;
                 }
