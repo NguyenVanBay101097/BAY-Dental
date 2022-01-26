@@ -18,16 +18,29 @@
 
 .teethElement {
   display: flex;
-  height: 46px;
+  height: 38px;
   flex-flow: column;
-  justify-content: center;
+  /* justify-content: center; */
   user-select: none;
+}
+
+.ham_tren .teethElement .teeth_nameTeeth {
+  margin-top: 0px;
+}
+
+.ham_duoi .teethElement {
+  justify-content: end;
+}
+
+.ham_duoi .teethElement .teeth_nameTeeth {
+  margin-bottom: 0px;
+  margin-top: 5px;
 }
 
 .chia_doi_doc {
   width: 1px;
   border-left: 1px solid #ccc;
-  height: 46px;
+  /* height: 46px; */
 }
 
 .teeth_nameTeeth.selected {
