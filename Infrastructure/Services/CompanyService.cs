@@ -114,7 +114,7 @@ namespace Infrastructure.Services
                 IsUserRoot = true,
             };
 
-            userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { Company = mainCompany });
+            userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = mainCompany.Id });
 
             var userObj = GetService<UserManager<ApplicationUser>>();
             await userObj.CreateAsync(userRoot, password);

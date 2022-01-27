@@ -291,9 +291,6 @@ export class PartnerCustomerListComponent implements OnInit {
     this.filter.offset = 0;
     this.filter.orderState = '';
     this.filter.isActive = true;
-    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
-      this.filter.companyId = this.authService.userInfo.companyId;
-    }
   }
 
   refreshData() {

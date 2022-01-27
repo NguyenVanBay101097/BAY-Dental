@@ -2533,6 +2533,8 @@ namespace Infrastructure.Services
 
         public IQueryable<Partner> GetQueryablePartnerFilter(PartnerQueryableFilter val)
         {
+            var allowedCompanyIds = new List<Guid>() { CompanyId };
+
             var saleOrderObj = GetService<ISaleOrderService>();
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var amlObj = GetService<IAccountMoveLineService>();
@@ -2542,11 +2544,16 @@ namespace Infrastructure.Services
             var serviceCardCardObj = GetService<IServiceCardCardService>();
             var partnerObj = GetService<IPartnerService>();
             var partnerSourceObj = GetService<IPartnerSourceService>();
+            var modelDataObj = GetService<IIRModelDataService>();
 
             var mainQuery = partnerObj.SearchQuery(x => x.Customer);
 
-            if (val.CompanyId.HasValue)
-                mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId);
+            var partnerRule = modelDataObj.GetRefNoAsync<IRRule>("base.res_partner_rule");
+            if (partnerRule != null)
+            {
+                if (partnerRule.Active)
+                    mainQuery = mainQuery.Where(x => allowedCompanyIds.Contains(x.CompanyId.Value));
+            }
 
             if (!string.IsNullOrEmpty(val.CityCode))
                 mainQuery = mainQuery.Where(x => x.CityCode == val.CityCode);
@@ -2635,7 +2642,7 @@ namespace Infrastructure.Services
 
             if (val.CardTypeIds.Any())
             {
-                var filterCardTypeQr = from ps in cardCardObj.SearchQuery(x => val.CardTypeIds.Contains(x.TypeId))
+                var filterCardTypeQr = from ps in cardCardObj.SearchQuery(x => val.CardTypeIds.Contains(x.TypeId) && allowedCompanyIds.Contains(x.CompanyId.Value))
                                        group ps by ps.PartnerId into g
                                        select g.Key;
 
@@ -2646,22 +2653,12 @@ namespace Infrastructure.Services
             }
 
             if (val.PartnerSourceIds.Any())
-            {
-
-                var filterPartnerSourceQr = from ps in SearchQuery(x => val.PartnerSourceIds.Contains(x.SourceId.Value))
-                                            group ps by ps.Id into g
-                                            select g.Key;
-
-
-                mainQuery = from a in mainQuery
-                            join pbk in filterPartnerSourceQr on a.Id equals pbk
-                            select a;
-            }
-
+                mainQuery = mainQuery.Where(x => val.PartnerSourceIds.Contains(x.SourceId.Value));
 
             if (!string.IsNullOrEmpty(val.OrderState))
             {
-                var orderStateQr = from v in saleOrderObj.SearchQuery(x => x.CompanyId == val.CompanyId)
+               
+                var orderStateQr = from v in saleOrderObj.SearchQuery(x => allowedCompanyIds.Contains(x.CompanyId))
                                    group v by v.PartnerId into g
                                    select new
                                    {
@@ -2685,11 +2682,10 @@ namespace Infrastructure.Services
                             select a;
             }
 
-
             if (val.RevenueFrom.HasValue || val.RevenueTo.HasValue)
             {
                 var types = new string[] { "out_invoice", "out_refund" };
-                var PartnerRevenueQr = (from s in amlObj._QueryGet(state: "posted", companyId: val.CompanyId)
+                var PartnerRevenueQr = (from s in amlObj._QueryGet(state: "posted", companyIds: allowedCompanyIds)
                                         where s.AccountInternalType != "receivable" && types.Contains(s.Move.Type)
                                         group s by s.PartnerId into g
                                         select new
@@ -2713,7 +2709,7 @@ namespace Infrastructure.Services
 
             if (val.AmountTotalFrom.HasValue || val.AmountTotalTo.HasValue)
             {
-                var PartnerAmountTotalQr = (from s in saleOrderObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
+                var PartnerAmountTotalQr = (from s in saleOrderObj.SearchQuery(x => allowedCompanyIds.Contains(x.CompanyId))
                                             where s.State == "sale" || s.State == "done"
                                             group s by s.PartnerId into g
                                             select new
@@ -2735,58 +2731,60 @@ namespace Infrastructure.Services
 
             }
 
-
-            var partnerRevenueExpectQr = (from pre in saleOrderLineObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                                          where pre.State == "sale" || pre.State == "done"
-                                          group pre by pre.OrderPartnerId into g
-                                          select new
-                                          {
-                                              PartnerId = g.Key.Value,
-                                              OrderResidual = g.Sum(x => x.PriceTotal - x.AmountInvoiced),
-                                          });
-
-            var debtQr = from aml in amlObj.SearchQuery(x => !val.CompanyId.HasValue || x.CompanyId == val.CompanyId)
-                         join acc in accObj.SearchQuery()
-                         on aml.AccountId equals acc.Id
-                         where acc.Code == "CNKH"
-                         group aml by aml.PartnerId into g
-                         select new
-                         {
-                             PartnerId = g.Key.Value,
-                             TotalDebt = g.Sum(x => x.Balance)
-                         };
-
             if (val.IsRevenueExpect.HasValue)
             {
-                IQueryable<Guid> partnersByKeywords;
+                var partnerRevenueExpectQr = from order in saleOrderObj.SearchQuery(x => allowedCompanyIds.Contains(x.CompanyId))
+                                         where order.State != "draft"
+                                         group order by order.PartnerId into g
+                                         select new 
+                                         { 
+                                            PartnerId = g.Key,
+                                            TotalResidual = g.Sum(s => s.Residual)
+                                         };
 
-                partnersByKeywords = from p in mainQuery select p.Id;
-
-                if (val.IsRevenueExpect == true)
-                    partnersByKeywords = partnersByKeywords.Where(x => partnerRevenueExpectQr.Select(s => s.PartnerId).Contains(x));
+                if (val.IsRevenueExpect.Value)
+                {
+                    mainQuery = from a in mainQuery
+                                join pre in partnerRevenueExpectQr on a.Id equals pre.PartnerId
+                                where pre.TotalResidual > 0
+                                select a;
+                }
                 else
-                    partnersByKeywords = partnersByKeywords.Except(from pre in partnerRevenueExpectQr select pre.PartnerId);
-
-                mainQuery = from a in mainQuery
-                            join pbk in partnersByKeywords on a.Id equals pbk
-                            select a;
+                {
+                    mainQuery = from a in mainQuery
+                                join pre in partnerRevenueExpectQr on a.Id equals pre.PartnerId
+                                where pre.TotalResidual == 0
+                                select a;
+                }
             }
-
 
             if (val.IsDebt.HasValue)
             {
-                IQueryable<Guid> partnersByKeywords;
+                var debtQr = from aml in amlObj._QueryGet(state: "posted", companyIds: allowedCompanyIds)
+                             join acc in accObj.SearchQuery()
+                             on aml.AccountId equals acc.Id
+                             where acc.Code == "CNKH"
+                             group aml by aml.PartnerId into g
+                             select new
+                             {
+                                 PartnerId = g.Key.Value,
+                                 TotalDebt = g.Sum(x => x.Balance)
+                             };
 
-                partnersByKeywords = from p in mainQuery select p.Id;
-
-                if (val.IsDebt == true)
-                    partnersByKeywords = partnersByKeywords.Where(x => debtQr.Select(s => s.PartnerId).Contains(x));
+                if (val.IsDebt.Value)
+                {
+                    mainQuery = from a in mainQuery
+                                join de in debtQr on a.Id equals de.PartnerId
+                                where de.TotalDebt > 0
+                                select a;
+                }
                 else
-                    partnersByKeywords = partnersByKeywords.Except(from dp in debtQr select dp.PartnerId);
-
-                mainQuery = from a in mainQuery
-                            join pbk in partnersByKeywords on a.Id equals pbk
-                            select a;
+                {
+                    mainQuery = from a in mainQuery
+                                join de in debtQr on a.Id equals de.PartnerId
+                                where de.TotalDebt == 0
+                                select a;
+                }    
             }
 
             if (val.AgeFrom.HasValue || val.AgeTo.HasValue)
@@ -3285,39 +3283,47 @@ namespace Infrastructure.Services
             var amlObj = GetService<IAccountMoveLineService>();
 
             var query = GetQueryablePartnerFilter(val);
+
             query = query.OrderByDescending(x => x.DateCreated);
             var total = await query.CountAsync();
 
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
+            var allowedCompanyIds = new List<Guid>() { CompanyId };
+
             var res = await query.Include(x => x.Source).Include(x => x.Company).ToListAsync();
 
             var cateList = await partnerCategoryRelObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).Include(x => x.Category).ToListAsync();
             var categDict = cateList.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.Select(s => s.Category));
 
-            var partnerOrderStateDict = saleOrderObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).GroupBy(x => x.PartnerId).Select(s => new
+            var partnerOrderStateDict = saleOrderObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId) && allowedCompanyIds.Contains(x.CompanyId)).GroupBy(x => x.PartnerId).Select(s => new
             {
                 PartnerId = s.Key,
                 CountSale = s.Sum(x => x.State == "sale" ? 1 : 0),
                 CountDone = s.Sum(x => x.State == "done" ? 1 : 0),
-                AmountRevenueExpect = s.Sum(x => x.AmountTotal - x.TotalPaid),
+                AmountRevenueExpect = s.Sum(x => x.Residual),
                 Date = s.Max(x => x.DateOrder)
             }).ToDictionary(g => g.PartnerId, x => x);
 
-            var partnerDebitDict = amlObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH").GroupBy(x => x.PartnerId).Select(s => new
-            {
-                PartnerId = s.Key,
-                AmountTotalDebit = s.Sum(x => x.Balance)
-            }).ToDictionary(g => g.PartnerId, x => x);
+            var partnerDebitDict = amlObj._QueryGet(state: "posted", companyIds: allowedCompanyIds)
+                .Where(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH")
+                .GroupBy(x => x.PartnerId).Select(s => new
+                {
+                    PartnerId = s.Key,
+                    AmountTotalDebit = s.Sum(x => x.Balance)
+                }).ToDictionary(g => g.PartnerId, x => x);
 
-            //var partnerCardTypeDict = cardCardObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value)).Select(s => new
-            //{
-            //    PartnerId = s.PartnerId,
-            //    CardTypeName = s.Type.Name
-            //}).ToDictionary(g => g.PartnerId, x => x);
+            var partnerCardTypes = await cardCardObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && allowedCompanyIds.Contains(x.CompanyId.Value))
+               .Select(s => new
+               {
+                   PartnerId = s.PartnerId,
+                   CardTypeName = s.Type.Name
+               }).ToListAsync();
 
-            var partnerAppointmentDict = appointmentObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId)).GroupBy(x => x.PartnerId).Select(s => new
+            var partnerCardTypeDict = partnerCardTypes.GroupBy(x => x.PartnerId).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+
+            var partnerAppointmentDict = appointmentObj.SearchQuery(x => res.Select(i => i.Id).Contains(x.PartnerId) && allowedCompanyIds.Contains(x.CompanyId)).GroupBy(x => x.PartnerId).Select(s => new
             {
                 PartnerId = s.Key,
                 AppointmentDate = s.Max(g => g.Date)
@@ -3330,7 +3336,7 @@ namespace Infrastructure.Services
                 item.OrderState = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].CountSale > 0 ? "sale" : (partnerOrderStateDict[item.Id].CountDone > 0 ? "done" : "draft") : "draft";
                 item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
                 item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
-                //item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
+                item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
                 item.SaleOrderDate = partnerOrderStateDict.ContainsKey(item.Id) ? (DateTime?)partnerOrderStateDict[item.Id].Date : null;
                 item.AppointmentDate = partnerAppointmentDict.ContainsKey(item.Id) ? (DateTime?)partnerAppointmentDict[item.Id].AppointmentDate : null;
             }
@@ -3339,7 +3345,6 @@ namespace Infrastructure.Services
             {
                 Items = items
             };
-
         }
 
         public async Task<PagedResult2<PartnerInfoDisplay>> GetPartnerInfoPaged(PartnerInfoPaged val)

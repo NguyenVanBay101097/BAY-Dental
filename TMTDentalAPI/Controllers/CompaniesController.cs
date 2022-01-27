@@ -138,7 +138,7 @@ namespace TMTDentalAPI.Controllers
             var userRoot = await _userManager.Users.Where(x => x.IsUserRoot).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
             if (userRoot != null)
             {
-                userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { Company = company });
+                userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
                 var updateResult = await _userManager.UpdateAsync(userRoot);
 
                 //clear cache ir rule
@@ -172,6 +172,20 @@ namespace TMTDentalAPI.Controllers
             //await SaveLogo(company, val);
             await _unitOfWork.BeginTransactionAsync();
             await _companyService.UpdateAsync(company);
+
+            var userRoot = await _userManager.Users.Where(x => x.IsUserRoot).Include(x => x.ResCompanyUsersRels).FirstOrDefaultAsync();
+            if (userRoot != null)
+            {
+                if (!userRoot.ResCompanyUsersRels.Any(x => x.CompanyId == company.Id))
+                {
+                    userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = company.Id });
+                    var updateResult = await _userManager.UpdateAsync(userRoot);
+
+                    //clear cache ir rule
+                    _cache.RemoveByPattern($"{(_tenant != null ? _tenant.Hostname : "localhost")}-ir.rule-{userRoot.Id}");
+                }
+            }
+
             _unitOfWork.Commit();
 
             return NoContent();

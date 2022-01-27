@@ -581,7 +581,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool? IsDebt { get; set; }
 
         /// <summary>
-        /// du kien thu
+        /// Xác định dự kiến thu lớn hơn 0 hoặc bằng 0
         /// </summary>
         public bool? IsRevenueExpect { get; set; }
 
