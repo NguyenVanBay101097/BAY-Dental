@@ -29,11 +29,17 @@
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="orderPartnerDisplayName"
                     title="Khách hàng" width="200">
                 </kendo-grid-column>
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employeeName" title="Bác sĩ"
+                    width="150">
+                </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" title="ĐVT" width="120"
                     field="productUOMName">
                 </kendo-grid-column>
-                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="employeeName" title="Bác sĩ"
-                    width="150">
+                <kendo-grid-column [headerClass]="{'font-weight-bold':true}" class="text-right" field="productUOMQty"
+                    title="Số lượng" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.productUOMQty | number}}
+                    </ng-template>
                 </kendo-grid-column>
                 <kendo-grid-column [headerClass]="{'font-weight-bold':true}" field="priceTotal" class="text-right"
                     title="Thành tiền" width="120">

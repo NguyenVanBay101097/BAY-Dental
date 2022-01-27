@@ -114,15 +114,17 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A2:K2"].Merge = true;
 
                 worksheet.Cells[4, 1].Value = "Dịch vụ";
-                worksheet.Cells[4, 2].Value = "Khách hàng";
-                worksheet.Cells[4, 3].Value = "Đơn vị tính";
+                worksheet.Cells[4, 2].Value = "Phiếu điều trị";
+                worksheet.Cells[4, 3].Value = "Khách hàng";
                 worksheet.Cells[4, 4].Value = "Bác sĩ";
-                worksheet.Cells[4, 5].Value = "Thành tiền";
-                worksheet.Cells[4, 6].Value = "Thanh toán";
-                worksheet.Cells[4, 7].Value = "Còn lại";
-                worksheet.Cells[4, 8].Value = "Răng";
-                worksheet.Cells[4, 9].Value = "Chuẩn đoán";
-                worksheet.Cells[4, 10].Value = "Trạng thái";
+                worksheet.Cells[4, 5].Value = "Đơn vị tính";
+                worksheet.Cells[4, 6].Value = "Số lượng";
+                worksheet.Cells[4, 7].Value = "Thành tiền";
+                worksheet.Cells[4, 8].Value = "Thanh toán";
+                worksheet.Cells[4, 9].Value = "Còn lại";
+                worksheet.Cells[4, 10].Value = "Răng";
+                worksheet.Cells[4, 11].Value = "Chẩn đoán";
+                worksheet.Cells[4, 12].Value = "Trạng thái";
 
                 worksheet.Cells["A4:L4"].Style.Font.Bold = true;
                 worksheet.Cells["A4:L4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
@@ -132,18 +134,21 @@ namespace TMTDentalAPI.Controllers
                 foreach (var item in data.Items)
                 {
                     worksheet.Cells[row, 1].Value = item.Product.Name;
-                    worksheet.Cells[row, 2].Value = item.OrderPartner.DisplayName;
-                    worksheet.Cells[row, 3].Value = item.ProductUOM != null ? item.ProductUOM.Name : "";
-                    worksheet.Cells[row, 4].Value = item.Employee != null ? item.Employee.Name : "";
-                    worksheet.Cells[row, 5].Value = item.PriceTotal;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 6].Value = (item.AmountInvoiced);
+                    worksheet.Cells[row, 2].Value = item.Order.Name;
+                    worksheet.Cells[row, 3].Value = item.OrderPartner.DisplayName;
+                    worksheet.Cells[row, 4].Value = item.ProductUOM != null ? item.ProductUOM.Name : "";
+                    worksheet.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : "";
+                    worksheet.Cells[row, 6].Value = item.PriceTotal;
                     worksheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 7].Value = (item.PriceTotal) - (item.AmountInvoiced ?? 0);
-                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 8].Value = item.TeethDisplay;
-                    worksheet.Cells[row, 9].Value = item.Diagnostic;
-                    worksheet.Cells[row, 10].Value = GetSaleOrderState(item.State);
+                    worksheet.Cells[row, 7].Value = item.ProductUOMQty;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "0";
+                    worksheet.Cells[row, 8].Value = (item.AmountInvoiced);
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 9].Value = (item.PriceTotal) - (item.AmountInvoiced ?? 0);
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 10].Value = item.TeethDisplay;
+                    worksheet.Cells[row, 11].Value = item.Diagnostic;
+                    worksheet.Cells[row, 12].Value = GetSaleOrderState(item.State);
                     row++;
                 }
 
