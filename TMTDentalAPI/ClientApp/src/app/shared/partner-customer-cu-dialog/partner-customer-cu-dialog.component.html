@@ -12,15 +12,21 @@
                     <label class="o_form_label oe_edit_only">Họ tên </label>
                     <h1>
                         <!-- <input ngbAutoFocus class="form-control" formControlName="name" name="name"> -->
-                        <kendo-autocomplete ngbAutoFocus formControlName="name" class="form-control" valueField="name" [popupSettings]="{width:'150px'}" #autocomplete [data]="filterPartners" [filterable]="true">
-                            <ng-template kendoAutoCompleteItemTemplate let-dataItem>
-                                <div>
-                                    <div><a [routerLink]="['/partners/customer/' + dataItem.id]"><b>{{dataItem.name}}</b></a></div>
-                                  <div class="text-black-50">{{ dataItem.dateOfBirth }}</div>
-                                  <div class="text-black-50">{{ dataItem.phone }}{{dataItem.phone && dataItem.email ? ' - ': ''}}{{dataItem.email}}</div>
+                        <div style="position: relative;">
+                            <input id="typeahead-basic" type="text" class="form-control" formControlName="name" [ngbTypeahead]="search" [inputFormatter]="formatter" [resultTemplate]="rt"
+                            [focusFirst]="false"/>
+                           <ng-template #rt let-r="result" let-t="term">
+                               <div>
+                                   <div class="font-weight-600"><a [routerLink]="['/partners/customer/' + r.id]">{{r.name}}</a></div>
+                                 <div *ngIf="r.dateOfBirth" class="text-muted">
+                                     <span class="fas fa-birthday-cake"></span> {{ r.dateOfBirth }}
                                 </div>
-                            </ng-template>
-                          </kendo-autocomplete>
+                                 <div *ngIf="r.phone || r.email" class="text-muted">
+                                    <span class="fas fa-address-book"></span> {{ r.phone }}{{r.phone && r.email ? ' - ': ''}}{{r.email}}
+                                </div>
+                               </div>
+                             </ng-template>
+                        </div>
                     </h1>
                     <div *ngIf="f.name.errors && (submitted || f.name.touched || f.name.dirty )" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>

@@ -250,7 +250,7 @@
                                             <label class="o_form_label">
                                                 <div class="form-check d-flex align-items-center">
                                                     <input class="form-check-input" type="checkbox"
-                                                        formControlName="isAllowSurvey" id="isAllowSurvey">
+                                                        formControlName="isAllowSurvey" id="isAllowSurvey" (change)="onChangeIsAllowSurvey($event)">
                                                     <label class="form-check-label" for="isAllowSurvey">
                                                         Là nhân viên khảo sát
                                                     </label>
@@ -260,6 +260,9 @@
                         <td colspan="3" style="width: 100%;">
                             <kendo-combobox [placeholder]="'Nhóm khảo sát'" [data]="groupSurvey" *ngIf="getValueForm('isAllowSurvey')" [valuePrimitive]="true" [textField]="'name'" [filterable]="true" formControlName="groupId" [valueField]="'id'">
                             </kendo-combobox>
+                            <div *ngIf="f.groupId.errors && submitted" class="text-danger">
+                                <div *ngIf="f.groupId.errors.required">Chọn nhóm khảo sát</div>
+                            </div>
                         </td>
                         </tr>
                         </tbody>

@@ -92,6 +92,9 @@
                                     <ng-container *ngIf="pickingState != 'done'; else dateLable">
                                         <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy HH:mm">
                                         </kendo-datepicker>
+                                        <div *ngIf="f.dateObj.errors && submitted" class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày xuất</div>
+                                        </div>
                                     </ng-container>
                                     <ng-template #dateLable>
                                         <label for="">{{picking.date | date: 'shortDate'}}</label>

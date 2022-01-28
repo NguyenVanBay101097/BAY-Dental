@@ -533,6 +533,16 @@ namespace Infrastructure.Services
         public IQueryable<Partner> GetQueryPaged(PartnerPaged val)
         {
             var query = SearchQuery();
+
+            var allowedCompanyIds = new List<Guid>() { CompanyId };
+            var modelDataObj = GetService<IIRModelDataService>();
+            var partnerRule = modelDataObj.GetRefNoAsync<IRRule>("base.res_partner_rule");
+            if (partnerRule != null)
+            {
+                if (partnerRule.Active)
+                    query = query.Where(x => allowedCompanyIds.Contains(x.CompanyId.Value));
+            }
+
             if (val.Customer.HasValue)
                 query = query.Where(x => x.Customer == val.Customer);
             if (val.Employee.HasValue)

@@ -66,7 +66,7 @@ export class AppHomeComponent implements OnInit {
         { name: 'Danh sách khảo sát', url: '/surveys/list', permissions: ['Survey.UserInput.Read'], groups: 'survey.group_user,survey.group_manager' },
         { name: 'Quản lý phân việc', url: '/surveys/manage', permissions: ['Survey.Assignment.Read'], groups: 'survey.group_manager' },
         { name: 'Câu hỏi khảo sát', url: '/surveys/config', permissions: ['Survey.Question.Read', 'Survey.Question.Create', 'Survey.Question.Update', 'Survey.Question.Delete'], groups: 'survey.group_manager' },
-        { name: 'Báo cáo khảo sát', url: '/surveys/report'}
+        { name: 'Báo cáo khảo sát', url: '/surveys/report', groups: 'survey.group_user,survey.group_manager'}
       ],
       groups: 'survey.group_survey',
       permissions: ['Survey.UserInput.Read', 'Survey.Assignment.Read', 'Survey.Question.Read']

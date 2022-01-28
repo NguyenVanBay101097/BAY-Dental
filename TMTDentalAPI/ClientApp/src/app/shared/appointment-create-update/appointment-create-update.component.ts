@@ -406,7 +406,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   filterChangeCombobox() {
-    debugger
     this.partnerCbx.filterChange.asObservable().pipe(
       debounceTime(300),
       tap(() => this.partnerCbx.loading = true),
@@ -434,11 +433,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
 
   searchCustomers(search?: string) {
     var partnerPaged = new PartnerPaged();
-    partnerPaged.employee = false;
     partnerPaged.customer = true;
-    partnerPaged.supplier = false;
-    partnerPaged.limit = 1000;
-    partnerPaged.offset = 0;
+    partnerPaged.limit = 20;
     partnerPaged.search = search || '';
 
     return this.partnerService.autocompletePartner(partnerPaged);

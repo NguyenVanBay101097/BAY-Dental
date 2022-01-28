@@ -536,11 +536,12 @@ export class EmployeeCreateUpdateComponent implements OnInit, AfterViewInit {
   onChangeIsAllowSurvey(e) {
     var value = e.target.checked;
     if (value == false) {
+      this.formCreate.get('groupId').setValidators([]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
       this.getControlForm('groupId').setValue(null);
     } else {
-      if (this.groupSurvey.length) {
-        this.getControlForm('groupId').setValue(this.groupSurvey[0].id);
-      }
+      this.formCreate.get('groupId').setValidators([Validators.required]);
+      this.formCreate.get('userPassword').updateValueAndValidity();
     }
   }
 

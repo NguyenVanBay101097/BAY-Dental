@@ -6,7 +6,8 @@ import { NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AutoCompleteComponent, ComboBoxComponent } from "@progress/kendo-angular-dropdowns";
 import { IntlService } from "@progress/kendo-angular-intl";
 import * as _ from "lodash";
-import { debounceTime, delay, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of, OperatorFunction, Subject } from "rxjs";
+import { catchError, debounceTime, delay, distinctUntilChanged, filter, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { HistorySimple } from "src/app/history/history";
 import { PartnerCategoryCuDialogComponent } from "src/app/partner-categories/partner-category-cu-dialog/partner-category-cu-dialog.component";
 import {
@@ -111,6 +112,9 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
 
 
   get f() { return this.formGroup.controls; }
+
+  search: OperatorFunction<string, any[]>;
+  formatter = (x: any) => x.name;
 
   constructor(
     private fb: FormBuilder,
@@ -287,18 +291,11 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
         this.agentCbx.loading = false;
       });
 
-    this.partnerAutocomplete.filterChange
-      .asObservable()
-      .pipe(
-        debounceTime(1000),
-        tap(() => (this.partnerAutocomplete.loading = true)),
-        switchMap((searchTerm) => this.autoComplete$(searchTerm))
-      )
-      .subscribe((data: PartnerSimple[]) => {
-        this.filterPartners = data;
-        this.partnerAutocomplete.loading = false;
-      });
-
+    this.search = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      switchMap(term => this.autoComplete$(term))
+    )
   }
 
   get sourceValue() {
@@ -626,12 +623,14 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
       postVal.id = this.id;
       this.partnerService.updateCustomer(postVal).subscribe(
         () => {
+          this.notifyService.notify('success', 'Lưu thành công');
           this.activeModal.close(true);
         },
       );
     } else {
       this.partnerService.createCustomer(postVal).pipe(
         mergeMap((rs: any) => {
+          this.notifyService.notify('success', 'Lưu thành công');
           return this.partnerService.getCustomerInfo(rs.id);
         })).subscribe(
           (result: PartnerSimple) => {
