@@ -190,6 +190,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = filter || '';
     val.isDoctor = true;
+    val.active = true;
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 

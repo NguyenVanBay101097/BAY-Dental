@@ -102,7 +102,7 @@
             <h5 class="card-header bg-white">
                 Số lượng khách hàng: {{gridData?.total}}
             </h5>
-            <kendo-grid [data]="gridData" [pageable]="pagerSettings" [skip]="this.offset" [pageSize]="this.limit"
+            <kendo-grid [data]="gridData" [pageable]="pagerSettings" [skip]="filter.offset" [pageSize]="filter.limit"
                 (pageChange)="onPageChange($event)">
                 <kendo-grid-column field="name" title="Họ tên" width="200">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">

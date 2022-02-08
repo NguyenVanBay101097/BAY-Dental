@@ -996,7 +996,8 @@ namespace TMTDentalAPI.Controllers
                 JobTitle = x.JobTitle,
                 Phone = x.Phone,
                 MedicalHistory = x.MedicalHistory,
-                Date = DateTime.Now,
+                Date = x.Date,
+                Name = x.Name,
                 Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
                 {
                     Id = x.HistoryId,

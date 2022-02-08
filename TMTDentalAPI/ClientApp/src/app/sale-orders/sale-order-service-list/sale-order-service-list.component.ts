@@ -147,6 +147,7 @@ export class SaleOrderServiceListComponent implements OnInit, OnChanges {
     val.limit = 0;
     val.offset = 0;
     val.active = true;
+    val.companyId = this.authService.userInfo.companyId;
 
     this.employeeService
       .getEmployeePaged(val)

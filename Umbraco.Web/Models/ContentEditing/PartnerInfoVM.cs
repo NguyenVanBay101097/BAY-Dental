@@ -314,6 +314,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public IEnumerable<SaleOrderLineBasic> OrderLines { get; set; } = new List<SaleOrderLineBasic>();
         public CompanyPrintVM Company { get; set; }
 
+        public string Name { get; set; }
     }
 
 }

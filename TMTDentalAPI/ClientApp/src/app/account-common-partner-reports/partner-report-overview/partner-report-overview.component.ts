@@ -28,7 +28,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
 
   formGroup: FormGroup
   gridData: GridDataResult;
-  limit: number = 20;
+  limit: number = 5;
   offset: number = 0;
   revenueExpect: { text: string, value: boolean }[] = [
     { text: 'Có dự kiến thu', value: true },
@@ -74,12 +74,12 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
+    this.filter.limit = this.limit;
+    this.filter.offset = this.offset;
     this.loadReportSource();
     this.loadReportAgeGender();
     this.loadCompanies();
     this.loadListPartner();
-    this.filter.limit = this.limit;
-    this.filter.offset = this.offset;
   }
 
   ngAfterViewInit(): void {
@@ -394,8 +394,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   onPageChange(event: PageChangeEvent): void {
-    this.offset = event.skip;
-    this.limit = event.take;
+    this.filter.offset = event.skip;
     this.loadListPartner();
   }
 }

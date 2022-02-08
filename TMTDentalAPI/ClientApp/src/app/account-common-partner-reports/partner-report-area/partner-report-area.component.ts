@@ -77,6 +77,9 @@ export class PartnerReportAreaComponent implements OnInit {
 
   loadChartOption() {
     this.chartOption = {
+      textStyle: {
+        fontFamily: 'sans-serif',
+      },
       tooltip: {},
       series: [
         {
