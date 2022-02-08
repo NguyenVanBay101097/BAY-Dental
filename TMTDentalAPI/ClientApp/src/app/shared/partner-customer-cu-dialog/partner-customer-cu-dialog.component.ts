@@ -114,7 +114,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   get f() { return this.formGroup.controls; }
 
   search: OperatorFunction<string, any[]>;
-  formatter = (x: any) => x.name;
+  formatter = (x: any) => x.name || x;
 
   constructor(
     private fb: FormBuilder,
@@ -143,7 +143,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
-    this.partnerAutocomplete.focus();
+    // this.partnerAutocomplete.focus();
   }
 
   ngOnInit() {

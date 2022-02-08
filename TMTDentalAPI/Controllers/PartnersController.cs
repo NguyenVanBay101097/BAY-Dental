@@ -971,7 +971,7 @@ namespace TMTDentalAPI.Controllers
             if (template == null)
             {
                 //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
-                template = await _modelDataService.GetRef<PrintTemplate>("base.tmp_treatment_histories");
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_treatment_histories");
                 if (template == null)
                     throw new Exception("Không tìm thấy mẫu in mặc định");
             }
@@ -1009,6 +1009,24 @@ namespace TMTDentalAPI.Controllers
             var result = await _printTemplateService.GeneratePrintHtml(template, new List<object> { res});
 
             return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerService.ActionArchive(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerService.ActionUnArchive(ids);
+            _unitOfWork.Commit();
+            return NoContent();
         }
     }
 }

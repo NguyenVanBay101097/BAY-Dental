@@ -5,7 +5,7 @@
                 Thẻ thành viên
             </h5>
             <div class="text-primary">
-                <a (click)="createCard()"><i class="fas fa-plus"></i></a>
+                <a *ngIf="!memberCard" (click)="createCard()"><i class="fas fa-plus"></i></a>
             </div>
         </div>
         <ng-container *ngIf="!memberCard; else elseTemplate">

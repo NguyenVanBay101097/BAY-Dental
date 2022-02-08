@@ -42,6 +42,9 @@ export class SaleReportOverviewComponent implements OnInit {
     { field: 'PriceSubTotal', aggregate: 'sum' },
     { field: 'AmountInvoiced', aggregate: 'sum' }
   ];
+
+  isDisabledDoctors = true;
+
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
@@ -94,6 +97,7 @@ export class SaleReportOverviewComponent implements OnInit {
     let val = new EmployeePaged();
     val.search = q;
     val.isDoctor = true;
+    val.companyId = this.filter.companyId || '';
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
@@ -109,7 +113,6 @@ export class SaleReportOverviewComponent implements OnInit {
     val.dateTo = this.filter.dateTo ? moment(this.filter.dateTo).format('YYYY-MM-DD') : '';
     val.limit = this.limit;
     val.offset = this.skip;
-    val.search = this.search || '';
     val.aggregate = this.filterAggregates;
     this.saleOrderLineService.getGrid(val).subscribe((result: any) => {
       this.gridData = (<GridDataResult>{
@@ -135,13 +138,20 @@ export class SaleReportOverviewComponent implements OnInit {
   }
 
   onSelectEmployee(event) {
-    this.filter.employeeId = event ? event.id : '';
     this.skip = 0;
     this.loadDataFromApi();
   }
 
-  onSelectCompany(event) {
-    this.filter.companyId = event ? event.id : '';
+  onSelectCompany(company) {
+    this.filter.employeeId = null;
+    if (company) {
+      this.isDisabledDoctors = false;
+      this.loadEmployees();
+    } else {
+      this.isDisabledDoctors = true;
+      this.listEmployees = [];
+    }
+
     this.skip = 0;
     this.loadDataFromApi();
   }

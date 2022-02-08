@@ -6,14 +6,14 @@
             [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"
             opens="right">
         </app-date-range-picker-filter>
-        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="listEmployees" (selectionChange)="onSelectEmployee($event)" #empCbx>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [(ngModel)]="filter.companyId" [textField]="'name'"
+            [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [valuePrimitive]="true" [data]="listCompanies" (valueChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="listCompanies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
+            [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [data]="listEmployees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
         <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
-            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
         <div class="dropdown mb-2 mr-2">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">

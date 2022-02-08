@@ -497,21 +497,33 @@ export class PartnerCustomerListComponent implements OnInit {
 
   onClickActive(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
-    modalRef.componentInstance.title = `${!item.active ? '' : 'Ngưng'} Theo dõi khách hàng ${item.name}`;
-    modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${!item.active ? '' : 'Ngưng'} theo dõi khách hàng này?`;
+    modalRef.componentInstance.title = `${!item.active ? 'Theo dõi' : 'Ngưng theo dõi'} khách hàng ${item.name}`;
+    modalRef.componentInstance.body = `Bạn có chắc chắn muốn ${!item.active ? '' : 'ngưng'} theo dõi khách hàng này?`;
     modalRef.result.then(() => {
-      var res = new PartnerActivePatch();
-      res.active = item.active ? false : true;
-      this.partnerService.UpdateActive(item.id, res).subscribe(() => {
-        this.notificationService.show({
-          content: 'Thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
+      var active = item.active ? false : true;
+      if (active) {
+        this.partnerService.actionUnArchive([item.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Cập nhật thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.refreshData();
         });
-        this.refreshData();
-      });
+      } else {
+        this.partnerService.actionArchive([item.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Cập nhật thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.refreshData();
+        });
+      }
     }, () => {
     });
   }

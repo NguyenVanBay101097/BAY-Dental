@@ -3473,6 +3473,24 @@ namespace Infrastructure.Services
             var query = orderObj.SearchQuery(x => x.State != "draft" && x.PartnerId == id);
             return await query.SumAsync(x=> x.AmountTotal ?? 0);
         }
+
+        public async Task ActionArchive(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var partner in self)
+                partner.Active = false;
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var partner in self)
+                partner.Active = true;
+
+            await UpdateAsync(self);
+        }
     }
 
     public class PartnerCreditDebitItem

@@ -29,38 +29,7 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
 
-  public options: any = {
-    locale: {
-      format: 'DD/MM/YYYY',
-      customRangeLabel: "Chọn ngày",
-      applyLabel: "Áp dụng",
-      cancelLabel: "Đóng",
-      monthNames: [
-        "Tháng 1",
-        "Tháng 2",
-        "Tháng 3",
-        "Tháng 4",
-        "Tháng 5",
-        "Tháng 6",
-        "Tháng 7",
-        "Tháng 8",
-        "Tháng 9",
-        "Tháng 10",
-        "Tháng 11",
-        "Tháng 12"
-      ]
-    },
-    cancelClass: " btn-light",
-    showDropdowns: true,
-    alwaysShowCalendars: true,
-    ranges: this.ranges,
-    // startDate: undefined,
-    // endDate: undefined,
-    autoUpdateInput: true,
-    opens: this.opens,
-    drops: this.drops,
-
-  };
+  public options: any;
 
   oldStartDate: any;
   oldEndDate: any;
@@ -75,6 +44,38 @@ export class DateRangePickerFilterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.options = {
+      locale: {
+        format: 'DD/MM/YYYY',
+        customRangeLabel: "Chọn ngày",
+        applyLabel: "Áp dụng",
+        cancelLabel: "Đóng",
+        monthNames: [
+          "Tháng 1",
+          "Tháng 2",
+          "Tháng 3",
+          "Tháng 4",
+          "Tháng 5",
+          "Tháng 6",
+          "Tháng 7",
+          "Tháng 8",
+          "Tháng 9",
+          "Tháng 10",
+          "Tháng 11",
+          "Tháng 12"
+        ]
+      },
+      cancelClass: " btn-light",
+      showDropdowns: true,
+      alwaysShowCalendars: true,
+      ranges: this.ranges,
+      // startDate: undefined,
+      // endDate: undefined,
+      autoUpdateInput: true,
+      opens: this.opens,
+      drops: this.drops,
+    };
+
     this.startDate = this.startDate ? moment(this.startDate) : null;
     this.endDate = this.endDate ? moment(this.endDate) : null;
 

@@ -640,6 +640,7 @@ const keyWorDatas =
                 { text: 'SĐT khách hàng', value: '{{o.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.address}}' },
                 { text: 'Tiểu sử bệnh', value: '{{o.histories_string}}' },
+                { text: 'Tiểu sử bệnh khác', value: '{{o.medical_history}}' },
                 { text: 'Giới tính', value: '{{o.display_gender}}' },
                 { text: 'Nghề nghiệp', value: '{{o.job_title}}' },
                 { text: 'Ngày sinh', value: '{{o.date_of_birth}}' },

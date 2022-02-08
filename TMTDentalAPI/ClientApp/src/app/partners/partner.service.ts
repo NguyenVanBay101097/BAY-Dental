@@ -621,10 +621,6 @@ export class PartnerService {
         }
     }
 
-    UpdateActive(id, val): Observable<any> {
-        return this.http.post(this.baseApi + "api/Partners/" + id + '/UpdateActive', val);
-    }
-
     getDebtPaged(id: string, val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
     }
@@ -703,5 +699,13 @@ export class PartnerService {
 
     printTreatmentHistories(val: any) {
         return this.http.post(this.baseApi + this.apiUrl + '/PrintTreatmentHistories',val);
+    }
+
+    actionArchive(ids: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionArchive", ids);
+    }
+
+    actionUnArchive(ids: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionUnArchive", ids);
     }
 }
