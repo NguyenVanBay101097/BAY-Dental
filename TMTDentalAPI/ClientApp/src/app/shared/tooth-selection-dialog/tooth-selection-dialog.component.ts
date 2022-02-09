@@ -71,7 +71,7 @@ export class ToothSelectionDialogComponent implements OnInit {
     // this.loadTeethMap(value);
     if (value.id == null) {
       this.myForm.get('toothType').setValue('manual');
-      this.myForm.updateValueAndValidity();
+      this.myForm.get('toothType').updateValueAndValidity();
     }
     this.toothSelectedIds = [];
   }
