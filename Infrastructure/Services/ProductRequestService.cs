@@ -58,11 +58,11 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await _mapper.ProjectTo<ProductRequestBasic>(query).ToListAsync();
+            var items = await query.ToListAsync();
 
             var paged = new PagedResult2<ProductRequestBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<ProductRequestBasic>>(items)
             };
 
             return paged;
@@ -185,7 +185,7 @@ namespace Infrastructure.Services
                     {
                         _mapper.Map(line, item);
                         item.Sequence = sequence++;
-                       
+
                     }
                 }
 
