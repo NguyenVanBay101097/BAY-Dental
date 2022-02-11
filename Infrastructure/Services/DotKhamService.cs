@@ -302,11 +302,11 @@ namespace Infrastructure.Services
             if (val.Limit > 0)
                 query = query.Skip(val.Offset).Take(val.Limit);
 
-            var items = await _mapper.ProjectTo<DotKhamBasic>(query.OrderByDescending(x => x.DateCreated).ThenByDescending(x => x.Sequence)).ToListAsync();
+            var items = await query.OrderByDescending(x => x.DateCreated).ThenByDescending(x => x.Sequence).ToListAsync();
 
             return new PagedResult2<DotKhamBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = _mapper.Map<IEnumerable<DotKhamBasic>>(items)
             };
         }
 
