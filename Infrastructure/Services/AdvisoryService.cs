@@ -334,9 +334,9 @@ namespace Infrastructure.Services
                     Name = x.Employee.Name,
                 } : null,
                 ToothType = x.ToothType,
-                Tooths = String.Join(",", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
-                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(",", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
-                Services = x.AdvisoryProductRels.Any() ? String.Join(",", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null,
+                Tooths = String.Join(", ", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
+                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(", ", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
+                Services = x.AdvisoryProductRels.Any() ? String.Join(", ", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null,
                 Note = x.Note
             }).ToListAsync();
 
@@ -529,7 +529,7 @@ namespace Infrastructure.Services
                     quotationLine.ToothType = advisory.ToothType;
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
                     quotationLine.ProductUOMId = product.UOMId;
-                    quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
+                    quotationLine.ToothCategoryId = advisory.ToothCategoryId;
                     foreach (var toothId in toothIds)
                     {
                         quotationLine.QuotationLineToothRels.Add(new QuotationLineToothRel

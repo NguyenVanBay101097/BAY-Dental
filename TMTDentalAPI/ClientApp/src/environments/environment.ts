@@ -9,7 +9,7 @@ export const environment = {
   // apiDomain: '/',
   uploadDomain: 'https://statics.tdental.vn/',
   //apiDomain: 'http://localhost:50396/',
-  ashipApi: 'https://aship.tpos.dev/',
+  ashipApi: 'https://aship.tpos.vn/',
   version: 1
 };
 

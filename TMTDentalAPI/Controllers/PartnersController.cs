@@ -979,7 +979,7 @@ namespace TMTDentalAPI.Controllers
             var companyId = CompanyId;
             var orderLinesQuery = _saleOrderLineService.SearchQuery(x => x.OrderPartnerId == val.Id && states
             .Contains(x.State) && x.CompanyId == companyId).OrderByDescending(x => x.Date);
-            var company = await _companyService.GetByIdAsync(companyId);
+            var company = await _companyService.SearchQuery(x => x.Id == companyId).Include(x => x.Partner).FirstOrDefaultAsync();
 
             var res = await _partnerService.SearchQuery(x => x.Id == val.Id).Select(x => new PartnerTreatmentHistoriesPrintResponse
             {

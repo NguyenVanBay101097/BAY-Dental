@@ -58,29 +58,25 @@ namespace Infrastructure.Services
         public async Task<ReportRatingScroreRateOfUserInputResponse> ReportRatingScroreRate(ReportRatingScroreRateOfUserInputRequest val)
         {
             var getReportAssignmentQuery = GetReportAssignmentQuery(val);
-            var userInputQr = _surveyUserInputService.SearchQuery();
-
-            var query = getReportAssignmentQuery.Join(userInputQr, ass => ass.UserInputId, ui => ui.Id, (ass, ui) => new { ass, ui });
-            var avergScore = await query.SumAsync(x => x.ui.Score ?? 0);
-            var total = await query.CountAsync();
-            var MaxScore = await query.Select(x => x.ui.MaxScore ?? 0).DefaultIfEmpty().MaxAsync();
-
-            var resLines = query.GroupBy(x =>Math.Ceiling(x.ui.Score.Value)).OrderByDescending(x => x.Key).Select(x => new
+            getReportAssignmentQuery = getReportAssignmentQuery.Where(x => x.UserInput.Score.HasValue && x.UserInput.Score > 0);
+            var resLines = await getReportAssignmentQuery.GroupBy(x => Math.Floor(x.UserInput.Score.Value)).OrderBy(x => x.Key).Select(x => new
             {
                 Score = x.Key,
                 Count = x.Count(),
-            })
-                .ToList();
+            }).ToListAsync();
+
+            var averageScore = await getReportAssignmentQuery.AverageAsync(x => x.UserInput.Score);
+            var maxScore = await getReportAssignmentQuery.MaxAsync(x => x.UserInput.MaxScore);
+
             return new ReportRatingScroreRateOfUserInputResponse()
             {
                 Lines = resLines.Select(x => new ReportRatingScroreRateOfUserInputResponseItem
                 {
-                    ScroreFrom = x.Score - 1,
-                    ScroreTo = x.Score,
+                    Score = x.Score,
                     Value = x.Count
                 }),
-                Score = Math.Round(avergScore / (total == 0 ? 1 : total), 2),
-                MaxScore = MaxScore
+                Score = averageScore,
+                MaxScore = maxScore
             };
         }
 
@@ -103,7 +99,7 @@ namespace Infrastructure.Services
             res.Data = listCountByScoreQuestion.GroupBy(x => x.Score).Select(x => new ReportSatifyScoreRatingByQuestionResponseItem()
             {
                 Score = x.Key,
-                Data = listQuestions.Select(z => x.Where(i => i.QuestionId == z.QuestionId).Sum(o=> o.Count))
+                Data = listQuestions.Select(z => x.Where(i => i.QuestionId == z.QuestionId).Sum(o => o.Count))
             });
 
             return res;

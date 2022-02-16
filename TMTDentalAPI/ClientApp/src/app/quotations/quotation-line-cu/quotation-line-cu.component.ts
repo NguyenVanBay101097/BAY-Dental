@@ -282,7 +282,7 @@ export class QuotationLineCuComponent implements OnInit {
     //   return this.toothTypeDict.find(x => x.value == toothType).name;
     // }
     if (toothData.toothType && toothData.toothType == "manual") {
-      this.teethList = toothData.teeth.map(x => x.name).join(',');
+      this.teethList = toothData.teeth.map(x => x.name).join(', ');
     } else if (toothData.toothType && toothData.toothType != "manual") {
       this.teethList = this.toothTypeDict.find(x => x.value == toothData.toothType).name;
     }

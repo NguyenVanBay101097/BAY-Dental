@@ -801,8 +801,8 @@ namespace TMTDentalAPI.Controllers
 
                     worksheet.Cells[row, 2].Value = "Dịch vụ";
                     worksheet.Cells[row, 2, row, 3].Merge = true;
-                    worksheet.Cells[row, 4].Value = "Đơn vị tính";
                     worksheet.Cells[row, 5].Value = "Số lượng";
+                    worksheet.Cells[row, 4].Value = "Đơn vị tính";
                     worksheet.Cells[row, 6].Value = "Thành tiền";
                     worksheet.Cells[row, 7].Value = "Thanh toán";
                     worksheet.Cells[row, 8].Value = "Còn lại";
@@ -820,8 +820,8 @@ namespace TMTDentalAPI.Controllers
                     {
                         worksheet.Cells[row, 2, row, 3].Merge = true;
                         worksheet.Cells[row, 2].Value = line.Name;
-                        worksheet.Cells[row, 4].Value = line.ProductUOMName;
-                        worksheet.Cells[row, 5].Value = line.ProductUOMQty;
+                        worksheet.Cells[row, 4].Value = line.ProductUOMQty;
+                        worksheet.Cells[row, 5].Value = line.ProductUOMName;
                         worksheet.Cells[row, 6].Value = line.PriceSubTotal;
                         worksheet.Cells[row, 7].Value = line.AmountInvoiced ?? 0;
                         worksheet.Cells[row, 8].Value = line.AmountResidual ?? 0;

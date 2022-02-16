@@ -36,8 +36,8 @@ namespace Umbraco.Web.Models.ContentEditing
     public class ReportRatingScroreRateOfUserInputResponse
     {
         public IEnumerable<ReportRatingScroreRateOfUserInputResponseItem> Lines = new List<ReportRatingScroreRateOfUserInputResponseItem>();
-        public decimal MaxScore { get; set; }
-        public decimal Score { get; set; }
+        public decimal? MaxScore { get; set; }
+        public decimal? Score { get; set; }
     }
 
     public class ReportRatingScroreRateOfUserInputResponseItem
@@ -46,11 +46,15 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return String.Format("{0} - {1} điểm", this.ScroreFrom, this.ScroreTo);
+                if (Score < 5)
+                    return String.Format("{0} - {1} điểm", this.Score, this.Score + 1);
+                return $"{Score} điểm";
             }
         }
+
         public decimal ScroreFrom { get; set; }
         public decimal ScroreTo { get; set; }
+        public decimal Score { get; set; }
         public int Value { get; set; }
     }
 
