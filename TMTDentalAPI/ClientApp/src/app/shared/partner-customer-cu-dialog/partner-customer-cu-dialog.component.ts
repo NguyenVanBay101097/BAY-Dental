@@ -672,6 +672,7 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
   onBlurPhone(e) {
     var value = e.target.value as string;
     if (!value || (this.partner && this.partner.phone == value)) {
+      this.phoneExistPartners = [];
       return;
     }
     this.partnerService.getExist({ phone: value, customer: true }).subscribe(res => {
@@ -687,4 +688,8 @@ export class PartnerCustomerCuDialogComponent implements OnInit {
     );
   }
 
+  onSelectPartnerValue(event, input) {
+    this.formGroup.get('name').setValue(event.item.name);
+    event.preventDefault();
+  }
 }
