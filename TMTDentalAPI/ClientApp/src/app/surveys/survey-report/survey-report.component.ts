@@ -157,7 +157,7 @@ export class SurveyReportComponent implements OnInit {
         xAxis: {
           data: xAxisData,
           axisLabel: {
-            interval: 0,
+            // interval: 0,
             // rotate: 25 //If the label names are too long you can manage this by rotating the label.
             
           },
@@ -274,7 +274,7 @@ export class SurveyReportComponent implements OnInit {
           type: 'bar',
           stack: 'total',
           label: {
-            show: true
+            show: false
           },
           emphasis: {
             focus: 'series'

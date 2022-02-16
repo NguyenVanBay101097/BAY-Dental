@@ -13,8 +13,8 @@
                     <h1>
                         <!-- <input ngbAutoFocus class="form-control" formControlName="name" name="name"> -->
                         <div style="position: relative;">
-                            <input id="typeahead-basic" type="text" class="form-control" formControlName="name" [ngbTypeahead]="search" [inputFormatter]="formatter" [resultTemplate]="rt"
-                            [focusFirst]="false"/>
+                            <input #searchInput id="typeahead-basic" type="text" class="form-control" formControlName="name" [ngbTypeahead]="search" [inputFormatter]="formatter" [resultTemplate]="rt"
+                            [focusFirst]="false" (selectItem)="onSelectPartnerValue($event, searchInput)"/>
                            <ng-template #rt let-r="result" let-t="term">
                                <div>
                                    <div class="font-weight-600"><a [routerLink]="['/partners/customer/' + r.id]">{{r.name}}</a></div>
