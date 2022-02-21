@@ -175,6 +175,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal PriceSubTotal { get; set; }
+        public string ProductUoMName { get; set; }
     }
   
     public class SumRevenueReportPar

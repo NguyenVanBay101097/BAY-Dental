@@ -107,6 +107,7 @@ namespace TMTDentalAPI.Controllers
             var employee = _mapper.Map<Employee>(val);
             if (!employee.CompanyId.HasValue)
                 employee.CompanyId = CompanyId;
+            employee.GroupId = employee.IsAllowSurvey ? employee.GroupId : null;
 
             if (val.IsUser)
             {
@@ -221,6 +222,7 @@ namespace TMTDentalAPI.Controllers
 
             var oldSurveyGroupId = employee.GroupId;
             employee = _mapper.Map(val, employee);
+            employee.GroupId = employee.IsAllowSurvey ? employee.GroupId : null;
 
             await UpdateSalary(val, employee);
 

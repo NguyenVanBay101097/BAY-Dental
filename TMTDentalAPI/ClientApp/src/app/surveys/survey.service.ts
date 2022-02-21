@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeSimple } from '../employees/employee';
 import { SaleOrderBasic } from '../sale-orders/sale-order-basic';
-import { SurveyUserInputDisplay } from './survey-userinput.service';
+import { GetReportReq, SurveyUserInputDisplay } from './survey-userinput.service';
 
 export class SurveyAssignmentPaged {
   limit: number;
@@ -15,6 +15,8 @@ export class SurveyAssignmentPaged {
   employeeId: string;
   IsGetScore: boolean;
   userId: string;
+  surveyTagId: string;
+  companyId: string;
 }
 
 export class SurveyAssignmentBasic {
@@ -104,6 +106,7 @@ export class SurveyAssignmentDisplaySaleOrderLine {
   productUOMQty: number;
   teeth: string[];
   diagnostic: string;
+  productUOMName: string;
 }
 
 export class SurveyAssignmentDisplayDotKham {
@@ -197,6 +200,29 @@ export class SurveyAssignmentService {
 
   updateAssignment(val: any) {
     return this.http.post(this.base_api + this.apiUrl + '/UpdateEmployee', val);
+  }
+
+  getScoreReport(val: GetReportReq){
+    return this.http.post(this.base_api + this.apiUrl + '/GetScoreReport', val);
+  }
+
+  getEmployeeReport(val: GetReportReq){
+    return this.http.post(this.base_api + this.apiUrl + '/GetEmployeeReport', val);
+  }
+
+  getQuestionReport(val: GetReportReq){
+    return this.http.post(this.base_api + this.apiUrl + '/GetQuestionReport', val);
+  }
+
+  exportDoneSurveyAssignmentExcel(val: any) {
+    return this.http.post(
+      this.base_api + this.apiUrl + "/ExportDoneSurveyAssignmentExcel", val,
+      { responseType: "blob" }
+    );
+  }
+
+  printDoneSurvey(val: any) {
+    return this.http.post(this.base_api + "SurveyAssignment/PrintDoneSurveyAssignmentReport", val, { responseType: "text" });
   }
 
 }

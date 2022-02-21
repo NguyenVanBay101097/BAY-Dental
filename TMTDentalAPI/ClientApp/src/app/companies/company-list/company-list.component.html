@@ -38,9 +38,9 @@
                     <span class="far fa-edit"></span></button>
                 <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteItem(dataItem)">
                     <span class="far fa-trash-alt"></span></button>
-                <button *ngIf="dataItem.active == true" kendoButton (click)="actionActive(dataItem, false)" class="btn btn-danger mr-2"><i title="Ẩn nhân viên"
+                <button *ngIf="dataItem.active == true" kendoButton (click)="actionActive(dataItem, false)" class="btn btn-danger mr-2"><i title="Ẩn chi nhánh"
                     class="fas fa-eye-slash"></i></button>
-                <button *ngIf="dataItem.active == false" kendoButton (click)="actionActive(dataItem, true)" class="btn btn-success mr-2"><i title="Hiện nhân viên"
+                <button *ngIf="dataItem.active == false" kendoButton (click)="actionActive(dataItem, true)" class="btn btn-success mr-2"><i title="Hiện chi nhánh"
                     class="fas fa-eye"></i></button>
             </ng-template>
         </kendo-grid-column>

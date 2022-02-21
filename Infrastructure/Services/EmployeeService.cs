@@ -95,13 +95,12 @@ namespace Infrastructure.Services
         public override ISpecification<Employee> RuleDomainGet(IRRule rule)
         {
             //ra đc list company id ma nguoi dung dc phép
-            //var userObj = GetService<IUserService>();
-            //var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "hr.employee_comp_rule":
-                    return new InitialSpecification<Employee>(x => !x.CompanyId.HasValue || x.CompanyId == companyId);
+                    return new InitialSpecification<Employee>(x => !x.CompanyId.HasValue || companyIds.Contains(x.CompanyId.Value));
                 default:
                     return null;
             }

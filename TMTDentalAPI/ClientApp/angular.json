@@ -50,7 +50,8 @@
               "src/quan-styles.css",
               "src/thien-styles.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css",
-              "node_modules/@ng-select/ng-select/themes/default.theme.css"
+              "node_modules/@ng-select/ng-select/themes/default.theme.css",
+              "node_modules/ng2-daterangepicker/assets/daterangepicker.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

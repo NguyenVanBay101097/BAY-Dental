@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <base href="http://localhost:4200/">
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/reset.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/print.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    {{ subst_needed = subst == true}}
+    {{if subst_needed}}
+    <script>
+        function subst() {
+            var vars = {};
+            var x = document.location.search.substring(1).split('&');
+            for (var i in x) {
+                var z = x[i].split('=', 2);
+                vars[z[0]] = unescape(z[1]);
+            }
+            var fromPage = document.getElementsByClassName('page');
+            for (var j = 0; j < fromPage.length; j++)
+                fromPage[j].textContent = vars['sitepage'];
+            var toPage = document.getElementsByClassName('topage');
+            for (var j = 0; j < toPage.length; j++)
+                toPage[j].textContent = vars['sitepages'];
+
+            var index = vars['webpage'].split('.', 4)[3]
+            var header = document.getElementById('minimal_layout_report_headers');
+            if (header !== null) {
+                var companyHeader = header.children[index];
+                header.textContent = '';
+                header.appendChild(companyHeader);
+            }
+            var footer = document.getElementById('minimal_layout_report_footers');
+            if (footer !== null) {
+                var companyFooter = footer.children[index];
+                footer.textContent = '';
+                footer.appendChild(companyFooter);
+            }
+        }
+    </script>
+    {{end}}
+</head>
+<body class="container">
+    {{body}}
+</body>
+</html>

@@ -238,6 +238,7 @@ namespace Infrastructure.Services
         public async Task<GetThuChiReportResponse> GetThuChiReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, Guid? journalId)
         {
             var amlObj = GetService<IAccountMoveLineService>();
+            var userService = GetService<IUserService>();
             //báo cáo doanh thu thực thu
             var resdateFrom = dateFrom.HasValue ? dateFrom.Value.AbsoluteBeginOfDate() : (DateTime?)null;
             var resdateTo = dateTo.HasValue ? dateTo.Value.AbsoluteEndOfDate() : (DateTime?)null;
@@ -250,7 +251,10 @@ namespace Infrastructure.Services
             var customerIncomeTotal = await query.Where(x => x.AccountInternalType == "receivable").SumAsync(x => x.Credit);
             var advanceIncomeTotal = await query.Where(x => x.Account.Code == "KHTU").SumAsync(x => x.Credit);
             var debtIncomeTotal = await query.Where(x => x.Account.Code == "CNKH").SumAsync(x => x.Credit);
-            var insuranceIncomeTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Credit);
+
+            var insuranceIncomeTotal = 0.0M;
+            if (await userService.HasGroup("insurance.group_insurance"))
+                insuranceIncomeTotal = await query.Where(x => x.Account.Code == "CNBH").SumAsync(x => x.Credit);
             var supplierIncomeTotal = await query.Where(x => x.AccountInternalType == "payable").SumAsync(x => x.Credit);
             var cashBankIncomeTotal = await query.SumAsync(x => x.Credit);
 
@@ -303,7 +307,97 @@ namespace Infrastructure.Services
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
 
+        public async Task<IEnumerable<RevenueReportChartVM>> GetRevenueReportChart(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy)
+        {
+            var saleOrderObj = GetService<ISaleOrderService>();
+            var accountMoveLineObj = GetService<IAccountMoveLineService>();
+            var accountMoveObj = GetService<IAccountMoveService>();
+            var accountInvoiceReportObj = GetService<IAccountInvoiceReportService>();
 
+            var res = new List<RevenueReportChartVM>();
+
+            var types = new string[] { "cash", "bank" };
+
+            var amountTotalQuery = saleOrderObj.SearchQuery(x => x.State != "draft" && (!companyId.HasValue || x.CompanyId == companyId.Value))
+                .GroupBy(x => x.DateOrder.Date)
+                .Select(x => new
+                {
+                    Date = x.Key,
+                    AmountTotal = x.Sum(y => y.AmountTotal ?? 0),
+                    Type = "Sale",
+                });
+
+            var revenueQuery = _context.AccountInvoiceReports.Where(x => (x.Type == "out_invoice" || x.Type == "out_refund") && x.State == "posted"
+            && x.AccountInternalType != "receivable" && (!companyId.HasValue || x.CompanyId == companyId.Value))
+                .GroupBy(x => x.InvoiceDate.Value.Date)
+                .Select(x => new
+                {
+                    Date = x.Key,
+                    AmountTotal = x.Sum(y => y.PriceSubTotal),
+                    Type = "Revenue"
+                });
+
+
+            var totalThuQuery = accountMoveLineObj.SearchQuery(x => x.Move.State == "posted" && x.AccountInternalType == "liquidity"
+            && types.Contains(x.Journal.Type) &&(!companyId.HasValue || x.CompanyId == companyId.Value)).GroupBy(x => x.Date.Value.Date)
+            .Select(x => new
+            {
+                Date = x.Key,
+                AmountTotal = x.Sum(y => y.Debit),
+                Type = "Liquidity"
+            });
+
+            var combineQuery = amountTotalQuery.Union(revenueQuery).Union(totalThuQuery);
+
+            if (groupBy == "groupby:day")
+            {
+                if (dateFrom.HasValue)
+                    combineQuery = combineQuery.Where(x => x.Date >= dateFrom.Value.AbsoluteBeginOfDate());
+
+                if (dateTo.HasValue)
+                    combineQuery = combineQuery.Where(x => x.Date <= dateTo.Value.AbsoluteEndOfDate());
+
+                res = await combineQuery.GroupBy(x => x.Date)
+                  .Select(x => new RevenueReportChartVM
+                  {
+                      Date = x.Key,
+                      TotalSaleAmount = x.Sum(s => s.Type == "Sale" ? s.AmountTotal : 0),
+                      TotalRevenueAmount = x.Sum(s => s.Type == "Revenue" ? s.AmountTotal : 0),
+                      TotalLiquidityAmount = x.Sum(s => s.Type == "Liquidity" ? s.AmountTotal : 0),
+                  }).ToListAsync();
+
+            }
+            if (groupBy == "groupby:month")
+            {
+                if (dateFrom.HasValue)
+                {
+                    var dateFromTmp = new DateTime(dateFrom.Value.Year, dateFrom.Value.Month, 1);
+                    combineQuery = combineQuery.Where(x => x.Date >= dateFromTmp);
+                }
+
+                if (dateTo.HasValue)
+                {
+                    var dateToTmp = new DateTime(dateTo.Value.Year, dateTo.Value.Month, DateTime.DaysInMonth(dateTo.Value.Year, dateTo.Value.Month));
+                    combineQuery = combineQuery.Where(x => x.Date <= dateToTmp.AbsoluteEndOfDate());
+                }
+
+                res = await combineQuery.GroupBy(x => new
+                {
+                    x.Date.Year,
+                    x.Date.Month,
+                })
+                 .Select(x => new RevenueReportChartVM
+                 {
+                     Date = new DateTime(x.Key.Year, x.Key.Month, 1),
+                     TotalSaleAmount = x.Sum(s => s.Type == "Sale" ? s.AmountTotal : 0),
+                     TotalRevenueAmount = x.Sum(s => s.Type == "Revenue" ? s.AmountTotal : 0),
+                     TotalLiquidityAmount = x.Sum(s => s.Type == "Liquidity" ? s.AmountTotal : 0),
+                 }).ToListAsync();
+
+            }
+
+            return res;
+        }
     }
 
 

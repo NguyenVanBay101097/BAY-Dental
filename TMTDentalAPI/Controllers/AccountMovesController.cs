@@ -11,5 +11,6 @@ namespace TMTDentalAPI.Controllers
     [ApiController]
     public class AccountMovesController : BaseApiController
     {
+
     }
 }

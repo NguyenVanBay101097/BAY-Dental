@@ -32,6 +32,7 @@
                         <th scope="col" class="" style="width:100px">Bác sĩ</th>
                         <th scope="col" class="" style="width:100px">Phụ tá</th>
                         <th scope="col" class="" style="width:100px">Dịch vụ/Thuốc</th>
+                        <th scope="col" class="" style="width:100px">ĐVT</th>
                         <th scope="col" class="text-right" style="width:80px">Thanh toán</th>
 
                     </tr>
@@ -39,15 +40,16 @@
                 <tbody>
                     @foreach (var row in item.Lines)
                     {
-                        <tr>
-                            <td class="" style="width:100px">@(row.InvoiceDate.Value.ToString("dd/MM/yyyy"))</td>
-                            <td class="" style="width:100px">@(row.InvoiceOrigin)</td>
-                            <td class="" style="width:100px">@(row.PartnerName)</td>
-                            <td class="" style="width:100px">@(row.EmployeeName)</td>
-                            <td class="" style="width:100px">@(row.AssistantName)</td>
-                            <td class="" style="width:100px">@(row.ProductName)</td>
-                            <td class="text-right" style="width:80px">@(string.Format(culture, "{0:0,0}", row.PriceSubTotal))</td>
-                        </tr>
+                    <tr>
+                        <td class="" style="width:100px">@(row.InvoiceDate.Value.ToString("dd/MM/yyyy"))</td>
+                        <td class="" style="width:100px">@(row.InvoiceOrigin)</td>
+                        <td class="" style="width:100px">@(row.PartnerName)</td>
+                        <td class="" style="width:100px">@(row.EmployeeName)</td>
+                        <td class="" style="width:100px">@(row.AssistantName)</td>
+                        <td class="" style="width:100px">@(row.ProductName)</td>
+                        <td class="" style="width:100px">@(row.ProductUoMName)</td>
+                        <td class="text-right" style="width:80px">@(string.Format(culture, "{0:0,0}", row.PriceSubTotal))</td>
+                    </tr>
                     }
 
                 </tbody>

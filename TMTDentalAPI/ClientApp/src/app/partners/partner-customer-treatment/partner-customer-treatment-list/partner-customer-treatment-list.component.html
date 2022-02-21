@@ -7,16 +7,22 @@
                         <label class="mb-2 mr-2">
                             Chế độ xem
                         </label>
-                        <select [(ngModel)]="viewType" (change)="onChangeViewType()" class="form-control w-auto mb-2 mr-2">
+                        <select [(ngModel)]="viewType" (change)="onChangeViewType()"
+                            class="form-control w-auto mb-2 mr-2">
                             <option value="saleOrder">Theo phiếu điều trị</option>
                             <option value="saleOrderLine">Theo dịch vụ</option>
                         </select>
-                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'right'" title="Ngày tạo" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                        <button type="button" (click)="createNewSaleOrder()" class="mb-2 mr-2 btn btn-primary"><i class="fas fa-plus-circle mr-1"></i> Thêm phiếu điều trị</button>
+                        <app-date-range-picker-filter class="mb-2 mr-2" [opens]="'right'" title="Ngày tạo"
+                            [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)">
+                        </app-date-range-picker-filter>
+                        <button type="button" (click)="createNewSaleOrder()" class="mb-2 mr-2 btn btn-primary"><i
+                                class="fas fa-plus-circle mr-1"></i> Thêm phiếu điều trị</button>
                     </div>
                     <div class="w-50">
                         <div class="o_searchview">
-                            <input type="text" class="o_searchview_input" [placeholder]="viewType=='saleOrder' ? 'Tìm kiếm theo số phiếu điều trị' : 'Tìm kiếm theo số phiếu điều trị, tên dịch vụ'" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                            <input type="text" class="o_searchview_input"
+                                [placeholder]="viewType=='saleOrder' ? 'Tìm kiếm theo số phiếu điều trị' : 'Tìm kiếm theo số phiếu điều trị, tên dịch vụ'"
+                                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
                             <span class="o_searchview_icon fas fa-search"></span>
                         </div>
                     </div>
@@ -25,7 +31,9 @@
         </div>
         <div class="t_treatment_grid">
             <div class="kendo-grid-data">
-                <kendo-grid *ngIf="viewType == 'saleOrder'" [data]="saleOrdersData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                <kendo-grid *ngIf="viewType == 'saleOrder'" [data]="saleOrdersData" [pageable]="pagerSettings"
+                    [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true"
+                    [loading]="loading">
                     <kendo-grid-column field="Name" title="Số phiếu" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <a class="text-primary" (click)="getFormSaleOrder(dataItem.id)">{{dataItem.name}}</a>
@@ -34,6 +42,11 @@
                     <kendo-grid-column field="DateOrder" title="Ngày tạo phiếu" width="120">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             {{dataItem.dateOrder | date:'short'}}
+                        </ng-template>
+                    </kendo-grid-column>
+                    <kendo-grid-column class="" field="doctor" title="Bác sĩ đại diện" width="110">
+                        <ng-template kendoGridCellTemplate let-dataItem>
+                            {{dataItem.doctorName}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column class="text-right" field="AmountTotal" title="Tổng tiền" width="120">
@@ -51,49 +64,50 @@
                             {{dataItem.residual | number}}
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column  field="State" title="Trạng thái" width="100">
+                    <kendo-grid-column field="State" title="Trạng thái" width="100">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <span *ngIf="dataItem.state === 'draft'">Nháp</span>
                             <span *ngIf="dataItem.state === 'done'">Hoàn thành</span>
                             <span *ngIf="dataItem.state === 'sale'">Đang điều trị</span>
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column  title="Thao tác" width="50">
+                    <kendo-grid-column title="Thao tác" width="50">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <button type="button" class="btn btn-icon btn-light" (click)="deleteItem(dataItem)">
                                 <span class="k-icon k-i-delete"></span>
                             </button>
                         </ng-template>
                     </kendo-grid-column>
-                    <div *kendoGridDetailTemplate="let dataItem">
+                    <div *kendoGridDetailTemplate="let dataItem" width="50">
                         <app-partner-customer-treatment-sale-order-line [saleOrderId]="dataItem.id">
                         </app-partner-customer-treatment-sale-order-line>
                     </div>
                 </kendo-grid>
 
-                <kendo-grid *ngIf="viewType == 'saleOrderLine'" [data]="saleOrderLinesData" [pageable]="pagerSettings" [pageSize]="limit" [skip]="skip" 
-                (pageChange)="pageChange($event)" [resizable]="true" [loading]="loading">
+                <kendo-grid *ngIf="viewType == 'saleOrderLine'" [data]="saleOrderLinesData" [pageable]="pagerSettings"
+                    [pageSize]="limit" [skip]="skip" (pageChange)="pageChange($event)" [resizable]="true"
+                    [loading]="loading">
                     <kendo-grid-column title="Dịch vụ" field="name" width="200">
                         <ng-template kendoGridCellTemplate let-dataItem>
                             <div>
-                                <a class="text-primary" (click)="getFormSaleOrder(dataItem.order.id)">{{dataItem.name}}</a>
-                                <div>{{dataItem.order.name}}</div>
+                                <div>{{dataItem.name}}</div>
+                                <a class="text-primary"
+                                    [routerLink]="['/sale-orders', dataItem.orderId]">{{dataItem.orderName}}</a>
                             </div>
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Ngày tạo" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.dateCreated | date:'shortDate'}}
+                            {{dataItem.date | date:'shortDate'}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Răng" field="teethDisplay" width="150">
                     </kendo-grid-column>
                     <kendo-grid-column title="Chẩn đoán" field="diagnostic" width="150">
                     </kendo-grid-column>
-                    <kendo-grid-column title="Bác sĩ" width="150">
-                        <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.employee ? dataItem.employee.name : ''}}
-                        </ng-template>
+                    <kendo-grid-column title="Bác sĩ" field="employeeName" width="150">
+                    </kendo-grid-column>
+                    <kendo-grid-column title="Đơn vị tính" width="120" field="productUOMName">
                     </kendo-grid-column>
                     <kendo-grid-column title="Số lượng" field="productUOMQty" width="100" class="text-right">
                     </kendo-grid-column>
@@ -109,17 +123,18 @@
                     </kendo-grid-column>
                     <kendo-grid-column title="Còn lại" class="text-right" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            {{dataItem.priceSubTotal - dataItem.amountInvoiced | number}}
+                            {{dataItem.amountResidual | number}}
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Trạng thái" width="150">
                         <ng-template kendoGridCellTemplate let-dataItem>
-                            <span class="badge" [ngStyle]="{'background-color':getColor(dataItem.state)}">{{getState(dataItem.state)}}</span>
+                            <span class="badge"
+                                [ngStyle]="{'background-color':getColor(dataItem.state)}">{{dataItem.stateDisplay}}</span>
                         </ng-template>
                     </kendo-grid-column>
                 </kendo-grid>
             </div>
         </div>
-       
+
     </div>
 </div>

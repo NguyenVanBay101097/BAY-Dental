@@ -1,9 +1,11 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore;
+using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using Infrastructure.EntityConfigurations;
 using Infrastructure.TenantData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -14,7 +16,6 @@ using SaasKit.Multitenancy;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -277,7 +278,7 @@ namespace Infrastructure.Data
 
         public DbSet<MemberLevel> MemberLevels { get; set; }
         public DbSet<SaleCouponProgramMemberLevelRel> SaleCouponProgramMemberLevelRels { get; set; }
-      
+
         public DbSet<AccountFinancialRevenueReport> AccountFinancialRevenueReports { get; set; }
         public DbSet<AccountFinancialRevenueReportAccountAccountRel> AccountFinancialRevenueReportAccountAccountRels { get; set; }
         public DbSet<AccountFinancialRevenueReportAccountAccountTypeRel> AccountFinancialRevenueReportAccountAccountTypeRels { get; set; }
@@ -346,6 +347,7 @@ namespace Infrastructure.Data
         public DbSet<SaleOrderLineSaleProductionRel> SaleOrderLineSaleProductionRels { get; set; }
         public DbSet<SaleProductionLineProductRequestLineRel> SaleProductionLineProductRequestLineRels { get; set; }
 
+        public DbSet<MailMessageSubtype> MailMessageSubtypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -609,6 +611,7 @@ namespace Infrastructure.Data
             builder.ApplyConfiguration(new SaleProductionLineConfiguration());
             builder.ApplyConfiguration(new SaleOrderLineSaleProductionRelConfiguration());
             builder.ApplyConfiguration(new SaleProductionLineProductRequestLineRelConfiguration());
+            builder.ApplyConfiguration(new MailMessageSubtypeConfiguration());
             //builder.ApplyConfiguration(new SaleOrderLineProductRequestedConfiguration());
 
             //var methodInfo = typeof(DbContext).GetRuntimeMethod(nameof(DatePart), new[] { typeof(string), typeof(DateTime) });
@@ -684,6 +687,49 @@ namespace Infrastructure.Data
         public Task<int> ExecuteSqlCommandAsync(string sql, params object[] parameters)
         {
             return Database.ExecuteSqlRawAsync(sql, parameters);
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                var customerError = HandleException(ex);
+                throw customerError;
+            }
+        }
+
+        private Exception HandleException(Exception exception)
+        {
+            if (exception is DbUpdateException dbUpdateEx)
+            {
+                if (dbUpdateEx.InnerException != null)
+                {
+                    if (dbUpdateEx.InnerException is SqlException sqlException)
+                    {
+                        string msg = "Không thể hoàn thành thao tác:";
+                        switch (sqlException.Number)
+                        {
+                            case 547:
+                                {
+                                    msg += " Có đối tượng khác cần dữ liệu bạn định xóa. Nếu có thể, bạn nên ẩn thay vì xóa.";
+                                    return new ValidationErrorException(msg);
+                                }
+                            default:
+                                // A custom exception of yours for other DB issues
+                                throw new Exception(
+                                  dbUpdateEx.Message, dbUpdateEx.InnerException);
+                        }
+                    }
+
+                    throw new Exception(dbUpdateEx.Message, dbUpdateEx.InnerException);
+                }
+            }
+
+            return exception;
         }
     }
 }

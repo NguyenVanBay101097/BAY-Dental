@@ -18,20 +18,20 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler) {
         this.loadingService.setLoading(true);
         return next.handle(request).pipe(
-            catchError((error: HttpErrorResponse) => {
+            catchError((errorResponse: HttpErrorResponse) => {
                 this.loadingService.setLoading(false);
                 let message;
-                if (error.status === 410) {
+                if (errorResponse.status === 410) {
                     this.authService.logout();
                     this.router.navigate(['/auth/expired']);
-                    return throwError(error);
+                    return throwError(errorResponse);
                 }
 
-                if (error instanceof HttpErrorResponse) {
+                if (errorResponse instanceof HttpErrorResponse) {
                     // Server Error
-                    message = error.message;
-                    if (error.error) {
-                        message = request.responseType == 'json' ? error.error.message : JSON.parse(error.error).message;
+                    const error = errorResponse.error;
+                    if (error) {
+                        message = error.data ? error.data.message : error.message;
                     }
 
                     if (message) {
@@ -52,7 +52,7 @@ export class HttpHandleErrorInterceptor implements HttpInterceptor {
                     }
                 }
 
-                return throwError(error);
+                return throwError(errorResponse);
             }))
             .pipe(map<HttpEvent<any>, any>((evt: HttpEvent<any>) => {
                 if (evt instanceof HttpResponse) {

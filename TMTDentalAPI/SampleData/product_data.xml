@@ -28,6 +28,10 @@
       <field name="name">Thể tích</field>
       <field name="measure_type">volume</field>
     </record>
+    <record id="product_uom_categ_service" model="product.uom.categ">
+      <field name="name">Dịch vụ</field>
+      <field name="measure_type">unit</field>
+    </record>
 
     <!--
             Resource: product.uom
@@ -85,6 +89,75 @@
       <field name="name">Lít</field>
       <field name="category_id" ref="product_uom_categ_vol"/>
       <field name="factor" eval="1.0"/>
+    </record>
+    
+    <record id="product_uom_service_1" model="product.uom">
+      <field name="name">Răng</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_2" model="product.uom">
+      <field name="name">Từng hàm</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_3" model="product.uom">
+      <field name="name">Nguyên hàm</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_4" model="product.uom">
+      <field name="name">Gói</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_5" model="product.uom">
+      <field name="name">Lần</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_6" model="product.uom">
+      <field name="name">Liệu trình</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_7" model="product.uom">
+      <field name="name">Trụ</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_8" model="product.uom">
+      <field name="name">Vít</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_9" model="product.uom">
+      <field name="name">Trọn gói</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_10" model="product.uom">
+      <field name="name">Tuýp</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_11" model="product.uom">
+      <field name="name">Ống tủy</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_12" model="product.uom">
+      <field name="name">Nang</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_13" model="product.uom">
+      <field name="name">Áp xe</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_14" model="product.uom">
+      <field name="name">Phim</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_15" model="product.uom">
+      <field name="name">Xoang</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_16" model="product.uom">
+      <field name="name">Cái</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
+    </record>
+    <record id="product_uom_service_17" model="product.uom">
+      <field name="name">Bộ</field>
+      <field name="category_id" ref="product_uom_categ_service"/>
     </record>
 
     <record id="list0" model="product.pricelist">

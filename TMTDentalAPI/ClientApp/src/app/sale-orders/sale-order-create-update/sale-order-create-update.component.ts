@@ -246,6 +246,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
 
   onUpdateOrder(data) {
     this.saleOrder.dateOrder = data.dateOrder;
+    this.saleOrder.doctorName = data.doctor ? data.doctor.name : null;
   }
 
   printSaleOrder() {
@@ -284,7 +285,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionCancel() {
     if (this.saleOrderId) {
       this.saleOrderService.actionCancel([this.saleOrderId]).subscribe(() => {
-        this.router.navigate([], { fragment: 'services', relativeTo: this.route } )
+        this.router.navigate([], { fragment: 'services', relativeTo: this.route })
         this.loadSaleOrder();
       });
     }
@@ -362,7 +363,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       var rs = viewChild.updateLineInfo();
       if (rs) {
         viewChild.onUpdateSignSubject.subscribe(value => {
-          if(value){
+          if (value) {
             this.saleOrderService.actionConfirm([this.saleOrder.id]).subscribe(() => {
               this.notify('success', 'Xác nhận thành công');
               this.loadSaleOrder();
@@ -388,7 +389,7 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
     // if (!this.formGroup.valid) {
     //   return false;
     // }
-    
+
     this.updateFormGroupDataToSaleOrder();
     const val = this.getFormDataSave();
 
@@ -518,16 +519,18 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
   actionSaleOrderPayment() {
     if (this.saleOrderId) {
       var val = new AmountCustomerDebtFilter();
-    val.partnerId = this.saleOrder.partnerId;
-    val.companyId = this.authService.userInfo.companyId;
-    var loadDebt$ = this.customerDebtReportService.getAmountDebtTotal(val);
+      val.partnerId = this.saleOrder.partnerId;
+      val.companyId = this.authService.userInfo.companyId;
+      var loadDebt$ = this.customerDebtReportService.getAmountDebtTotal(val);
       var loadSaleOrder$ = this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId);
-      forkJoin({partnerDebt: loadDebt$, payment: loadSaleOrder$}).subscribe(rs => {
+      forkJoin({ partnerDebt: loadDebt$, payment: loadSaleOrder$ }).subscribe(rs => {
+        console.log(this.saleOrder);
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs.payment;
         modalRef.componentInstance.advanceAmount = this.amountAdvanceBalance;
-        modalRef.componentInstance.partner = this.saleOrder.partner;
+        modalRef.componentInstance.partnerId = this.saleOrder.partnerId;
+        modalRef.componentInstance.partnerName = this.saleOrder.partnerName;
         modalRef.componentInstance.partnerDebt = (rs.partnerDebt as any).balanceTotal;
 
         modalRef.result.then(result => {
@@ -538,16 +541,16 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-          
+
           this.loadSaleOrder();
-          if(this.serviceListComp) // load lại công nợ
+          if (this.serviceListComp) // load lại công nợ
           {
             this.serviceListComp.loadPartnerDebt();
           }
           if (this.paymentComp) {
             this.paymentComp.loadPayments();
           }
-        
+
           if (result.print) {
             this.printPayment(result.paymentId)
           }

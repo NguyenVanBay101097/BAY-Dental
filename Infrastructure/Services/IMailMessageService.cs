@@ -12,5 +12,7 @@ namespace Infrastructure.Services
         Task<MailMessage> GenerateMessageCreatedAppointment(Guid appointmentId);
         Task<IEnumerable<MailMessageFormat>> MessageFetch(MailMessageFetch val);
         Task<IEnumerable<MailMessageFormat>> MessageFormat(IEnumerable<Guid> ids);
+
+        Task<IEnumerable<MailMessage>> GetLogsForPartner(LogForPartnerRequest val);
     }
 }

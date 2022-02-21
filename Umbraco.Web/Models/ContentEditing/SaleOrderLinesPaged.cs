@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Kendo.DynamicLinqCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -44,6 +48,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }
+
+        public IEnumerable<Aggregator> Aggregate { get; set; }
+        public Guid? PartnerId { get; set; }
     }
 
     public class SaleOrderLinesLaboPaged

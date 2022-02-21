@@ -173,6 +173,8 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = filter || '';
     val.isDoctor = true;
+    val.active = true;
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 
@@ -311,9 +313,7 @@ export class CustomerReceipCreateUpdateComponent implements OnInit {
     partnerPaged.supplier = false;
     partnerPaged.limit = 10;
     partnerPaged.offset = 0;
-    if (this.sessionInfoStorageService.getSessionInfo().settings && !this.sessionInfoStorageService.getSessionInfo().settings.companySharePartner) {
-      partnerPaged.companyId = this.authService.userInfo.companyId;
-    }
+
     this.partnerService.autocompletePartner(partnerPaged).subscribe(
       rs => {
         this.customerSimpleFilter = _.unionBy(this.customerSimpleFilter, rs, 'id');

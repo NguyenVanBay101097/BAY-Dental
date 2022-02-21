@@ -48,6 +48,8 @@ export class ServiceSaleReportComponent implements OnInit {
     '3-6 tháng trước': [moment().subtract(6, 'months'), moment().subtract(3, 'months')],
     '6-12 tháng trước': [moment().subtract(12, 'months'),  moment().subtract(6, 'months')],
   }
+
+  isDisabledDoctors = true;
   
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
@@ -75,6 +77,10 @@ export class ServiceSaleReportComponent implements OnInit {
   initFilter() {
     this.filter.limit = 20;
     this.filter.offset = 0;
+
+    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+    this.filter.dateOrderFrom = this.dateFrom || new Date(y, m, 1);
+    this.filter.dateOrderTo = this.dateTo || new Date(y, m + 1, 0);
   }
   
   loadAllData() {
@@ -141,11 +147,6 @@ export class ServiceSaleReportComponent implements OnInit {
       this.filter.offset = 0;
       this.loadAllData();
     })
-    
-    var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-    this.dateFrom = this.dateFrom || new Date(y, m, 1);
-    this.dateTo = this.dateTo || new Date(y, m + 1, 0);
-    this.loadAllData();
   }
 
   searchCompany$(search?) {
@@ -165,6 +166,7 @@ export class ServiceSaleReportComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = q;
     val.isDoctor = true;
+    val.companyId = this.filter.companyId || '';
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
@@ -181,19 +183,26 @@ export class ServiceSaleReportComponent implements OnInit {
     this.loadAllData();
   }
 
-  onSelectCompany(e) {
-    this.companyId = e ? e.id : null;
-    this.filter.offset = 0;
+  onSelectEmployee(event) {
+    this.skip = 0;
     this.loadAllData();
   }
 
-  onSelectEmployee(e) {
-    this.employeeId = e ? e.id : null;
-    this.filter.offset = 0;
+  onSelectCompany(company) {
+    this.filter.employeeId = null;
+    if (company) {
+      this.isDisabledDoctors = false;
+      this.loadEmployees();
+    } else {
+      this.isDisabledDoctors = true;
+      this.employees = [];
+    }
+
+    this.skip = 0;
     this.loadAllData();
   }
 
-    pageChange(event: PageChangeEvent): void {
+  pageChange(event: PageChangeEvent): void {
     this.filter.limit = event.take;
     this.filter.offset = event.skip;
     this.loadAllData();

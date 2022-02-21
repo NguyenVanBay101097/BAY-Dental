@@ -8,7 +8,7 @@ namespace ApplicationCore.Entities
     /// <summary>
     /// Phiếu điều trị / phiếu tư vấn
     /// </summary>
-    public class SaleOrder: BaseEntity
+    public class SaleOrder : BaseEntity
     {
         public SaleOrder()
         {
@@ -129,9 +129,11 @@ namespace ApplicationCore.Entities
         /// </summary>
         public Guid? OrderId { get; set; }
         public SaleOrder Order { get; set; }
-
-        //public Guid? EmployeeId { get; set; }
-        //public Employee Employee { get; set; }
+        /// <summary>
+        /// bác sĩ đại diện
+        /// </summary>
+        public Guid? DoctorId { get; set; }
+        public Employee Doctor { get; set; }
 
         public Guid? CodePromoProgramId { get; set; }
         public SaleCouponProgram CodePromoProgram { get; set; }
@@ -169,5 +171,38 @@ namespace ApplicationCore.Entities
         [NotMapped]
         public ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
 
+        /// <summary>
+        /// Tổng tiền chưa giảm
+        /// </summary>
+        [NotMapped]
+        public decimal? AmountUndiscountTotal
+        {
+            get
+            {
+                var total = 0.0M;
+                foreach (var item in OrderLines)
+                {
+                    total += item.PriceUnit * item.ProductUOMQty;
+                }
+                return total;
+            }
+        }
+
+        /// <summary>
+        /// Tổng tiền giảm giá
+        /// </summary>
+        [NotMapped]
+        public decimal? AmountDiscountTotal
+        {
+            get
+            {
+                var total = 0.0M;
+                foreach (var item in OrderLines)
+                {
+                    total += (decimal)(item.AmountDiscountTotal ?? 0) * item.ProductUOMQty;
+                }
+                return total;
+            }
+        }
     }
 }

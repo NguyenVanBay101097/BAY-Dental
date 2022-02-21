@@ -79,6 +79,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int InvoiceCount { get; set; }
 
         public decimal? TotalPaid { get; set; }
+        public EmployeeSimple Doctor { get; set; }
     }
 
     public class SaleOrderDisplayVm

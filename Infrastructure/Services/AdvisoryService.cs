@@ -334,9 +334,9 @@ namespace Infrastructure.Services
                     Name = x.Employee.Name,
                 } : null,
                 ToothType = x.ToothType,
-                Tooths = String.Join(",", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
-                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(",", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
-                Services = x.AdvisoryProductRels.Any() ? String.Join(",", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null,
+                Tooths = String.Join(", ", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
+                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(", ", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
+                Services = x.AdvisoryProductRels.Any() ? String.Join(", ", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null,
                 Note = x.Note
             }).ToListAsync();
 
@@ -450,6 +450,7 @@ namespace Infrastructure.Services
                     saleOrderLine.Sequence = sequence++;
                     saleOrderLine.ToothCategoryId = advisory.ToothCategoryId;
                     saleOrderLine.Date = DateTime.Now;
+                    saleOrderLine.ProductUOMId = product.UOMId;
 
                     if (advisory.ToothType == "manual")
                     {
@@ -527,7 +528,8 @@ namespace Infrastructure.Services
                     quotationLine.DiscountType = "percentage";
                     quotationLine.ToothType = advisory.ToothType;
                     quotationLine.Amount = quotationLine.Qty * quotationLine.SubPrice;
-                    quotationLine.ToothCategoryId = advisory.ToothCategoryId.GetValueOrDefault();
+                    quotationLine.ProductUOMId = product.UOMId;
+                    quotationLine.ToothCategoryId = advisory.ToothCategoryId;
                     foreach (var toothId in toothIds)
                     {
                         quotationLine.QuotationLineToothRels.Add(new QuotationLineToothRel
@@ -560,7 +562,8 @@ namespace Infrastructure.Services
                     Date = x.Order.DateOrder,
                     DoctorName = x.Employee.Name,
                     Qty = x.ProductUOMQty,
-                    Type = "saleOrder"
+                    Type = "saleOrder",
+                    UomName = x.Product.UOM != null ? x.Product.UOM.Name : ""
                 });
 
             var quotationLines = quotationLineService.SearchQuery(x => x.AdvisoryId == val.AdvisoryId)
@@ -572,7 +575,8 @@ namespace Infrastructure.Services
                     Date = x.Quotation.DateQuotation,
                     Qty = x.Qty,
                     Type = "quotation",
-                    DoctorName = x.Employee.Name
+                    DoctorName = x.Employee.Name,
+                    UomName = x.ProductUOM != null ? x.ProductUOM.Name : ""
                 });
 
             var res = saleOrderLines.Union(quotationLines);

@@ -65,5 +65,9 @@ export class ServiceCardCardService {
     checkCode(val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/CheckCode', { params: new HttpParams({ fromObject: val }) });
     }
+
+    GetNewestCreated(val){
+        return this.http.post(this.baseApi + this.apiUrl + '/GetNewestCreated', val);
+    }
         
 }

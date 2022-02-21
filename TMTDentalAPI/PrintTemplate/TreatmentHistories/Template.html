@@ -1,0 +1,160 @@
+﻿<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+            <td>
+                <strong>{{o.company.name}}</strong><br />
+                Địa chỉ: {{o.company.address}}<br />
+                ĐT: {{o.company.phone}}<br />
+                Email: {{o.company.email}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 style="text-align:center">HỒ SƠ ĐIỀU TRỊ</h3>
+
+<p style="text-align: center;">
+    Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}<br />
+    <!--<strong>Số: {{o.name}}</strong>-->
+</p>
+
+<h6>THÔNG TIN CHI TIẾT</h6>
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%; margin-bottom: 0">
+    <tbody>
+        <tr>
+            <td>
+                <table border="0" cellpadding="3" cellspacing="1" style="width:100%; margin-bottom: 0">
+                    <tbody>
+                        <tr>
+                            <td style="width:150px"><strong>Khách hàng:</strong></td>
+                            <td>{{o.display_name}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:150px"><strong>Giới tính:</strong></td>
+                            <td>{{o.display_gender}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:150px"><strong>Nghề nghiệp:</strong></td>
+                            <td>{{o.job_title}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <table border="0" cellpadding="3" cellspacing="1" style="width:100%; margin-bottom: 0">
+                    <tbody>
+                        <tr>
+                            <td style="width:150px"><strong>Ngày sinh:</strong></td>
+                            <td>{{o.date_of_birth}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:150px"><strong>Điện thoại:</strong></td>
+                            <td>{{o.phone}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:150px"><strong>Email:</strong></td>
+                            <td>{{o.email}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td>
+                <table border="0" cellpadding="3" cellspacing="1" style="width:100%">
+                    <tbody>
+                        <tr>
+                            <td style="width:150px"><strong>Địa chỉ:</strong></td>
+                            <td>{{o.address}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:150px"><strong>Tiểu sử bệnh:</strong></td>
+                            <td>{{o.histories_string}}</td>
+                        </tr>
+                        <tr>
+                            <td style="width:150px"><strong>Tiểu sử bệnh khác:</strong></td>
+                            <td>{{o.medical_history}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<h6>DANH SÁCH DỊCH VỤ</h6>
+<table border="1" cellpadding="3" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td><strong>Ngày</strong></td>
+            <td><strong>Dịch vụ</strong></td>
+            <td><strong>Số lượng</strong></td>
+            <td><strong>Răng</strong></td>
+            <td><strong>Bác sĩ</strong></td>
+            <td><strong>Thành tiền</strong></td>
+            <td><strong>Thanh toán</strong></td>
+            <td><strong>Còn lại</strong></td>
+        </tr>
+        <!--{{for line in o.order_lines}}-->
+        <tr>
+            <td>{{line.date | date.to_string '%d/%m/%Y'}}</td>
+            <td>{{line.name}}</td>
+            <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}
+            <td>{{line.teeth_display}}</td>
+            <td>{{line.employee_name}}</td>
+            <td style="text-align:right">{{line.price_total | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.amount_invoiced | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.amount_residual | math.format "N0" }}</td>
+        </tr>
+        <!--{{end}}-->
+    </tbody>
+</table>
+
+<table align="right" cellpadding="3" border="0" cellspacing="1">
+    <tbody>
+        <tr>
+            <td style="width:120px"><strong>Tổng tiền</strong></td>
+            <td style="text-align:right">{{o.price_total | math.format "N0" }}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Đã thanh toán</strong></td>
+            <td style="text-align:right">{{o.amount_invoiced | math.format "N0"}}</td>
+        </tr>
+        <tr>
+            <td style="width:120px"><strong>Còn lại</strong></td>
+            <td style="text-align:right">{{o.amount_residual | math.format "N0" }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="clearfix"></div>
+
+<table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+    <tbody>
+        <tr>
+            <td style="text-align:center;width:50%;">
+                <strong>Bác sĩ điều trị </strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <strong>{{u.name | string.upcase}}</strong>
+            </td>
+            <td style="text-align:center;width: 50%;">
+                <strong>Khách hàng</strong><br />
+                <em>(Ký, họ tên)</em><br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <strong>{{o.name | string.upcase}}</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>

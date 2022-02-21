@@ -8,9 +8,11 @@ using ApplicationCore.Utilities;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Infrastructure.Services;
+using Kendo.DynamicLinqCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using TMTDentalAPI.JobFilters;
@@ -112,20 +114,20 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A2:K2"].Merge = true;
 
                 worksheet.Cells[4, 1].Value = "Dịch vụ";
-                worksheet.Cells[4, 2].Value = "Phếu điều trị";
+                worksheet.Cells[4, 2].Value = "Phiếu điều trị";
                 worksheet.Cells[4, 3].Value = "Khách hàng";
-                worksheet.Cells[4, 4].Value = "Số lượng";
-                worksheet.Cells[4, 5].Value = "Bác sĩ";
-                worksheet.Cells[4, 6].Value = "Răng";
-                worksheet.Cells[4, 7].Value = "Chuẩn đoán";
+                worksheet.Cells[4, 4].Value = "Bác sĩ";
+                worksheet.Cells[4, 5].Value = "Đơn vị tính";
+                worksheet.Cells[4, 6].Value = "Số lượng";
+                worksheet.Cells[4, 7].Value = "Thành tiền";
+                worksheet.Cells[4, 8].Value = "Thanh toán";
+                worksheet.Cells[4, 9].Value = "Còn lại";
+                worksheet.Cells[4, 10].Value = "Răng";
+                worksheet.Cells[4, 11].Value = "Chẩn đoán";
+                worksheet.Cells[4, 12].Value = "Trạng thái";
 
-                worksheet.Cells[4, 8].Value = "Thành tiền";
-                worksheet.Cells[4, 9].Value = "Thanh toán";
-                worksheet.Cells[4, 10].Value = "Còn lại";
-                worksheet.Cells[4, 11].Value = "Trạng thái";
-
-                worksheet.Cells["A4:K4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:K4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells["A4:L4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:L4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
 
                 var row = 5;
 
@@ -134,18 +136,19 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 1].Value = item.Product.Name;
                     worksheet.Cells[row, 2].Value = item.Order.Name;
                     worksheet.Cells[row, 3].Value = item.OrderPartner.DisplayName;
-                    worksheet.Cells[row, 4].Value = item.ProductUOMQty;
-                    worksheet.Cells[row, 4].Style.Numberformat.Format = "0";
+                    worksheet.Cells[row, 4].Value = item.ProductUOM != null ? item.ProductUOM.Name : "";
                     worksheet.Cells[row, 5].Value = item.Employee != null ? item.Employee.Name : "";
-                    worksheet.Cells[row, 6].Value = item.TeethDisplay;
-                    worksheet.Cells[row, 7].Value = item.Diagnostic;
-                    worksheet.Cells[row, 8].Value = item.PriceSubTotal;
-                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###";
-                    worksheet.Cells[row, 9].Value = (item.PriceSubTotal - item.AmountResidual);
-                    worksheet.Cells[row, 9].Style.Numberformat.Format = ((item.PriceSubTotal) - (item.AmountResidual ?? 0)) > 0 && item.State != "draft" ? "#,###" : "0";
-                    worksheet.Cells[row, 10].Value = item.AmountResidual;
-                    worksheet.Cells[row, 10].Style.Numberformat.Format = (item.AmountResidual ?? 0) > 0 ? "#,###" : "0";
-                    worksheet.Cells[row, 11].Value = GetSaleOrderState(item.State);
+                    worksheet.Cells[row, 6].Value = item.PriceTotal;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 7].Value = item.ProductUOMQty;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "0";
+                    worksheet.Cells[row, 8].Value = (item.AmountInvoiced);
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 9].Value = (item.PriceTotal) - (item.AmountInvoiced ?? 0);
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 10].Value = item.TeethDisplay;
+                    worksheet.Cells[row, 11].Value = item.Diagnostic;
+                    worksheet.Cells[row, 12].Value = GetSaleOrderState(item.State);
                     row++;
                 }
 
@@ -191,6 +194,45 @@ namespace TMTDentalAPI.Controllers
             }).ToListAsync();
 
             return Ok(res.Count > 0 ? res[0] : new GetSummarySaleReportResponse());
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> GetServiceOverviewReport(ServiceReportReq val)
+        {
+            var res = await _saleReportService.ServiceOverviewReport(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> PrintPdfServiceOverviewReport(SaleOrderLinesPaged val)
+        {
+            var data = await _saleReportService.PrintServiceOverviewReport(val);
+            var html = _viewRenderService.Render("SaleReport/ServiceOverviewReportPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 5 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Báo cáo dịch vụ - Tổng quan", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", "BaoCaoDichVu_TongQuan.pdf");
         }
 
         [HttpPost("[action]")]
@@ -292,6 +334,114 @@ namespace TMTDentalAPI.Controllers
         {
             var data = await _saleReportService.ServiceReportByServiceExcel(val);
             return _saleReportService.ExportServiceReportExcel(data, val.DateFrom, val.DateTo, "service");
+
+        }
+
+        [HttpPost("[action]")]
+        [CheckAccess(Actions = "Report.Sale")]
+        public async Task<IActionResult> ExportServiceOverviewReportExcel(SaleOrderLinesPaged val)
+        {
+            var stream = new MemoryStream();
+            var data = await _saleOrderLineService.GetPagedResultAsync(val);
+            var dateToDate = "";
+            if (val.DateFrom.HasValue && val.DateTo.HasValue)
+            {
+                dateToDate = $"Từ ngày {val.DateFrom.Value.ToString("dd/MM/yyyy")} đến ngày {val.DateTo.Value.ToString("dd/MM/yyyy")}";
+            }
+
+            byte[] fileContent;
+
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoDichVu_TongQuan");
+
+                worksheet.Cells["A1:J1"].Value = "BÁO CÁO TỔNG QUAN DỊCH VỤ";
+                //worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(Color.Blue);
+                worksheet.Cells["A1:J1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:J1"].Merge = true;
+                worksheet.Cells["A1:J1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A2:J2"].Value = dateToDate;
+                worksheet.Cells["A2:J2"].Merge = true;
+                worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+
+                worksheet.Cells[4, 1].Value = "Ngày tạo";
+                worksheet.Cells[4, 2].Value = "Dịch vụ";
+                worksheet.Cells[4, 3].Value = "Phiếu điều trị";
+                worksheet.Cells[4, 4].Value = "Khách hàng";
+                worksheet.Cells[4, 5].Value = "Số lượng";
+                worksheet.Cells[4, 6].Value = "Bác sĩ";
+                worksheet.Cells[4, 7].Value = "Thành tiền";
+                worksheet.Cells[4, 8].Value = "Thanh toán";
+                worksheet.Cells[4, 9].Value = "Còn lại";
+                worksheet.Cells[4, 10].Value = "Trạng thái";
+
+
+                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:J4"].Style.Font.Size = 11;
+                worksheet.Cells["A4:J4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:J4"].Style.Border.Bottom.Color.SetColor(Color.White);
+                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
+                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
+
+                var row = 5;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.Date;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 2].Value = item.Name;
+                    worksheet.Cells[row, 3].Value = item.OrderName;
+                    worksheet.Cells[row, 4].Value = item.OrderPartnerName;
+                    worksheet.Cells[row, 5].Value = item.ProductUOMQty;
+                    worksheet.Cells[row, 6].Value = item.EmployeeName;
+                    worksheet.Cells[row, 7].Value = item.PriceSubTotal;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 8].Value = item.AmountInvoiced;
+                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 9].Value = item.AmountResidual;
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 10].Value = item.StateDisplay;
+
+                    worksheet.Cells[row, 1, row, 10].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 10].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 10].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+
+                    row++;
+                }
+
+                dynamic aggregates = data.Aggregates;
+                worksheet.Cells[row, 1, row, 6].Value = "Tổng";
+                worksheet.Cells[row, 1, row, 6].Merge = true;    
+                worksheet.Cells[row, 7].Value = aggregates.PriceSubTotal.sum; 
+                worksheet.Cells[row, 8].Value = aggregates.AmountInvoiced.sum;
+                worksheet.Cells[row, 9].Value = (aggregates.PriceSubTotal.sum - aggregates.AmountInvoiced.sum);
+                worksheet.Cells[row, 10].Value = "";
+                worksheet.Cells[row, 1, row, 10].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 10].Style.Font.Bold = true;
+                worksheet.Cells[row, 7, row, 9].Style.Numberformat.Format = "#,##0";
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
 
         }
 

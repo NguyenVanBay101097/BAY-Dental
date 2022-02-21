@@ -6,8 +6,9 @@
                 </app-service-list-search-dropdown>
             </div>
             <div>
-                <button type="button" hasGroups [groups]="'insurance.group_insurance'" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1"
-                    class="btn btn-primary ml-auto" (click)="actionInsurancePayment()">
+                <button type="button" hasGroups [groups]="'insurance.group_insurance'"
+                    *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" class="btn btn-primary ml-auto"
+                    (click)="actionInsurancePayment()">
                     Bảo hiểm
                 </button>
                 <button type="button" *ngIf="saleOrder.state != 'done'" class="btn btn-primary ml-1"
@@ -38,8 +39,9 @@
                         [initialFilteredToothCategories]="filteredToothCategories" [initialListTeeths]="listTeeths"
                         [line]="line" (onCancelEvent)="onCancelEditLine($event, i)" (onDeleteEvent)="onDeleteLine(i)"
                         (onEditEvent)="onEditLine($event)" (onUpdateEvent)="updateLineInfo($event, i)"
-                        (onActiveEvent)="onActiveLine($event, line)"
-                        (onUpdateStateEvent)="onUpdateStateLine(i, $event)" [orderState]="saleOrder?.state">
+                        (onActiveEvent)="onActiveLine($event, line)" (onUpdateStateEvent)="onUpdateStateLine(i, $event)"
+                        (actionDoneEvent)="onLineActionDone(i)" (actionCancelEvent)="onLineActionCancel(i)"
+                        (actionUnlockEvent)="onLineActionUnlock(i)" [orderState]="saleOrder?.state">
                     </app-sale-order-line-cu>
                 </ng-container>
             </div>
@@ -65,16 +67,17 @@
                         <label class="font-weight-600">{{getAmountSubTotal() -
                             getAmountDiscountTotal() | number}}</label>
                     </p>
-                    <p hasGroups [groups]="'insurance.group_insurance'" *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
+                    <p hasGroups [groups]="'insurance.group_insurance'"
+                        *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">
                         <label class="font-weight-600">Bảo hiểm trả</label>
                         <label class="font-weight-600">{{getAmountInsurancePaidTotal() | number}}</label>
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
-                    class="d-flex justify-content-between mb-0">
-                    <label class="font-weight-600">Khách hàng trả</label>
-                    <label class="font-weight-600">{{saleOrder.totalPaid - getAmountInsurancePaidTotal() |
-                        number}}</label>
+                        class="d-flex justify-content-between mb-0">
+                        <label class="font-weight-600">Khách hàng trả</label>
+                        <label class="font-weight-600">{{saleOrder.totalPaid - getAmountInsurancePaidTotal() |
+                            number}}</label>
                     </p>
                     <p *ngIf="saleOrder.state == 'sale' || saleOrder.state == 'done'"
                         class="d-flex justify-content-between mb-0">
@@ -185,7 +188,7 @@
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white px-3 py-1">Thông tin phiếu
                 </div>
-                <div class="card-body px-3 py-2" [formGroup]="formGroup">
+                <div class="card-body px-3 py-2 popover-edit-info" [formGroup]="formGroup">
                     <table class="o_group m-0 o_inner_group o_group_col_12">
                         <tbody>
                             <tr>
@@ -195,24 +198,41 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <span>{{saleOrder.dateOrder | date: 'short'}}</span>
-                                    <button *ngIf="saleOrder.state == 'draft'" class="text-success"
-                                        #popover="ngbPopover" triggers="manual"
-                                        (click)="openUpdateOrderPopover(popover)" title="Sửa"
-                                        style="outline: none;background: none;border: none;" [ngbPopover]="popContent"
-                                        placement="bottom-right" [autoClose]="'outside'">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+                                    <div class="d-flex justify-content-between">
+                                        <span>{{saleOrder.dateOrder | date: 'short'}}</span>
+                                        <button *ngIf="saleOrder.state != 'done'" class="text-success"
+                                            #popover="ngbPopover" triggers="manual" popoverClass="mw-100"
+                                            (click)="openUpdateOrderPopover(popover)" title="Sửa"
+                                            style="outline: none;background: none;border: none;" data-container="body"
+                                            [ngbPopover]="popContent" placement="top-right" [autoClose]="'outside'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
                                     <ng-template #popContent>
-                                        <div [formGroup]="formGroup" [class.ng-submitted]="submitted">
+                                        <div [formGroup]="formGroup" class="o_form_view"
+                                            [class.ng-submitted]="submitted">
                                             <div class="mb-2">
-                                                <kendo-datepicker style="width: 100%" format="dd/MM/yyyy HH:mm"
-                                                    formControlName="dateOrder"
-                                                    [popupSettings]="{appendTo: 'component'}">
-                                                </kendo-datepicker>
-                                                <div *ngIf="f.dateOrder.errors && submitted"
-                                                    class="text-danger">
-                                                    <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu</div>
+                                                <label>Ngày lập phiếu</label>
+                                                <div>
+                                                    <kendo-datepicker [disabled]="saleOrder.state != 'draft'"
+                                                        style="width: 100%" format="dd/MM/yyyy HH:mm"
+                                                        formControlName="dateOrder"
+                                                        [popupSettings]="{appendTo: 'component'}">
+                                                    </kendo-datepicker>
+                                                    <div *ngIf="f.dateOrder.errors && submitted" class="text-danger">
+                                                        <div *ngIf="f.dateOrder.errors.required">Chọn ngày lập phiếu
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label>Bác sĩ đại diện</label>
+                                                <div>
+                                                    <kendo-combobox [popupSettings]="{appendTo: 'component'}" #doctorCbx
+                                                        formControlName="doctor" [data]="doctors" [textField]="'name'"
+                                                        [valueField]="'id'" [filterable]="true"
+                                                        [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }">
+                                                    </kendo-combobox>
                                                 </div>
                                             </div>
                                             <div>
@@ -224,6 +244,16 @@
                                         </div>
                                     </ng-template>
 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label o_td_label_sm">
+                                    <label class="o_form_label">
+                                        Bác sĩ đại diện
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{saleOrder?.doctorName}}</span>
                                 </td>
                             </tr>
                             <tr>

@@ -91,6 +91,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DoctorName { get; set; }
         public decimal Qty { get; set; }
         public string Type { get; set; }
+        public string UomName { get; set; }
     }
 
     public class AdvisoryLinePaged

@@ -94,10 +94,13 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'"
+                                    <div class="d-flex">
+                                        <kendo-combobox [data]="filteredPartners" [textField]="'name'"
                                         [class.d-none]="purchaseOrder?.state != 'draft'" [filterable]="true" #partnerCbx
                                         formControlName="partner" [valueField]="'id'">
                                     </kendo-combobox>
+                                    <a (click)="onCreateSupplier()" [class.d-none]="purchaseOrder?.state != 'draft'" class="btn btn-sm btn-light"><span class="k-icon k-i-plus"></span></a>
+                                    </div>
                                     <div *ngIf="f.partner.errors && submitted"
                                         class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn nhà cung cấp</div>

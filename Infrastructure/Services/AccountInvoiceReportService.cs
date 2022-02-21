@@ -419,7 +419,8 @@ namespace Infrastructure.Services
                 PartnerId = x.PartnerId,
                 PriceSubTotal = Math.Abs(x.PriceSubTotal),
                 ProductName = x.Product.Name,
-                ProductId = x.ProductId
+                ProductId = x.ProductId,
+                ProductUoMName = x.ProductUoM.Name
             }).ToListAsync();
 
             return new PagedResult2<RevenueReportDetailDisplay>(count, val.Offset, val.Limit)

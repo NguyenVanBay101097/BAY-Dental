@@ -257,19 +257,35 @@ export class ProductService {
     return this.http.get(this.baseApi + this.apiUrl + "/" + id + "/GetUOMs");
   }
 
-  updateServiceFromExcel(val: ProductImportExcelBaseViewModel){
+  updateServiceFromExcel(val: ProductImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/UpdateServiceFromExcel", val);
   }
 
-  updateProductFromExcel(val: ProductImportExcelBaseViewModel){
+  updateProductFromExcel(val: ProductImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/UpdateProductFromExcel", val);
   }
 
-  updateMedicineFromExcel(val: ProductImportExcelBaseViewModel){
+  updateMedicineFromExcel(val: ProductImportExcelBaseViewModel) {
     return this.http.post(this.baseApi + this.apiUrl + "/UpdateMedicineFromExcel", val);
   }
-  
-  getProductsComingEnd(val){
+
+  getProductsComingEnd(val) {
     return this.http.get(this.baseApi + this.apiUrl + "/GetProductsComingEnd", { params: new HttpParams({ fromObject: val }) });
+  }
+
+  createService(val) {
+    return this.http.post(this.baseApi + "api/ServiceProducts", val);
+  }
+
+  getService(id) {
+    return this.http.get(this.baseApi + "api/ServiceProducts" + '/' + id);
+  }
+
+  updateService(val) {
+    return this.http.put(this.baseApi + "api/ServiceProducts", val);
+  }
+
+  deleteService(id) {
+    return this.http.delete(this.baseApi + "api/ServiceProducts" + '/' + id);
   }
 }

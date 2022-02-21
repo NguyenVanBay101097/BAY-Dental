@@ -1,99 +1,85 @@
-<div class="o_cp_controller">
-    <div class="o_control_panel">
-        <ol class="breadcrumb">
-            <li class="active">
-                Thống kê điều trị
-            </li>
-        </ol>
-        <div class="o_cp_searchview">
-            <div class="o_cp_searchview_group">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
-                    <span class="o_searchview_icon fas fa-search"></span>
-                </div>
-            </div>
-        </div>
-        <div class="o_cp_left">
-            <div class="o_cp_buttons">
-                <div class="btn-group mr-2" role="group" aria-label="Basic example">
-                    <button type="button" class="btn btn-outline-secondary" *ngFor="let item of groups" [class.active]="item.value == groupBy" (click)="setGroupBy(item.value)">{{item.text}}</button>
-                </div>
-            </div>
-            <div class="o_cp_sidebar">
-                <div hasGroups [groups]="'base.group_multi_company'">
-                    <kendo-combobox [data]="listCompanies" style="width: 200px;" [placeholder]="'Tất cả chi nhánh'" [filterable]="true" #comboboxCbx (valueChange)="changeCompany($event)" [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
-                    </kendo-combobox>
-                </div>
-            </div>
-        </div>
-        <div class="o_cp_right">
-            <div class="o_search_options">
-                <div class="btn-group mr-2" role="group" aria-label="Basic example" *ngIf="groupBy == 'date'">
-                    <button type="button" class="btn btn-outline-secondary" *ngFor="let item of group2s" [class.active]="item.value == groupBy2" (click)="setGroupBy2(item.value)">{{item.text}}</button>
-                </div>
-                <app-date-range-picker-filter [opens]="'left'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
-                <!-- <div class="ml-2">
-                    <div class="custom-control custom-checkbox pt-1">
-                        <input type="checkbox" [(ngModel)]="isQuotation" (ngModelChange)="loadDataFromApi()"
-                            class="custom-control-input" id="customCheck1">
-                        <label class="custom-control-label" for="customCheck1">Phiếu tư vấn</label>
-                    </div>
-                </div> -->
-            </div>
-            <nav aria-label="View switcher" class="btn-group o_cp_switch_buttons" role="toolbar">
-                <button accesskey="l" (click)="setViewType('list')" [class.active]="viewType == 'list'" class="btn btn-secondary o_cp_switch_list" title="Danh sách" type="button">
-                    <i class="fas fa-list-ul"></i>
-                </button>
-                <button (click)="setViewType('graph')" [class.active]="viewType == 'graph'" aria-label="View graph" class="btn btn-secondary o_cp_switch_graph" title="Biểu đồ" type="button">
-                    <i class="fas fa-chart-bar"></i>
-                </button>
-            </nav>
-        </div>
-    </div>
-</div>
 
-<div class="o_content">
-    <div>
-        <kendo-grid *ngIf="viewType == 'list'" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
-            <kendo-grid-column field="name" [title]="getTitle()">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.name || 'Chưa xác định'}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="productUOMQty" class="text-right" title="Số lượng dịch vụ" footerClass="text-right font-weight-bold">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.productUOMQty | number}}
-                </ng-template>
-                <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['productUOMQty']">
-                    {{total["productUOMQty"].sum | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <kendo-grid-column field="priceTotal" class="text-right" title="Tổng tiền" footerClass="text-right font-weight-bold">
-                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                    {{dataItem.priceTotal | number}}
-                </ng-template>
-                <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['priceTotal']">
-                    {{total["priceTotal"].sum | number}}
-                </ng-template>
-            </kendo-grid-column>
-            <div *kendoGridDetailTemplate="let dataItem">
-                <app-sale-report-item-detail [item]="dataItem"></app-sale-report-item-detail>
-            </div>
-        </kendo-grid>
 
-        <kendo-chart *ngIf="viewType == 'graph'">
-            <kendo-chart-tooltip>
-                <ng-template kendoChartSeriesTooltipTemplate let-value="value" let-dataItem="dataItem">
-                    {{value | number}} - {{dataItem.name}}
-                </ng-template>
-            </kendo-chart-tooltip>
-            <kendo-chart-series>
-                <kendo-chart-series-item type="column" [data]="items" field="priceTotal" [spacing]="0">
-                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        {{dataItem.priceTotal | number}}
-                    </ng-template>
-                </kendo-chart-series-item>
-            </kendo-chart-series>
-        </kendo-chart>
+<div class="container py-3">
+    <div class="form-inline">
+        <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mb-2 mr-2"
+            [startDate]="filter.dateFrom" [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)"
+            opens="right">
+        </app-date-range-picker-filter>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [(ngModel)]="filter.companyId" [textField]="'name'"
+            [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [valuePrimitive]="true" [data]="listCompanies" (valueChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
+        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
+            [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [data]="listEmployees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
+        </kendo-combobox>
+        <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
+            [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
+        <div class="dropdown mb-2 mr-2">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-download"></i> Xuất File</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
+                <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+            </div>
+        </div>
+        <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
     </div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Ngày tạo" footerClass="font-weight-600" width="110">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.date | date:'dd/MM/yyyy'}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                Tổng
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Dịch vụ" width="200">
+        </kendo-grid-column>
+        <kendo-grid-column field="orderName" title="Phiếu điều trị" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="orderPartnerDisplayName" title="Khách hàng" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary"
+                    [routerLink]="['/partners/customer/', dataItem.orderPartnerId]">{{dataItem.orderPartnerDisplayName}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="productUOMQty" title="Số lượng" class="text-right" width="110">
+        </kendo-grid-column>
+        <kendo-grid-column field="employeeName" title="Bác sĩ" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="priceSubTotal" title="Thành tiền" class="text-right"
+            footerClass="text-right font-weight-600" width="110">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.priceSubTotal || 0 | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                {{aggregates?.PriceSubTotal.sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountInvoiced" title="Thanh toán" class="text-right"
+            footerClass="text-right font-weight-600" width="110">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.amountInvoiced || 0 | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                {{aggregates?.AmountInvoiced.sum | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountResidual" title="Còn lại" class="text-right"
+            footerClass="text-right font-weight-600" width="110">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.amountResidual | number}}
+            </ng-template>
+            <ng-template kendoGridFooterTemplate>
+                {{(aggregates?.PriceSubTotal.sum - aggregates?.AmountInvoiced.sum) | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="stateDisplay" title="Trạng thái" width="110">
+        </kendo-grid-column>
+    </kendo-grid>
 </div>

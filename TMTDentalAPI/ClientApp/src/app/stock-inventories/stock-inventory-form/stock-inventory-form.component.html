@@ -283,7 +283,7 @@
                                                     <td class="text-right">
                                                         <input class="form-control" style="width: 120px;" formControlName="productQty"
                                                             *ngIf="stateControl == 'confirmed'"
-                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric/>
+                                                            [options]="{ decimalPlaces: 2 }" tmtautonumeric/>
                                                         <span style="padding-right: 16px;"
                                                             *ngIf="stateControl != 'confirmed'">{{line.get('productQty').value
                                                             | number}}</span>

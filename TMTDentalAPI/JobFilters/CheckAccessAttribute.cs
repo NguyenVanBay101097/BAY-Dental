@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities;
+﻿using ApplicationCore;
+using ApplicationCore.Entities;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -38,7 +39,10 @@ namespace TMTDentalAPI.JobFilters
                 var accessResult = await roleFunctionObj.HasAccess(permissions);
                 if (!accessResult.Access)
                 {
-                    var result = new JsonResult(new { message = accessResult.Error });
+                    var errorConverter = (IExceptionToErrorConverter)context.HttpContext.RequestServices.GetService(typeof(IExceptionToErrorConverter));
+                    var exception = new AccessErrorException(accessResult.Error);
+                    var error = errorConverter.Convert(exception);
+                    var result = new ObjectResult(error);
                     result.StatusCode = 403;
                     context.Result = result;
                 }

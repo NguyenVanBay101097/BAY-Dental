@@ -61,6 +61,7 @@ using ApplicationCore.Users;
 using ApplicationCore.Security.Claims;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Identity;
+using ApplicationCore;
 
 namespace TMTDentalAPI
 {
@@ -395,7 +396,11 @@ namespace TMTDentalAPI
 
             services.AddScoped<ISaleProductionService, SaleProductionService>();
             services.AddScoped<ISaleProductionLineService, SaleProductionLineService>();
+            services.AddScoped<ISurveyReportService, SurveyReportService>();
 
+            services.AddScoped<IMailMessageSubtypeService, MailMessageSubtypeService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IMailThreadMessageService, MailThreadMessageService>();
             services.AddMemoryCache();
 
             services.AddSingleton<IMyCache, MyMemoryCache>();
@@ -417,6 +422,8 @@ namespace TMTDentalAPI
             services.AddTransient<ICurrentUser, CurrentUser>();
             services.AddSingleton<ICurrentPrincipalAccessor, HttpContextCurrentPrincipalAccessor>();
             services.AddTransient<IAbpClaimsPrincipalFactory, AbpClaimsPrincipalFactory>();
+            services.AddTransient<IExceptionToErrorConverter, DefaultExceptionToErrorConverter>();
+            services.AddTransient<IReportRenderService, ReportRenderService>();
 
             #region -- Add profile mapper of entity
             Action<IMapperConfigurationExpression> mapperConfigExp = mc =>
@@ -605,6 +612,7 @@ namespace TMTDentalAPI
                 mc.AddProfile(new PaymentProfile());
                 mc.AddProfile(new SaleProductionProfile());
                 mc.AddProfile(new SaleProductionLineProfile());
+                mc.AddProfile(new MailMessageSubtypeProfile());
             };
 
             #endregion

@@ -11,9 +11,24 @@
                 <div class="oe_title">
                     <label class="o_form_label oe_edit_only">Họ tên </label>
                     <h1>
-                        <input ngbAutoFocus class="form-control" formControlName="name" name="name">
+                        <!-- <input ngbAutoFocus class="form-control" formControlName="name" name="name"> -->
+                        <div style="position: relative;">
+                            <input #searchInput id="typeahead-basic" type="text" class="form-control" formControlName="name" [ngbTypeahead]="search" [inputFormatter]="formatter" [resultTemplate]="rt"
+                            [focusFirst]="false" (selectItem)="onSelectPartnerValue($event, searchInput)"/>
+                           <ng-template #rt let-r="result" let-t="term">
+                               <div>
+                                   <div class="font-weight-600"><a [routerLink]="['/partners/customer/' + r.id]">{{r.name}}</a></div>
+                                 <div *ngIf="r.dateOfBirth" class="text-muted">
+                                     <span class="fas fa-birthday-cake"></span> {{ r.dateOfBirth }}
+                                </div>
+                                 <div *ngIf="r.phone || r.email" class="text-muted">
+                                    <span class="fas fa-address-book"></span> {{ r.phone }}{{r.phone && r.email ? ' - ': ''}}{{r.email}}
+                                </div>
+                               </div>
+                             </ng-template>
+                        </div>
                     </h1>
-                    <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
+                    <div *ngIf="f.name.errors && (submitted || f.name.touched || f.name.dirty )" class="text-danger mb-1">
                         <div *ngIf="f.name.errors.required">Nhập tên khách hàng</div>
                     </div>
                 </div>
@@ -45,7 +60,8 @@
                                                 <label class="o_form_label">Điện thoại</label>
                                             </td>
                                             <td colspan="1" style="width: 100%;">
-                                                <input type="text" class="form-control" formControlName="phone" />
+                                                <input (blur)="onBlurPhone($event)" type="text" class="form-control" formControlName="phone" />
+                                                <label *ngIf="phoneExistPartners.length" class="mb-0 text-warning">Số điện thoại đã tồn tại <a [routerLink]="" (click)="onDetailExistPartner()">Chi tiết</a></label>
                                             </td>
                                         </tr>
                                         <tr>

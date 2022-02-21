@@ -96,7 +96,7 @@ export class SaleOrderManagementComponent implements OnInit {
       this.saleOrdersData = res;
       this.loading = false;
     }, err => {
-      console.log(err);
+      console.log(err); 
       this.loading = false;
     })
   }
@@ -217,7 +217,7 @@ export class SaleOrderManagementComponent implements OnInit {
               { value: product.name },
               { value: product.productUOMQty, format: '#,##0' },
               { value: product.priceTotal, format: '#,##0' },
-              { value: product.amountPaid, format: '#,##0' },
+              { value: product.amountInvoiced, format: '#,##0' },
               { value: product.amountResidual, format: '#,##0' },
             ],
           });

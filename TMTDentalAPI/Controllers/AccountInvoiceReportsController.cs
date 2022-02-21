@@ -351,34 +351,34 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add("BaoCaoDoanhThu_TheoDV");
 
-                worksheet.Cells["A1:H1"].Value = data.Title;
-                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
-                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:I1"].Value = data.Title;
+                worksheet.Cells["A1:I1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:I1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
                 worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:H1"].Merge = true;
-                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
-                worksheet.Cells["A2:H2"].Value = dateToDate;
-                worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A2:H2"].Merge = true;
-                worksheet.Cells["A3:H3"].Value = "";
+                worksheet.Cells["A1:I1"].Merge = true;
+                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:I2"].Value = dateToDate;
+                worksheet.Cells["A2:I2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:I2"].Merge = true;
+                worksheet.Cells["A3:I3"].Value = "";
                 worksheet.Cells["A4:A4"].Value = data.ColumnTitle;
-                worksheet.Cells["A4:H4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["B4:H4"].Value = "Doanh thu";
-                worksheet.Cells["B4:H4"].Merge = true;
-                worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["B4:H4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells["A4:H4"].Style.Font.Size = 14;
+                worksheet.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["B4:I4"].Value = "Doanh thu";
+                worksheet.Cells["B4:I4"].Merge = true;
+                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["B4:I4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["A4:I4"].Style.Font.Size = 14;
 
                 var row = 5;
                 foreach (var item in data.Data)
                 {
                     worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.ProductName) ? item.ProductName : "Không xác định";
                     
-                    worksheet.Cells[row, 2, row, 8].Value = item.PriceSubTotal;
-                    worksheet.Cells[row, 2, row, 8].Style.Numberformat.Format = "#,###,###";
-                    worksheet.Cells[row, 2, row, 8].Merge = true;
+                    worksheet.Cells[row, 2, row, 9].Value = item.PriceSubTotal;
+                    worksheet.Cells[row, 2, row, 9].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 2, row, 9].Merge = true;
                     row++;
 
                     worksheet.Cells[row, 1].Value = "";
@@ -388,10 +388,11 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 5].Value = "Bác sĩ";
                     worksheet.Cells[row, 6].Value = "Phụ tá";
                     worksheet.Cells[row, 7].Value = "Dịch vụ/Thuốc";
-                    worksheet.Cells[row, 8].Value = "Thanh toán";
-                    worksheet.Cells[row, 2, row, 8].Style.Font.Bold = true;
-                    worksheet.Cells[row, 2, row, 8].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[row, 2, row, 8].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                    worksheet.Cells[row, 8].Value = "Đơn vị tính";
+                    worksheet.Cells[row, 9].Value = "Thanh toán";
+                    worksheet.Cells[row, 2, row, 9].Style.Font.Bold = true;
+                    worksheet.Cells[row, 2, row, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 9].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
                     var rowEnd = row + item.Lines.Count();
                     worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                     row++;
@@ -406,8 +407,9 @@ namespace TMTDentalAPI.Controllers
                         worksheet.Cells[row, 5].Value = line.EmployeeName;
                         worksheet.Cells[row, 6].Value = line.AssistantName;
                         worksheet.Cells[row, 7].Value = line.ProductName;
-                        worksheet.Cells[row, 8].Value = line.PriceSubTotal;
-                        worksheet.Cells[row, 8].Style.Numberformat.Format = "#,###,###";
+                        worksheet.Cells[row, 8].Value = line.ProductUoMName;
+                        worksheet.Cells[row, 9].Value = line.PriceSubTotal;
+                        worksheet.Cells[row, 9].Style.Numberformat.Format = "#,###,###";
                         row++;
                     }
 

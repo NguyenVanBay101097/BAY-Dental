@@ -45,6 +45,7 @@ namespace Umbraco.Web.Models.ContentEditing
         /// Giá vốn
         /// </summary>
         public decimal? StandardPrice { get; set; }
+        public string UoMName { get; set; }
     }
 
     public class ProductProductExportExcel

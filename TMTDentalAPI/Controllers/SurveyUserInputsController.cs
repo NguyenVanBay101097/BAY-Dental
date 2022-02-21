@@ -92,7 +92,8 @@ namespace TMTDentalAPI.Controllers
                     QuestionId = x.QuestionId.Value,
                     AnswerValue = x.Question.Type == "radio" ? x.AnswerId.ToString() : x.ValueText
                 }),
-                SurveyTags = surveyInput.SurveyUserInputSurveyTagRels.Select(x => new SurveyTagBasic { 
+                SurveyTags = surveyInput.SurveyUserInputSurveyTagRels.Select(x => new SurveyTagBasic
+                {
                     Id = x.SurveyTagId,
                     Color = x.SurveyTag.Color,
                     Name = x.SurveyTag.Name
@@ -101,5 +102,6 @@ namespace TMTDentalAPI.Controllers
 
             return Ok(res);
         }
+
     }
 }

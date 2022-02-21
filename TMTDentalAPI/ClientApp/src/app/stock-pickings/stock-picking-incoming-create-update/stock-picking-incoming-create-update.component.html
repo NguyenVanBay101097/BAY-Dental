@@ -66,15 +66,24 @@
                                     </label>
                                 </td>
                                 <td colspan="1" style="width: 100%;">
-                                    <kendo-combobox [hidden]="state == 'done'" [data]="filteredPartners"
-                                        [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner"
-                                        [valueField]="'id'">
-                                    </kendo-combobox>
-                                    <div *ngIf="f.partner.errors && submitted"
-                                        class="text-danger">
+                                    <div class="d-flex">
+                                        <kendo-combobox [hidden]="state == 'done'" [data]="filteredPartners"
+                                            [textField]="'displayName'" [filterable]="true" #partnerCbx
+                                            formControlName="partner" [valueField]="'id'">
+                                        </kendo-combobox>
+                                        <a *ngIf="state != 'done'" data-toggle="dropdown" class="btn btn-sm btn-light"><span
+                                                class="k-icon k-i-plus"></span></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a href="javascript: void(0);" (click)="onCreatePartner(item.value)"
+                                                *ngFor="let item of  listTypePartner"
+                                                class="dropdown-item">{{item.text}}</a>
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="f.partner.errors && submitted" class="text-danger">
                                         <div *ngIf="f.partner.errors.required">Chọn đối tác</div>
                                     </div>
-                                    <label *ngIf="state == 'done'">{{partner?.name}}</label>
+                                    <label *ngIf="state == 'done'">{{partner?.displayName}}</label>
                                 </td>
                             </tr>
                             <tr>
@@ -87,6 +96,9 @@
                                     <ng-container *ngIf="state != 'done'; else dateLable">
                                         <kendo-datepicker formControlName="dateObj" format="dd/MM/yyyy">
                                         </kendo-datepicker>
+                                        <div *ngIf="f.dateObj.errors && submitted" class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày nhập</div>
+                                        </div>
                                     </ng-container>
                                     <ng-template #dateLable>
                                         <label for="">{{picking?.date | date: 'shortDate'}}</label>
@@ -140,7 +152,8 @@
                                                 <th width="100">Số lượng</th>
                                                 <th width="120" hasGroups [groups]="'product.group_uom'">Đơn vị tính
                                                 </th>
-                                                <th width="90" *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
+                                                <th width="90"
+                                                    *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1">
                                                     Thao tác</th>
                                             </tr>
                                         </thead>
@@ -154,21 +167,25 @@
                                                         line.get('product').value.name}}
                                                     </td>
                                                     <td class="align-middle ">
-                                                        <span *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
+                                                        <span
+                                                            *ngIf="line.get('product').value.type2 == 'medicine'">Thuốc</span>
                                                         <span *ngIf="line.get('product').value.type2 == 'product'">Vật
                                                             tư</span>
                                                     </td>
                                                     <td class="align-middle ">
-                                                        <input class="form-control" style="width: 80px;" formControlName="productUOMQty"
+                                                        <input class="form-control" style="width: 80px;"
+                                                            formControlName="productUOMQty"
                                                             *ngIf="['done', 'cancel'].indexOf(picking?.state) === -1"
-                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }" tmtautonumeric />
+                                                            [options]="{ minimumValue: 0, decimalPlaces: 2 }"
+                                                            tmtautonumeric />
                                                         <div *ngIf="line.get('productUOMQty').errors && submitted"
                                                             class="text-danger">
                                                             <div *ngIf="line.get('productUOMQty').errors.required">
                                                                 Nhập số lượng
                                                             </div>
                                                         </div>
-                                                        <span *ngIf="['done', 'cancel'].indexOf(picking?.state) !== -1">{{
+                                                        <span
+                                                            *ngIf="['done', 'cancel'].indexOf(picking?.state) !== -1">{{
                                                             line.get('productUOMQty').value | number}}</span>
                                                     </td>
                                                     <td class="align-middle " hasGroups [groups]="'product.group_uom'">

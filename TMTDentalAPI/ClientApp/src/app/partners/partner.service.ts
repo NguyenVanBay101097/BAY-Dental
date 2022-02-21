@@ -26,6 +26,35 @@ export class PartnerFilter {
     active: boolean;
 }
 
+export class PartnerInfoFilter {
+    limit: number;
+    offset: number;
+    search: string;
+    companyId?: string;
+    ageFrom?: number;
+    ageTo?: number;
+    revenueFrom?: number;
+    revenueTo?: number;
+    amountTotalFrom?: number;
+    amountTotalTo?: number;
+    isDebt?: boolean;
+    isRevenueExpect?: boolean;
+    orderState: string;
+    categIds: string[];
+    partnerSourceIds: string[];
+    cardTypeIds: string[];
+    cityCode: string;
+    districtCode: string;
+    wardCode: string;
+    gender: string;
+    dateFrom?: string;
+    dateTo?: string;
+    isActive?: boolean;
+    cityCodeIsNull: boolean;
+    districtCodeIsNull: boolean;
+    wardCodeIsNull: boolean;
+}
+
 export class SaleOrderLineBasic {
     name: string;
     state: string;
@@ -56,6 +85,8 @@ export class SaleOrderLinePaged {
     companyId: string;
     dateFrom: string;
     dateTo: string;
+    aggregate: any;
+    partnerId: string;
 }
 
 export class PartnerReportLocationCitySearch {
@@ -188,6 +219,9 @@ export class PartnerInfoDisplay {
     categories: any[];
     dateOfBirth: string;
     age: string;
+    companyName: string;
+    appointmentDate: string;
+    saleOrderDate: string;
 }
 
 export class PartnerInfoPaged {
@@ -201,6 +235,41 @@ export class PartnerInfoPaged {
     cardTypeId: string;
     orderState: string;
     companyId: string;
+    active?: boolean;
+}
+
+export class PartnerGetExistReq{
+    phone: string;
+}
+
+export class GetThreadMessageForPartnerRequest{
+    limit: number;
+    offset: number;
+    dateFrom: any;
+    dateTo: any;
+    subtypeId: string;
+}
+
+export class GetPartnerThreadMessageResponse  {
+    messages: MailMessageFormat[];
+}
+
+export class MailMessageFormat {
+    id: string;
+    body: string;
+    date: any;
+    authorName:string;
+    messageType: string;
+    subject: string;
+    model: string;
+    resId: string;
+    isNote: boolean;
+    isNotification: boolean;
+    subtypeName: string;
+}
+
+export class CreateCommentForPartnerRequest{
+    body: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -552,10 +621,6 @@ export class PartnerService {
         }
     }
 
-    patchActive(id, val): Observable<any> {
-        return this.http.patch(this.baseApi + "api/Partners/" + id + '/PatchActive', val);
-    }
-
     getDebtPaged(id: string, val: any) {
         return this.http.get(this.baseApi + this.apiUrl + '/' + id + '/GetDebtPaged', { params: new HttpParams({ fromObject: val }) });
     }
@@ -615,6 +680,32 @@ export class PartnerService {
     updateSupplier(val: any) {
         return this.http.put(this.baseApi + this.apiUrl + '/Suppliers', val);
     }
+
+    getExist(val){
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + '/GetExist', val);
+    }
+
+    getTotalAmountOfSaleOrder(id){
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + `/${id}/GetTotalAmountOfSaleOrder`, null);
+    }
+
+    getThreadMessages(id: string,val: GetThreadMessageForPartnerRequest) {
+        return this.http.post<GetPartnerThreadMessageResponse>(this.baseApi + this.apiUrl + `/${id}/ThreadMessages`, val);
+    }
+
+    createComment(id: string,val: CreateCommentForPartnerRequest) {
+        return this.http.post<PartnerSimple[]>(this.baseApi + this.apiUrl + `/${id}/CreateComment`, val);
+    }
+
+    printTreatmentHistories(val: any) {
+        return this.http.post(this.baseApi + this.apiUrl + '/PrintTreatmentHistories',val);
+    }
+
+    actionArchive(ids: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionArchive", ids);
+    }
+
+    actionUnArchive(ids: any){
+        return this.http.post(this.baseApi + this.apiUrl + "/ActionUnArchive", ids);
+    }
 }
-
-

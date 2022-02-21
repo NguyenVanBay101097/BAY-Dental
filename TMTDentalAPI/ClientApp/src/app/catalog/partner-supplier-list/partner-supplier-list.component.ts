@@ -162,24 +162,33 @@ export class PartnerSupplierListComponent implements OnInit {
   onClickActive(item) {
     let modalRef = this.modalService.open(ConfirmDialogComponent, { size: 'sm', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.title = (!item.active ? 'Hiện nhà cung cấp ' : 'Ẩn nhà cung cấp ') + item.name;
-    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((!item.active ? 'hiện nhà cung cấp ' : 'ẩn nhà cung cấp ') + item.name);
+    modalRef.componentInstance.body = 'Bạn có chắc chắn muốn ' + ((!item.active ? 'hiện nhà cung cấp ' : 'ẩn nhà cung cấp ') + item.name + '?');
     modalRef.result.then(() => {
-      var res = new PartnerActivePatch();
-      res.active = item.active ? false : true;
-      this.partnerService.patchActive(item.id, res).subscribe(() => {
-        this.notificationService.show({
-          content:  !item.active ? 'Hiện nhà cung cấp thành công ' : 'Ẩn nhà cung cấp thành công',
-          hideAfter: 3000,
-          position: { horizontal: 'center', vertical: 'top' },
-          animation: { type: 'fade', duration: 400 },
-          type: { style: 'success', icon: true }
+      var active = item.active ? false : true;
+      if (active) {
+        this.partnerService.actionUnArchive([item.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Hiện nhà cung cấp thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadDataFromApi();
         });
-        this.loadDataFromApi();
-      });
+      } else {
+        this.partnerService.actionArchive([item.id]).subscribe(() => {
+          this.notificationService.show({
+            content: 'Ẩn nhà cung cấp thành công',
+            hideAfter: 3000,
+            position: { horizontal: 'center', vertical: 'top' },
+            animation: { type: 'fade', duration: 400 },
+            type: { style: 'success', icon: true }
+          });
+          this.loadDataFromApi();
+        });
+      }
     }, () => {
     });
-
-
   }
-
 }

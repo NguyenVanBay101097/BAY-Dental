@@ -1,4 +1,4 @@
-<div class="input-group date-picker" ngxDaterangepickerMd [showDropdowns]="showDropdowns" (datesUpdated)="onApply()"
+<!-- <div class="input-group date-picker" ngxDaterangepickerMd [showDropdowns]="showDropdowns" (datesUpdated)="onApply()"
     [showClearButton]="showClearButton" [(ngModel)]="selected" [opens]="opens" [drops]="drops" [showCustomRangeLabel]="true"
     [alwaysShowCalendars]="true" [ranges]="ranges" [linkedCalendars]="true" [showCancel]="true">
     <span *ngIf="selected?.startDate && selected?.endDate" class="form-control custom-input border-right-0">
@@ -6,6 +6,20 @@
     </span>
     <span class="form-control custom-input border-right-0 title"
         *ngIf="!selected?.startDate && !selected?.endDate">{{title}}</span>
+    <div (click)="open()" class="input-group-append cursor-pointer">
+        <span class="input-group-text">
+            <i class="fas fa-calendar-alt"></i>
+        </span>
+    </div>
+</div> -->
+
+
+<div class="input-group date-picker" daterangepicker [options]="options" (selected)="selectedDate($event)" (showDaterangepicker)="onShowDateRangePicker($event)">
+    <span *ngIf="startDate && endDate" class="form-control custom-input border-right-0">
+        {{ startDate | date:'dd/MM/yyyy' }} - {{ endDate| date:'dd/MM/yyyy' }}
+    </span>
+    <span class="form-control custom-input border-right-0 title"
+        *ngIf="!startDate && !endDate">{{title}}</span>
     <div (click)="open()" class="input-group-append cursor-pointer">
         <span class="input-group-text">
             <i class="fas fa-calendar-alt"></i>

@@ -25,6 +25,7 @@ using Infrastructure;
 using TMTDentalAPI.JobFilters;
 using Microsoft.AspNetCore.Hosting;
 using System.Xml;
+using Microsoft.AspNetCore.Identity;
 
 namespace TMTDentalAPI.Controllers
 {
@@ -45,6 +46,13 @@ namespace TMTDentalAPI.Controllers
         private readonly IServiceCardCardService _serviceCardService;
         private readonly IPartnerSourceService _partnerSourceService;
         private readonly IIRModelDataService _iRModelDataService;
+        private readonly IMailMessageService _mailMessageService;
+        private readonly IMailThreadMessageService _threadMessageService;
+        private readonly IPrintTemplateConfigService _printTemplateConfigService;
+        private readonly IIRModelDataService _modelDataService;
+        private readonly IPrintTemplateService _printTemplateService;
+        private readonly ISaleOrderLineService _saleOrderLineService;
+        private readonly ICompanyService _companyService;
 
         public PartnersController(IPartnerService partnerService, IMapper mapper,
             IUnitOfWorkAsync unitOfWork,
@@ -57,7 +65,14 @@ namespace TMTDentalAPI.Controllers
             IServiceCardCardService serviceCardService,
             IPartnerSourceService partnerSourceService,
             IIRModelDataService iRModelDataService,
-            IAccountCommonPartnerReportService accReportService)
+            IAccountCommonPartnerReportService accReportService,
+            IMailMessageService mailMessageService,
+            IMailThreadMessageService threadMessageService,
+            IPrintTemplateConfigService printTemplateConfigService,
+            IIRModelDataService modelDataService,
+            IPrintTemplateService printTemplateService,
+            ISaleOrderLineService saleOrderLineService,
+            ICompanyService companyService)
         {
             _accReportService = accReportService;
             _partnerService = partnerService;
@@ -72,6 +87,13 @@ namespace TMTDentalAPI.Controllers
             _serviceCardService = serviceCardService;
             _partnerSourceService = partnerSourceService;
             _iRModelDataService = iRModelDataService;
+            _mailMessageService = mailMessageService;
+            _threadMessageService = threadMessageService;
+            _printTemplateConfigService = printTemplateConfigService;
+            _modelDataService = modelDataService;
+            _printTemplateService = printTemplateService;
+            _saleOrderLineService = saleOrderLineService;
+            _companyService = companyService;
         }
 
         [HttpGet]
@@ -241,7 +263,6 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> Autocomplete2(PartnerPaged val)
         {
             var res = await _partnerService.SearchPartnersCbx(val);
-            res = res.Skip(val.Offset).Take(val.Limit);
             return Ok(res);
         }
 
@@ -610,7 +631,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpPost("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Export")]
-        public async Task<IActionResult> ExportExcelFile(PartnerInfoPaged val)
+        public async Task<IActionResult> ExportExcelFile(PartnerQueryableFilter val)
         {
             var stream = new MemoryStream();
             var data = await _partnerService.GetExcel(val);
@@ -750,24 +771,19 @@ namespace TMTDentalAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("{id}/[action]")]
+        [HttpPost("{id}/[action]")]
         [CheckAccess(Actions = "Basic.Partner.Update")]
-        public async Task<IActionResult> PatchActive(Guid id, PartnerActivePatch result)
+        public async Task<IActionResult> UpdateActive(Guid id, PartnerActivePatch val)
         {
             var entity = await _partnerService.GetByIdAsync(id);
             if (entity == null)
             {
                 return NotFound();
             }
-
-            var patch = new JsonPatchDocument<PartnerActivePatch>();
-            patch.Replace(x => x.Active, result.Active);
-            var entityMap = _mapper.Map<PartnerActivePatch>(entity);
-            patch.ApplyTo(entityMap);
-
-            entity = _mapper.Map(entityMap, entity);
+            await _unitOfWork.BeginTransactionAsync();
+            entity.Active = val.Active;
             await _partnerService.UpdateAsync(entity);
-
+            _unitOfWork.Commit();
             return NoContent();
         }
 
@@ -796,7 +812,7 @@ namespace TMTDentalAPI.Controllers
 
         [HttpGet("[action]")]
         [CheckAccess(Actions = "Basic.Partner.Read")]
-        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerInfoPaged val) // giao diện list khách hàng
+        public async Task<IActionResult> GetPartnerInfoPaged2([FromQuery] PartnerQueryableFilter val) // giao diện list khách hàng
         {
             var result = await _partnerService.GetPartnerInfoPaged2(val);
 
@@ -878,6 +894,140 @@ namespace TMTDentalAPI.Controllers
             await irModelObj.CreateAsync(irModelCreate);
             return Ok();
 
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetExist(PartnerGetExistReq val)
+        {
+            var res = await _partnerService.GetExist(val);
+            return Ok(res);
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> GetTotalAmountOfSaleOrder(Guid id)
+        {
+            var res = await _partnerService.GetTotalAmountOfSaleOrder(id);
+            return Ok(new { Value = res });
+        }
+
+        [HttpPost("{id}/ThreadMessages")]
+        public async Task<IActionResult> GetThreadMessages([FromRoute] Guid id, [FromBody] GetThreadMessageForPartnerRequest val)
+        {
+            var modelName = typeof(Partner).Name;
+            var query = _mailMessageService.SearchQuery(x => x.Model == modelName && x.ResId == id, orderBy: x => x.OrderByDescending(s => s.Date));
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
+
+            if (val.DateFrom.HasValue)
+                query = query.Where(x => x.Date <= val.DateTo.Value.AbsoluteEndOfDate());
+
+            if (val.SubtypeId.HasValue)
+                query = query.Where(x => x.SubtypeId == val.SubtypeId);
+
+            if (val.Limit > 0)
+                query = query.Skip(val.Offset).Take(val.Limit);
+
+            var messages = await query.Include(x => x.Author).Include(x => x.Subtype).ToListAsync();
+            var messageFormats = messages.Select(x => new MailMessageFormat
+            {
+                Id = x.Id,
+                AuthorName = x.Author?.Name,
+                SubtypeName = x.Subtype?.Name,
+                Body = x.Body,
+                Date = x.Date,
+                MessageType = x.MessageType,
+                Model = x.Model,
+                ResId = x.ResId,
+                Subject = x.Subject,
+                IsNote = x.MessageType == "comment",
+                IsNotification = x.MessageType == "notification"
+            });
+
+            var response = new GetPartnerThreadMessageResponse { Messages = messageFormats };
+            return Ok(response);
+        }
+
+        [HttpPost("{id}/[action]")]
+        public async Task<IActionResult> CreateComment([FromRoute] Guid id, [FromBody] CreateCommentForPartnerRequest val)
+        {         
+            var message = await _threadMessageService.MessagePost(typeof(Partner).Name, id, val.body, messageType: "comment");
+            return Ok();
+        }
+
+        [HttpPost("PrintTreatmentHistories")]
+        [CheckAccess(Actions = "Basic.SaleOrder.Print")]
+        public async Task<IActionResult> GetPrintTreatmentHistories(PartnerTreatmentHistoriesPrintRequest val)
+        {
+            //Lấy mẫu in
+            //tim trong bảng config xem có dòng nào để lấy ra template
+            var printConfig = await _printTemplateConfigService.SearchQuery(x => x.Type == "tmp_treatment_histories" && x.IsDefault)
+                .Include(x => x.PrintPaperSize)
+                .Include(x => x.PrintTemplate)
+                .FirstOrDefaultAsync();
+
+            PrintTemplate template = printConfig != null ? printConfig.PrintTemplate : null;
+            PrintPaperSize paperSize = printConfig != null ? printConfig.PrintPaperSize : null;
+            if (template == null)
+            {
+                //tìm template mặc định sử dụng chung cho tất cả chi nhánh, sử dụng bảng IRModelData hoặc bảng IRConfigParameter
+                template = await _modelDataService.GetRef<PrintTemplate>("base.print_template_treatment_histories");
+                if (template == null)
+                    throw new Exception("Không tìm thấy mẫu in mặc định");
+            }
+            var states = new string[] { "sale", "done","cancel"};
+            var companyId = CompanyId;
+            var orderLinesQuery = _saleOrderLineService.SearchQuery(x => x.OrderPartnerId == val.Id && states
+            .Contains(x.State) && x.CompanyId == companyId).OrderByDescending(x => x.Date);
+            var company = await _companyService.SearchQuery(x => x.Id == companyId).Include(x => x.Partner).FirstOrDefaultAsync();
+
+            var res = await _partnerService.SearchQuery(x => x.Id == val.Id).Select(x => new PartnerTreatmentHistoriesPrintResponse
+            {
+                DisplayName = x.DisplayName,
+                BirthDay = x.BirthDay,
+                BirthMonth = x.BirthMonth,
+                BirthYear = x.BirthYear,
+                CityName = x.CityName,
+                DistrictName = x.DistrictName,
+                WardName = x.WardName,
+                Email = x.Email,
+                Gender = x.Gender,
+                Street = x.Street,
+                JobTitle = x.JobTitle,
+                Phone = x.Phone,
+                MedicalHistory = x.MedicalHistory,
+                Date = x.Date,
+                Name = x.Name,
+                Histories = x.PartnerHistoryRels.Select(x => new HistorySimple()
+                {
+                    Id = x.HistoryId,
+                    Name = x.History.Name
+                }),
+            }).FirstOrDefaultAsync();
+            
+            res.OrderLines = await _mapper.ProjectTo<SaleOrderLineBasic>(orderLinesQuery).ToListAsync();
+            res.Company = _mapper.Map<CompanyPrintVM>(company);
+            var result = await _printTemplateService.GeneratePrintHtml(template, new List<object> { res});
+
+            return Ok(new PrintData() { html = result });
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerService.ActionArchive(ids);
+            _unitOfWork.Commit();
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _partnerService.ActionUnArchive(ids);
+            _unitOfWork.Commit();
+            return NoContent();
         }
     }
 }

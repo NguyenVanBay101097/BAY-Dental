@@ -24,5 +24,6 @@ namespace Infrastructure.Services
 
         CheckPromoCodeMessage _CheckServiceCardCardApplySaleLine(ServiceCardCard self, SaleOrderLine line);
         Task<ImportExcelResponse> ActionImport(IFormFile formFile);
+        Task<ServiceCardCard> GetNewestCreatedRequest(GetServiceCardCardNewestCreatedRequest val);
     }
 }

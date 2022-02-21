@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +20,14 @@ namespace Infrastructure.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAsyncRepository<Partner> _partnerRepository;
         public AccountCommonPartnerReportService(IMapper mapper, IHttpContextAccessor httpContextAccessor,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, IAsyncRepository<Partner> partnerRepository)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _partnerRepository = partnerRepository;
         }
 
         public async Task<IEnumerable<AccountCommonPartnerReportItem>> ReportSummary(AccountCommonPartnerReportSearch val)
@@ -182,6 +185,183 @@ namespace Infrastructure.Services
             }
             return res;
         }
+
+        public async Task<AccountCommonPartnerReportOverview> GetPartnerReportSumaryOverview(PartnerQueryableFilter val)
+        {
+            var partnerObj = GetService<IPartnerService>();
+            var saleOderLineObj = GetService<ISaleOrderLineService>();
+            var amlObj = GetService<IAccountMoveLineService>();
+            var query = partnerObj.GetQueryablePartnerFilter(val);
+
+            var res = new AccountCommonPartnerReportOverview();
+            res.TotalPartner = await query.CountAsync();
+            res.TotalService = await saleOderLineObj.SearchQuery(x => query.Select(s => s.Id).Contains(x.OrderPartnerId.Value) && x.State == "sale" || x.State == "done").CountAsync();
+            res.TotalRevenue = await saleOderLineObj.SearchQuery(x => query.Select(s => s.Id).Contains(x.OrderPartnerId.Value) && x.State == "sale" || x.State == "done").SumAsync(x => x.AmountInvoiced ?? 0);
+            res.TotalRevenueExpect = await saleOderLineObj.SearchQuery(x => query.Select(s => s.Id).Contains(x.OrderPartnerId.Value) && x.State == "sale" || x.State == "done").SumAsync(x => x.PriceTotal - (x.AmountInvoiced ?? 0));
+            res.TotalDebt = await amlObj.SearchQuery(x => query.Select(s => s.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH").SumAsync(x => x.Balance);
+
+            return res;
+        }
+
+        public async Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(PartnerQueryableFilter val)
+        {
+            var partnerObj = GetService<IPartnerService>();
+            var query = partnerObj.GetQueryablePartnerFilter(val);
+            var groupSourceCount = query.GroupBy(x => x.SourceId).Select(x => new
+            {
+                PartnerSourceId = x.Key,
+                TotalPartner = x.Count()
+            }).ToList();
+
+            var partnerSourceObj = GetService<IPartnerSourceService>();
+            var sourceIds = groupSourceCount.Where(x => x.PartnerSourceId.HasValue).Select(x => x.PartnerSourceId.Value).ToList();
+            var sources = await partnerSourceObj.SearchQuery(x => sourceIds.Contains(x.Id)).ToListAsync();
+            var sourceDict = sources.ToDictionary(x => x.Id, x => x);
+
+            var res = groupSourceCount.Select(x => new PartnerReportSourceOverview
+            {
+                PartnerSourceId = x.PartnerSourceId,
+                PartnerSourceName = !x.PartnerSourceId.HasValue ? "Chưa xác định" : sourceDict[x.PartnerSourceId.Value].Name,
+                TotalPartner = x.TotalPartner
+            });
+
+            return res;
+        }
+
+        public async Task<IEnumerable<PartnerGenderReportOverview>> GetPartnerReportGenderOverview(PartnerQueryableFilter val)
+        {
+            var partnerObj = GetService<IPartnerService>();
+            var query = partnerObj.GetQueryablePartnerFilter(val);
+
+            //group by theo độ tuổi
+            var nowYear = DateTime.Now.Year;
+            var ageGroupData = await query
+                .Select(x => new
+                {
+                    DoTuoi = x.BirthYear.HasValue ? ((nowYear - x.BirthYear.Value) >= 0 && (nowYear - x.BirthYear.Value) <= 12 ? 1 : ((nowYear - x.BirthYear.Value) >= 13 && (nowYear - x.BirthYear.Value) <= 17 ? 2 : ((nowYear - x.BirthYear.Value) >= 18 && (nowYear - x.BirthYear.Value) <= 24 ? 3 : ((nowYear - x.BirthYear.Value) >= 25 && (nowYear - x.BirthYear.Value) <= 34 ? 4 : ((nowYear - x.BirthYear.Value) >= 35 && (nowYear - x.BirthYear.Value) <= 44 ? 5 : ((nowYear - x.BirthYear.Value) >= 45 && (nowYear - x.BirthYear.Value) <= 64 ? 6 : 7)))))) : 8
+                })
+                .GroupBy(x => x.DoTuoi)
+                .Select(x => new
+                {
+                    DoTuoi = x.Key,
+                    Count = x.Count()
+                }).ToListAsync();
+
+            //group by theo độ tuổi và giới tính
+            var ageGenderGroupData = await query
+             .Select(x => new
+             {
+                 DoTuoi = x.BirthYear.HasValue ? ((nowYear - x.BirthYear.Value) >= 0 && (nowYear - x.BirthYear.Value) <= 12 ? 1 : ((nowYear - x.BirthYear.Value) >= 13 && (nowYear - x.BirthYear.Value) <= 17 ? 2 : ((nowYear - x.BirthYear.Value) >= 18 && (nowYear - x.BirthYear.Value) <= 24 ? 3 : ((nowYear - x.BirthYear.Value) >= 25 && (nowYear - x.BirthYear.Value) <= 34 ? 4 : ((nowYear - x.BirthYear.Value) >= 35 && (nowYear - x.BirthYear.Value) <= 44 ? 5 : ((nowYear - x.BirthYear.Value) >= 45 && (nowYear - x.BirthYear.Value) <= 64 ? 6 : 7)))))) : 8,
+                 Gender = x.Gender
+             })
+             .GroupBy(x => new { DoTuoi = x.DoTuoi, Gender = x.Gender })
+             .Select(x => new
+             {
+                 DoTuoi = x.Key.DoTuoi,
+                 Gender = x.Key.Gender,
+                 Count = x.Count()
+             }).ToListAsync();
+
+            var doTuoiNameDict = new Dictionary<int, string>()
+            {
+                { 8, "Chưa xác định" },
+                { 1, "0 - 12" },
+                { 2, "13 - 17" },
+                { 3, "18 - 24" },
+                { 4, "25 - 34" },
+                { 5, "35 - 44" },
+                { 6, "45 - 64" },
+                { 7, "65+" },
+            };
+
+            var res = new List<PartnerGenderReportOverview>();
+            foreach (var ageGroup in ageGroupData)
+            {
+                var item = new PartnerGenderReportOverview()
+                {
+                    AgeRange = ageGroup.DoTuoi,
+                    AgeRangeName = doTuoiNameDict[ageGroup.DoTuoi],
+                    TotalMale = ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "male").FirstOrDefault() != null ? ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "male").FirstOrDefault().Count : 0,
+                    TotalFemale = ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "female").FirstOrDefault() != null ? ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "female").FirstOrDefault().Count : 0,
+                    TotalOther = ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "other").FirstOrDefault() != null ? ageGenderGroupData.Where(x => x.DoTuoi == ageGroup.DoTuoi && x.Gender == "other").FirstOrDefault().Count : 0
+                };
+                res.Add(item);
+            }
+
+            return res;
+        }
+
+        public static SampleDataAgeFilter[] sampleDataAgeFilter = new SampleDataAgeFilter[] {
+            new SampleDataAgeFilter {Name = "0 - 12",  AgeFrom = 0, AgeTo = 12},
+            new SampleDataAgeFilter {Name = "13 - 17", AgeFrom = 13 , AgeTo = 17},
+            new SampleDataAgeFilter {Name = "18 - 24", AgeFrom = 18 , AgeTo = 24},
+            new SampleDataAgeFilter {Name = "25 - 34", AgeFrom = 25 , AgeTo = 34},
+            new SampleDataAgeFilter {Name = "35 - 44", AgeFrom = 35 , AgeTo = 44},
+            new SampleDataAgeFilter {Name = "45 - 64", AgeFrom = 45 , AgeTo = 64},
+            new SampleDataAgeFilter {Name = "65+", AgeFrom = 65},
+            new SampleDataAgeFilter {Name = "Không xác định" }
+        };
+
+        public async Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(PartnerQueryableFilter val)
+        {
+            var partnerObj = GetService<IPartnerService>();
+            var query = partnerObj.GetQueryablePartnerFilter(val);
+
+            var cityResults = await query.GroupBy(x => new { CityCode = x.CityCode, CityName = x.CityName }).Select(x => new GetPartnerForCityReportOverview
+            {
+                CityCode = x.Key.CityCode,
+                CityName = x.Key.CityName,
+                Count = x.Count()
+            }).ToListAsync();
+
+            var cityCodes = cityResults.Where(x => !x.CityCode.IsNullOrWhiteSpace()).Select(x => x.CityCode).ToList();
+
+            var districtResults = await query.Where(x => cityCodes.Contains(x.CityCode))
+                .GroupBy(x => new
+                {
+                    CityCode = x.CityCode,
+                    DistrictCode = x.DistrictCode,
+                    DistrictName = x.DistrictName
+                })
+                .Select(x => new GetPartnerForDistrictReportOverview
+                {
+                    CityCode = x.Key.CityCode,
+                    DistrictCode = x.Key.DistrictCode,
+                    DistrictName = x.Key.DistrictName,
+                    Count = x.Count()
+                }).ToListAsync();
+
+            var districtCodes = districtResults.Where(x => !x.DistrictCode.IsNullOrWhiteSpace()).Select(x => x.DistrictCode).ToList();
+
+            var wardResult = await query.Where(x => cityCodes.Contains(x.CityCode) && districtCodes.Contains(x.DistrictCode))
+                .GroupBy(x => new
+                {
+                    CityCode = x.CityCode,
+                    DistrictCode = x.DistrictCode,
+                    WardCode = x.WardCode,
+                    WardName = x.WardName
+                })
+                .Select(x => new GetPartnerForWardReportOverview
+                {
+                    CityCode = x.Key.CityCode,
+                    DistrictCode = x.Key.DistrictCode,
+                    WardCode = x.Key.WardCode,
+                    WardName = x.Key.WardName,
+                    Count = x.Count()
+                }).ToListAsync();
+
+            foreach (var cityResult in cityResults)
+            {
+                cityResult.Districts = districtResults.Where(x => x.CityCode == cityResult.CityCode).ToList();
+                foreach (var districtResult in cityResult.Districts)
+                {
+                    districtResult.Wards = wardResult.Where(x => x.CityCode == cityResult.CityCode && x.DistrictCode == districtResult.DistrictCode).ToList();
+                }
+            }
+
+            return cityResults;
+        }
+
         public async Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val)
         {
             var data = await ReportSummary(val);
@@ -295,7 +475,7 @@ namespace Infrastructure.Services
             var dict = new Dictionary<Guid, AccountCommonPartnerReportItem>();
             var amlObj = (IAccountMoveLineService)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAccountMoveLineService));
             var empObj = GetService<IEmployeeService>();
-            var empl_dict = await empObj.SearchQuery(x => x.HrJobId.HasValue && x.PartnerId.HasValue).Include(x => x.HrJob).Include(x => x.User).ThenInclude(x => x.Partner).Distinct().ToDictionaryAsync(x => x.PartnerId, x => x.HrJob.Name);
+            var empl_dict = empObj.SearchQuery(x => x.HrJobId.HasValue && x.PartnerId.HasValue).Include(x => x.HrJob).ToDictionary(x => x.PartnerId, x => x.HrJob.Name);
             var query = amlObj._QueryGet(dateFrom: val.FromDate, dateTo: val.ToDate, initBal: true, state: "posted", companyId: val.CompanyId);
             if (!string.IsNullOrWhiteSpace(val.Search))
             {
@@ -304,7 +484,7 @@ namespace Infrastructure.Services
             }
             query = query.Where(x => x.Account.Code.Equals("334"));
 
-            var list = await query
+            var list = await query.Where(x => x.PartnerId.HasValue)
                .GroupBy(x => new
                {
                    PartnerId = x.Partner.Id,
@@ -320,7 +500,6 @@ namespace Infrastructure.Services
                    PartnerRef = x.Key.PartnerRef,
                    PartnerPhone = x.Key.PartnerPhone,
                    JobName = empl_dict.ContainsKey(x.Key.PartnerId) ? empl_dict[x.Key.PartnerId] : null,
-                   x.Key.Type,
                    InitialBalance = x.Sum(s => s.Debit - s.Credit),
                }).ToListAsync();
 

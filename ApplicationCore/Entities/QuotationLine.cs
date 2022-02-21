@@ -52,11 +52,14 @@ namespace ApplicationCore.Entities
         /// </summary>
         public string Diagnostic { get; set; }
 
+        public Guid? ProductUOMId { get; set; }
+        public UoM ProductUOM { get; set; }
+
         /// <summary>
         /// Loại răng: răng sữa, răng vĩnh viễn !!!
         /// </summary>
         public ToothCategory ToothCategory { get; set; }
-        public Guid ToothCategoryId { get; set; }
+        public Guid? ToothCategoryId { get; set; }
 
         public ICollection<QuotationLineToothRel> QuotationLineToothRels { get; set; } = new List<QuotationLineToothRel>();
 

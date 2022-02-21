@@ -1,0 +1,43 @@
+﻿<div class="header">
+    <div class="row">
+        <div class="col-3 mb4">
+            {{if company.logo}}
+            <img src="{{company.logo}}" style="max-height: 45px;" alt="Logo" />
+            {{ end }}
+        </div>
+        <div class="col-9 text-right" style="margin-top:22px;" name="moto">
+            {{company.report_header}}
+        </div>
+    </div>
+    {{if (company.logo || company.report_header)}}
+    <div class="row zero_min_height">
+        <div class="col-12">
+            <div style="border-bottom: 1px solid black;" />
+        </div>
+    </div>
+    {{ end }}
+</div>
+
+<div class="article o_report_layout_standard">
+    #CONTENT#
+</div>
+
+<div class="footer o_standard_footer">
+    <div class="text-center" style="border-top: 1px solid black;">
+        <ul class="list-inline mb4">
+            {{if (company.phone)}}
+            <li class="list-inline-item d-inline">Phone: <span>{{company.phone}}</span></li>
+            {{ end }}
+            {{if (company.Email)}}
+            <li class="list-inline-item d-inline">Phone: <span>{{company.email}}</span></li>
+            {{ end }}
+        </ul>
+        <div name="financial_infos">
+            <span>{{company.report_footer}}</span>
+        </div>
+
+        <div class="text-muted">
+            Page: <span class="page" /> / <span class="topage" />
+        </div>
+    </div>
+</div>

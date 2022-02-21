@@ -9,6 +9,7 @@ using ApplicationCore.Entities;
 using ApplicationCore.Models;
 using ApplicationCore.Utilities;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Infrastructure.Services;
@@ -84,6 +85,7 @@ namespace TMTDentalAPI.Controllers
         {
             var order = await _saleOrderService.SearchQuery(x => x.Id == id)
                 .Include(x => x.Partner)
+                .Include(x => x.Doctor)
                 .FirstOrDefaultAsync();
 
             return Ok(_mapper.Map<SaleOrderBasic>(order));
@@ -744,7 +746,10 @@ namespace TMTDentalAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> ExportManagementExcel(SaleOrderPaged val)
         {
-            var data = await _saleOrderService.ExportManagementExcel(val);
+            val.Limit = 0;
+            var salePaged = await _saleOrderService.GetPagedResultAsync(val);
+            var saleIds = salePaged.Items.Select(x => x.Id).ToList();
+            var allLines = await _mapper.ProjectTo<SaleOrderLineBasic>(_saleLineService.SearchQuery(x => saleIds.Contains(x.OrderId))).ToListAsync();
 
             var stream = new MemoryStream();
             byte[] fileContent;
@@ -753,72 +758,75 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add("QuanLyDieuTri");
 
-                worksheet.Cells["A1:F1"].Value = "BÁO CÁO QUẢN LÝ ĐIỀU TRỊ CHƯA HOÀN THÀNH";
-                worksheet.Cells["A1:F1"].Style.Font.Size = 14;
-                worksheet.Cells["A1:F1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells["A1:F1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:F1"].Merge = true;
-                worksheet.Cells["A1:F1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:H1"].Value = "BÁO CÁO QUẢN LÝ ĐIỀU TRỊ CHƯA HOÀN THÀNH";
+                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:H1"].Merge = true;
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
 
-                worksheet.Cells["A2:F2"].Value = "";
+                worksheet.Cells["A2:H2"].Value = "";
                 worksheet.Cells["A3"].Value = "Ngày lập phiếu";
                 worksheet.Cells["B3"].Value = "Số phiếu";
                 worksheet.Cells["C3"].Value = "Khách hàng";
-                worksheet.Cells["D3"].Value = "Tiền điều trị";
-                worksheet.Cells["E3"].Value = "Thanh toán";
-                worksheet.Cells["F3"].Value = "Còn lại";
-                worksheet.Cells["A3:F3"].Style.Font.Bold = true;
-                worksheet.Cells["A3:F3"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A3:F3"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["A3:F3"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["A3:F3"].Style.Font.Size = 14;
+                worksheet.Cells["D3:E3"].Value = "Bác sĩ đại diện";
+                worksheet.Cells["D3:E3"].Merge = true;
+                worksheet.Cells["F3"].Value = "Tiền điều trị";
+                worksheet.Cells["G3"].Value = "Thanh toán";
+                worksheet.Cells["H3"].Value = "Còn lại";
+                worksheet.Cells["A3:H3"].Style.Font.Bold = true;
+                worksheet.Cells["A3:H3"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A3:H3"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A3:H3"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A3:H3"].Style.Font.Size = 14;
 
                 var row = 4;
-                foreach (var item in data)
+                foreach (var item in salePaged.Items)
                 {
+                    worksheet.Cells[row, 4, row, 5].Merge = true;
+
                     worksheet.Cells[row, 1].Value = item.DateOrder;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
                     worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     worksheet.Cells[row, 3].Value = item.PartnerName;
-                    worksheet.Cells[row, 4].Value = item.AmountTotal;
-                    worksheet.Cells[row, 5].Value = item.TotalPaid;
-                    worksheet.Cells[row, 3, row, 5].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[row, 4].Value = item.DoctorName;
+                    worksheet.Cells[row, 6].Value = item.AmountTotal ?? 0;
+                    worksheet.Cells[row, 7].Value = item.TotalPaid ?? 0;
+                    worksheet.Cells[row, 8].Value = item.Residual ?? 0;
+                    worksheet.Cells[row, 6, row, 8].Style.Numberformat.Format = "#,##0";
+
                     row++;
-                    worksheet.Cells[row, 1].Value = "";
+
                     worksheet.Cells[row, 2].Value = "Dịch vụ";
-                    worksheet.Cells[row, 3].Value = "Số lượng";
-                    worksheet.Cells[row, 4].Value = "Thành tiền";
-                    worksheet.Cells[row, 5].Value = "Thanh toán";
-                    worksheet.Cells[row, 6].Value = "Còn lại";
-                    worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    worksheet.Cells[row, 2, row, 6].Style.Font.Bold = true;
-                    worksheet.Cells[row, 2, row, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[row, 2, row, 6].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
-                    worksheet.Cells[row, 2, row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    var rowEnd = row + item.Lines.Count();
+                    worksheet.Cells[row, 2, row, 3].Merge = true;
+                    worksheet.Cells[row, 5].Value = "Số lượng";
+                    worksheet.Cells[row, 4].Value = "Đơn vị tính";
+                    worksheet.Cells[row, 6].Value = "Thành tiền";
+                    worksheet.Cells[row, 7].Value = "Thanh toán";
+                    worksheet.Cells[row, 8].Value = "Còn lại";
+
+                    worksheet.Cells[row, 2, row, 8].Style.Font.Bold = true;
+                    worksheet.Cells[row, 2, row, 8].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 8].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                    worksheet.Cells[row, 2, row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    var saleLines = allLines.Where(x => x.OrderId == item.Id).ToList();
+                    var rowEnd = row + saleLines.Count();
                     worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                     row++;
 
-                    foreach (var line in item.Lines)
+                    foreach (var line in saleLines)
                     {
-                        worksheet.Cells[row, 1].Value = "";
+                        worksheet.Cells[row, 2, row, 3].Merge = true;
                         worksheet.Cells[row, 2].Value = line.Name;
-                        worksheet.Cells[row, 3].Value = line.ProductUOMQty;
-                        worksheet.Cells[row, 4].Value = line.PriceSubTotal;
-                        worksheet.Cells[row, 5].Value = line.AmountPaid;
-                        worksheet.Cells[row, 6].Value = line.AmountResidual;
-                        worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                        worksheet.Cells[row, 4, row, 6].Style.Numberformat.Format = "#,###,###";
+                        worksheet.Cells[row, 4].Value = line.ProductUOMQty;
+                        worksheet.Cells[row, 5].Value = line.ProductUOMName;
+                        worksheet.Cells[row, 6].Value = line.PriceSubTotal;
+                        worksheet.Cells[row, 7].Value = line.AmountInvoiced ?? 0;
+                        worksheet.Cells[row, 8].Value = line.AmountResidual ?? 0;
+                        worksheet.Cells[row, 2, row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 6, row, 8].Style.Numberformat.Format = "#,##0";
                         row++;
                     }
 

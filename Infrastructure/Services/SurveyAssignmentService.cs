@@ -77,9 +77,13 @@ namespace Infrastructure.Services
             var pnCateRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var query = GetAllQuery(val);
-            query = query.Include(x => x.UserInput).ThenInclude(x=>x.SurveyUserInputSurveyTagRels).ThenInclude(x=>x.SurveyTag).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
+            query = query.Include(x => x.UserInput).ThenInclude(x => x.SurveyUserInputSurveyTagRels).ThenInclude(x => x.SurveyTag).Include(x => x.Employee).Include(x => x.Partner).Include(x => x.SaleOrder);
             var count = await query.CountAsync();
-            var items = await query.Skip(val.Offset).Take(val.Limit).ToListAsync();
+            if (val.Limit != 0)
+            {
+                query = query.Skip(val.Offset).Take(val.Limit);
+            }
+            var items = await query.ToListAsync();
 
             var pnCategories = await pnCateRelObj.SearchQuery(x => items.Select(y => y.PartnerId).Contains(x.PartnerId))
                 .Select(x => new { ParnerId = x.PartnerId, CategoryName = x.Category.Name }).ToListAsync();
@@ -99,6 +103,10 @@ namespace Infrastructure.Services
         private IQueryable<SurveyAssignment> GetAllQuery(SurveyAssignmentPaged val)
         {
             var query = SearchQuery();
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
             if (!string.IsNullOrEmpty(val.Search))
             {
                 query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.Ref.Contains(val.Search) || x.SaleOrder.Name.Contains(val.Search)
@@ -125,6 +133,11 @@ namespace Infrastructure.Services
             if (val.UserId.HasValue)
             {
                 query = query.Where(x => x.Employee.UserId == val.UserId.ToString());
+            }
+
+            if (val.SurveyTagId.HasValue)
+            {
+                query = query.Where(x => x.UserInput.SurveyUserInputSurveyTagRels.Any(y => y.SurveyTagId == val.SurveyTagId.Value));
             }
 
             query = query.OrderByDescending(x => x.DateCreated);
@@ -192,7 +205,8 @@ namespace Infrastructure.Services
                     Diagnostic = x.Diagnostic,
                     EmployeeName = x.Employee.Name,
                     ProductUOMQty = x.ProductUOMQty,
-                    Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name)
+                    Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name),
+                    ProductUOMName = x.ProductUOM != null ? x.ProductUOM.Name : ""
                 }).ToListAsync();
 
             assignDisplay.DotKhams = await dotkhamObj.SearchQuery(x => x.SaleOrderId == assign.SaleOrderId)
@@ -433,6 +447,19 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task<DoneSurveyAssignmentPrintVM> GetDoneSurveyAssignmentReportPrint(SurveyAssignmentPaged val)
+        {
+            var res = new DoneSurveyAssignmentPrintVM();
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            var data = await GetPagedResultAsync(val);
+            res.Data = data.Items;
 
+            return res;
+        }
     }
 }

@@ -39,6 +39,7 @@
                 <th width="150">Khách hàng</th>
                 <th width="150">Dịch vụ</th>
                 <th width="150">Bác sĩ</th>
+                <th width="120">ĐVT</th>
                 <th width="120">Răng</th>
                 <th width="120" class="text-right">Số lượng</th>
                 <th width="120">Thành tiền</th>
@@ -49,26 +50,27 @@
         <tbody>
             @foreach (var line in Model.data)
             {
-                <tr>
-                    <td>@(!line.Date.HasValue? "":line.Date.Value.ToString("dd/MM/yyyy"))</td>
-                    <td>@line.OrderPartner.Name</td>
-                    <td>@line.Product.Name</td>
-                    <td>@(line.Employee == null? "": line.Employee.Name)</td>
-                    <td>
-                        @if (line.ToothType == "manual")
-                        {
-                            @string.Join(", ", line.Teeth.Select(x => x.Name))
-                        }
-                        else
-                        {
-                            @showTeethList(line.ToothType)
-                        }
-                    </td>
-                    <td class="text-right">@string.Format(culture, "{0:0}", @line.ProductUOMQty)</td>
-                    <td class="text-right">@string.Format(culture, "{0:0,0}", line.PriceSubTotal)</td>
-                    <td>@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel"? "Ngừng dịch vụ" : "Đang điều trị"))</td>
-                    <td>@line.Order.Name</td>
-                </tr>
+            <tr>
+                <td>@(!line.Date.HasValue? "":line.Date.Value.ToString("dd/MM/yyyy"))</td>
+                <td>@line.OrderPartnerDisplayName</td>
+                <td>@line.ProductName</td>
+                <td>@(line.EmployeeName)</td>
+                <td>@(line.ProductUOMName)</td>
+                <td>
+                    @if (line.ToothType == "manual")
+                    {
+                        @string.Join(", ", line.Teeth2)
+                    }
+                    else
+                    {
+                        @showTeethList(line.ToothType)
+                    }
+                </td>
+                <td class="text-right">@string.Format(culture, "{0:n0}", @line.ProductUOMQty)</td>
+                <td class="text-right">@string.Format(culture, "{0:n0}", line.PriceSubTotal)</td>
+                <td>@(line.StateDisplay)</td>
+                <td>@line.OrderName</td>
+            </tr>
                 <tr>
                 </tr>
             }

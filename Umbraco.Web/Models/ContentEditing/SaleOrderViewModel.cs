@@ -99,7 +99,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class GetPrintManagementItemRes: SaleOrderBasic
     {
-        public IEnumerable<SaleOrderLineDisplay> Lines { get; set; } = new List<SaleOrderLineDisplay>();
+        public IEnumerable<SaleOrderLineBasic> Lines { get; set; } = new List<SaleOrderLineBasic>();
     }
 
     public class GetExcelManagementItemRes : SaleOrderBasic

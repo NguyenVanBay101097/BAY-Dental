@@ -6,6 +6,7 @@ import { PartnerAreaReportComponent } from './partner-area-report/partner-area-r
 import { PartnerDebitListReportComponent } from './partner-debit-list-report/partner-debit-list-report.component';
 import { PartnerReportManagementComponent } from './partner-report-management/partner-report-management.component';
 import { PartnerReportOverviewComponent } from './partner-report-overview/partner-report-overview.component';
+import { PartnerTreatmentReportComponent } from './partner-treatment-report/partner-treatment-report.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
       {
         path: 'partner-report-overview',
         component: PartnerReportOverviewComponent
+      },
+      {
+        path: 'partner-treatment',
+        component: PartnerTreatmentReportComponent
       },
       {
         path: 'partner-area',

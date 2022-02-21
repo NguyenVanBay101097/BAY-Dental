@@ -14,7 +14,6 @@ namespace ApplicationCore.Entities
         {
             Active = true;
             SaleOK = true;
-            PurchaseOK = true;
             Type = "consu";
         }
 

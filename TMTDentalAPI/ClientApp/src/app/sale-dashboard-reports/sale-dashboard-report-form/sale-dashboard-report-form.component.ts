@@ -7,7 +7,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AccountInvoiceReportService, RevenueTimeReportPar } from 'src/app/account-invoice-reports/account-invoice-report.service';
 import { CashBookReportFilter, CashBookService } from 'src/app/cash-book/cash-book.service';
 import { CompanyBasic, CompanyPaged, CompanyService } from 'src/app/companies/company.service';
-import { DashboardReportService } from 'src/app/core/services/dashboard-report.service';
+import { DashboardReportService, ReportRevenueChartFilter } from 'src/app/core/services/dashboard-report.service';
 import { CustomerReceiptReportFilter, CustomerReceiptReportService } from 'src/app/customer-receipt-reports/customer-receipt-report.service';
 import { PartnerOldNewReportService } from 'src/app/sale-report/partner-old-new-report.service';
 
@@ -26,10 +26,10 @@ export class SaleDashboardReportFormComponent implements OnInit {
   filteredCompanies: CompanyBasic[] = [];
   companyId: string;
   groupBy: string = 'groupby:day';
-  cashBooks: any[] = [];
-  revenues: any[] = [];
   dataNoTreatment: any[] = [];
   dataCustomer: any[] = [];
+  saleRevenueCashBookData: any[] = [];
+  cashBooks: any[] = [];
   partnerTypes = [
     { text: 'Khách mới', value: 'new' },
     { text: 'Khách quay lại', value: 'old' }
@@ -115,28 +115,15 @@ export class SaleDashboardReportFormComponent implements OnInit {
   }
 
   loadDataRevenueChartApi() {
-    var val = new RevenueTimeReportPar();
+    var val = new ReportRevenueChartFilter();
     val.companyId = this.companyId || '';
     val.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
     val.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
+    val.groupBy = this.groupBy;
 
-    var val2 = new CashBookReportFilter();
-    val2.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : '';
-    val2.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : '';
-    val2.companyId = this.companyId ? this.companyId : '';
-    val2.groupBy = this.groupBy;
-
-    if (this.groupBy == 'groupby:month') {
-      forkJoin([this.revenueReportService.getRevenueTimeByMonth(val), this.cashBookService.getChartReport(val2)]).subscribe(results => {
-        this.revenues = results[0];
-        this.cashBooks = results[1];
-      });
-    } else {
-      forkJoin([this.revenueReportService.getRevenueTimeReport(val), this.cashBookService.getChartReport(val2)]).subscribe(results => {
-        this.revenues = results[0];
-        this.cashBooks = results[1];
-      });
-    }
+    this.dashboardReportService.getRevenueReportChart(val).subscribe((result: any[]) => {
+      this.saleRevenueCashBookData = result;
+    })
   }
 
   loadDataRevenueApi() {
@@ -146,7 +133,7 @@ export class SaleDashboardReportFormComponent implements OnInit {
       companyId: this.companyId ? this.companyId : null
     };
 
-    this.dashboardReportService.getRevenueActualReport(val).subscribe(result => {
+    this.dashboardReportService.getRevenueActualReport(val).subscribe((result: any) => {
       this.revenueActualReportData = result;
     });
   }
@@ -155,8 +142,13 @@ export class SaleDashboardReportFormComponent implements OnInit {
     var val = {
       dateFrom: this.dateFrom ? this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd') : null,
       dateTo: this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null,
-      companyId: this.companyId ? this.companyId : null
+      companyId: this.companyId ? this.companyId : null,
+      groupBy: this.groupBy
     };
+
+    this.cashBookService.getChartReport(val).subscribe(result => {
+      this.cashBooks = result;
+    })
 
     this.dashboardReportService.getThuChiReport(val).subscribe(result => {
       this.thuChiReportData = result;
@@ -261,6 +253,9 @@ export class SaleDashboardReportFormComponent implements OnInit {
         break;
       case "hoa-hong-report":
         this.router.navigateByUrl("commission-settlements/report");
+        break;
+        case "res-insurance-reports":
+          this.router.navigateByUrl(value);
         break;
       default:
         break;
