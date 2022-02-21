@@ -30,7 +30,7 @@ namespace TMTDentalAdmin.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var tenants = await _tenantService.SearchQuery(x => x.Version != "1.0.1.8").ToListAsync();
+            var tenants = await _tenantService.SearchQuery(x => x.Version != "1.0.2.4").ToListAsync();
             foreach(var tenant in tenants)
             {
                 var response = await _client.GetAsync($"https://{tenant.Hostname}.tdental.vn/ProcessUpdate");
