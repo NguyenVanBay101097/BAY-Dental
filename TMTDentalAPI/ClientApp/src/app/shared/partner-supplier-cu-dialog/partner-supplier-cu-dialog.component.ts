@@ -18,7 +18,7 @@ export class PartnerSupplierCuDialogComponent implements OnInit {
   submitted = false;
   isDisabledDistricts: boolean = true;
   isDisabledWards: boolean = true;
-  title: string;
+  title: string = 'Thêm: Nhà cung cấp';
 
   dataSourceCities: Array<{ code: string; name: string }>;
   dataSourceDistricts: Array<{

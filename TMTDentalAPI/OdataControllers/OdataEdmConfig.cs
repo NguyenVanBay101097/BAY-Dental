@@ -226,7 +226,7 @@ namespace TMTDentalAPI.OdataControllers
             builder.ComplexType<PartnerImageDisplay>();
             builder.ComplexType<DotKhamLineSaveVM>();
             builder.ComplexType<SaleOrderOnChangePartnerResult>();
-
+            builder.ComplexType<UoMBasic>();
 
             #endregion
 

@@ -8,7 +8,7 @@
     <form [formGroup]="myForm">
         <!-- nhóm răng-->
         <div class="mb-2 d-flex">
-            <div class="form-check t-form-check mr-2" *ngFor="let item of filteredToothCategories">
+            <div class="form-check t-form-check mr-2" *ngFor="let item of listToothCategories">
                 <input class="form-check-input" type="radio" [id]="'toothCategoryId_' + item.id" [value]="item.id"
                     formControlName="toothCategoryId" (change)="onChangeToothCategory(item)">
                 <label class="form-check-label" [for]="'toothCategoryId_' + item.id">
@@ -19,15 +19,24 @@
         <!-- loại răng chọn -->
         <div>
             <ng-container *ngFor="let item of toothTypeDict">
-                <input [value]="item.value" class="btn-check" type="radio" formControlName="toothType"
+                <input [attr.disabled]="getFormValue('toothCategoryId') == null && item.value != 'manual' ? true: null"
+                    [value]="item.value" class="btn-check" type="radio" formControlName="toothType"
                     [id]="'toothType_' + item.value" autocomplete="off" (change)="onChangeToothType(item.value)">
-                <label class="btn btn-outline-primary mr-1"
-                    [for]="'toothType_' + item.value">{{item.name}}</label>
+                <label [ngClass]="getFormValue('toothCategoryId') == null && item.value != 'manual' ? 'disabled' : ''"
+                    class="btn btn-outline-primary mr-1" [for]="'toothType_' + item.value">{{item.name}}</label>
             </ng-container>
         </div>
         <!-- răng -->
         <div class="text-center" style="overflow: auto;" [class.d-none]="getFormValue('toothType') != 'manual'">
-            <app-teeth-chart [teeth]="filterTeeths" [(selectedKeys)]="toothSelectedIds"></app-teeth-chart>
+            <ng-container *ngFor="let cate of listToothCategories">
+                <div *ngIf="getFormValue('toothCategoryId') == cate.id">
+                    <ng-container *ngFor="let listTooth of cate.teeth">
+                        <div class="my-2">
+                            <app-teeth-chart [teeth]="listTooth" [(selectedKeys)]="toothSelectedIds"></app-teeth-chart>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
         </div>
         <div *ngIf="(getFormValue('toothType') == 'manual'
             && toothSelectedIds.length == 0) 

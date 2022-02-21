@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, Renderer2, RendererStyleFlags2 } from '@angular/core';
 import { PermissionService } from './permission.service';
 
 @Directive({
@@ -33,7 +33,7 @@ export class HasGroupsDirective implements OnInit {
             this.renderer.setStyle(
                 this.elementRef.nativeElement,
                 'display',
-                'none'
+                'none', RendererStyleFlags2.Important + RendererStyleFlags2.DashCase
             )
         }
         else {

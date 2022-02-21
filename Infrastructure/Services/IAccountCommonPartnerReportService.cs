@@ -24,5 +24,13 @@ namespace Infrastructure.Services
         Task<AccountCommonPartnerReportPrint> ReportSummaryPrint(AccountCommonPartnerReportSearch val);
         Task<IEnumerable<ReportPartnerDebitExcel>> ExportReportPartnerDebitExcel(ReportPartnerDebitReq val);
         Task<ReportPartnerAdvancePrintVM> ReportPartnerAdvancePrint(ReportPartnerAdvanceFilter val);
+
+        Task<AccountCommonPartnerReportOverview> GetPartnerReportSumaryOverview(PartnerQueryableFilter val);
+
+        Task<IEnumerable<PartnerReportSourceOverview>> GetPartnerReportSourceOverview(PartnerQueryableFilter val);
+
+        Task<IEnumerable<PartnerGenderReportOverview>> GetPartnerReportGenderOverview(PartnerQueryableFilter val);
+
+        Task<IEnumerable<GetPartnerForCityReportOverview>> GetPartnerReportTreeMapOverview(PartnerQueryableFilter val);
     }
 }

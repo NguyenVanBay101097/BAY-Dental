@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { RouterModule } from '@angular/router';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
-import { ReactiveFormsModule, FormsModule} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LayoutSidebarComponent } from './layout-sidebar/layout-sidebar.component';
 import { LayoutHeaderComponent } from './layout-header/layout-header.component';
 import { NavSidebarService } from './nav-sidebar.service';
@@ -114,6 +114,9 @@ import { ResInsuranceCuDialogComponent } from './res-insurance-cu-dialog/res-ins
 import { NumberDirective } from './directives/numbers-only.directive';
 import { TmtAutonumericModule } from 'tmt-autonumeric';
 import { AgePopoverComponent } from './age-popover/age-popover.component';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { CommentCuDialogComponent } from '../mail-messages/comment-cu-dialog/comment-cu-dialog.component';
+import { Daterangepicker } from 'ng2-daterangepicker';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -204,7 +207,6 @@ const config: LocaleConfig = {};
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        ToothSelectionDialogComponent,
         TeethChartComponent,
         ToothSelectionDialogComponent,
         SaleOrderLineSwitchStatePopoverComponent,
@@ -220,7 +222,8 @@ const config: LocaleConfig = {};
         ComputePriceInputPopoverComponent,
         ResInsuranceCuDialogComponent,
         NumberDirective,
-        AgePopoverComponent
+        AgePopoverComponent,
+        CommentCuDialogComponent
     ],
     exports: [
         ConfirmDialogComponent,
@@ -299,13 +302,12 @@ const config: LocaleConfig = {};
         DaterangepickerDirective,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        ToothSelectionDialogComponent,
         TeethChartComponent,
         ToothSelectionDialogComponent,
         SaleOrderLineSwitchStatePopoverComponent,
         ProductCategoriesSearchDropdownComponent,
         ComputePriceInputPopoverComponent,
-        
+
         CustomerReceipCreateUpdateComponent,
         CustomerReceiptStatePopoverComponent,
         AddressDialogComponent,
@@ -318,7 +320,10 @@ const config: LocaleConfig = {};
         ResInsuranceCuDialogComponent,
         NumberDirective,
         TmtAutonumericModule,
-        AgePopoverComponent
+        AgePopoverComponent,
+        NgxEchartsModule,
+        CommentCuDialogComponent
+
     ],
     imports: [
         NgbModule,
@@ -336,12 +341,15 @@ const config: LocaleConfig = {};
                 'm': 59
             }
         }),
-        TmtAutonumericModule
+        TmtAutonumericModule,
+        NgxEchartsModule,
+        Daterangepicker
+
     ],
     providers: [NavSidebarService, AppLoadingService, AppSharedShowErrorService, FundBookService,
         { provide: LOCALE_CONFIG, useValue: config },
         { provide: LocaleService, useClass: LocaleService, deps: [LOCALE_CONFIG] },
-        
+
     ],
     entryComponents: [
         ConfirmDialogComponent,
@@ -371,13 +379,14 @@ const config: LocaleConfig = {};
         DateRangePickerFilterComponent,
         DateRangePickerDropdownComponent,
         AgentCreateUpdateDialogComponent,
-        ToothSelectionDialogComponent,        
+        ToothSelectionDialogComponent,
         CustomerReceipCreateUpdateComponent,
         AddressDialogComponent,
         ReceiveAppointmentDialogComponent,
         WarrantyCuDidalogComponent,
         BankCuDialogComponent,
-        ResInsuranceCuDialogComponent
+        ResInsuranceCuDialogComponent,
+        CommentCuDialogComponent
     ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

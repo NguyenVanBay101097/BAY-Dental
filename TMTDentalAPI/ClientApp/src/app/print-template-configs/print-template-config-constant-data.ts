@@ -24,6 +24,8 @@ export const types: { text: string, value: string }[] = [
     { text: 'Phiếu xuất kho', value: 'tmp_stock_picking_outgoing' },
     { text: 'Phiếu kiểm kho', value: 'tmp_stock_inventory' },
     { text: 'Phiếu hẹn', value: 'tmp_appointment' },
+    { text: 'Hồ sơ điều trị', value: 'tmp_treatment_histories' },
+
 
 ];
 
@@ -561,6 +563,8 @@ const keyWorDatas =
                 { text: 'Họ tên khách hàng', value: '{{o.partner?.name}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
+                { text: 'Tổng thành tiền (chưa giảm giá)', value: '{{o.amount_undiscount_total}}' },
+                { text: 'Tổng giảm giá', value: '{{o.amount_discount_total}}' },
                 { text: 'Tổng tiền', value: '{{o.amount_total}}' },
                 { text: 'Đã thanh toán', value: '{{o.total_paid}}' },
                 { text: 'Số tiền còn lại', value: '{{o.residual}}' },
@@ -572,11 +576,14 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách dịch vụ', value: '{{o.order_lines}}' },
                 { text: 'Tên dịch vụ', value: '{{line.product?.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
-                { text: 'Đơn giá', value: '{{line.price_unit}}' },
+                { text: 'Đơn giá gốc', value: '{{line.price_unit}}' },
+                { text: 'Đơn giá đã giảm', value: '{{line.price_with_discount}}' },
                 { text: 'Giảm giá', value: '{{line.amount_discount_total}}' },
-                { text: 'Thành tiền', value: '{{line.price_sub_total}}' },
-
+                { text: 'Tổng giảm giá', value: '{{line.total_discount_amount}}' },
+                { text: 'Thành tiền (đã giảm giá)', value: '{{line.price_sub_total}}' },
+                { text: 'Thành tiền (chưa giảm giá)', value: '{{line.total_undiscount_amount}}' },
             ]
         },
         {
@@ -616,6 +623,54 @@ const keyWorDatas =
             ]
         },
     ],
+    'tmp_treatment_histories': [
+        companyInfo,
+        {
+            text: 'Thông tin hồ sơ',
+            value: [
+                { text: 'Ngày in', value: '{{o.date.day}}' },
+                { text: 'Tháng in', value: '{{o.date.month}}' },
+                { text: 'Năm in', value: '{{o.date.year}}' },
+            ]
+        },
+        {
+            text: 'Thông tin chung',
+            value: [
+                { text: 'Mã + Họ tên khách hàng', value: '{{o.display_name}}' },
+                { text: 'Họ tên khách hàng', value: '{{o.name}}' },
+                { text: 'SĐT khách hàng', value: '{{o.phone}}' },
+                { text: 'Địa chỉ khách hàng', value: '{{o.address}}' },
+                { text: 'Giới tính', value: '{{o.display_gender}}' },
+                { text: 'Nghề nghiệp', value: '{{o.job_title}}' },
+                { text: 'Tiểu sử bệnh', value: '{{o.histories_string}}' },
+                { text: 'Tiểu sử bệnh khác', value: '{{o.medical_history}}' },
+                { text: 'Ngày sinh', value: '{{o.date_of_birth}}' },
+                { text: 'Email', value: '{{o.email}}' },
+                { text: 'Tổng tiền', value: '{{o.price_total}}' },
+                { text: 'Đã thanh toán', value: '{{o.amount_invoiced}}' },
+                { text: 'Số tiền còn lại', value: '{{o.amount_residual}}' },
+                { text: 'Bác sĩ điều trị', value: '{{u.name}}' },
+            ]
+        },
+        {
+            text: 'Thông tin danh sách dịch vụ',
+            value: [
+                { text: 'Danh sách dịch vụ', value: '{{o.order_lines}}' },
+                { text: 'Ngày tạo dịch vụ', value: '{{line.date}}' },
+                { text: 'Mã phiếu điều trị chứa dịch vụ', value: '{{line.order_name}}' },
+                { text: 'Tên dịch vụ', value: '{{line.name}}' },
+                { text: 'Số lượng dịch vụ', value: '{{line.product_uomqty}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uomname}}' },
+                { text: 'Răng', value: '{{line.teeth_display}}' },
+                { text: 'Họ tên bác sĩ', value: '{{o.employee.name}}' },
+                { text: 'Chẩn đoán', value: '{{line.diagnostic}}' },
+                { text: 'Thành tiền', value: '{{line.price_total}}' },
+                { text: 'Thanh toán', value: '{{line.amount_invoiced}}' },
+                { text: 'Còn lại', value: '{{line.amount_residual}}' },
+                { text: 'Trạng thái dịch vụ', value: '{{line.state_display}}' },
+            ]
+        }
+    ],
     'tmp_quotation': [
         companyInfo,
         {
@@ -647,6 +702,7 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách dịch vụ', value: '{{o.lines}}' },
                 { text: 'Tên dịch vụ', value: '{{line.name}}' },
+                { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng', value: '{{line.qty}}' },
                 { text: 'Đơn giá', value: '{{(line.sub_price - line.amount_discount_total)}}' },
                 { text: 'Thành tiền', value: '{{line.amount}}' },

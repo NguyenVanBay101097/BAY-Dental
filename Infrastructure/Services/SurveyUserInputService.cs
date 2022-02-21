@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Models;
+using ApplicationCore.Utilities;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -196,9 +198,9 @@ namespace Infrastructure.Services
 
             //update UserInputId cho assignment va status
             var assignmentObj = GetService<ISurveyAssignmentService>();
-            var assignment = await assignmentObj.SearchQuery(x => x.Id == val.AssignmentId).FirstOrDefaultAsync();
+            var assignment = await assignmentObj.SearchQuery(x => x.Id == val.AssignmentId).Include(x => x.SaleOrder).FirstOrDefaultAsync();
 
-            if (assignment == null) 
+            if (assignment == null)
                 throw new Exception("Không tìm thấy Khảo sát!");
 
             var now = DateTime.Now;
@@ -206,6 +208,11 @@ namespace Infrastructure.Services
             assignment.UserInputId = userinput.Id;
             assignment.Status = "done";
             assignment.CompleteDate = now;
+
+            ///Create log saleorder
+            var mailMessageObj = GetService<IMailThreadMessageService>();
+            var bodySaleOrder = string.Format($"<p>Đánh giá phiếu điều trị <b>{0}</b> - số điểm <b>{1}/{2}</b></p>", assignment.SaleOrder.Name, userinput.Score, userinput.MaxScore);
+            await mailMessageObj.MessagePost(typeof(Partner).Name, assignment.PartnerId, body: bodySaleOrder, date: assignment.CompleteDate, subjectTypeId: "mail.subtype_sale_order");
 
             await assignmentObj.UpdateAsync(assignment);
         }

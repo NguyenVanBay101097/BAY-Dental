@@ -3,11 +3,11 @@
         <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mb-2 mr-2" [startDate]="filter.dateFrom"
             [endDate]="filter.dateTo" (searchChange)="onSearchDateChange($event)" opens="right">
         </app-date-range-picker-filter>
-        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="employees" (selectionChange)="onSelectEmployee($event)" #empCbx>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [(ngModel)]="filter.companyId" [textField]="'name'"
+            [filterable]="true" [valuePrimitive]="true" [data]="companies" (valueChange)="onSelectCompany($event)" #companyCbx>
         </kendo-combobox>
-        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
-            [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
+        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="employees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
         <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
             [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">

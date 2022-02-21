@@ -1,43 +1,60 @@
-<div class="s_container">
-  <div class="s_header">
-    <div class="d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="mb-0 text-primary">
         Lịch sử điều trị
       </h5>
-      <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary">
-        <i class="fas fa-plus pr-1"></i>
-        <span>Tạo điều trị</span>
-      </button>
-    </div>
-  </div>
-  <div class="s_body">
-    <div class="container_treatment">
-      <div class="wrapper_treatment">
-        <ul class="sessions_treatment">
-          <li *ngFor="let treatment of listTreatments | keyvalue: reverseKeyTreatment">
-            <div class="time t_sub_title"> {{formatDate(treatment.key)==today ? 'Hôm nay' : formatDate(treatment.key)}}
-            </div>
-            <div *ngFor="let item of treatment.value">
-              <div class="card_border">
-                <div class="card_treatment">
-                  <p class="d-flex justify-content-between">
-                    <span class="font-weight-600">
-                      {{item?.name}}
-                    </span>
-                    <span style="min-width: 60px;">
-                      <a class="text-primary" [routerLink]="['/sale-orders', item?.orderId]">Chi tiết</a>
-                    </span>
-                  </p>
-                  <p class="opacity-8">Răng: {{viewTeeth(item)}} </p>
-                  <p class="opacity-8">Bác sĩ: {{item?.employeeName}}</p>
-                  <p class="opacity-8">Chuẩn đoán: {{item?.diagnostic}}</p>
-                  <p class="opacity-8">Trạng thái: {{getStateDisplay(item.state)}}</p>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
+      <div class="d-flex align-items-center">
+        <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary mr-2">
+          <span class="fas fa-plus-circle"></span>
+          <span> Tạo điều trị</span>
+        </button>
+        <button type="button" (click)="printTreatmentHistories()" class="btn btn-primary d-flex">
+          <span>In hồ sơ điều trị</span>
+        </button>
       </div>
     </div>
+    <kendo-grid class="grid-data" [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
+      <kendo-grid-column field="date" title="Ngày" width="110">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.date | date: 'dd/MM/yyyy'}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="name" title="Dịch vụ" width="200">
+      </kendo-grid-column>
+      <kendo-grid-column field="date" title="Phiếu điều trị" width="110">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Số lượng" field="productUOMQty" width="100" class="text-right">
+      </kendo-grid-column>
+      <kendo-grid-column title="Đơn vị tính" field="productUOMName" width="100">
+      </kendo-grid-column>
+      <kendo-grid-column title="Thành tiền" class="text-right" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.priceSubTotal | number}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Thanh toán" class="text-right" width="150">
+          <ng-template kendoGridCellTemplate let-dataItem>
+              {{dataItem.amountInvoiced | number}}
+          </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Còn lại" class="text-right" width="150">
+          <ng-template kendoGridCellTemplate let-dataItem>
+              {{dataItem.amountResidual | number}}
+          </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Răng" field="teethDisplay" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column title="Bác sĩ" field="employeeName" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column title="Chẩn đoán" field="diagnostic" width="150">
+      </kendo-grid-column>
+     
+      <kendo-grid-column field="stateDisplay" title="Trạng thái" width="120">
+      </kendo-grid-column>
+    </kendo-grid>
   </div>
 </div>

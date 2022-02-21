@@ -94,6 +94,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid CompanyId { get; set; }
         public CompanyBasic Company { get; set; }
         public string HrJobName { get; set; }
+        public PartnerSimple Partner { get; set; }
 
     }
 

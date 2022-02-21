@@ -76,4 +76,8 @@ export class UomService {
   importExcel(val: any) {
     return this.http.post(this.base_api + this.apiUrl + '/ImportExcel', val);
   }
+
+  listServiceUoMs(val: any) {
+    return this.http.get(this.base_api + 'api/ServiceUoMs', { params: new HttpParams({fromObject: val})});
+  }
 }

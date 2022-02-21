@@ -176,7 +176,7 @@ export class ProductManagementServicesComponent implements OnInit {
 
     modalRef.result.then(
       () => {
-        this.productService.delete(item.id).subscribe(
+        this.productService.deleteService(item.id).subscribe(
           () => {
             this.loadServices();
           },

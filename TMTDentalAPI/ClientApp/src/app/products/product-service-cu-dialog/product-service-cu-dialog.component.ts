@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { da } from 'date-fns/locale';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -12,6 +13,7 @@ import { ProductCategory } from 'src/app/product-categories/product-category';
 import { ProductCategoryBasic, ProductCategoryPaged, ProductCategoryService } from 'src/app/product-categories/product-category.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
 import { ProductCategoryDialogComponent } from 'src/app/shared/product-category-dialog/product-category-dialog.component';
+import { UoMBasic, UoMPaged, UomService } from 'src/app/uoms/uom.service';
 import { Product } from '../product';
 import { ProductBomDisplay } from '../product-bom';
 import { ProductProductCuDialogComponent } from '../product-product-cu-dialog/product-product-cu-dialog.component';
@@ -49,6 +51,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   filteredProducts: any[] = [];
   isExist: boolean = false;
   showStandardPrice = false; // ẩn hiện giá vốn theo phân quyền
+  filterdUoMs: UoMBasic[] = [];
 
   @Input() productDefaultVal: Product;
   @Input() name: string = '';
@@ -56,13 +59,16 @@ export class ProductServiceCuDialogComponent implements OnInit {
   @ViewChild('form', { static: true }) formView: any;
   @ViewChild('nameInput', { static: true }) nameInput: ElementRef;
   @ViewChild('categCbx', { static: true }) categCbx: ComboBoxComponent;
+  @ViewChild('uomCbx', { static: true }) uomCbx: ComboBoxComponent;
+
 
   constructor(private fb: FormBuilder, private productService: ProductService,
     private productCategoryService: ProductCategoryService, public activeModal: NgbActiveModal,
-    private modalService: NgbModal, 
-    private notificationService: NotificationService, 
+    private modalService: NgbModal,
+    private notificationService: NotificationService,
     private authService: AuthService,
-    private checkPermissionService: CheckPermissionService) {
+    private checkPermissionService: CheckPermissionService,
+    private uomService: UomService) {
   }
 
   formStepEdit = this.fb.group({
@@ -73,32 +79,19 @@ export class ProductServiceCuDialogComponent implements OnInit {
   ngOnInit() {
     this.productForm = this.fb.group({
       name: [this.name, Validators.required],
-      saleOK: true,
-      purchaseOK: false,
       categ: [null, Validators.required],
-      uomId: null,
-      uompoId: null,
-      type: 'service',
-      type2: 'service',
+      uom: [null, Validators.required],
       listPrice: 1,
       standardPrice: 0,
       laboPrice: 0,
-      companyId: null,
-      defaultCode: '',
-      keToaNote: null,
-      keToaOK: false,
+      defaultCode: null,
       isLabo: false,
-      //Công đoạn
-      stepName: null,
-      note: null,
-      default: true,
-      order: this.order,
-      purchasePrice: 0,
       firm: null,
+      steps: this.fb.array([]),
       // Định mức vật tư
       boms: this.fb.array([]),
     });
-   
+
 
     this.searchCategories('').subscribe(result => {
       this.filterdCategories = _.unionBy(this.filterdCategories, result, 'id');
@@ -108,36 +101,50 @@ export class ProductServiceCuDialogComponent implements OnInit {
       this.filteredProducts = result;
     });
 
+    this.uomCbx.filterChange.asObservable().pipe(
+      debounceTime(300),
+      tap(() => (this.uomCbx.loading = true)),
+      switchMap(value => this.searchUoms(value))
+    ).subscribe((result: any) => {
+      console.log('go ogogo');
+      this.filterdUoMs = result.uoms;
+      this.uomCbx.loading = false;
+    });
+
     if (this.id) {
       this.loadDataFromApi();
-    } else {
-      this.loadDefault();
     }
+
     this.checkPermission();
     this.categCbxFilterChange();
     this.productCbxFilterChange();
-   
+    this.loadUoms();
+
   }
 
   loadDataFromApi() {
-    this.productService.get(this.id).subscribe(result => {
+    this.productService.getService(this.id).subscribe((result: any) => {
+      console.log(result);
       this.filterdCategories = _.unionBy(this.filterdCategories, [result.categ as ProductCategoryBasic], 'id');
+      this.filterdUoMs = _.unionBy(this.filterdUoMs, [result.uom as UoMBasic], 'id');
+
       this.productForm.patchValue(result);
 
-      this.loadStepList();
-      this.productForm.get('type').value == 'service' ? this.stepTab = true : this.stepTab = false;
-      
-      if (result.boms.length > 0) {
-        var array = this.productForm.get('boms') as FormArray;
-        result.boms.forEach(bom => {
-          array.push(this.fb.group({
-            id: bom.id,
-            materialProduct: [bom.materialProduct,Validators.required],
-            productUOM: bom.productUOM,
-            quantity: [bom.quantity, Validators.required]
-          }))
-        });
-      }
+      result.steps.forEach(step => {
+        this.stepsFA.push(this.fb.group({
+          id: step.id,
+          name: [step.name, Validators.required],
+        }))
+      });
+
+      result.boms.forEach(bom => {
+        this.boms.push(this.fb.group({
+          id: bom.id,
+          materialProduct: [bom.materialProduct, Validators.required],
+          productUOM: bom.productUOM,
+          quantity: [bom.quantity, Validators.required]
+        }))
+      });
     });
   }
 
@@ -175,7 +182,7 @@ export class ProductServiceCuDialogComponent implements OnInit {
   }
 
   productCbxFilterChange() {
-   
+
   }
 
   categCbxFilterChange2(e: string) {
@@ -194,17 +201,21 @@ export class ProductServiceCuDialogComponent implements OnInit {
     });
   }
 
-  onKeyDownStepName(event) {
-    if (event.key === "Enter") {
-      this.createTempProductStepList();
-    }
-  }
-
   searchCategories(q?: string) {
     var val = new ProductCategoryPaged();
     val.search = q || '';
     val.type = 'service';
     return this.productCategoryService.autocomplete(val);
+  }
+
+  searchUoms(q?: string) {
+    return this.uomService.listServiceUoMs({ search: q || '' });
+  }
+
+  loadUoms() {
+    this.searchUoms().subscribe((result: any) => {
+      this.filterdUoMs = _.unionBy(this.filterdUoMs, result.uoms, 'id');
+    });
   }
 
   displayFn(category: ProductCategory) {
@@ -230,13 +241,14 @@ export class ProductServiceCuDialogComponent implements OnInit {
 
   saveOrUpdate() {
     this.submitted = true;
-    if (!this.productForm.valid || this.isExist == true) {
+    if (!this.productForm.valid) {
       return;
     }
 
     var data = this.getBodyData();
     if (this.id) {
-      this.productService.update(this.id, data).subscribe(
+      data.id = this.id;
+      this.productService.updateService(data).subscribe(
         result => {
           this.notificationService.show({
             content: 'Lưu thành công',
@@ -245,10 +257,10 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-    this.activeModal.close(result);
+          this.activeModal.close(result);
         });
     } else {
-      this.productService.create(data).subscribe(
+      this.productService.createService(data).subscribe(
         (result: any) => {
           this.notificationService.show({
             content: 'Lưu thành công',
@@ -257,23 +269,38 @@ export class ProductServiceCuDialogComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
-          result.categ = data.categ;
           this.activeModal.close(result);
         });
     }
   }
 
-  getBodyData() {
+  getBodyData(): any {
     var data = this.productForm.value;
-    data.companyId = this.authService.userInfo.companyId;
-    data.categId = data.categ.id;
-    data.stepList = this.stepList;
-    data.boms.forEach(bom => {
-      bom.materialProductId = bom.materialProduct ? bom.materialProduct.id : null;
-      bom.productUOMId = bom.productUOM ? bom.productUOM.id : null;
-    });
-
-    return data;
+    return {
+      name: data.name,
+      categId: data.categ.id,
+      uomId: data.uom.id,
+      defaultCode: data.defaultCode,
+      standardPrice: data.standardPrice,
+      laboPrice: data.laboPrice,
+      listPrice: data.listPrice,
+      isLabo: data.isLabo,
+      firm: data.firm,
+      steps: data.steps.map(x => {
+        return {
+          id: x.id,
+          name: x.name
+        }
+      }),
+      boms: data.boms.map(x => {
+        return {
+          id: x.id,
+          materialProductId: x.materialProduct.id,
+          productUomId: x.productUOM.id,
+          quantity: x.quantity,
+        }
+      })
+    };
   }
 
   onSaveAndNew() {
@@ -315,17 +342,15 @@ export class ProductServiceCuDialogComponent implements OnInit {
     )
   }
 
-  createTempProductStepList() {
-    if (this.productForm.get('stepName').value && this.productForm.get('stepName').value.trim()) {
+  get stepsFA() {
+    return this.productForm.get('steps') as FormArray;
+  }
 
-      var prdStep = new ProductStepDisplay;
-      prdStep.name = this.productForm.get('stepName').value;
-      prdStep.order = this.stepList.length + 1;
-      prdStep.default = true;
-      // this.reorderStepList();
-
-      this.stepList.push(prdStep);
-      this.productForm.get('stepName').setValue(null);
+  createTempProductStepList(stepName) {
+    if (stepName) {
+      this.stepsFA.push(this.fb.group({
+        name: stepName
+      }))
     }
   }
 
@@ -344,9 +369,8 @@ export class ProductServiceCuDialogComponent implements OnInit {
     }
   }
 
-  removeStepListItem(order) {
-    this.stepList.splice(order - 1, 1);
-    this.reorder();
+  removeStepListItem(i) {
+    this.stepsFA.removeAt(i);
   }
 
   createProductStep(productId) {
@@ -463,12 +487,12 @@ export class ProductServiceCuDialogComponent implements OnInit {
   addMaterialProduct() {
     var line = this.fb.group({
       materialProduct: [null, Validators.required],
-      productUOM: null,
+      productUOM: [null, Validators.required],
       quantity: [0, Validators.required]
     });
 
     this.boms.push(line);
-    
+
   }
 
   deleteMaterialProduct(index) {
@@ -480,31 +504,23 @@ export class ProductServiceCuDialogComponent implements OnInit {
     if (item) {
       var temp = this.boms.value.filter(x => x.materialProduct ? x.materialProduct.id == item.id : false);
       if (temp.length > 1) {
-        // this.notificationService.show({
-        //   content: 'Vật tư đã tồn tại',
-        //   hideAfter: 3000,
-        //   position: { horizontal: 'center', vertical: 'top' },
-        //   animation: { type: 'fade', duration: 400 },
-        //   type: { style: 'error', icon: true }
-        // });
+        this.notificationService.show({
+          content: 'Vật tư đã tồn tại',
+          hideAfter: 3000,
+          position: { horizontal: 'center', vertical: 'top' },
+          animation: { type: 'fade', duration: 400 },
+          type: { style: 'error', icon: true }
+        });
 
-       // this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
-       // this.isExist = true;
-       this.boms.at(i).get('materialProduct').setErrors({'incorrect': true});
-       this.boms.at(i).patchValue({ productUOM: item.uom });
-       this.isExist = true;
+        this.boms.at(i).get('materialProduct').setValue(null);
       }
       else {
-        this.boms.at(i).patchValue({ productUOM: item.uom });
-        this.isExist = false;
+        this.boms.at(i).get('productUOM').setValue(item.uom);
       }
-    }
-    else {
-      this.boms.at(i).patchValue({ materialProduct: null, productUOM: null, quantity: 1 });
     }
   }
 
-  checkPermission(){
+  checkPermission() {
     this.showStandardPrice = this.checkPermissionService.check(['Catalog.Products.StandardPrice']);
   }
 }

@@ -16,7 +16,9 @@ namespace Infrastructure.Services
         Task<RevenueTodayReponse> GetSumary(ReportTodayRequest val);
 
         Task<IEnumerable<ReportRevenueChart>> GetRevenueChartReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy);
-        
+        Task<IEnumerable<RevenueReportChartVM>> GetRevenueReportChart(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string groupBy);
+
+
         Task<SumaryRevenueReport> GetSumaryRevenueReport(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string accountCode, string resultSelection);
 
         Task<CashBookReportDay> GetDataCashBookReportDay(DateTime? dateFrom, DateTime? dateTo, Guid? companyId);

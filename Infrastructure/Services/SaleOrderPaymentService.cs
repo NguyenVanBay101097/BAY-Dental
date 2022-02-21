@@ -203,7 +203,7 @@ namespace Infrastructure.Services
             /// truy vấn đủ dữ liệu của saleorder payment`
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move)
-                .Include(x => x.Order)
+                .Include(x => x.Order).ThenInclude(s => s.Partner)
                 .Include(x => x.Lines)
                 .Include(x => x.JournalLines).ThenInclude(s => s.Journal)
                 .Include(x => x.JournalLines).ThenInclude(s => s.Insurance)
@@ -356,10 +356,33 @@ namespace Infrastructure.Services
                     await cardObj.UpdateAsync(card);
                 }
 
-
+                //Create Log SaleOrderPayment
+                var insuranceId = payments.Any(s => s.InsuranceId.HasValue) ? payments.Select(s => s.InsuranceId).FirstOrDefault() : null;
+                await GenerateLogSaleOrderPayment(saleOrderPayment, insuranceId);
             }
+
             //await partnerObj.UpdateMemberLevelForPartner(partnerIds);
             await UpdateAsync(saleOrderPayments);
+        }
+
+        public async Task GenerateLogSaleOrderPayment(SaleOrderPayment payment, Guid? insuranceId = null)
+        {
+            var insuranceObj = GetService<IResInsuranceService>();
+            var threadMessageObj = GetService<IMailThreadMessageService>();
+            var content = "";
+            var insurance = await insuranceObj.GetByIdAsync(insuranceId);
+            if (payment.State == "posted")
+                content = "Thanh toán phiếu điều trị";
+            if (payment.State == "cancel")
+                content = "Hủy thanh toán phiếu điều trị";
+            if (payment.State == "posted" && insurance != null)
+                content = $"Công ty <b>{insurance.Name}</b> bảo lãnh phiếu điều trị";
+            if (payment.State == "cancel" && insurance != null)
+                content = $"Hủy bảo lãnh phiếu điều trị";
+
+
+            var bodyContent = string.Format("{0} <b>{1}</b> số tiền <b>{2}</b> đồng", content, payment.Order.Name, string.Format("{0:#,##0}", payment.Amount));
+            await threadMessageObj.MessagePost(payment.Order.Partner, body: bodyContent, subjectTypeId: "mail.subtype_sale_order_payment");
         }
 
         public decimal ConvertAmountToPoint(decimal amount)
@@ -560,7 +583,7 @@ namespace Infrastructure.Services
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
             var saleOrderPayments = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Move).ThenInclude(s => s.Lines)
-                .Include(x => x.Order)
+                .Include(x => x.Order).ThenInclude(s => s.Partner)
                 .Include(x => x.Lines)
                 .Include(x => x.PaymentRels).ThenInclude(s => s.Payment)
                 .ToListAsync();
@@ -628,6 +651,10 @@ namespace Infrastructure.Services
                     await insurancePaymentObj.Unlink(insurancePaymentIds);
 
                 saleOrderPayment.State = "cancel";
+
+                //Create Log SaleOrderPayment
+                var insuranceId = saleOrderPayment.PaymentRels.Any(s => s.Payment.InsuranceId.HasValue) ? saleOrderPayment.PaymentRels.Select(s => s.Payment.InsuranceId).FirstOrDefault() : null;
+                await GenerateLogSaleOrderPayment(saleOrderPayment, insuranceId);
             }
 
             await UpdateAsync(saleOrderPayments);

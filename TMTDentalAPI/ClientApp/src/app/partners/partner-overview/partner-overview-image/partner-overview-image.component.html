@@ -1,7 +1,7 @@
-<div class="d-flex flex-column partner-overview p-3">
-    <div class="o_chatter oe_chatter">
-        <div class="o_mail_chatter_attachments">
-            <div class="o_chatter_attachment">
+<div class="d-flex flex-column partner-overview p-3 h-100">
+    <div class="o_chatter oe_chatter h-100">
+        <div class="o_mail_chatter_attachments h-100">
+            <div class="o_chatter_attachment h-100 d-flex flex-column">
                 <div class="d-flex align-items-center justify-content-between">
                     <h5 class="text-title-1">
                         Hình ảnh
@@ -17,7 +17,7 @@
                             accept="image/*" (change)="addPartnerImages($event)">
                     </div>
                 </div>
-                <div class="w-100 view-img h-75">
+                <div class="w-100 view-img overflow-auto">
                     <div class="o_AttachmentList_partialList">
                         <div [attr.title]="img.name" *ngFor="let img of imagesPreview;let i = index"
                             class="o_Attachment">

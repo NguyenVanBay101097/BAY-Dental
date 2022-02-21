@@ -97,8 +97,12 @@ import { PartnerOverviewPreferentialCardsComponent } from './partner-overview/pa
 import { PartnerOverviewMemberCardsComponent } from './partner-overview/partner-overview-member-cards/partner-overview-member-cards.component';
 import { CardCardsModule } from '../card-cards/card-cards.module';
 import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card-cards-member-create-dialog/card-cards-member-create-dialog.component';
+import { StatePersistingService } from '../shared/services/state-persisting.service';
+import { PartnerExistListDialogComponent } from './partner-exist-list-dialog/partner-exist-list-dialog.component';
+import { PartnerActivityHistoryComponent } from './partner-activity-history/partner-activity-history.component';
+import { PartnerOtherInfoComponent } from './partner-other-info/partner-other-info.component';
 // import { CatalogModule } from '../catalog/catalog.module';
-
+import { Daterangepicker } from 'ng2-daterangepicker';
 
 
 @NgModule({
@@ -184,6 +188,9 @@ import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card
     PartnerSupplierListComponent,
     PartnerOverviewPreferentialCardsComponent,
     PartnerOverviewMemberCardsComponent,
+    PartnerExistListDialogComponent,
+    PartnerActivityHistoryComponent,
+    PartnerOtherInfoComponent,
   ],
   imports: [
     CommonModule,
@@ -200,6 +207,7 @@ import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card
     PartnerAdvancesModule,
     HistoryModule,
     CardCardsModule,
+    
     // CatalogModule
   ],
   entryComponents: [
@@ -220,7 +228,7 @@ import { CardCardsMemberCreateDialogComponent } from '../service-card-cards/card
     PartnerCustomerDebtPaymentDialogComponent,
     CardCardsMemberCreateDialogComponent
   ],
-  providers: [SaleCouponProgramService, AccountInvoiceReportService],
+  providers: [SaleCouponProgramService, AccountInvoiceReportService , StatePersistingService],
   exports: [
     PartnerCustomerDetailComponent,
     PartnerCustomerTreatmentPaymentDetailComponent

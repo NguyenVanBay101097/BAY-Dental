@@ -39,3 +39,7 @@
 .color-overdue {
     color: #FFC107; /* quá hạn */
 }
+
+.grid-data{
+    max-height: 400px;
+}

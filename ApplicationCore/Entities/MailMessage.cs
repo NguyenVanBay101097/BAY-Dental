@@ -28,10 +28,15 @@ namespace ApplicationCore.Entities
         //Team Assign: 'team.assign'
         
         public string Model { get; set; }
+
         //8
         public Guid? ResId { get; set; }
+
         //name of object
         public string RecordName { get; set; }
+
+        public Guid? SubtypeId { get; set; }
+        public MailMessageSubtype Subtype { get; set; }
 
         /// <summary>
         /// Message type: email for email message, notification for system
@@ -39,8 +44,8 @@ namespace ApplicationCore.Entities
         /// ('email', 'Email'),
         /// ('follow', 'Follow task')
         /// ('notification.team', 'Add new user in a team')
-        /// ('comment', 'Comment'),
-        /// ('notification', 'System notification')
+        /// ('comment', 'Comment'), 
+        /// ('notification', 'System notification') general used action
         /// </summary>
         public string MessageType { get; set; }
 

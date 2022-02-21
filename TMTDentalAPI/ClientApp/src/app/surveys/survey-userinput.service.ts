@@ -61,6 +61,12 @@ export class SurveyUserInputLineSave {
   questionId: string;
 }
 
+export class GetReportReq {
+  dateFrom: any;
+  dateTo: any;
+  companyId: string;
+  status: string;
+}
 
 
 

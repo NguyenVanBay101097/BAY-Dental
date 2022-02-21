@@ -393,6 +393,7 @@ namespace TMTDentalAPI.Controllers
             var result = await _appointmentService.GetListDoctor(val);
             return Ok(result);
         }
+
         [HttpGet("{id}/Print")]
         [CheckAccess(Actions = "Basic.Appointment.Read")]
         public async Task<IActionResult> GetPrint(Guid id)
@@ -412,7 +413,7 @@ namespace TMTDentalAPI.Controllers
                 if (template == null)
                     throw new Exception("Không tìm thấy mẫu in mặc định");
             }
-
+            
             var result = await _printTemplateService.GeneratePrintHtml(template, new List<Guid>() { id }, paperSize);
             return Ok(new PrintData() { html = result });
         }

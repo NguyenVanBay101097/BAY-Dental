@@ -22,6 +22,7 @@ import { StockPickingRequestProductComponent } from './stock-picking-request-pro
 import { StockPickingRequestProductDialogComponent } from './stock-picking-request-product-dialog/stock-picking-request-product-dialog.component';
 import { StockXuatNhapTonDetailDialogComponent } from './stock-xuat-nhap-ton-detail-dialog/stock-xuat-nhap-ton-detail-dialog.component';
 import { PurchaseOrdersModule } from '../purchase-orders/purchase-orders.module';
+import { RoleService } from '../roles/role.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,7 @@ import { PurchaseOrdersModule } from '../purchase-orders/purchase-orders.module'
     NgbModule
   ],
   providers: [
-    StockPickingService, StockReportService
+    StockPickingService, StockReportService, RoleService
   ],
   entryComponents: [
     StockPickingMlDialogComponent,

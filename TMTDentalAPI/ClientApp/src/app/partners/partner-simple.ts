@@ -69,6 +69,7 @@ export class PartnerDisplay extends PartnerBasic {
     memberLevel: any;
     agenId:string;
     agent: AgentBasic;
+  
 }
 
 export class PartnerSimpleInfo {

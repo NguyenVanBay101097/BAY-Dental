@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 // import { SaleReportOldNewPartnerComponent } from './sale-report-old-new-partner/sale-report-old-new-partner.component';
-// import { SaleReportOverviewComponent } from './sale-report-overview/sale-report-overview.component';
+import { SaleReportOverviewComponent } from './sale-report-overview/sale-report-overview.component';
 // import { SaleReportPartnerComponent } from './sale-report-partner/sale-report-partner.component';
 import { ServiceReportManagementComponent } from './service-report-management/service-report-management.component';
 import { ServiceReportServiceComponent } from './service-report-service/service-report-service.component';
@@ -27,7 +27,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'time'
+        redirectTo: 'overview'
+      },
+      {
+        path: 'overview',
+        component: SaleReportOverviewComponent
       },
       {
         path: 'time',

@@ -53,5 +53,9 @@ namespace ApplicationCore.Entities
                 return Partner != null ? Partner.GetAddress() : "";
             }
         }
+
+        public string ReportHeader { get; set; }
+
+        public string ReportFooter { get; set; }
     }
 }

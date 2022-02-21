@@ -39,5 +39,11 @@ namespace ApplicationCore.Entities
         /// canh lề phải
         /// </summary>
         public int RightMargin { get; set; }
+
+        public int HeaderSpacing { get; set; }
+
+        public string Orientation { get; set; }
+
+        public bool HeaderLine { get; set; }
     }
 }

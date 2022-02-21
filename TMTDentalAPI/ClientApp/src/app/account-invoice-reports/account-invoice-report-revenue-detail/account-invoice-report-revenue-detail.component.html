@@ -14,6 +14,8 @@
     </kendo-grid-column>
     <kendo-grid-column field="productName" title="Dịch vụ/Thuốc" width="150">
     </kendo-grid-column>
+    <kendo-grid-column [hidden]="type != 'service'" field="productUoMName" title="Đơn vị tính" width="120">
+    </kendo-grid-column>
     <kendo-grid-column class="text-right" field="priceSubTotal" title="Thanh toán" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.priceSubTotal | number}}

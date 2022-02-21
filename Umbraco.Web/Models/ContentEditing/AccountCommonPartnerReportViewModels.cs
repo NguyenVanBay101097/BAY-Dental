@@ -38,6 +38,106 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CompanyId { get; set; }
     }
 
+    public class SampleDataAgeFilter
+    {
+
+        public string Name { get; set; }
+        public int? AgeFrom { get; set; }
+
+        public int? AgeTo { get; set; }
+    }
+
+    
+
+    public class PartnerReportOverviewItem
+    {
+        public Guid PartnerId { get; set; }
+
+        public string PartnerGender { get; set; }
+        /// <summary>
+        /// Năm sinh
+        /// </summary>
+        public int? Age { get; set; }
+
+        public Guid? PartnerSourceId { get; set; }
+
+        public string PartnerSourceName { get; set; }
+
+
+        /// <summary>
+        /// thành phố
+        /// </summary>
+        public string CityName { get; set; }
+
+        public string CityCode { get; set; }
+
+        /// <summary>
+        /// quận/ huyện
+        /// </summary>
+        public string DistrictName { get; set; }
+        public string DistrictCode { get; set; }
+
+        /// <summary>
+        /// phường/xã
+        /// </summary>
+        public string WardName { get; set; }
+        public string WardCode { get; set; }
+
+        public string OrderState { get; set; }
+
+        public decimal TotalService { get; set; }
+
+        public decimal TotalRevenue { get; set; }
+
+        public decimal TotalRevenueExpect { get; set; }
+
+        public decimal TotalDebt { get; set; }
+    }
+
+    public class AccountCommonPartnerReportOverview
+    {
+        public decimal TotalPartner { get; set; }
+
+        public decimal TotalService { get; set; }
+
+        public decimal TotalRevenue { get; set; }
+
+        public decimal TotalRevenueExpect { get; set; }
+
+        public decimal TotalDebt { get; set; }
+    }
+
+    public class PartnerReportSourceOverview
+    {
+        public Guid? PartnerSourceId { get; set; }
+
+        public string PartnerSourceName { get; set; }
+
+        public int TotalPartner { get; set; }
+
+    }
+
+    public class PartnerGenderReportOverview
+    {
+        public int AgeRange { get; set; }
+
+        public string AgeRangeName { get; set; }
+
+        public int TotalMale { get; set; }
+
+        public int TotalFemale { get; set; }
+
+        public int TotalOther { get; set; }
+    }
+
+    public class PartnerGenderItemReportOverview
+    {
+        public string PartnerGender { get; set; }
+        public double PartnerGenderPercent { get; set; }
+        public IEnumerable<double> Percent { get; set; }
+        public IEnumerable<int> Count { get; set; }
+    }
+
     public class AccountCommonPartnerReportSearchV2
     {
         public AccountCommonPartnerReportSearchV2()
@@ -106,7 +206,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string ResultSelection { get; set; }
     }
- 
+
     public class AccountCommonPartnerReportPrint
     {
         public IEnumerable<AccountCommonPartnerReportItem> Data { get; set; } = new List<AccountCommonPartnerReportItem>();
@@ -137,6 +237,45 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal InitialBalance { get; set; }
 
         public int CountSaleOrder { get; set; }
+
+    }
+
+    public class GetPartnerForCityReportOverview
+    {
+        public string CityName { get; set; }
+
+        public string CityCode { get; set; }
+
+        public int Count { get; set; }
+
+        public IEnumerable<GetPartnerForDistrictReportOverview> Districts { get; set; } = new List<GetPartnerForDistrictReportOverview>();
+
+    }
+
+    public class GetPartnerForDistrictReportOverview
+    {
+        public string CityCode { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string DistrictCode { get; set; }
+
+        public int Count { get; set; }
+
+        public IEnumerable<GetPartnerForWardReportOverview> Wards { get; set; } = new List<GetPartnerForWardReportOverview>();
+    }
+
+    public class GetPartnerForWardReportOverview
+    {
+        public string CityCode { get; set; }
+
+        public string DistrictCode { get; set; }
+
+        public string WardName { get; set; }
+
+        public string WardCode { get; set; }
+
+        public int Count { get; set; }
 
     }
 

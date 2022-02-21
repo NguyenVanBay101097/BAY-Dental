@@ -47,7 +47,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public Guid? ToothCategoryId { get; set; }
         public ToothCategoryBasic ToothCategory { get; set; }
-
+        public UoMBasic ProductUOM { get; set; }
         public IEnumerable<ToothDisplay> Teeth { get; set; } = new List<ToothDisplay>();
         public IEnumerable<SaleOrderPromotionBasic> Promotions { get; set; } = new List<SaleOrderPromotionBasic>();
 

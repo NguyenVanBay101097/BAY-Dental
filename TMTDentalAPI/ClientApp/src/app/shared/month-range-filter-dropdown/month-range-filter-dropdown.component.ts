@@ -43,7 +43,6 @@ export class MonthRangeFilterDropdownComponent implements OnInit {
     if (this.monthTo) {
       value.dateTo = new Date(this.monthTo.getFullYear(), this.monthTo.getMonth(), 1);
     }
-    console.log(value);
 
     this.searchChange.emit(value);
     this.myDrop.close();

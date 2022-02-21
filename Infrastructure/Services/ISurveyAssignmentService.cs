@@ -23,5 +23,6 @@ namespace Infrastructure.Services
         Task<IEnumerable<SurveyAssignmentGetSummary>> GetSummary(SurveyAssignmentGetSummaryFilter val);
 
         Task AddIrDataForSurvey();
+        Task<DoneSurveyAssignmentPrintVM> GetDoneSurveyAssignmentReportPrint(SurveyAssignmentPaged val);
     }
 }

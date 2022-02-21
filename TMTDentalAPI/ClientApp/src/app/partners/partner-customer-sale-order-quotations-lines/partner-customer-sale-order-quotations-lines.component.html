@@ -18,6 +18,12 @@
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
+        title="Đơn vị tính" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.uomName}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}"
         title="Bác sĩ" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{dataItem.doctorName}}

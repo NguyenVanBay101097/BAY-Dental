@@ -383,6 +383,13 @@ namespace Infrastructure.Services
                 throw new Exception("Đã có công đoạn đợt khám hoàn thành, không thể hủy");
             await dkStepObj.DeleteAsync(removeDkSteps);
 
+            var mailThreadObj = GetService<IMailThreadMessageService>();
+            foreach (var sale in self)
+            {
+                ///Create log saleorder
+                var bodySaleOrder = string.Format("Hủy phiếu điều trị <b>{0}</b>", sale.Name);
+                await mailThreadObj.MessagePost(typeof(Partner).Name, sale.PartnerId, body: bodySaleOrder, subjectTypeId: "mail.subtype_sale_order");
+            }
 
             foreach (var sale in self)
             {
@@ -459,8 +466,12 @@ namespace Infrastructure.Services
                 await cardObj.UpdateAsync(card);
                 await cardObj._CheckUpgrade(new List<CardCard>() { card });
 
-                //tạo 1 message chờ gửi
+                var threadMessageObj = GetService<IMailThreadMessageService>();
+                ///Create log saleorder
+                var bodySaleOrder = string.Format("Hoàn thành phiếu điều trị <b>{0}</b>", sale.Name);
+                await threadMessageObj.MessagePost(sale.Partner, body: bodySaleOrder, date: sale.DateDone, subjectTypeId: "mail.subtype_sale_order");
 
+                //tạo 1 message chờ gửi
 
             }
 
@@ -1234,7 +1245,7 @@ namespace Infrastructure.Services
         public async Task<SaleOrderDisplay> GetSaleOrderForDisplayAsync(Guid id)
         {
             var saleOrder = await SearchQuery(x => x.Id == id)
-                .Include(x => x.Partner)
+                .Include(x => x.Partner).Include(x => x.Doctor)
                 .FirstOrDefaultAsync();
 
             var display = _mapper.Map<SaleOrderDisplay>(saleOrder);
@@ -1250,6 +1261,7 @@ namespace Infrastructure.Services
                 .Include(x => x.Employee)
                 .Include(x => x.Counselor)
                 .Include(x => x.Insurance)
+                .Include(x => x.ProductUOM)
                 .Include(x => x.OrderPartner).ToListAsync();
 
             display.OrderLines = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
@@ -1295,7 +1307,9 @@ namespace Infrastructure.Services
              .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
              .Include(x => x.Employee)
              .Include(x => x.Counselor)
-             .Include(x => x.OrderPartner).ToListAsync();
+             .Include(x => x.OrderPartner)
+             .Include(x => x.ProductUOM)
+             .ToListAsync();
 
             var res = _mapper.Map<IEnumerable<SaleOrderLineDisplay>>(lines);
             return res;
@@ -1322,7 +1336,7 @@ namespace Infrastructure.Services
 
             //order = _mapper.Map(val, order);
             order.DateOrder = val.DateOrder;
-
+            order.DoctorId = val.DoctorId;
             //await SaveOrderLines(val, order);
             await UpdateAsync(order); //update trước để generate id cho những sale order line
 
@@ -1507,7 +1521,6 @@ namespace Infrastructure.Services
                     if (saleLine != null)
                     {
                         _mapper.Map(line, saleLine);
-                        saleLine.Discount = line.Discount;
                         saleLine.PriceUnit = line.PriceUnit;
                         saleLine.Sequence = sequence++;
                         saleLine.Order = order;
@@ -1692,7 +1705,9 @@ namespace Infrastructure.Services
         public async Task ActionConfirm(IEnumerable<Guid> ids)
         {
             var saleLineObj = GetService<ISaleOrderLineService>();
+            var mailMessageObj = GetService<IMailMessageService>();
             var self = await SearchQuery(x => ids.Contains(x.Id))
+                .Include(x => x.Partner)
                 .Include(x => x.OrderLines)
                 .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
                 .Include(x => x.Promotions).ThenInclude(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
@@ -1721,6 +1736,17 @@ namespace Infrastructure.Services
                 saleLineObj._ComputeInvoiceStatus(order.OrderLines);
                 saleLineObj.ComputeResidual(order.OrderLines);
                 await saleLineObj.CreateSaleProduction(order.OrderLines);
+
+
+                ///Create log saleorder
+                var threadMessageObj = GetService<IMailThreadMessageService>();
+                var bodySaleOrder = string.Format("Tạo phiếu điều trị <b>{0}</b>", order.Name);
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrder, date: order.DateOrder, subjectTypeId: "mail.subtype_sale_order");
+
+
+                ///Create log saleorderline
+                var bodySaleOrderLine = string.Format("Sử dụng dịch vụ <b>{0}</b> - phiếu điều trị <b>{1}</b>", string.Join(",", order.OrderLines.Select(s => s.Name).ToList()), order.Name);
+                await threadMessageObj.MessagePost(order.Partner, bodySaleOrderLine, date: order.DateOrder, subjectTypeId: "mail.subtype_sale_order_line");
                 //await saleLineObj.RecomputeCommissions(order.OrderLines);
             }
 
@@ -1743,6 +1769,8 @@ namespace Infrastructure.Services
             await UpdateAsync(self);
 
             await _GenerateDotKhamSteps(self);
+
+
 
         }
 
@@ -1961,6 +1989,7 @@ namespace Infrastructure.Services
                 .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x => x.ToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.CreatedBy)
+                .Include(x => x.OrderLines).ThenInclude(x => x.ProductUOM)
                 .ToListAsync();
             foreach (var order in orders)
             {
@@ -2549,59 +2578,6 @@ namespace Infrastructure.Services
                 }
 
                 await saleLineService.CreateAsync(saleLine);
-
-                if (line.Promotions.Any())
-                {
-                    foreach (var item in line.Promotions)
-                    {
-                        var discount_amount = 0M;
-                        if (item.Type == "discount")
-                        {
-
-                            var total = saleLine.PriceUnit * saleLine.ProductUOMQty;
-                            var price_reduce = item.DiscountType == "percentage" ? saleLine.PriceUnit * (1 - item.DiscountPercent / 100) : saleLine.PriceUnit - item.DiscountFixed;
-                            discount_amount = (saleLine.PriceUnit - (price_reduce ?? 0)) * saleLine.ProductUOMQty;
-                            var promotion = new SaleOrderPromotion();
-
-                            promotion.Name = "Giảm tiền";
-                            promotion.Amount = discount_amount;
-                            promotion.DiscountType = item.DiscountType;
-                            promotion.DiscountFixed = item.DiscountFixed;
-                            promotion.DiscountPercent = item.DiscountPercent;
-                            promotion.SaleOrderLine = saleLine;
-                            promotion.SaleOrderId = saleLine.OrderId;
-                            promotion.Type = item.Type;
-
-                            promotion.Lines.Add(new SaleOrderPromotionLine
-                            {
-                                SaleOrderLine = saleLine,
-                                Amount = promotion.Amount,
-                                PriceUnit = (double)(line.ProductUOMQty != 0 ? (promotion.Amount / line.ProductUOMQty) : 0),
-                            });
-
-                            saleLine.Promotions.Add(promotion);
-                        }
-                        else if (item.Type == "code_usage_program" || item.Type == "promotion_program")
-                        {
-                            var program = await programObj.SearchQuery(x => x.Id == item.SaleCouponProgramId)
-                                .Include(x => x.DiscountSpecificProducts).ThenInclude(x => x.Product)
-                                .Include(x => x.DiscountCardTypes)
-                                .FirstOrDefaultAsync();
-                            if (program != null)
-                            {
-                                var error_status = await programObj._CheckPromotionApplySaleLine(program, saleLine);
-                                if (string.IsNullOrEmpty(error_status.Error))
-                                {
-                                    saleLine.Promotions.Add(saleLineService._GetRewardLineValues(saleLine, program));
-                                }
-                                else
-                                    throw new Exception(error_status.Error);
-                            }
-                        }
-
-                    }
-                }
-
             }
 
             _AmountAll(order);
@@ -2863,12 +2839,12 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<SaleOrderLineBasicViewModel>> GetDotKhamStepByOrderLine(Guid key)
         {
             var lineObj = GetService<ISaleOrderLineService>();
-            var lines = await lineObj.SearchQuery(x => x.OrderId == key)
+            var lines = await lineObj.SearchQuery(x => x.OrderId == key).Include(x => x.ProductUOM)
                 .Select(x => new SaleOrderLineBasicViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,
-
+                    UoMName = x.ProductUOM != null ? x.ProductUOM.Name : "",
                     Steps = x.DotKhamSteps.OrderBy(s => s.Order).Select(s => new DotKhamStepBasic
                     {
                         Id = s.Id,
@@ -3214,10 +3190,12 @@ namespace Infrastructure.Services
 
         public async Task<GetPrintManagementRes> GetPrintManagement(SaleOrderPaged val)
         {
+            var saleLineObj = GetService<ISaleOrderLineService>();
             val.Limit = 0;
             var data = await GetPagedResultAsync(val);
             var allData = _mapper.Map<IEnumerable<GetPrintManagementItemRes>>(data.Items);
-            var allLines = await GetSaleOrderLineBySaleOrder(null);
+            var saleIds = data.Items.Select(x => x.Id).ToList();
+            var allLines = await _mapper.ProjectTo<SaleOrderLineBasic>(saleLineObj.SearchQuery(x => saleIds.Contains(x.OrderId))).ToListAsync();
             foreach (var item in allData)
             {
                 item.Lines = allLines.Where(x => x.OrderId == item.Id).ToList();
@@ -3259,7 +3237,7 @@ namespace Infrastructure.Services
             var attObj = GetService<IIrAttachmentService>();
             var dotkhamObj = GetService<IDotKhamService>();
 
-            var attQr = attObj.SearchQuery(x=> x.CompanyId == CompanyId);
+            var attQr = attObj.SearchQuery(x => x.CompanyId == CompanyId);
             var dotkhamQr = dotkhamObj.SearchQuery();
 
             var resQr = from att in attQr

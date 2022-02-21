@@ -7,6 +7,7 @@
         <div class="section-body">
             <div *ngFor="let service of services; index as i" class="border rounded bg-white p-2 mb-3">
                 <h5>{{service.name}}</h5>
+                <div>Đơn vị tính: {{service.uoMName}}</div>
                 <div>Răng:
                     <span>{{formatTeethList(service)}} </span>
                 </div>

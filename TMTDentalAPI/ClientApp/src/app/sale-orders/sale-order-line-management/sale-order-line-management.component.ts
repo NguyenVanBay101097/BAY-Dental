@@ -1,5 +1,8 @@
 import { HttpParams } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { GridDataResult } from '@progress/kendo-angular-grid';
+import { map } from 'rxjs/operators';
+import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { SaleOrdersOdataService } from 'src/app/shared/services/sale-ordersOdata.service';
 import { SaleOrderLineDisplay } from '../sale-order-line-display';
 
@@ -19,7 +22,7 @@ export class SaleOrderLineManagementComponent implements OnInit {
 
   public total: any;
   constructor(
-    private saleOrderOdataService: SaleOrdersOdataService
+    private saleOrderLineService: SaleOrderLineService
   ) { }
 
   ngOnInit() {
@@ -29,23 +32,22 @@ export class SaleOrderLineManagementComponent implements OnInit {
   loadDataFromOData() {
     this.loading = true;
     var val = {
-      id: this.saleOrderId,
-      func: "GetSaleOrderLines",
-      options: {
-        params: new HttpParams().set('$count', 'true')
-      }
+      orderId: this.saleOrderId,
     }
-    this.saleOrderOdataService.getSaleOrderLines(val).subscribe(
-      result => {
-        this.gridData = {
-          data: result && result['value'],
-          
-          total: result['@odata.count']
-        };
-        this.loading = false;
-      }, () => {
-        this.loading = false;
-      });
+
+    this.saleOrderLineService.getPaged(val).pipe(
+      map((response: any) =>
+      (<GridDataResult>{
+        data: response.items,
+        total: response.totalItems
+      }))
+    ).subscribe(res => {
+      this.gridData = res;
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.loading = false;
+    })
   }
 
 }

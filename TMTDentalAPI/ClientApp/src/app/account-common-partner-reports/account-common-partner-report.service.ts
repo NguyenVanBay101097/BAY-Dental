@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PartnerInfoFilter } from '../partners/partner.service';
 
 export class AccountCommonPartnerReportItem {
     partnerId: string;
@@ -146,6 +147,40 @@ export class ReportPartnerAdvanceDetail {
     ref: string;
 }
 
+export class AccountCommonPartnerReportOverviewFilter {
+    companyId?: string;
+    partnerCompanyId?: string;
+    ageFrom?: number;
+    ageTo?: number;
+    revenueFrom?: number;
+    revenueTo?: number;
+    revenueExpectFrom?: number;
+    revenueExpectTo?: number;
+    debtFrom?: number;
+    debtTo?: number;
+    isDebt?: boolean;
+    isRevenueExpect?: boolean;
+    orderState: string;
+    categIds: string[];
+    partnerSourceIds: string[];
+    cardTypeIds: string[];
+    cityCode: string;
+    districtCode: string;
+    wardCode: string;
+    priceSubTotalFrom?: number;
+    priceSubTotalTo?: number;
+    gender: string;
+    dateFrom?: string;
+    dateTo?: string;
+}
+
+export class AccountCommonPartnerReportOverview {
+    totalPartner: number;
+    totalService: number;
+    totalRevenue: number;
+    totalRevenueExpect: number;
+    totalDebt: number;
+}
 @Injectable()
 export class AccountCommonPartnerReportService {
     apiUrl = 'api/AccountCommonPartnerReports';
@@ -235,5 +270,21 @@ export class AccountCommonPartnerReportService {
 
     printReportPartnerAdvance(val) {
         return this.http.post(this.baseApi + "AccountCommonPartnerReport/ReportPartnerAdvance", val,{ responseType: "text" });
+    }
+
+    getPartnerReportSumaryOverview(val: PartnerInfoFilter): Observable<AccountCommonPartnerReportOverview> {
+        return this.http.post<AccountCommonPartnerReportOverview>(this.baseApi + this.apiUrl + "/GetPartnerReportSumaryOverview", val);
+    }
+
+    getPartnerReportSourceOverview(val: PartnerInfoFilter) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportSourceOverview", val);
+    }
+
+    getPartnerReportGenderOverview(val: PartnerInfoFilter) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportGenderOverview", val);
+    }
+
+    getPartnerReportTreeMapOverview(val: PartnerInfoFilter) {
+        return this.http.post(this.baseApi + this.apiUrl + "/GetPartnerReportTreeMapOverview", val);
     }
 }

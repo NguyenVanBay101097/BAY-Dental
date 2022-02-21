@@ -114,7 +114,7 @@ namespace Infrastructure.Services
                 IsUserRoot = true,
             };
 
-            userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { Company = mainCompany });
+            userRoot.ResCompanyUsersRels.Add(new ResCompanyUsersRel { CompanyId = mainCompany.Id });
 
             var userObj = GetService<UserManager<ApplicationUser>>();
             await userObj.CreateAsync(userRoot, password);
@@ -374,7 +374,7 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH , accCNBH});
+            await accountObj.CreateAsync(new List<AccountAccount>() { creadiorsAcc, debtorsAcc, cashAcc, bankAcc, incomeAcc, expenseAccount, acc1561, acc334, acc642, accKHTU, accCNKH, accHH, accCNBH });
 
             #endregion
 
@@ -481,7 +481,7 @@ namespace Infrastructure.Services
                 CompanyId = company.Id,
             };
 
-            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA , journalBH });
+            await journalObj.CreateAsync(new List<AccountJournal>() { cashJournal, bankJournal, saleJournal, purchaseJournal, salaryJournal, journalAdvance, journalCNKH, journalHHA, journalBH });
 
             #endregion
         }
@@ -913,6 +913,7 @@ namespace Infrastructure.Services
             var paper_size_dict = new Dictionary<string, PrintPaperSize>();
             var sms_campaign_dict = new Dictionary<string, SmsCampaign>();
             var print_template_dict = new Dictionary<string, PrintTemplate>();
+            var mail_message_subtype_dict = new Dictionary<string, MailMessageSubtype>();
 
             var file_path = Path.Combine(_hostingEnvironment.ContentRootPath, @"SampleData\dental_data.xml");
             XmlDocument doc = new XmlDocument();
@@ -1109,6 +1110,24 @@ namespace Infrastructure.Services
                     }
                     print_template_dict.Add(id, printTemplate);
                 }
+                else if (model == "mail.mail_message_subtype")
+                {
+                    var mailMessageSubtype = new MailMessageSubtype();
+                    var fields = record.GetElementsByTagName("field");
+                    for (var j = 0; j < fields.Count; j++)
+                    {
+                        XmlElement field = (XmlElement)fields[j];
+                        var field_name = field.GetAttribute("name");
+                        if (field_name == "name")
+                        {
+
+                            mailMessageSubtype.Name = field.InnerText;
+                        }
+
+
+                    }
+                    mail_message_subtype_dict.Add(id, mailMessageSubtype);
+                }
             }
 
             var toothCategoryObj = GetService<IToothCategoryService>();
@@ -1135,6 +1154,11 @@ namespace Infrastructure.Services
             await printTemplateObj.CreateAsync(print_template_dict.Values);
 
             await modelDataObj.CreateAsync(PrepareModelData(print_template_dict, "print.template"));
+
+            var mailMessageSubtypeObj = GetService<IMailMessageSubtypeService>();
+            await mailMessageSubtypeObj.CreateAsync(mail_message_subtype_dict.Values);
+
+            await modelDataObj.CreateAsync(PrepareModelData(mail_message_subtype_dict, "mail.message.subtype"));
 
             var modelDatas = new List<IRModelData>();
             modelDatas.AddRange(PrepareModelData(tooth_category_dict, "tooth.category"));

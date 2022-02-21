@@ -10,5 +10,6 @@ namespace Infrastructure.Services
     {
         Task<IRModelData> GetObjectReference(string reference);
         Task<T> GetRef<T>(string reference) where T : class;
+        T GetRefNoAsync<T>(string reference) where T : class;
     }
 }

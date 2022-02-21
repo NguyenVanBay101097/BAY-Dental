@@ -17,6 +17,11 @@ namespace Infrastructure.EntityConfigurations
           .WithMany()
           .HasForeignKey(x => x.AuthorId);
 
+
+            builder.HasOne(x => x.Subtype)
+          .WithMany()
+          .HasForeignKey(x => x.SubtypeId);
+
             builder.HasOne(x => x.CreatedBy)
           .WithMany()
           .HasForeignKey(x => x.CreatedById);

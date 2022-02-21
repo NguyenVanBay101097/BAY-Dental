@@ -327,6 +327,7 @@ namespace Infrastructure.Services
                 .Include(x => x.OrderPartner)
                 .Include(x => x.Product)
                 .Include(x => x.SaleOrderLinePaymentRels)
+                .Include(x => x.ProductUOM)
                 .Include("SaleOrderLineToothRels.Tooth")
                 .AsQueryable();
 
@@ -744,6 +745,7 @@ namespace Infrastructure.Services
         {
             var orderLineObj = GetService<ISaleOrderLineService>();
             var query = orderLineObj.SearchQuery();
+
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.Date >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
@@ -771,6 +773,7 @@ namespace Infrastructure.Services
 
             return query;
         }
+
         public async Task<IEnumerable<ServiceReportRes>> GetServiceReportByTime(ServiceReportReq val)
         {
             var res = await GetServiceReportQuery(val).GroupBy(x => x.Date.Value.Date).OrderByDescending(x => x.Key).Select(x => new ServiceReportRes()
@@ -805,7 +808,7 @@ namespace Infrastructure.Services
                 DateTo = val.DateTo,
                 EmployeeId = val.EmployeeId,
                 Search = val.Search,
-                State = val.State
+                State = val.State,
             });
 
             if (val.ProductId.HasValue)
@@ -831,6 +834,54 @@ namespace Infrastructure.Services
 
                 return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             }
+        }
+
+        public async Task<IEnumerable<ServiceOverviewResponse>> ServiceOverviewReport(ServiceReportReq val)
+        {
+            var query = GetServiceReportQuery(val);
+
+            query = query.OrderByDescending(x => x.Date);
+
+            var items = await query.Select(x => new ServiceOverviewResponse
+            {
+                Date = x.Date,
+                Name = x.Name,
+                OrderId = x.Order.Id,
+                OrderName = x.Order.Name,
+                PartnerId = x.OrderPartnerId.HasValue ? x.OrderPartner.Id : Guid.Empty,
+                PartnerName = x.OrderPartnerId.HasValue ? x.OrderPartner.Name : null,
+                ProductUOMQty = x.ProductUOMQty,
+                EmployeeName = x.EmployeeId.HasValue ? x.Employee.Name : null,
+                AmountTotal = x.PriceTotal,
+                AmountPaid = x.AmountInvoiced ?? 0,
+                AmountResidual = x.PriceTotal - (x.AmountInvoiced ?? 0),
+                State = x.State
+            }).ToListAsync();
+
+            return items;
+        }
+
+        public async Task<PrintServiceOverviewResponse> PrintServiceOverviewReport(SaleOrderLinesPaged val)
+        {
+            var saleOrderLineObj = GetService<ISaleOrderLineService>();
+            var data = await saleOrderLineObj.GetPagedResultAsync(val);
+            var companyObj = GetService<ICompanyService>();
+            var res = new PrintServiceOverviewResponse()
+            {
+                data = data.Items,
+                Aggregates = data.Aggregates,
+                DateFrom = val.DateFrom,
+                DateTo = val.DateTo,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+
+            if (val.CompanyId.HasValue)
+            {
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+
+            return res;
         }
 
         public async Task<ServiceReportPrint> ServiceReportByServicePrint(ServiceReportReq val)
@@ -944,35 +995,35 @@ namespace Infrastructure.Services
                 var sheetName = type == "time" ? "BaoCaoDichVu_TheoTG" : "BaoCaoTheoDichVu";
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                worksheet.Cells["A1:J1"].Value = type == "time" ? "BÁO CÁO DỊCH VỤ THEO THỜI GIAN" : "BÁO CÁO THEO DỊCH VỤ";
-                worksheet.Cells["A1:J1"].Style.Font.Size = 14;
-                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells["A1:J1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:J1"].Merge = true;
-                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
-                worksheet.Cells["A2:J2"].Value = dateToDate;
-                worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A2:J2"].Merge = true;
-                worksheet.Cells["A3:J3"].Value = "";
-                worksheet.Cells["A4:J4"].Value = type == "time" ? "Ngày" : "Dịch vụ";
-                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["B4:G4"].Value = "Số lượng";
-                worksheet.Cells["B4:G4"].Merge = true;
-                worksheet.Cells["B4:G4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells["B4:G4"].Style.Font.Bold = true;
-                worksheet.Cells["B4:G4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["B4:G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["B4:G4"].Style.Font.Color.SetColor(Color.White);
-                worksheet.Cells["H4:J4"].Value = "Tổng tiền";
-                worksheet.Cells["H4:J4"].Merge = true;
-                worksheet.Cells["H4:J4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells["H4:J4"].Style.Font.Bold = true;
-                worksheet.Cells["H4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["H4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["H4:J4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A1:K1"].Value = type == "time" ? "BÁO CÁO DỊCH VỤ THEO THỜI GIAN" : "BÁO CÁO THEO DỊCH VỤ";
+                worksheet.Cells["A1:K1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:K1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:K1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:K1"].Merge = true;
+                worksheet.Cells["A1:K1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:K2"].Value = dateToDate;
+                worksheet.Cells["A2:K2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:K2"].Merge = true;
+                worksheet.Cells["A3:K3"].Value = "";
+                worksheet.Cells["A4:K4"].Value = type == "time" ? "Ngày" : "Dịch vụ";
+                worksheet.Cells["A4:K4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:K4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:K4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:K4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["B4:H4"].Value = "Số lượng";
+                worksheet.Cells["B4:H4"].Merge = true;
+                worksheet.Cells["B4:H4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["B4:H4"].Style.Font.Bold = true;
+                worksheet.Cells["B4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["B4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["B4:H4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["I4:K4"].Value = "Tổng tiền";
+                worksheet.Cells["I4:K4"].Merge = true;
+                worksheet.Cells["I4:K4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["I4:K4"].Style.Font.Bold = true;
+                worksheet.Cells["I4:K4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["I4:K4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["I4:K4"].Style.Font.Color.SetColor(Color.White);
 
                 var row = 5;
                 foreach (var item in data)
@@ -986,24 +1037,25 @@ namespace Infrastructure.Services
                         worksheet.Cells[row, 1].Value = item.Name;
 
                     worksheet.Cells[row, 2].Value = item.Quantity;
-                    worksheet.Cells[row, 2, row, 7].Merge = true;
-                    worksheet.Cells[row, 8].Value = item.TotalAmount;
-                    worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 8, row, 10].Merge = true;
+                    worksheet.Cells[row, 2, row, 8].Merge = true;
+                    worksheet.Cells[row, 9].Value = item.TotalAmount;
+                    worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 9, row, 11].Merge = true;
                     row++;
                     worksheet.Cells[row, 1].Value = "";
                     worksheet.Cells[row, 2].Value = "Ngày tạo";
                     worksheet.Cells[row, 3].Value = "Khách hàng";
                     worksheet.Cells[row, 4].Value = "Dịch vụ";
                     worksheet.Cells[row, 5].Value = "Bác sĩ";
-                    worksheet.Cells[row, 6].Value = "Răng";
-                    worksheet.Cells[row, 7].Value = "Số lượng";
-                    worksheet.Cells[row, 8].Value = "Thành tiền";
-                    worksheet.Cells[row, 9].Value = "Trạng thái";
-                    worksheet.Cells[row, 10].Value = "Phiếu điều trị";
-                    worksheet.Cells[row, 2, row, 10].Style.Font.Bold = true;
-                    worksheet.Cells[row, 2, row, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[row, 2, row, 10].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+                    worksheet.Cells[row, 6].Value = "Đơn vị tính";
+                    worksheet.Cells[row, 7].Value = "Răng";
+                    worksheet.Cells[row, 8].Value = "Số lượng";
+                    worksheet.Cells[row, 9].Value = "Thành tiền";
+                    worksheet.Cells[row, 10].Value = "Trạng thái";
+                    worksheet.Cells[row, 11].Value = "Phiếu điều trị";
+                    worksheet.Cells[row, 2, row, 11].Style.Font.Bold = true;
+                    worksheet.Cells[row, 2, row, 11].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[row, 2, row, 11].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
                     var rowEnd = row + item.Lines.Count();
                     worksheet.Cells[row, 1, rowEnd, 1].Merge = true;
                     row++;
@@ -1035,12 +1087,13 @@ namespace Infrastructure.Services
                 worksheet.Cells[row, 3].Value = line.OrderPartnerName;
                 worksheet.Cells[row, 4].Value = line.Name;
                 worksheet.Cells[row, 5].Value = line.EmployeeName;
-                worksheet.Cells[row, 6].Value = line.TeethDisplay;
-                worksheet.Cells[row, 7].Value = line.ProductUOMQty;
-                worksheet.Cells[row, 8].Value = line.PriceSubTotal;
-                worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
-                worksheet.Cells[row, 9].Value = line.StateDisplay;
-                worksheet.Cells[row, 10].Value = line.OrderName;
+                worksheet.Cells[row, 6].Value = line.ProductUOM != null ? line.ProductUOM.Name : "";
+                worksheet.Cells[row, 7].Value = line.TeethDisplay;
+                worksheet.Cells[row, 8].Value = line.ProductUOMQty;
+                worksheet.Cells[row, 9].Value = line.PriceSubTotal;
+                worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
+                worksheet.Cells[row, 10].Value = line.StateDisplay;
+                worksheet.Cells[row, 11].Value = line.OrderName;
                 row++;
             }
         }

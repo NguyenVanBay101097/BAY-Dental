@@ -5,6 +5,7 @@ using ApplicationCore.Specifications;
 using ApplicationCore.Utilities;
 using AutoMapper;
 using Infrastructure.Data;
+using Kendo.DynamicLinqCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,12 @@ using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
+using Kendo.DynamicLinqCore;
 
 namespace Infrastructure.Services
 {
@@ -457,9 +461,15 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Labos.Any(s => s.State == val.LaboState));
             }
 
+            if (val.PartnerId.HasValue)
+                query = query.Where(x => x.OrderPartnerId == val.PartnerId);
+
             var totalItems = await query.CountAsync();
 
-            query = query.Include(x => x.OrderPartner).Include(x => x.Product).Include(x => x.Order).Include(x => x.Labos).Include(x => x.Employee).OrderByDescending(x => x.DateCreated);
+            // Calculate the aggregates
+            var aggregate = query.ProcessAggregates(val.Aggregate);
+
+            query = query.OrderByDescending(x => x.DateCreated);
             if (val.Limit > 0)
             {
                 query = query.Skip(val.Offset).Take(val.Limit);
@@ -469,7 +479,8 @@ namespace Infrastructure.Services
 
             return new PagedResult2<SaleOrderLineBasic>(totalItems, val.Offset, val.Limit)
             {
-                Items = items
+                Items = items,
+                Aggregates = aggregate
             };
         }
 
@@ -488,70 +499,60 @@ namespace Infrastructure.Services
 
         public async Task Unlink(IEnumerable<Guid> ids)
         {
-            var couponObj = GetService<ISaleCouponService>();
-            var saleObj = GetService<ISaleOrderService>();
-            var programObj = GetService<ISaleCouponProgramService>();
-            var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
-            var serviceCardObj = GetService<IServiceCardCardService>();
+            //var couponObj = GetService<ISaleCouponService>();
+            //var saleObj = GetService<ISaleOrderService>();
+            //var programObj = GetService<ISaleCouponProgramService>();
+            //var saleCardRelObj = GetService<ISaleOrderServiceCardCardRelService>();
+            //var serviceCardObj = GetService<IServiceCardCardService>();
 
 
-            var self = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.Coupon).Include(x => x.SaleOrderLinePaymentRels)
-                .Include(x => x.Order).Include(x => x.Promotions).ThenInclude(x => x.Lines)
-                .Include(x => x.Promotions).ThenInclude(x => x.SaleCouponProgram)
-                .Include(x => x.PaymentHistoryLines).ThenInclude(x => x.SaleOrderPayment)
-                .ToListAsync();
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
 
-
-            if (self.Any(x => x.State != "draft" && x.State != "cancel" && x.State != "sale"))
-                throw new Exception("Chỉ có thể xóa chi tiết ở trạng thái nháp hoặc hủy bỏ");
-
-            if (self.Any(x => x.PaymentHistoryLines.Any(x => x.SaleOrderPayment.State == "posted")))
+            if (self.Any(x => x.AmountInvoiced > 0))
                 throw new Exception("Bạn không thể xóa dịch vụ đã thanh toán");
 
-            foreach (var line in self.Where(x => x.IsRewardLine))
-            {
-                var appliedCoupons = await couponObj.SearchQuery(x => x.SaleOrderId == line.OrderId)
-                    .Include(x => x.Program).ToListAsync();
+            //foreach (var line in self.Where(x => x.IsRewardLine))
+            //{
+            //    var appliedCoupons = await couponObj.SearchQuery(x => x.SaleOrderId == line.OrderId)
+            //        .Include(x => x.Program).ToListAsync();
 
-                var coupons_to_reactivate = appliedCoupons.Where(x => x.Program.DiscountLineProductId == line.ProductId).ToList();
-                foreach (var coupon in coupons_to_reactivate)
-                {
-                    coupon.State = "new";
-                    coupon.SaleOrderId = null;
-                }
+            //    var coupons_to_reactivate = appliedCoupons.Where(x => x.Program.DiscountLineProductId == line.ProductId).ToList();
+            //    foreach (var coupon in coupons_to_reactivate)
+            //    {
+            //        coupon.State = "new";
+            //        coupon.SaleOrderId = null;
+            //    }
 
-                await couponObj.UpdateAsync(coupons_to_reactivate);
+            //    await couponObj.UpdateAsync(coupons_to_reactivate);
 
-                var related_program = await programObj.SearchQuery(x => x.DiscountLineProductId == line.ProductId).ToListAsync();
-                if (related_program.Any())
-                {
-                    foreach (var program in related_program)
-                    {
-                        var promo_programs = await _dbContext.SaleOrderNoCodePromoPrograms.Where(x => x.ProgramId == program.Id).ToListAsync();
-                        _dbContext.SaleOrderNoCodePromoPrograms.RemoveRange(promo_programs);
-                        await _dbContext.SaveChangesAsync();
+            //    var related_program = await programObj.SearchQuery(x => x.DiscountLineProductId == line.ProductId).ToListAsync();
+            //    if (related_program.Any())
+            //    {
+            //        foreach (var program in related_program)
+            //        {
+            //            var promo_programs = await _dbContext.SaleOrderNoCodePromoPrograms.Where(x => x.ProgramId == program.Id).ToListAsync();
+            //            _dbContext.SaleOrderNoCodePromoPrograms.RemoveRange(promo_programs);
+            //            await _dbContext.SaveChangesAsync();
 
-                        if (program.Id == line.Order.CodePromoProgramId)
-                            line.Order.CodePromoProgramId = null;
-                    }
-                }
+            //            if (program.Id == line.Order.CodePromoProgramId)
+            //                line.Order.CodePromoProgramId = null;
+            //        }
+            //    }
 
-                await saleObj.UpdateAsync(line.Order);
+            //    await saleObj.UpdateAsync(line.Order);
 
-                var card_rels_to_unlink = await saleCardRelObj.SearchQuery(x => x.SaleOrderId == line.OrderId && x.Card.CardType.ProductId == line.ProductId).ToListAsync();
-                var card_ids = card_rels_to_unlink.Select(x => x.CardId).Distinct().ToList();
-                await saleCardRelObj.DeleteAsync(card_rels_to_unlink);
+            //    var card_rels_to_unlink = await saleCardRelObj.SearchQuery(x => x.SaleOrderId == line.OrderId && x.Card.CardType.ProductId == line.ProductId).ToListAsync();
+            //    var card_ids = card_rels_to_unlink.Select(x => x.CardId).Distinct().ToList();
+            //    await saleCardRelObj.DeleteAsync(card_rels_to_unlink);
 
-                await serviceCardObj._ComputeResidual(card_ids);
+            //    await serviceCardObj._ComputeResidual(card_ids);
 
-                var promotionObj = GetService<ISaleOrderPromotionService>();
-                var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && x.SaleOrderId.HasValue).Select(x => x.Id).ToListAsync();
-                if (promotionIds.Any())
-                    await promotionObj.RemovePromotion(promotionIds);
+            //    var promotionObj = GetService<ISaleOrderPromotionService>();
+            //    var promotionIds = await promotionObj.SearchQuery(x => ids.Contains(x.SaleOrderLineId.Value) && x.SaleOrderId.HasValue).Select(x => x.Id).ToListAsync();
+            //    if (promotionIds.Any())
+            //        await promotionObj.RemovePromotion(promotionIds);
 
-            }
-
-
+            //}
 
             await DeleteAsync(self);
         }
@@ -1438,8 +1439,6 @@ namespace Infrastructure.Services
             var entity = await SearchQuery(x => x.Id == id).Include(x => x.SaleOrderLineToothRels).FirstOrDefaultAsync();
             if (entity == null)
                 throw new Exception("Không tìm thấy dịch vụ!");
-            if (val.State == "done" && entity.State != "done")
-                entity.DateDone = DateTime.Now;
             _mapper.Map(val, entity);
             entity.SaleOrderLineToothRels.Clear();
             if (val.ToothType == "manual")
@@ -1464,7 +1463,7 @@ namespace Infrastructure.Services
             {
                 var promotionObj = GetService<ISaleOrderPromotionService>();
                 await promotionObj.ComputeAmount(orderPromotionIds);
-            }        
+            }
 
             //Tính toán lại thành tiền, tổng giảm giá, tổng tiền, đã thanh toán, còn lại cho order
             var orderObj = GetService<ISaleOrderService>();
@@ -1487,10 +1486,15 @@ namespace Infrastructure.Services
 
         public async Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val)
         {
+            var mailMessageObj = GetService<IMailMessageService>();
+            var orderObj = GetService<ISaleOrderService>();
+            var order = await orderObj.SearchQuery(x => x.Id == val.OrderId)
+               .Include(x => x.OrderLines).ThenInclude(x => x.OrderPartner)
+               .FirstOrDefaultAsync();
+
             var saleLine = _mapper.Map<SaleOrderLine>(val);
             saleLine.Date = saleLine.Date ?? DateTime.Now;
-            if (val.State == "done") saleLine.DateDone = DateTime.Now;
-            saleLine.AmountResidual = saleLine.PriceSubTotal - saleLine.AmountPaid;
+            saleLine.State = order.State;
 
             if (val.ToothType == "manual")
             {
@@ -1502,11 +1506,6 @@ namespace Infrastructure.Services
                     });
                 }
             }
-
-            var orderObj = GetService<ISaleOrderService>();
-            var order = await orderObj.SearchQuery(x => x.Id == saleLine.OrderId)
-               .Include(x => x.OrderLines)
-               .FirstOrDefaultAsync();
 
             UpdateOrderInfo(new List<SaleOrderLine>() { saleLine }, order);
             _GetInvoiceQty(new List<SaleOrderLine>() { saleLine });
@@ -1534,6 +1533,10 @@ namespace Infrastructure.Services
                 && (await SearchQuery(x => x.OrderId == saleLine.OrderId).AnyAsync(x => x.State == "done"));
             if (isOrderDone)
                 await orderObj.ActionDone(new List<Guid>() { saleLine.OrderId });
+
+            if (saleLine.State != "draft")
+                await GenerateActionLogSaleOrderLine(saleLine, null, order.Name);
+
             return saleLine;
         }
 
@@ -1583,19 +1586,112 @@ namespace Infrastructure.Services
 
         public async Task UpdateState(Guid id, string state)
         {
-            var line = await GetByIdAsync(id);
+            var line = await SearchQuery(x => x.Id == id).Include(x => x.Order).Include(x => x.OrderPartner).FirstOrDefaultAsync();
+            var oldLineState = line.State;
             line.State = state;
             if (line.State == "done")
                 line.DateDone = DateTime.Now;
             await UpdateAsync(line);
+
             //action done saleorder
             var isOrderDone = (await SearchQuery(x => x.OrderId == line.OrderId).AllAsync(x => x.State == "done" || x.State == "cancel"))
                 && (await SearchQuery(x => x.OrderId == line.OrderId).AnyAsync(x => x.State == "done"));
             var orderObj = GetService<ISaleOrderService>();
             if (isOrderDone)
                 await orderObj.ActionDone(new List<Guid>() { line.OrderId });
+
+            await GenerateActionLogSaleOrderLine(line, oldLineState, line.Order.Name);
         }
 
+        public async Task GenerateActionLogSaleOrderLine(SaleOrderLine line, string oldState = null, string orderName = null)
+        {
+            var threadMessageObj = GetService<IMailThreadMessageService>();
+            var date = DateTime.Now;
+            var content = "";
+            if ((oldState == "cancel" || oldState == "done") && line.State == "sale")
+                content = "Tiếp tục điều trị dịch vụ";
+            if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "done")
+                content = "Hoàn thành dịch vụ";
+            if (oldState == "sale" && line.State == "cancel")
+                content = "Ngừng điều trị dịch vụ";
+            if ((oldState == "sale" || string.IsNullOrEmpty(oldState)) && line.State == "sale")
+            {
+                content = "Sử dụng dịch vụ";
+                date = line.Date.Value;
+            }
+
+
+            var bodySaleOrderLine = string.Format("{0} <b>{1}</b> - phiếu điều trị <b>{2}</b>", content, line.Name, orderName);
+            await threadMessageObj.MessagePost(line.OrderPartner, body: bodySaleOrderLine, date: date, subjectTypeId: "mail.subtype_sale_order_line");
+        }
+
+
+        public async Task ActionDone(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var line in self)
+            {
+                line.State = "done";
+                line.DateDone = DateTime.Now;
+            }
+
+            var orderIds = self.Select(x => x.OrderId).Distinct().ToList();
+            await _ComputeOrderState(orderIds);
+        }
+
+        public async Task ActionCancel(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var line in self)
+                line.State = "cancel";
+
+            await UpdateAsync(self);
+
+            var orderIds = self.Select(x => x.OrderId).Distinct().ToList();
+            await _ComputeOrderState(orderIds);
+        }
+
+        public async Task ActionUnlock(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var line in self)
+                line.State = "sale";
+
+            await UpdateAsync(self);
+
+            var orderIds = self.Select(x => x.OrderId).Distinct().ToList();
+            await _ComputeOrderState(orderIds);
+        }
+
+        private async Task _ComputeOrderState(IEnumerable<Guid> ids)
+        {
+            var orderObj = GetService<ISaleOrderService>();
+            var orders = await orderObj.SearchQuery(x => ids.Contains(x.Id))
+               .Include(x => x.OrderLines)
+               .ToListAsync();
+
+            foreach (var order in orders)
+            {
+                if (order.OrderLines.All(x => x.State == "done" || x.State == "cancel"))
+                {
+                    if (order.OrderLines.Any(x => x.State == "done"))
+                    {
+                        order.State = "done";
+                        order.DateDone = DateTime.Now;
+                    }
+                    else
+                    {
+                        order.State = "sale";
+                    }
+                }
+                else
+                {
+                    order.State = "sale";
+                }
+            }
+
+            await orderObj.UpdateAsync(orders);
+        }
         public async Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val)
         {
             val.Limit = 0;
@@ -1618,7 +1714,7 @@ namespace Infrastructure.Services
 
         public async Task DebtPayment(Guid id)
         {
-            var saleLine = await SearchQuery(x=> x.Id == id).Include(x=>x.Order).FirstOrDefaultAsync();
+            var saleLine = await SearchQuery(x => x.Id == id).Include(x => x.Order).FirstOrDefaultAsync();
             if (saleLine == null)
                 throw new Exception("Không tìm thấy dịch vụ");
             var amountToPay = saleLine.PriceTotal - saleLine.AmountInvoiced;
@@ -1626,7 +1722,7 @@ namespace Infrastructure.Services
             var journalObj = GetService<IAccountJournalService>();
             var soPaymentObj = GetService<ISaleOrderPaymentService>();
             var debtJournal = await journalObj.GetJournalByTypeAndCompany("debt", saleLine.CompanyId.Value);
-            
+
             var soPaymentSave = new SaleOrderPaymentSave()
             {
                 Amount = amountToPay.Value,
@@ -1649,7 +1745,7 @@ namespace Infrastructure.Services
                     }
                 },
                 Note = saleLine.Order.Name + " - Khách hàng thanh toán",
-                OrderId = saleLine.OrderId ,
+                OrderId = saleLine.OrderId,
                 State = "draft"
             };
             var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);

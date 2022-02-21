@@ -40,6 +40,8 @@ export class ServiceReportServiceComponent implements OnInit {
     { value: 'done', text: 'Hoàn thành' },
     { value: 'cancel', text: 'Ngừng điều trị' },
   ];
+  
+  isDisabledDoctors = true;
 
   constructor(
     private saleReportService: SaleReportService,
@@ -140,6 +142,7 @@ export class ServiceReportServiceComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = q;
     val.isDoctor = true;
+    val.companyId = this.filter.companyId || '';
     return this.employeeService.getEmployeeSimpleList(val);
   }
 
@@ -163,14 +166,21 @@ export class ServiceReportServiceComponent implements OnInit {
     this.loadAllData();
   }
 
-  onSelectCompany(e) {
-    this.filter.companyId = e ? e.id : null;
+  onSelectEmployee(event) {
     this.skip = 0;
     this.loadAllData();
   }
 
-  onSelectEmployee(e) {
-    this.filter.employeeId = e ? e.id : null;
+  onSelectCompany(company) {
+    this.filter.employeeId = null;
+    if (company) {
+      this.isDisabledDoctors = false;
+      this.loadEmployees();
+    } else {
+      this.isDisabledDoctors = true;
+      this.employees = [];
+    }
+
     this.skip = 0;
     this.loadAllData();
   }

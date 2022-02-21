@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
 using ApplicationCore.Utilities;
 using OfficeOpenXml;
+using System.Globalization;
 
 namespace Infrastructure.Services
 {
@@ -86,8 +87,8 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
-                dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
+                dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
+                dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer, doctorIsNull: val.DoctorIsNull);
 
             var totalItems = await query.CountAsync();
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
@@ -175,7 +176,7 @@ namespace Infrastructure.Services
         public IQueryable<Appointment> GetSearchQuery(string search = "", Guid? partnerId = null,
             string state = "", DateTime? dateTo = null, DateTime? dateFrom = null, Guid? dotKhamId = null,
             Guid? doctorId = null, bool? isLate = null, string userId = "", Guid? companyId = null,
-            bool? isRepeatCustomer = null)
+            bool? isRepeatCustomer = null, bool? doctorIsNull = null)
         {
             var query = SearchQuery();
             var today = DateTime.Today;
@@ -237,6 +238,9 @@ namespace Infrastructure.Services
 
             if (doctorId.HasValue)
                 query = query.Where(x => x.DoctorId == doctorId.Value);
+
+            if (doctorIsNull.HasValue)
+                query = query.Where(x => !x.DoctorId.HasValue == doctorIsNull.Value);
 
             return query;
         }
@@ -371,7 +375,7 @@ namespace Infrastructure.Services
         {
             var query = GetSearchQuery(search: val.Search, state: val.State, isLate: val.IsLate,
               partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
-              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId, 
+              dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
               dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer);
 
             query = query.OrderByDescending(x => x.DateCreated);
@@ -389,6 +393,8 @@ namespace Infrastructure.Services
 
         public async Task<Appointment> CreateAsync(AppointmentDisplay val)
         {
+            var threadMessageObj = GetService<IMailThreadMessageService>();
+            var employeeObj = GetService<IEmployeeService>();
             var appointment = _mapper.Map<Appointment>(val);
             if (val.Services.Any())
             {
@@ -402,6 +408,11 @@ namespace Infrastructure.Services
             }
 
             appointment = await CreateAsync(appointment);
+
+            //Create log appointment
+            appointment = await SearchQuery(x => x.Id == appointment.Id).Include(x => x.Partner).Include(x => x.Doctor).FirstOrDefaultAsync();
+            var bodyContent = string.Format("Đặt lịch hẹn {0} <br>Thời gian: {1}<br>Bác sĩ: {2}<br>Nội dung: {3}", $"<b>{(appointment.IsRepeatCustomer ? "<b>tái khám</b>" : "<b>khám mới</b>")} - {appointment.Name}</b>", $"{appointment.Date.ToString("HH:mm dddd", CultureInfo.GetCultureInfo("vi-VN"))}, {appointment.Date.ToString("dd/MM/yyyy")}", appointment.Doctor?.Name, appointment.Note);
+            await threadMessageObj.MessagePost(appointment.Partner, body: bodyContent, subjectTypeId: "mail.subtype_appointment");
             return appointment;
         }
 

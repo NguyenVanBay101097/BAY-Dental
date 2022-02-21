@@ -84,5 +84,8 @@ namespace ApplicationCore.Models
 
         [DataMember(Name = "items")]
         public IEnumerable<T> Items { get; set; }
+
+        [DataMember(Name = "aggregates")]
+        public object Aggregates { get; set; }
     }
 }

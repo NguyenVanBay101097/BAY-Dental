@@ -62,9 +62,11 @@ export class DashboardServiceTodayReportComponent implements OnInit {
     val.companyId = this.authService.userInfo.companyId;
     val.search = this.search;
     val.state = 'sale,done,cancel';
-
+    val.aggregate = [
+      { field: 'PriceSubTotal', aggregate: 'sum'}
+    ];
     this.loading = true;
-    this.saleOrderLineService.getPaged(val).pipe(
+    this.saleOrderLineService.getGrid(val).pipe(
       map((response: any) =>
       (<GridDataResult>{
         data: response.items,

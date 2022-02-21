@@ -111,7 +111,8 @@ namespace TMTDentalAPI.Controllers
         public async Task<IActionResult> AutoComplete(CardTypePaged val)
         {
             var res = await _cardTypeService.GetAutoComplete(val);
-            return Ok(res);
+            var basic = _mapper.Map<IEnumerable<CardTypeBasic>>(res);
+            return Ok(basic);
         }
 
         [HttpDelete("{id}")]

@@ -48,8 +48,7 @@
                                     <td colspan="1" style="width: 100%;">
                                         <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
                                         </kendo-datepicker>
-                                        <div *ngIf="f.dateObj.errors && submitted"
-                                            class="text-danger">
+                                        <div *ngIf="f.dateObj.errors && submitted" class="text-danger">
                                             <div *ngIf="f.dateObj.errors.required">Chọn ngày tạo</div>
                                         </div>
                                     </td>
@@ -75,17 +74,29 @@
                             <div>
                                 <ng-container *ngFor="let item of toothTypeDict">
                                     <input [value]="item.value" class="btn-check" type="radio"
+                                        [attr.disabled]="getValueFormControl('toothCategoryId') == null && item.value != 'manual' ? true: null"
                                         formControlName="toothType" [id]="'toothType_' + item.value" autocomplete="off"
                                         (change)="onChangeToothType(item.value)">
                                     <label class="btn btn-outline-primary mr-1"
+                                        [ngClass]="getValueFormControl('toothCategoryId') == null && item.value != 'manual' ? 'disabled' : ''"
                                         [for]="'toothType_' + item.value">{{item.name}}</label>
                                 </ng-container>
                             </div>
                         </div>
                         <div class="mb-2">
                             <div class="text-center">
-                                <app-teeth-chart [isDisabled]="teethDisabled" [teeth]="filterTeeths" [(selectedKeys)]="toothSelectedIds">
-                                </app-teeth-chart>
+                                <ng-container *ngFor="let cate of filteredToothCategories">
+                                    <div *ngIf="getValueFormControl('toothCategoryId') == cate.id">
+                                        <ng-container *ngFor="let listTooth of cate.teeth">
+                                            <div class="my-2">
+                                                <app-teeth-chart [isDisabled]="teethDisabled" [teeth]="listTooth"
+                                                    [(selectedKeys)]="toothSelectedIds">
+                                                </app-teeth-chart>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+
                                 <div *ngIf="getValueFormControl('toothType') == 'manual'
                                     && toothSelectedIds.length == 0
                                     && submitted" class="text-danger">
@@ -113,6 +124,12 @@
                             <kendo-multiselect [filterable]="true" class="mr-3" [data]="productSource"
                                 [filterable]="true" (filterChange)="this.searchUpdateProduct.next($event)"
                                 [textField]="'name'" [valueField]="'id'" formControlName="product">
+                                <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                                    <div class="d-flex justify-content-between">
+                                        <div style="width: 450px">{{dataItem.name}}</div>
+                                        <div style="width: 150px">{{dataItem.uomName? dataItem.uomName : ''}}</div>
+                                    </div>
+                                </ng-template>
                             </kendo-multiselect>
                         </div>
 

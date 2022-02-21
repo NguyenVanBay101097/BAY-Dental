@@ -2124,6 +2124,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReportFooter")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReportHeader")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -4804,6 +4810,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SubtypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WriteById")
                         .HasColumnType("nvarchar(450)");
 
@@ -4812,6 +4821,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("SubtypeId");
 
                     b.HasIndex("WriteById");
 
@@ -4831,6 +4842,37 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("PartnerId");
 
                     b.ToTable("MailMessageResPartnerRels");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailMessageSubtype", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WriteById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("WriteById");
+
+                    b.ToTable("MailMessageSubtypes");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.MailNotification", b =>
@@ -5993,6 +6035,12 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("HeaderLine")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("HeaderSpacing")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsSize")
                         .HasColumnType("bit");
 
@@ -6003,6 +6051,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Orientation")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaperFormat")
@@ -7226,6 +7277,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ProductUOMId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
@@ -7235,7 +7289,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("SubPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("ToothCategoryId")
+                    b.Property<Guid?>("ToothCategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ToothType")
@@ -7257,6 +7311,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductUOMId");
 
                     b.HasIndex("QuotationId");
 
@@ -8407,6 +8463,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("DateOrder")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DoctorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("InvoiceStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -8471,6 +8530,8 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("DoctorId");
 
                     b.HasIndex("JournalId");
 
@@ -14502,6 +14563,10 @@ namespace Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("ApplicationCore.Entities.MailMessageSubtype", "Subtype")
+                        .WithMany()
+                        .HasForeignKey("SubtypeId");
+
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
                         .HasForeignKey("WriteById");
@@ -14520,6 +14585,17 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("PartnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.MailMessageSubtype", b =>
+                {
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
+                        .WithMany()
+                        .HasForeignKey("WriteById");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.MailNotification", b =>
@@ -15540,6 +15616,10 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ApplicationCore.Entities.UoM", "ProductUOM")
+                        .WithMany()
+                        .HasForeignKey("ProductUOMId");
+
                     b.HasOne("ApplicationCore.Entities.Quotation", "Quotation")
                         .WithMany("Lines")
                         .HasForeignKey("QuotationId")
@@ -15548,9 +15628,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasOne("ApplicationCore.Entities.ToothCategory", "ToothCategory")
                         .WithMany()
-                        .HasForeignKey("ToothCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ToothCategoryId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "WriteBy")
                         .WithMany()
@@ -16086,6 +16164,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
+
+                    b.HasOne("ApplicationCore.Entities.Employee", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId");
 
                     b.HasOne("ApplicationCore.Entities.AccountJournal", "Journal")
                         .WithMany()

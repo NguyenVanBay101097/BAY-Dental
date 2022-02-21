@@ -77,7 +77,14 @@ namespace Infrastructure.Services
         Task<SaleOrderLine> CreateOrderLine(SaleOrderLineSave val);
         Task RemoveOrderLine(Guid id);
 
+        Task ActionDone(IEnumerable<Guid> ids);
+
+        Task ActionCancel(IEnumerable<Guid> ids);
+
+        Task ActionUnlock(IEnumerable<Guid> ids);
+
         Task UpdateState(Guid id, string state);
+
         Task<ServiceSaleReportPrint> SaleReportPrint(SaleOrderLinesPaged val);
 
         Task<IEnumerable<SaleOrderLine>> GetOrderLinesBySaleOrderId(Guid orderId);

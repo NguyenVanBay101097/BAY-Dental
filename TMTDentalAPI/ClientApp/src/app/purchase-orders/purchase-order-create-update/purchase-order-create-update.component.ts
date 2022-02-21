@@ -17,6 +17,7 @@ import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { AccountInvoiceRegisterPaymentDialogV2Component } from 'src/app/shared/account-invoice-register-payment-dialog-v2/account-invoice-register-payment-dialog-v2.component';
+import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -542,6 +543,15 @@ export class PurchaseOrderCreateUpdateComponent implements OnInit {
       for (const item of result) {
         this.selectProduct(item)
       }
+    }, () => {
+    });
+  }
+
+  onCreateSupplier(){
+    let modalRef = this.modalService.open(PartnerSupplierCuDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+    modalRef.result.then((res : any) => {
+      this.filteredPartners = _.unionBy(this.filteredPartners, [res], "id");
+      this.formGroup.get("partner").patchValue(res);
     }, () => {
     });
   }

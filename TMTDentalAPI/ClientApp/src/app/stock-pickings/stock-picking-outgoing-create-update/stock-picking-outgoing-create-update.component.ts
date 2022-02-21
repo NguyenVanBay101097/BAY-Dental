@@ -9,11 +9,14 @@ import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { EmployeeCreateUpdateComponent } from 'src/app/employees/employee-create-update/employee-create-update.component';
 import { PartnerPaged, PartnerSimple } from 'src/app/partners/partner-simple';
 import { PartnerService } from 'src/app/partners/partner.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductBasic2, ProductPaged, ProductService } from 'src/app/products/product.service';
 import { CheckPermissionService } from 'src/app/shared/check-permission.service';
+import { PartnerCustomerCuDialogComponent } from 'src/app/shared/partner-customer-cu-dialog/partner-customer-cu-dialog.component';
+import { PartnerSupplierCuDialogComponent } from 'src/app/shared/partner-supplier-cu-dialog/partner-supplier-cu-dialog.component';
 import { PermissionService } from 'src/app/shared/permission.service';
 import { SelectUomProductDialogComponent } from 'src/app/shared/select-uom-product-dialog/select-uom-product-dialog.component';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -53,6 +56,11 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   canPrint = false;
   canCreate = false;
   hasDefined = false;
+  listTypePartner = [
+    { text: "Nhà cung cấp", value: 'supplier' },
+    { text: "Khách hàng", value: 'customer' },
+    { text: "Nhân viên", value: 'employee' }
+  ]
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild(TaiProductListSelectableComponent) productListSelectable: TaiProductListSelectableComponent;
 
@@ -78,7 +86,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   ngOnInit() {
     this.pickingForm = this.fb.group({
       partner: [null],
-      dateObj: new Date(),
+      dateObj: [new Date(), Validators.required],
       note: null,
       moveLines: this.fb.array([]),
       companyId: null,
@@ -175,7 +183,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
   loadFilteredPartners() {
     this.searchPartners().subscribe(
       results => {
-        this.filteredPartners = _.unionBy(results[0], results[1], results[2], 'id');
+        this.filteredPartners = _.unionBy(this.filteredPartners,results[0], results[1], results[2], 'id');
       }
     );
   }
@@ -212,6 +220,7 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
 
   loadRecord() {
     this.stockPickingService.get(this.id).subscribe((result: any) => {
+      this.filteredPartners = _.unionBy(this.filteredPartners, [result.partner], 'id');
       this.createdByName = result.createdByName;
       this.picking = result;
       this.pickingForm.patchValue(result);
@@ -470,6 +479,33 @@ export class StockPickingOutgoingCreateUpdateComponent implements OnInit {
         this.moveLines.push(group);
         this.focusLastRow();
       });
+    }
+  }
+
+  onCreatePartner(type) {
+    var onModal = (comp, title) => {
+      let modalRef = this.modalService.open(comp, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
+      modalRef.componentInstance.title = title;
+
+      modalRef.result.then((res: any) => {
+        var resPartner = type == "employee"? res.partner: res;
+          this.pickingForm.get("partner").patchValue(resPartner);
+          this.filteredPartners = _.unionBy(this.filteredPartners, [resPartner], "id");
+      }, () => {
+      });
+    }
+    switch (type) {
+      case "customer":
+        onModal(PartnerCustomerCuDialogComponent, 'Thêm khách hàng');
+        break;
+      case "supplier":
+        onModal(PartnerSupplierCuDialogComponent, 'Thêm nhà cung cấp');
+        break;
+      case "employee":
+        onModal(EmployeeCreateUpdateComponent, 'Thêm nhân viên');
+        break;
+      default:
+        break;
     }
   }
 }

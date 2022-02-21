@@ -106,7 +106,7 @@ export class PartnerCustomerTreatmentSaleOrderLineComponent implements OnInit {
   getInfor(item: any) {   
     var res = '';
     if (item.toothType && item.toothType == "manual") {
-      res = item.teeth.map(x => x.name).join(',');
+      res = item.teeth.map(x => x.name).join(', ');
     } else if (item.toothType && item.toothType != "manual") {
       res = this.toothTypeDict.find(x => x.value == item.toothType).name;
     }

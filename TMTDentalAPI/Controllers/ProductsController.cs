@@ -324,11 +324,15 @@ namespace TMTDentalAPI.Controllers
                             var errs = new List<string>();
                             var name = Convert.ToString(worksheet.Cells[row, 2].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
-
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value);
                             if (string.IsNullOrEmpty(name))
                                 errs.Add("Tên dịch vụ là bắt buộc");
+
                             if (string.IsNullOrEmpty(categName))
                                 errs.Add("Nhóm dịch vụ là bắt buộc");
+
+                            if (string.IsNullOrEmpty(uomName))
+                                errs.Add("Đơn vị tính là bắt buộc");
 
                             if (errs.Any())
                             {
@@ -342,11 +346,12 @@ namespace TMTDentalAPI.Controllers
                                 DefaultCode = Convert.ToString(worksheet.Cells[row, 1].Value),
                                 IsLabo = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                                 CategName = categName,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
-                                Firm = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                UoMName = uomName,
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 9].Value),
+                                Firm = Convert.ToString(worksheet.Cells[row, 10].Value),
                             };
                             data.Add(item);
                         }
@@ -378,10 +383,42 @@ namespace TMTDentalAPI.Controllers
                 }
             }
 
+            var uomCateg = await _modelDataService.GetRef<UoMCategory>("product.product_uom_categ_service");
+            if (uomCateg == null)
+            {
+                uomCateg = new UoMCategory { Name = "Dịch vụ", MeasureType = "unit" };
+                await _uomCategService.CreateAsync(uomCateg);
+
+                await _modelDataService.CreateAsync(new IRModelData
+                {
+                    Module = "product",
+                    Name = "product_uom_categ_service",
+                    Model = "uom.category",
+                    ResId = uomCateg.Id.ToString()
+                });
+            }
+
+            var uomNames = data.Select(x => x.UoMName).Distinct().ToList();
+            var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name) && x.CategoryId == uomCateg.Id).ToListAsync();
+            var uomNamesCreate = uomNames.Where(x => !uoms.Any(s => s.Name == x)).ToList();
+            if (uomNamesCreate.Any())
+            {
+                var addUoMs = uomNamesCreate.Select(x => new UoM
+                {
+                    CategoryId = uomCateg.Id,
+                    Name = x,
+                    MeasureType = uomCateg.MeasureType,
+                }).ToList();
+
+                await _uomService.CreateAsync(addUoMs);
+
+                uoms = uoms.Concat(addUoMs).ToList();
+            }
+
+            var uomDict = uoms.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.FirstOrDefault());
 
             var productDict = new Dictionary<string, Product>();
             var standardPriceDict = new Dictionary<Product, decimal>();
-            var uom = await _uomService.DefaultUOM();
             var productsCreate = new List<Product>();
 
             var itemsNoCode = data.Where(x => string.IsNullOrEmpty(x.DefaultCode)).ToList();
@@ -431,6 +468,7 @@ namespace TMTDentalAPI.Controllers
 
             foreach (var item in data)
             {
+                var uom = uomDict[item.UoMName];
                 var product = new Product();
                 product.CompanyId = CompanyId;
                 product.ListPrice = item.ListPrice ?? 0;
@@ -512,6 +550,7 @@ namespace TMTDentalAPI.Controllers
                             var serviceCode = Convert.ToString(worksheet.Cells[row, 1].Value);
                             var categName = Convert.ToString(worksheet.Cells[row, 4].Value);
                             var name = Convert.ToString(worksheet.Cells[row, 2].Value);
+                            var uomName = Convert.ToString(worksheet.Cells[row, 5].Value);
 
                             if (string.IsNullOrEmpty(serviceCode))
                                 errs.Add("Mã dịch vụ là bắt buộc");
@@ -521,6 +560,9 @@ namespace TMTDentalAPI.Controllers
 
                             if (string.IsNullOrEmpty(categName))
                                 errs.Add("Nhóm dịch vụ là bắt buộc");
+
+                            if (string.IsNullOrEmpty(uomName))
+                                errs.Add("Đơn vị tính là bắt buộc");
 
                             if (errs.Any())
                             {
@@ -534,11 +576,12 @@ namespace TMTDentalAPI.Controllers
                                 IsLabo = Convert.ToBoolean(worksheet.Cells[row, 3].Value),
                                 CategName = categName,
                                 DefaultCode = serviceCode,
-                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 5].Value),
-                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
-                                Steps = Convert.ToString(worksheet.Cells[row, 7].Value),
-                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 8].Value),
-                                Firm = Convert.ToString(worksheet.Cells[row, 9].Value),
+                                UoMName = uomName,
+                                ListPrice = Convert.ToDecimal(worksheet.Cells[row, 6].Value),
+                                StandardPrice = Convert.ToDecimal(worksheet.Cells[row, 7].Value),
+                                Steps = Convert.ToString(worksheet.Cells[row, 8].Value),
+                                LaboPrice = Convert.ToDecimal(worksheet.Cells[row, 9].Value),
+                                Firm = Convert.ToString(worksheet.Cells[row, 10].Value),
                             };
                             data.Add(item);
                         }
@@ -581,6 +624,39 @@ namespace TMTDentalAPI.Controllers
             if (notFoundProductCodes.Any())
                 return Ok(new { success = false, errors = new List<string>() { $"Mã dịch vụ không tồn tại: {string.Join(", ", notFoundProductCodes)}" } });
 
+            var uomCateg = await _modelDataService.GetRef<UoMCategory>("product.product_uom_categ_service");
+            if (uomCateg == null)
+            {
+                uomCateg = new UoMCategory { Name = "Dịch vụ", MeasureType = "unit" };
+                await _uomCategService.CreateAsync(uomCateg);
+
+                await _modelDataService.CreateAsync(new IRModelData
+                {
+                    Module = "product",
+                    Name = "product_uom_categ_service",
+                    Model = "uom.category",
+                    ResId = uomCateg.Id.ToString()
+                });
+            }
+
+            var uomNames = data.Select(x => x.UoMName).Distinct().ToList();
+            var uoms = await _uomService.SearchQuery(x => uomNames.Contains(x.Name) && x.CategoryId == uomCateg.Id).ToListAsync();
+            var uomNamesCreate = uomNames.Where(x => !uoms.Any(s => s.Name == x)).ToList();
+            if (uomNamesCreate.Any())
+            {
+                var addUoMs = uomNamesCreate.Select(x => new UoM
+                {
+                    CategoryId = uomCateg.Id,
+                    Name = x,
+                    MeasureType = uomCateg.MeasureType,
+                }).ToList();
+
+                await _uomService.CreateAsync(addUoMs);
+
+                uoms = uoms.Concat(addUoMs).ToList();
+            }
+            var uomDict = uoms.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.FirstOrDefault());
+
             var standardPriceDict = new Dictionary<Product, decimal>();
             foreach (var item in data)
             {
@@ -591,8 +667,12 @@ namespace TMTDentalAPI.Controllers
                 if (product == null)
                     continue;
 
+                var uom = uomDict[item.UoMName];
+
                 product.Name = item.Name;
                 product.IsLabo = item.IsLabo ?? false;
+                product.UOMId = uom.Id;
+                product.UOMPOId = uom.Id;
                 product.CategId = categDict[item.CategName].Id;
                 product.ListPrice = item.ListPrice ?? 0;
                 product.LaboPrice = item.LaboPrice ?? 0;
@@ -1530,13 +1610,14 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 2].Value = "Tên dịch vụ";
                 worksheet.Cells[1, 3].Value = "Có thể đặt labo";
                 worksheet.Cells[1, 4].Value = "Nhóm dịch vụ";
-                worksheet.Cells[1, 5].Value = "Giá bán";
-                worksheet.Cells[1, 6].Value = "Giá vốn";
-                worksheet.Cells[1, 7].Value = "Công đoạn";
-                worksheet.Cells[1, 8].Value = "Giá đặt labo";
-                worksheet.Cells[1, 9].Value = "Hãng";
+                worksheet.Cells[1, 5].Value = "Đơn vị tính";
+                worksheet.Cells[1, 6].Value = "Giá bán";
+                worksheet.Cells[1, 7].Value = "Giá vốn";
+                worksheet.Cells[1, 8].Value = "Công đoạn";
+                worksheet.Cells[1, 9].Value = "Giá đặt labo";
+                worksheet.Cells[1, 10].Value = "Hãng";
 
-                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
 
                 for (int row = 2; row < services.Count() + 2; row++)
                 {
@@ -1546,11 +1627,12 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Value = item.Name;
                     worksheet.Cells[row, 3].Value = item.IsLabo;
                     worksheet.Cells[row, 4].Value = item.CategName;
-                    worksheet.Cells[row, 5].Value = item.ListPrice;
-                    worksheet.Cells[row, 6].Value = item.StandardPrice;
-                    worksheet.Cells[row, 7].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
-                    worksheet.Cells[row, 8].Value = item.LaboPrice ?? 0;
-                    worksheet.Cells[row, 9].Value = item.Firm;
+                    worksheet.Cells[row, 5].Value = item.UoMName;
+                    worksheet.Cells[row, 6].Value = item.ListPrice;
+                    worksheet.Cells[row, 7].Value = item.StandardPrice;
+                    worksheet.Cells[row, 8].Value = item.StepList.Count() == 0 ? null : string.Join(";", item.StepList.Select(x => x.Name).ToList());
+                    worksheet.Cells[row, 9].Value = item.LaboPrice ?? 0;
+                    worksheet.Cells[row, 10].Value = item.Firm;
                 }
 
                 worksheet.Cells.AutoFitColumns();

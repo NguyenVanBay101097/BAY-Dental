@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ServiceCardCardsPreferentialCuDialogComponent } from 'src/app/service-card-cards/service-card-cards-preferential-cu-dialog/service-card-cards-preferential-cu-dialog.component';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -16,6 +16,7 @@ import { GridDataResult } from '@progress/kendo-angular-grid';
 export class PartnerOverviewPreferentialCardsComponent implements OnInit {
   @Input() partnerId: string;
   @Input() preferentialCards: any;
+  @Output() onCreateUpdateEvent = new EventEmitter<boolean>();
   constructor(
     private modalService: NgbModal,
     private notifyService: NotifyService,
@@ -34,7 +35,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
       if (!result) {
         this.notifyService.notify('success', 'Lưu thành công');
       }
-      this.getNextCard();
+      this.onCreateUpdateEvent.emit(true);
     }, () => { });
   }
 
@@ -48,7 +49,7 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
       if (!result) {
         this.notifyService.notify('success', 'Lưu thành công');
       }
-      this.getNextCard();
+      this.onCreateUpdateEvent.emit(true);
     }, () => { });
   }
 
@@ -90,16 +91,16 @@ export class PartnerOverviewPreferentialCardsComponent implements OnInit {
     return nbrPeriod + ' ' + period + ' ('+ activatedDate + ' - ' + expiredDate + ') '; 
   }
 
-  getNextCard(){
-    let val = new ServiceCardCardPaged();
-    val.partnerId = this.partnerId;
-    this.cardCardService.getPaged(val).pipe(
-      map((response: any) => (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe((res) => {
-      this.preferentialCards = res.data;
-    });
-  }
+  // getNextCard(){
+  //   let val = new ServiceCardCardPaged();
+  //   val.partnerId = this.partnerId;
+  //   this.cardCardService.getPaged(val).pipe(
+  //     map((response: any) => (<GridDataResult>{
+  //       data: response.items,
+  //       total: response.totalItems
+  //     }))
+  //   ).subscribe((res) => {
+  //     this.preferentialCards = res.data;
+  //   });
+  // }
 }

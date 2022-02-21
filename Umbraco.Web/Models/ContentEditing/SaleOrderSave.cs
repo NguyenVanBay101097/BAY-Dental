@@ -31,5 +31,6 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool? IsQuotation { get; set; }
         public bool IsFast { get; set; }
+        public Guid? DoctorId { get; set; }
     }
 }
