@@ -1223,6 +1223,7 @@ namespace TMTDentalAPI.Controllers
                 var uom = uomDict[item.UOM];
                 var uomPO = uomDict[item.UOMPO];
                 var product = new Product();
+                product.PurchaseOK = true;
                 product.CompanyId = CompanyId;
                 product.UOMId = uom.Id;
                 product.UOMPOId = uomPO.Id;

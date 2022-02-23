@@ -74,7 +74,13 @@ namespace Infrastructure.Services
 
         public async Task<PhieuThuChiDisplay> GetByIdPhieuThuChi(Guid id)
         {
-            return await _mapper.ProjectTo<PhieuThuChiDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
+            var phieuThuChi = await SearchQuery(x => x.Id == id)
+                .Include(x => x.LoaiThuChi)
+                .Include(x => x.Partner)
+                .Include(x => x.Journal)
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<PhieuThuChiDisplay>(phieuThuChi);
         }
 
         public async Task<PhieuThuChi> CreatePhieuThuChi(PhieuThuChiSave val)

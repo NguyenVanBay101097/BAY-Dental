@@ -48,13 +48,17 @@ namespace Infrastructure.Services
         public async Task<HrPayslipRunDisplay> GetHrPayslipRunForDisplay(Guid id)
         {
             //bị lỗi là các đợt logic cũ có  nhân viên chi nhánh khác
-            var res = await _mapper.ProjectTo<HrPayslipRunDisplay>(SearchQuery(x => x.Id == id && x.CompanyId == CompanyId)
+            var payslipRun = await SearchQuery(x => x.Id == id)
                 .Include(x => x.Slips).ThenInclude(x => x.Employee)
-                .Include(x => x.Slips).ThenInclude(x => x.SalaryPayment))
+                .Include(x => x.Slips).ThenInclude(x => x.SalaryPayment)
                 .FirstOrDefaultAsync();
-            if (res == null)
+
+            if (payslipRun == null)
                 throw new NullReferenceException("Đợt lương không tồn tại");
+
+            var res = _mapper.Map<HrPayslipRunDisplay>(payslipRun);
             res.IsExistSalaryPayment = res.Slips.Any(x => x.SalaryPayment != null);
+
             // get user
             var userManager = (UserManager<ApplicationUser>)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(UserManager<ApplicationUser>));
             var user = await userManager.FindByIdAsync(UserId);
