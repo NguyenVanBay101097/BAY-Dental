@@ -1110,7 +1110,7 @@ namespace Infrastructure.Services
                     }
                     print_template_dict.Add(id, printTemplate);
                 }
-                else if (model == "mail.mail_message_subtype")
+                else if (model == "mail.message.subtype")
                 {
                     var mailMessageSubtype = new MailMessageSubtype();
                     var fields = record.GetElementsByTagName("field");
@@ -1120,11 +1120,8 @@ namespace Infrastructure.Services
                         var field_name = field.GetAttribute("name");
                         if (field_name == "name")
                         {
-
                             mailMessageSubtype.Name = field.InnerText;
                         }
-
-
                     }
                     mail_message_subtype_dict.Add(id, mailMessageSubtype);
                 }
