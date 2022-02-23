@@ -94,7 +94,6 @@ hr.model_hr_job,HrJob,Chức vụ,0
 base.model_res_insurance,ResInsurance,ResInsurance,0
 base.model_res_insurance_payment,ResInsurancePayment,ResInsurance Payment,0
 sale.model_sale_production,SaleProduction,Sale Production,0
-mail.model_mail_message,MailMessage,MailMessage,0
 mail.model_mail_message_subtype,MailMessageSubtype,MailMessageSubtype,0
 
 
