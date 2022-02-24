@@ -138,6 +138,7 @@ namespace Infrastructure.Services
             {
                 var product = _mapper.Map<Product>(item);
                 product.SaleOK = false;
+                product.PurchaseOK = true;
                 product.CompanyId = companyId;
                 product.Type = "product";
                 product.Type2 = "product";
