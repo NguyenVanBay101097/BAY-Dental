@@ -628,25 +628,25 @@
     <!--
     MailMessageSubtype sample data
     -->
-    <record id="mail.mail_message_subtype_sale_order" model="mail.message.subtype">
+    <record id="mail.subtype_sale_order" model="mail.message.subtype">
       <field name="name">Phiếu điều trị</field>
     </record>
-    <record id="mail.mail_message_subtype_sale_order_line" model="mail.message.subtype">
+    <record id="mail.subtype_sale_order_line" model="mail.message.subtype">
       <field name="name">Dịch vụ</field>
     </record>
-    <record id="mail.mail_message_subtype_sale_order_payment" model="mail.message.subtype">
+    <record id="mail.subtype_sale_order_payment" model="mail.message.subtype">
       <field name="name">Thanh toán</field>
     </record>
-    <record id="mail.mail_message_subtype_appointment" model="mail.message.subtype">
+    <record id="mail.subtype_appointment" model="mail.message.subtype">
       <field name="name">Lịch hẹn</field>
     </record>
-    <record id="mail.mail_message_subtype_receive" model="mail.message.subtype">
+    <record id="mail.subtype_receive" model="mail.message.subtype">
       <field name="name">Tiếp nhận</field>
     </record>
-    <record id="mail.mail_message_subtype_dotkham" model="mail.message.subtype">
+    <record id="mail.subtype_dotkham" model="mail.message.subtype">
       <field name="name">Đợt khám</field>
     </record>
-    <record id="mail.message.subtype_comment" model="mail.message.subtype">
+    <record id="mail.subtype_comment" model="mail.message.subtype">
       <field name="name">Ghi chú</field>
     </record>
     
