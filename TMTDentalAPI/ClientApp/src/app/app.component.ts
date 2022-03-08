@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
 
     if (this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
-        if (confirm("Có phiên bản mới, tải ngay?")) {
+        if (confirm("Có cập nhật mới, tải ngay?")) {
           window.location.reload();
         }
       });
@@ -40,25 +40,25 @@ export class AppComponent implements OnInit {
     }
   }
 
-  @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
-    if (!this._areAccessKeyVisible &&
-      (keyDownEvent.altKey || keyDownEvent.key === 'Alt') &&
-      !keyDownEvent.ctrlKey) {
+  // @HostListener('document:keydown', ['$event']) onKeydownHandler(keyDownEvent: KeyboardEvent) {
+  //   if (!this._areAccessKeyVisible &&
+  //     (keyDownEvent.altKey || keyDownEvent.key === 'Alt') &&
+  //     !keyDownEvent.ctrlKey) {
 
-      this._areAccessKeyVisible = true;
-      this._addAccessKeyOverlays();
-    }
-  }
+  //     this._areAccessKeyVisible = true;
+  //     this._addAccessKeyOverlays();
+  //   }
+  // }
 
-  @HostListener('document:keyup', ['$event']) onKeyupHandler(keyUpEvent: KeyboardEvent) {
-    if ((keyUpEvent.altKey || keyUpEvent.key === 'Alt' || keyUpEvent.key === 'Tab') && !keyUpEvent.ctrlKey) {
-      this._hideAccessKeyOverlay();
-      if (keyUpEvent.preventDefault) keyUpEvent.preventDefault(); else keyUpEvent.returnValue = false;
-      if (keyUpEvent.stopPropagation) keyUpEvent.stopPropagation();
-      if (keyUpEvent.cancelBubble) keyUpEvent.cancelBubble = true;
-      return false;
-    }
-  }
+  // @HostListener('document:keyup', ['$event']) onKeyupHandler(keyUpEvent: KeyboardEvent) {
+  //   if ((keyUpEvent.altKey || keyUpEvent.key === 'Alt' || keyUpEvent.key === 'Tab') && !keyUpEvent.ctrlKey) {
+  //     this._hideAccessKeyOverlay();
+  //     if (keyUpEvent.preventDefault) keyUpEvent.preventDefault(); else keyUpEvent.returnValue = false;
+  //     if (keyUpEvent.stopPropagation) keyUpEvent.stopPropagation();
+  //     if (keyUpEvent.cancelBubble) keyUpEvent.cancelBubble = true;
+  //     return false;
+  //   }
+  // }
 
   _hideAccessKeyOverlay() {
     this._areAccessKeyVisible = false;
