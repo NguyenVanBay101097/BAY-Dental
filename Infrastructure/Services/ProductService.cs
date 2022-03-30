@@ -1223,7 +1223,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var product in self)
-                product.Active = false;
+                product.Active = true;
 
             await UpdateAsync(self);
         }
@@ -1232,7 +1232,7 @@ namespace Infrastructure.Services
         {
             var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
             foreach (var product in self)
-                product.Active = true;
+                product.Active = false;
 
             await UpdateAsync(self);
         }
