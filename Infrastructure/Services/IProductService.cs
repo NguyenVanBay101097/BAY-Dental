@@ -42,5 +42,7 @@ namespace Infrastructure.Services
         void _ComputeUoMRels(IEnumerable<Product> self);
 
         Task<double> GetHistoryPrice(Guid id, Guid companyId, DateTime? date = null);
+        Task ActionArchive(IEnumerable<Guid> ids);
+        Task ActionUnArchive(IEnumerable<Guid> ids);
     }
 }

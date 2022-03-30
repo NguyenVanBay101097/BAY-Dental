@@ -107,6 +107,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? CategId { get; set; }
 
         public string Type2 { get; set; }
+        public bool? Active { get; set; }
     }
 
     public class ProductImportExcelViewModel

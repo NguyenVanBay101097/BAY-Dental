@@ -656,6 +656,9 @@ namespace Infrastructure.Data
                     .HasForeignKey(ur => ur.RoleId)
                     .IsRequired();
             });
+
+            // global query filter
+            builder.Entity<Product>().HasQueryFilter(b => b.Active == true);
         }
 
         public int? DatePart(string datePartArg, DateTime? date) => throw new Exception();

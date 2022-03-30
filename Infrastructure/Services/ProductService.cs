@@ -226,6 +226,8 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
+            if (val.Active.HasValue)
+                query = query.Where(x => x.Active == true);
 
             if (val.Type2 == "labo" || val.Type2 == "labo_attach")
                 query = query.OrderByDescending(x => x.DateCreated);
@@ -1216,6 +1218,25 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task ActionArchive(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var product in self)
+                product.Active = false;
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var product in self)
+                product.Active = true;
+
+            await UpdateAsync(self);
+        }
+
         private async Task<bool> IsExistProductCode(string productCode)
         {
             var product = await SearchQuery(x => x.DefaultCode == productCode).FirstOrDefaultAsync();
