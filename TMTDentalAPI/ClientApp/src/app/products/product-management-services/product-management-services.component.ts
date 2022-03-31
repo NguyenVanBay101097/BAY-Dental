@@ -259,13 +259,13 @@ export class ProductManagementServicesComponent implements OnInit {
 
   onActionUnArchive(item) {
     this.productService.actionUnArchive([item.id]).subscribe((res: any) => {
-      item.active = !item.active;
+      this.loadServices();
     }, error => console.log(error));
   }
 
   onActionArchive(item) {
     this.productService.actionArchive([item.id]).subscribe((res: any) => {
-      item.active = !item.active;
+      this.loadServices();
     }, error => console.log(error));
   }
 
