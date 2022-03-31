@@ -1,0 +1,9 @@
+.search-products {
+    max-width: 300px;
+}
+
+.search-products .dropdown-menu {
+    width: 100%!important;
+    max-height: 400px;
+    overflow: auto;
+}

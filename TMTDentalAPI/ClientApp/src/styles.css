@@ -2366,3 +2366,7 @@ kendo-pager-page-sizes select{
 .popover {
     font-size: 1rem!important;
 }
+
+.dropdown-menu {
+    min-width: 15rem!important;
+}

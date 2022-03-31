@@ -226,6 +226,10 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
+            if (val.Active.HasValue)
+                query = query.Where(x => x.Active == val.Active.Value);
+            else
+                query = query.Where(x => x.Active == true);
 
             if (val.Type2 == "labo" || val.Type2 == "labo_attach")
                 query = query.OrderByDescending(x => x.DateCreated);
@@ -333,7 +337,13 @@ namespace Infrastructure.Services
             var qty_available_dict = ProductAvailable(ids: compute_items.Select(x => x.Id).ToList(), company_id: company_id);
 
             foreach (var item in compute_items)
-                item.QtyAvailable = qty_available_dict[item.Id].QtyAvailable;
+            {
+                if (qty_available_dict.ContainsKey(item.Id))
+                {
+                    item.QtyAvailable = qty_available_dict[item.Id].QtyAvailable;
+
+                }
+            }
         }
 
         private async Task _ProcessListPriceExport(List<ProductServiceExportExcel> items)
@@ -448,7 +458,7 @@ namespace Infrastructure.Services
 
         private IQueryable<Product> GetQueryPaged(ProductPaged val)
         {
-            var query = SearchQuery(x => x.Active);
+            var query = SearchQuery();
 
             if (!string.IsNullOrEmpty(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.NameNoSign.Contains(val.Search) || x.DefaultCode.Contains(val.Search));
@@ -1216,6 +1226,26 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task ActionArchive(IEnumerable<Guid> ids)
+        {
+            // IgnoreQueryFilters ignore filter global
+            var self = await SearchQuery(x => ids.Contains(x.Id) && x.Active == false).IgnoreQueryFilters().ToListAsync();
+            foreach (var product in self)
+                product.Active = true;
+
+            await UpdateAsync(self);
+        }
+
+        public async Task ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            var self = await SearchQuery(x => ids.Contains(x.Id)).ToListAsync();
+            foreach (var product in self)
+                product.Active = false;
+
+            await UpdateAsync(self);
+        }
+
         private async Task<bool> IsExistProductCode(string productCode)
         {
             var product = await SearchQuery(x => x.DefaultCode == productCode).FirstOrDefaultAsync();

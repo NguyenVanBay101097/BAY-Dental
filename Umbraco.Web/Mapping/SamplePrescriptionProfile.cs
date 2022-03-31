@@ -15,7 +15,8 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SamplePrescription, SamplePrescriptionSave>();
 
-            CreateMap<SamplePrescription, SamplePrescriptionDisplay>();
+            CreateMap<SamplePrescription, SamplePrescriptionDisplay>()
+                .ForMember(x => x.Lines, x => x.Ignore()); ;
 
             CreateMap<SamplePrescriptionDisplay, SamplePrescription>()
                 .ForMember(x => x.Id, x => x.Ignore())

@@ -33,6 +33,7 @@ export class ProductManagementServicesComponent implements OnInit {
   canAdd = false; // quyền thêm dịch vụ
   canEdit = false; // quyền sửa dịch vụ
   canDelete = false; // quyền xóa dịch vụ
+  active: boolean = true;
   constructor(
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
@@ -63,7 +64,7 @@ export class ProductManagementServicesComponent implements OnInit {
     val.search = this.searchService || "";
     val.categId = this.selectedCateg ? this.selectedCateg.id : '';
     val.type2 = this.type;
-
+    val.active = this.active;
     this.productService
       .getPaged(val)
       .pipe(
@@ -256,4 +257,42 @@ export class ProductManagementServicesComponent implements OnInit {
     this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);
   }
 
+  onActionUnArchive(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+
+    modalRef.componentInstance.title = "Ngừng sử dụng dịch vụ";
+    modalRef.componentInstance.body = `Bạn có chắc muốn ngừng sử dụng dịch vụ ${item.name}?`;
+
+    modalRef.result.then(() => {
+      this.productService.actionUnArchive([item.id]).subscribe((res: any) => {
+        this.loadServices();
+      }, error => console.log(error));
+    }, () => { });
+  }
+
+  onActionArchive(item) {
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+
+    modalRef.componentInstance.title = "Sử dụng lại dịch vụ";
+    modalRef.componentInstance.body = `Bạn có chắc muốn sử dụng lại dịch vụ ${item.name}?`;
+
+    modalRef.result.then(() => {
+      this.productService.actionArchive([item.id]).subscribe((res: any) => {
+        this.loadServices();
+      }, error => console.log(error));
+    }, () => { });
+  }
+
+  onStateSelect(event) {
+    this.active = event.target.value ? event.target.value : true;
+    this.loadServices();
+  }
 }

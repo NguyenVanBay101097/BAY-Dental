@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, DropDownFilterSettings } from '@progress/kendo-angular-dropdowns';
+import { Observable, of, OperatorFunction } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { SamplePrescriptionLineService } from 'src/app/core/services/sample-prescription-line.service';
 import { ProductSimple } from 'src/app/products/product-simple';
 import { ProductFilter, ProductService } from 'src/app/products/product.service';
@@ -20,6 +22,9 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
   filteredProducts: ProductSimple[];
   @ViewChild('productCbx', { static: true }) productCbx: ComboBoxComponent;
   title: string;
+
+  searchStr: any;
+  searching = false;
 
   get f() { return this.PrescriptionForm.controls; }
   get lines() { return this.PrescriptionForm.get('lines') as FormArray; }
@@ -45,6 +50,42 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
       this.loadFilteredProducts();
     });
 
+  }
+
+  searchProductsTypeahead: OperatorFunction<any, any[]> = (text$: Observable<any>) => {
+    return text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(() => this.searching = true),
+      switchMap(term =>
+        this.searchProducts(term).pipe(
+          catchError(() => {
+            return of([]);
+          }))
+      ),
+      tap(() => this.searching = false)
+    )
+  }
+
+  formatter = (x: any) => x.name;
+
+  onSelectValue(event, input) {
+    var product = event.item;
+    this.samplePrescriptionLineService.onChangeProduct({ productId: product.id }).subscribe((result: any) => {
+      var lines = this.PrescriptionForm.get('lines') as FormArray;
+      lines.push(this.fb.group({
+        product: product,
+        productUoM: result.uoM,
+        numberOfTimes: 1,
+        amountOfTimes: 1,
+        quantity: 1,
+        numberOfDays: 1,
+        useAt: 'after_meal',
+        note: null
+      }));
+
+      input.select();
+    });
   }
 
   loadRecord() {
@@ -88,6 +129,7 @@ export class SamplePrescriptionCreateUpdateDialogComponent implements OnInit {
     var val = new ProductFilter();
     val.keToaOK = true;
     val.search = search;
+    val.limit = 0;
     return this.productService.autocomplete2(val);
   }
 
