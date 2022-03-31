@@ -261,15 +261,37 @@ export class ProductManagementMedicinesComponent implements OnInit {
   }
 
   onActionUnArchive(item) {
-    this.productService.actionUnArchive([item.id]).subscribe((res: any) => {
-      this.loadMedicines();
-    }, error => console.log(error));
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+
+    modalRef.componentInstance.title = "Ngừng sử dụng thuốc";
+    modalRef.componentInstance.body = `Bạn có chắc muốn ngừng sử dụng thuốc ${item.name}?`;
+
+    modalRef.result.then(() => {
+      this.productService.actionUnArchive([item.id]).subscribe((res: any) => {
+        this.loadMedicines();
+      }, error => console.log(error));
+    }, () => { });
   }
 
   onActionArchive(item) {
-    this.productService.actionArchive([item.id]).subscribe((res: any) => {
-      this.loadMedicines();
-    }, error => console.log(error));
+    let modalRef = this.modalService.open(ConfirmDialogComponent, {
+      windowClass: "o_technical_modal",
+      keyboard: false,
+      backdrop: "static",
+    });
+
+    modalRef.componentInstance.title = "Sử dụng lại thuốc";
+    modalRef.componentInstance.body = `Bạn có chắc muốn sử dụng lại thuốc ${item.name}?`;
+
+    modalRef.result.then(() => {
+      this.productService.actionArchive([item.id]).subscribe((res: any) => {
+        this.loadMedicines();
+      }, error => console.log(error));
+    }, () => { });
   }
   
   onStateSelect(event) {

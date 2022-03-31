@@ -226,8 +226,10 @@ namespace Infrastructure.Services
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
             var query = GetQueryPaged(val);
-            if (val.Active.HasValue && val.Active == false)
-                query = query.Where(x => x.Active == false).IgnoreQueryFilters();
+            if (val.Active.HasValue)
+                query = query.Where(x => x.Active == val.Active.Value);
+            else
+                query = query.Where(x => x.Active == true);
 
             if (val.Type2 == "labo" || val.Type2 == "labo_attach")
                 query = query.OrderByDescending(x => x.DateCreated);

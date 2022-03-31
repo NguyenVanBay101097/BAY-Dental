@@ -23,8 +23,8 @@
                     <i class="fas fa-upload"></i>
                     Cập nhật Excel</button>
                 <select class="form-control mt-2" style="width: 145px;" (change)="onStateSelect($event)">
-                    <option [value]="true">Đang theo dõi</option>
-                    <option [value]="false">Ngưng theo dõi</option>
+                    <option [value]="true">Đang sử dụng</option>
+                    <option [value]="false">Ngừng sử dụng</option>
                 </select>
             </div>
         </div>
@@ -57,11 +57,11 @@
                         </button>
                         <button *ngIf="dataItem.active == true" (click)="onActionUnArchive(dataItem)"
                             class="btn btn-danger ml-2">
-                            <i title="Ngưng theo dõi" class="fas fa-eye-slash"></i>
+                            <i title="Ngừng sử dụng" class="fas fa-eye-slash"></i>
                         </button>
                         <button *ngIf="dataItem.active == false" (click)="onActionArchive(dataItem)"
                             class="btn btn-success ml-2">
-                            <i title="Theo dõi" class="fas fa-eye"></i>
+                            <i title="Sử dụng" class="fas fa-eye"></i>
                         </button>
                     </ng-template>
                 </kendo-grid-column>

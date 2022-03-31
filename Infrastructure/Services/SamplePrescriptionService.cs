@@ -41,10 +41,16 @@ namespace Infrastructure.Services
 
         public async Task<SamplePrescriptionDisplay> GetPrescriptionForDisplay(Guid id)
         {
-            var res = await _mapper.ProjectTo<SamplePrescriptionDisplay>(SearchQuery(x => x.Id == id)).FirstOrDefaultAsync();
-            if (res == null)
-                throw new NullReferenceException("Toa thuoc not found");
-            res.Lines = res.Lines.OrderBy(x => x.Sequence);
+            var prescription = await SearchQuery(x => x.Id == id).FirstOrDefaultAsync();
+
+            var lineObj = GetService<ISamplePrescriptionLineService>();
+            var lines = await lineObj.SearchQuery(x => x.PrescriptionId == id, orderBy: x => x.OrderBy(s => s.Sequence))
+                .Include(x => x.Product)
+                .Include(x => x.ProductUoM)
+                .ToListAsync();
+
+            var res = _mapper.Map<SamplePrescriptionDisplay>(prescription);
+            res.Lines = _mapper.Map<IEnumerable<SamplePrescriptionLineDisplay>>(lines);
             return res;
         }
 
