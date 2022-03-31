@@ -225,10 +225,9 @@ namespace Infrastructure.Services
 
         public async Task<PagedResult2<ProductBasic>> GetPagedResultAsync(ProductPaged val)
         {
-            // ignore filter global => get both active and unactive products
-            var query = GetQueryPaged(val).IgnoreQueryFilters();
-            if (val.Active.HasValue)
-                query = query.Where(x => x.Active == val.Active);
+            var query = GetQueryPaged(val);
+            if (val.Active.HasValue && val.Active == false)
+                query = query.Where(x => x.Active == false).IgnoreQueryFilters();
 
             if (val.Type2 == "labo" || val.Type2 == "labo_attach")
                 query = query.OrderByDescending(x => x.DateCreated);
@@ -1222,8 +1221,8 @@ namespace Infrastructure.Services
 
         public async Task ActionArchive(IEnumerable<Guid> ids)
         {
-            // IgnoreQueryFilters ignore filter global => get both active and unactive products
-            var self = await SearchQuery(x => ids.Contains(x.Id)).IgnoreQueryFilters().ToListAsync();
+            // IgnoreQueryFilters ignore filter global
+            var self = await SearchQuery(x => ids.Contains(x.Id) && x.Active == false).IgnoreQueryFilters().ToListAsync();
             foreach (var product in self)
                 product.Active = true;
 
