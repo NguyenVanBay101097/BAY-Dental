@@ -1937,6 +1937,24 @@ namespace TMTDentalAPI.Controllers
             //string[] listProInfoStr = { "Name","Type","Type2","ListPrice","PurchasePrice","SaleOk","PurchaseOk","KetoanOk","IsLabo","MinInventory",
             //"Firm","CategId", "UOMPOId", "UOMId"};
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionArchive(IEnumerable<Guid> ids)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _productService.ActionArchive(ids);
+            return NoContent();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ActionUnArchive(IEnumerable<Guid> ids)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _productService.ActionUnArchive(ids);
+            return NoContent();
+        }
     }
 
 

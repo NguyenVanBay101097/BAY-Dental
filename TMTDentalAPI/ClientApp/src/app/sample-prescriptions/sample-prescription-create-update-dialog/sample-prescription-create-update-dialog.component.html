@@ -43,10 +43,18 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="overflow-auto">
-                    <div class="d-flex">
-                        <button type="button" accesskey="a" class="btn btn-primary mr-2" (click)="onCreate()">Thêm
-                            thuốc</button>
+                <div>
+                    <div>
+                        <div class="position-relative search-products">
+                            <input #searchInput
+                            [placeholder]="'Tìm kiếm và thêm dịch vụ'" id="typeahead-template"  type="text" class="form-control"
+                            (selectItem)="onSelectValue($event, searchInput)" [ngbTypeahead]="searchProductsTypeahead"
+                            [resultTemplate]="rt" [inputFormatter]="formatter" />
+                        
+                            <ng-template #rt let-r="result" let-t="term">
+                                <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                            </ng-template>
+                        </div>
                     </div>
                     <table class="table table-sm table-tbody-ver-align-middle mt-2">
                         <thead>
@@ -64,10 +72,12 @@
                             <ng-container *ngFor="let item of lines.controls; let i = index;">
                                 <tr [formGroupName]="i">
                                     <td>
-                                        <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                        <!-- <kendo-combobox [data]="filteredProducts" [textField]="'name'"
                                             formControlName="product" [kendoDropDownFilter]="filterSettings"
+                                            [allowCustom]="true"
                                             [valueField]="'id'" (valueChange)="onChangeProduct($event, item)">
-                                        </kendo-combobox>
+                                        </kendo-combobox> -->
+                                        {{item.get('product').value?.name}}
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
