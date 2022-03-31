@@ -35,7 +35,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
   canAdd = false;
   canEdit = false;
   canDelete = false;
-  active: boolean;
+  active: boolean = true;
 
   constructor(
     private productCategoryService: ProductCategoryService,
@@ -68,9 +68,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
     val.search = this.searchMedicine || "";
     val.categId = this.selectedCateg ? this.selectedCateg.id : '';
     val.type2 = this.type;
-    if (String(this.active) != '' && this.active != undefined) {
-      val.active = this.active;
-    }
+    val.active = this.active;
     this.productService
       .getPaged(val)
       .pipe(
@@ -275,7 +273,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
   }
   
   onStateSelect(event) {
-    this.active = event.target.value ? event.target.value : '';
+    this.active = event.target.value ? event.target.value : true;
     this.loadMedicines();
   }
 }

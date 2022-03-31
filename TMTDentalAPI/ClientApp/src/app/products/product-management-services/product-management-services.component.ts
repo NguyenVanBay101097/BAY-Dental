@@ -33,7 +33,7 @@ export class ProductManagementServicesComponent implements OnInit {
   canAdd = false; // quyền thêm dịch vụ
   canEdit = false; // quyền sửa dịch vụ
   canDelete = false; // quyền xóa dịch vụ
-  active: boolean;
+  active: boolean = true;
   constructor(
     private productCategoryService: ProductCategoryService,
     private productService: ProductService,
@@ -64,9 +64,7 @@ export class ProductManagementServicesComponent implements OnInit {
     val.search = this.searchService || "";
     val.categId = this.selectedCateg ? this.selectedCateg.id : '';
     val.type2 = this.type;
-    if (String(this.active) != '' && this.active != undefined) {
-      val.active = this.active;
-    }
+    val.active = this.active;
     this.productService
       .getPaged(val)
       .pipe(
@@ -272,7 +270,7 @@ export class ProductManagementServicesComponent implements OnInit {
   }
 
   onStateSelect(event) {
-    this.active = event.target.value ? event.target.value : '';
+    this.active = event.target.value ? event.target.value : true;
     this.loadServices();
   }
 }
