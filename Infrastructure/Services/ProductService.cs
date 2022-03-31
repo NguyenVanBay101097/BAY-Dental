@@ -335,7 +335,13 @@ namespace Infrastructure.Services
             var qty_available_dict = ProductAvailable(ids: compute_items.Select(x => x.Id).ToList(), company_id: company_id);
 
             foreach (var item in compute_items)
-                item.QtyAvailable = qty_available_dict[item.Id].QtyAvailable;
+            {
+                if (qty_available_dict.ContainsKey(item.Id))
+                {
+                    item.QtyAvailable = qty_available_dict[item.Id].QtyAvailable;
+
+                }
+            }
         }
 
         private async Task _ProcessListPriceExport(List<ProductServiceExportExcel> items)

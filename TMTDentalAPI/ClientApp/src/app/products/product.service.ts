@@ -33,6 +33,7 @@ export class ProductPaged {
   isLabo: boolean;
   type: string;
   type2: string;
+  active: boolean;
 }
 
 export class ProductBasic2 {
@@ -124,9 +125,7 @@ export class ProductService {
   }
 
   getPaged(val: any): Observable<ProductPaging2> {
-    return this.http.get<ProductPaging2>(this.baseApi + this.apiUrl, {
-      params: val,
-    });
+    return this.http.get<ProductPaging2>(this.baseApi + this.apiUrl, { params: new HttpParams({ fromObject: val }) });
   }
 
   get(id: string): Observable<Product> {
@@ -287,5 +286,13 @@ export class ProductService {
 
   deleteService(id) {
     return this.http.delete(this.baseApi + "api/ServiceProducts" + '/' + id);
+  }
+
+  actionArchive(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl +  "/ActionArchive", ids);
+  }
+  
+  actionUnArchive(ids: string[]) {
+    return this.http.post(this.baseApi + this.apiUrl + "/ActionUnArchive", ids);
   }
 }

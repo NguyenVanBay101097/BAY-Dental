@@ -1,32 +1,36 @@
 <div class="pms-wrapper d-flex">
     <div class="pms-left border mr-2">
         <app-product-category-list (onDelete)="onDeleteCate($event)" (createBtnEvent)="onCreateBtnEvent($event)"
-            [categories]="categories" (updateBtnEvent)="onUpdateBtnEvent($event)" (onSelect)="onSelectedCate($event)" [type]="type">
+            [categories]="categories" (updateBtnEvent)="onUpdateBtnEvent($event)" (onSelect)="onSelectedCate($event)"
+            [type]="type">
         </app-product-category-list>
     </div>
-    <div class="pms-right border h-100 overflow-auto d-flex flex-column p-2">
-        <div class="flex-0-0-auto mb-3 d-flex align-items-center">
-            <div class="has-search mr-1 flex-fill">
+    <div class="pms-right border h-100 overflow-auto d-flex flex-column px-2 pb-2">
+        <div class="flex-0-0-auto mb-3 d-flex align-items-center flex-wrap">
+            <div class="has-search mr-1 flex-fill mt-2">
                 <span class="fa fa-search form-control-feedback"></span>
                 <input [(ngModel)]="searchService" (ngModelChange)="this.searchServiceUpdate.next($event)"
                     class="form-control size-text-14" placeholder="Tìm kiếm theo mã hoặc tên ..." type="text">
             </div>
-            <div class="flex-fill">
-                <button *ngIf="canAdd" class="btn btn-primary mr-2" (click)="createService()">Thêm mới</button>
-                <button type="button" class="btn btn-secondary mr-2" (click)="importFromExcel()">
+            <div class="d-flex flex-fill flex-wrap">
+                <button *ngIf="canAdd" class="btn btn-primary mr-2 mt-2" (click)="createService()">Thêm mới</button>
+                <button type="button" class="btn btn-secondary mr-2 mt-2" (click)="importFromExcel()">
                     <i class="fas fa-upload"></i> Import
                 </button>
-                <button type="button" class="btn btn-secondary mr-2" (click)="exportExcelFile()">
+                <button type="button" class="btn btn-secondary mr-2 mt-2" (click)="exportExcelFile()">
                     <i class="fas fa-download"></i>&nbsp;Xuất file Excel</button>
-                <button class="btn btn-secondary mr-2" (click)="updateServiceFromExcel()">
+                <button class="btn btn-secondary mr-2 mt-2" (click)="updateServiceFromExcel()">
                     <i class="fas fa-upload"></i>
                     Cập nhật Excel</button>
-
+                <select class="form-control mt-2" style="width: 145px;" (change)="onStateSelect($event)">
+                    <option [value]="true">Đang theo dõi</option>
+                    <option [value]="false">Ngưng theo dõi</option>
+                </select>
             </div>
         </div>
         <div class="flex-1-1-100 h-100 overflow-hidden">
-            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
-                (pageChange)="pageChange($event)">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
+                [loading]="loading" (pageChange)="pageChange($event)">
                 <kendo-grid-column field="name" title="Tên dịch vụ" width="250">
                 </kendo-grid-column>
                 <kendo-grid-column field="defaultCode" title="Mã dịch vụ" width="100">
@@ -40,15 +44,25 @@
                         {{dataItem.listPrice | number}}
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column *ngIf="canEdit || canDelete" field="id" width="100">
+                <kendo-grid-column *ngIf="canEdit || canDelete" field="id" width="180">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác
                     </ng-template>
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                        <button *ngIf="canEdit" class="btn btn-success mr-2" (click)="editService(dataItem)">
-                            <i class="far fa-edit"></i></button>
-                        <button *ngIf="canDelete" class="btn btn-danger" (click)="deleteService(dataItem)">
-                            <i class="far fa-trash-alt"></i></button>
+                        <button *ngIf="canEdit" class="btn btn-success" (click)="editService(dataItem)">
+                            <i class="far fa-edit"></i>
+                        </button>
+                        <button *ngIf="canDelete" class="btn btn-danger ml-2" (click)="deleteService(dataItem)">
+                            <i class="far fa-trash-alt"></i>
+                        </button>
+                        <button *ngIf="dataItem.active == true" (click)="onActionUnArchive(dataItem)"
+                            class="btn btn-danger ml-2">
+                            <i title="Ngưng theo dõi" class="fas fa-eye-slash"></i>
+                        </button>
+                        <button *ngIf="dataItem.active == false" (click)="onActionArchive(dataItem)"
+                            class="btn btn-success ml-2">
+                            <i title="Theo dõi" class="fas fa-eye"></i>
+                        </button>
                     </ng-template>
                 </kendo-grid-column>
             </kendo-grid>

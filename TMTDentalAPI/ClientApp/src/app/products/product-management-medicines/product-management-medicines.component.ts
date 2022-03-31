@@ -35,7 +35,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
   canAdd = false;
   canEdit = false;
   canDelete = false;
-
+  active: boolean = true;
 
   constructor(
     private productCategoryService: ProductCategoryService,
@@ -68,7 +68,7 @@ export class ProductManagementMedicinesComponent implements OnInit {
     val.search = this.searchMedicine || "";
     val.categId = this.selectedCateg ? this.selectedCateg.id : '';
     val.type2 = this.type;
-
+    val.active = this.active;
     this.productService
       .getPaged(val)
       .pipe(
@@ -260,4 +260,20 @@ export class ProductManagementMedicinesComponent implements OnInit {
     this.canDelete = this.checkPermissionService.check(['Catalog.Products.Delete']);
   }
 
+  onActionUnArchive(item) {
+    this.productService.actionUnArchive([item.id]).subscribe((res: any) => {
+      item.active = !item.active;
+    }, error => console.log(error));
+  }
+
+  onActionArchive(item) {
+    this.productService.actionArchive([item.id]).subscribe((res: any) => {
+      item.active = !item.active;
+    }, error => console.log(error));
+  }
+  
+  onStateSelect(event) {
+    this.active = event.target.value ? event.target.value : true;
+    this.loadMedicines();
+  }
 }
