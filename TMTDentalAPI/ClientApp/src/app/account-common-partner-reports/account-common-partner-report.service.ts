@@ -79,6 +79,7 @@ export class ReportPartnerDebitReq {
     partnerId: string;
     search: string;
     companyId: string;
+    type: string;
 }
 
 export class ReportPartnerDebitRes {

@@ -754,6 +754,13 @@ namespace Infrastructure.Services
                 item.CompanyId = val.CompanyId;
             }
 
+            res = res.FindAll(x => x.Begin != 0 || x.Debit != 0 || x.Credit != 0 || x.End != 0);
+
+            if (!string.IsNullOrWhiteSpace(val.Type))
+            {
+                res = res.FindAll(x => val.Type == "has-debt" ? x.End > 0 : x.End == 0);
+            }
+
             return res;
         }
 

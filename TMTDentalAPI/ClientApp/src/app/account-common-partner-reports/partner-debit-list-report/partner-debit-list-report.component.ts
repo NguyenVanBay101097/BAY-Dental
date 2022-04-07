@@ -41,7 +41,11 @@ export class PartnerDebitListReportComponent implements OnInit {
   public aggregates: any[] = [
     { field: 'end', aggregate: 'sum' },
   ];
-
+  type: string = 'has-debt';
+  filteredTypes: { [key: string]: string }[] = [
+    { key: 'has-debt', value: 'Có công nợ' },
+    { key: 'no-debt', value: 'Không có công nợ' },
+  ];
   constructor(private reportService: AccountCommonPartnerReportService,
     private intlService: IntlService,
     private companyService: CompanyService,
@@ -56,7 +60,7 @@ export class PartnerDebitListReportComponent implements OnInit {
   ngOnInit() {
     this.dateFrom = this.monthStart;
     this.dateTo = this.monthEnd;
-
+    
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -113,7 +117,7 @@ export class PartnerDebitListReportComponent implements OnInit {
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.search = this.search ? this.search : '';
     val.companyId = this.companyId || '';
-
+    val.type = this.type || '';
     this.reportService.ReportPartnerDebit(val).subscribe(res => {
       this.items = res;
       this.loadItems();
@@ -308,4 +312,8 @@ export class PartnerDebitListReportComponent implements OnInit {
     }
   }
 
+  onChangeType(event: any) {
+    this.type = event.target.value;
+    this.loadDataFromApi();
+  }
 }

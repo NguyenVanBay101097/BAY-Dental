@@ -7,6 +7,9 @@
                 </app-date-range-picker-filter>
                 <kendo-combobox [placeholder]="'Tất cả chi nhánh'" [popupSettings]="{width: 'auto'}" width="auto" class="mr-1 kendo-combobox" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
                 </kendo-combobox>
+                <select class="form-control w-auto mr-1" (change)="onChangeType($event)">
+                    <option [value]="type.key" *ngFor="let type of filteredTypes">{{type.value}}</option>
+                </select>
                 <div class="dropdown mr-1">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-download"></i> Xuất File</button>
@@ -15,7 +18,7 @@
                         <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
                     </div>
                 </div>
-                <button class="btn btn-primary" (click)="printReport()">In báo cáo</button>
+                <button class="btn btn-primary mr-1" (click)="printReport()">In báo cáo</button>
             </div>
             <div class="o_searchview w-30">
                 <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
