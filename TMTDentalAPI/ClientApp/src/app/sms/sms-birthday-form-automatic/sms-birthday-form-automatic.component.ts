@@ -4,6 +4,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SmsAccountPaged, SmsAccountService } from '../sms-account.service';
 import { SmsBirthdayAutomationConfigService } from '../sms-birthday-automation-config.service';
 import { SmsCampaignService } from '../sms-campaign.service';
@@ -28,7 +29,6 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
   limit: number = 20;
   type: string;
   filteredTemplate: any[];
-  companyId: string;
   textareaLimit: number = 200;
   campaign: any;
   isTemplateCopy = false;
@@ -50,7 +50,8 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     private intlService: IntlService,
     private smsAccountService: SmsAccountService,
     private notificationService: NotificationService,
-    private smsCampaignService: SmsCampaignService
+    private smsCampaignService: SmsCampaignService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -63,11 +64,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
       templateName: '',
       body: ''
     })
-    var user_change_company_vm = localStorage.getItem('user_change_company_vm');
-    if (user_change_company_vm) {
-      var companyInfo = JSON.parse(user_change_company_vm);
-      this.companyId = companyInfo.currentCompany.id;
-    }
+  
     this.loadDataFormApi();
     this.loadDefaultCampaignBirthday();
     this.loadSmsTemplate();
@@ -204,7 +201,7 @@ export class SmsBirthdayFormAutomaticComponent implements OnInit {
     val.smsAccountId = val.smsAccount ? val.smsAccount.id : null;
     val.scheduleTime = this.intlService.formatDate(val.scheduleTimeObj, "yyyy-MM-ddTHH:mm");
     val.timeBeforSend = Number.parseInt(val.timeBeforSend);
-    val.companyId = this.companyId;
+    val.companyId = this.authService.userInfo.companyId;
     val.templateId = val.template ? val.template.id : null;
     val.smsCampaignId = this.campaign ? this.campaign.id : null;
     this.smsConfigService.saveConfig(val).subscribe(
