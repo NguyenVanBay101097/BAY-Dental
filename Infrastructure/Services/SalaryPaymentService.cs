@@ -280,7 +280,8 @@ namespace Infrastructure.Services
                     Account = accDebit334,
                     Move = move,
                     Ref = payment.Name,
-                    PartnerId = partnerId
+                    PartnerId = partnerId,
+                    SalaryPaymentId = payment.Id
                 },
                 new AccountMoveLine
                 {
@@ -291,7 +292,8 @@ namespace Infrastructure.Services
                     Account = liquidity_line_account,
                     Move = move,
                     Ref = payment.Name,
-                    PartnerId = partnerId
+                    PartnerId = partnerId,
+                    SalaryPaymentId = payment.Id
                 },
             };
 

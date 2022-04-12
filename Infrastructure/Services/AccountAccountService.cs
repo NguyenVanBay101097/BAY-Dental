@@ -131,9 +131,9 @@ namespace Infrastructure.Services
             }
         }
 
-        public async Task<string> SearchNewAccountCode(Guid companyId, int digits, string prefix) 
-        { 
-            foreach(var num in Enumerable.Range(1, 10000))
+        public async Task<string> SearchNewAccountCode(Guid companyId, int digits, string prefix)
+        {
+            foreach (var num in Enumerable.Range(1, 10000))
             {
                 var newCode = prefix.PadLeft(digits - 1, '0') + num;
                 var rec = await SearchQuery(x => x.Code == newCode && x.CompanyId == companyId).FirstOrDefaultAsync();
@@ -142,6 +142,18 @@ namespace Infrastructure.Services
             }
 
             throw new Exception("Cannot generate an unused account code.");
+        }
+
+        public async Task<IEnumerable<AccountAccount>> GetAutoCompleteAsync(AccountAccountPaged val)
+        {
+            var query = SearchQuery(x => x.Active);
+
+            if (!string.IsNullOrWhiteSpace(val.Search))
+                query = query.Where(x => x.Name.Contains(val.Search) || x.Code.Contains(val.Search));
+
+            var items = await query.ToListAsync();
+
+            return items;
         }
     }
 }

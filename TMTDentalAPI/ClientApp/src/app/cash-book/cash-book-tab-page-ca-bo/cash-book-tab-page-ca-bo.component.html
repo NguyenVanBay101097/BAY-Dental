@@ -32,17 +32,22 @@
         </div>
     </div>
     <div class="my-3 d-flex justify-content-between">
-        <div class="d-flex">
-            <app-date-range-picker-filter [opens]="'right'" class="mr-2" [startDate]="dateFrom" [endDate]="dateTo"
+        <div class="d-flex align-items-start w-100 flex-wrap">
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
-            <button type="button" class="btn btn-primary mr-2" (click)="exportExcelFile()">
-                <i class="fas fa-download mr-2"></i>Xuất file
+            <kendo-combobox class="ml-1 w-auto" [placeholder]="'Loại thu'" (valueChange)="onChangePaymentType($event)"
+                [data]="filteredPaymentTypes" [valueField]="'value'" [textField]="'text'" [valuePrimitive]="true"></kendo-combobox>
+            <kendo-multiselect [placeholder]="'Loại thu chi'" class="ml-1" style="width: 250px;" [filterable]="true"
+                [data]="filteredAccountCode" [textField]="'name'" [valueField]="'code'" [valuePrimitive]="true"
+                (valueChange)="changeAccountCode($event)"></kendo-multiselect>
+            <button type="button" class="btn btn-primary ml-1" (click)="exportExcelFile()">
+                <i class="fas fa-download ml-2"></i>Xuất file
             </button>
             <!-- <button type="button" class="btn btn-primary mr-2" (click)="changeData()">
                 <i class="fas fa-download mr-2"></i>Change Data
             </button> -->
         </div>
-        <div class="t-search t-search-left w-50">
+        <div class="t-search t-search-left">
             <div class="o_searchview">
                 <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu" [(ngModel)]="search"
                     (ngModelChange)="this.searchUpdate.next($event)" />
@@ -70,8 +75,10 @@
                                 <i class="fas fa-plus-circle mr-1"></i>
                                 Thêm tài khoản ngân hàng
                             </button>
-                            <kendo-combobox #accountJournalCbx [popupSettings]="cbxPopupSettings" style="width: 250px" class="mr-2 cbx-account" [data]="listAccounts" filterable="true"
-                            textField="name" [value]="accountJournalSelectedId" valueField="id" placeholder = "Tất cả tài khoản" [valuePrimitive]="true" (selectionChange)="onSelectAccount($event)">
+                            <kendo-combobox #accountJournalCbx [popupSettings]="cbxPopupSettings" style="width: 250px"
+                                class="mr-2 cbx-account" [data]="listAccounts" filterable="true" textField="name"
+                                [value]="accountJournalSelectedId" valueField="id" placeholder="Tất cả tài khoản"
+                                [valuePrimitive]="true" (selectionChange)="onSelectAccount($event)">
                                 <ng-template kendoComboBoxItemTemplate let-dataItem>
                                     <div class="pt-2 pb-2">
                                         <div class="font-weight-bold">{{dataItem.accountNumber || dataItem.name}}</div>
@@ -85,7 +92,8 @@
                                     </div>
                                 </ng-template>
                             </kendo-combobox>
-                            <button *ngIf="this.accountJournalSelectedId" class="btn btn-success btn-edit" (click)="editAccountBank()">
+                            <button *ngIf="this.accountJournalSelectedId" class="btn btn-success btn-edit"
+                                (click)="editAccountBank()">
                                 <i class="far fa-edit"></i>
                             </button>
                         </div>
@@ -120,9 +128,9 @@
                                     </span>
                                 </ng-template>
                                 <span class="font-weight-bold mr-1">Chênh lệch</span>
-                                <i class="fas fa-info-circle text-primary" popoverClass="popover-sm" placement="top" 
-                                [ngbPopover]="popContent" triggers="mouseenter:mouseleave"></i>
-                                
+                                <i class="fas fa-info-circle text-primary" popoverClass="popover-sm" placement="top"
+                                    [ngbPopover]="popContent" triggers="mouseenter:mouseleave"></i>
+
                                 <h4 class="text-warning">{{getDifferentThuChi() |
                                     number}}</h4>
                             </div>

@@ -25,9 +25,14 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-       
-       
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AutoComplete(AccountAccountPaged val)
+        {
+            var res = await _accountAccountService.GetAutoCompleteAsync(val);
 
-       
+            return Ok(_mapper.Map<IEnumerable<AccountAccountBasic>>(res));
+        }
+
+
     }
 }

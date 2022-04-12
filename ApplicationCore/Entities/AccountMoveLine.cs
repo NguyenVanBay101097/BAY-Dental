@@ -132,5 +132,7 @@ namespace ApplicationCore.Entities
 
         public Guid? InsuranceId { get; set; }
         public ResInsurance Insurance { get; set; }
+        public Guid? SalaryPaymentId { get; set; }
+        public SalaryPayment SalaryPayment { get; }
     }
 }

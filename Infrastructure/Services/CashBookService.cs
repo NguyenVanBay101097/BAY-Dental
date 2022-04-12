@@ -71,7 +71,7 @@ namespace Infrastructure.Services
             return total;
         }
 
-        public async Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId)
+        public async Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId, string accountCode, string paymentType)
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var cashBookReport = new CashBookReport();
@@ -102,6 +102,24 @@ namespace Infrastructure.Services
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
             if (journalId.HasValue)
                 query = query.Where(x => x.JournalId == journalId.Value);
+
+            if (!string.IsNullOrWhiteSpace(accountCode))
+            {
+                query = query.Where(x => accountCode == x.Account.Code);
+            }
+
+            if (!string.IsNullOrWhiteSpace(paymentType))
+            {
+                query = query.Include(x => x.Payment).Include(x => x.PhieuThuChi);
+                if (paymentType == "inbound")
+                {
+                    query = query.Where(x => (x.PhieuThuChiId.HasValue && x.PhieuThuChi.Type.Equals("thu")) || (x.PaymentId.HasValue && x.Payment.PaymentType.Equals("inbound")));
+                }
+                else if (paymentType == "outbound")
+                {
+                    query = query.Where(x => (x.PhieuThuChiId.HasValue && x.PhieuThuChi.Type.Equals("chi")) || (x.PaymentId.HasValue && x.Payment.PaymentType.Equals("outbound")) || (x.SalaryPaymentId.HasValue));
+                }
+            }
 
             cashBookReport.TotalThu = await query.SumAsync(x => x.Credit);
             cashBookReport.TotalChi = await query.SumAsync(x => x.Debit);
@@ -192,7 +210,7 @@ namespace Infrastructure.Services
             return SumaryCashBook;
         }
 
-        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit, int offset, Guid? companyId, string search, string resultSelection, Guid? journalId)
+        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit, int offset, Guid? companyId, string search, string resultSelection, Guid? journalId, string accountCode, string paymentType)
         {
             var amlObj = GetService<IAccountMoveLineService>();
 
@@ -216,6 +234,24 @@ namespace Infrastructure.Services
 
             if (journalId.HasValue)
                 query = query.Where(x => x.JournalId == journalId);
+
+            if (!string.IsNullOrWhiteSpace(accountCode))
+            {
+                query = query.Where(x => accountCode == x.Account.Code);
+            }
+
+            if (!string.IsNullOrWhiteSpace(paymentType))
+            {
+                query = query.Include(x => x.Payment).Include(x => x.PhieuThuChi);
+                if (paymentType == "inbound")
+                {
+                    query = query.Where(x => (x.PhieuThuChiId.HasValue && x.PhieuThuChi.Type.Equals("thu")) || (x.PaymentId.HasValue && x.Payment.PaymentType.Equals("inbound")) );
+                }
+                else if (paymentType == "outbound")
+                {
+                    query = query.Where(x => (x.PhieuThuChiId.HasValue && x.PhieuThuChi.Type.Equals("chi")) || (x.PaymentId.HasValue && x.Payment.PaymentType.Equals("outbound")) || (x.SalaryPaymentId.HasValue));
+                }
+            }
 
             var totalItems = await query.CountAsync();
 

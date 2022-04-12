@@ -20,6 +20,8 @@ export class CashBookSummarySearch {
   journalId: string;
   dateFrom: string;
   dateTo: string;
+  accountCode: string;
+  paymentType: string;
 }
 
 export class AccountMoveLineCashBookVM {
@@ -60,6 +62,8 @@ export class CashBookDetailFilter {
   search: string;
   limit: number;
   offset: number;
+  accountCode: string;
+  paymentType: string;
 }
 
 export class DataInvoiceFilter {
@@ -100,12 +104,17 @@ export class SumaryCashBook {
   balance: number;
 }
 
+export class AccountAccountPaged {
+  limit: number;
+  offset: number;
+  search: string;
+}
 @Injectable({
   providedIn: "root",
 })
 export class CashBookService {
   apiUrl = "api/CashBooks";
-
+  apiUrlAccount = "api/AccountAccounts";
   constructor(
     private http: HttpClient,
     @Inject("BASE_API") private baseApi: string
@@ -168,5 +177,7 @@ export class CashBookService {
     return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
 
-
+  getAutoCompleteAccounts(val: AccountAccountPaged) {
+    return this.http.post(this.baseApi + this.apiUrlAccount + '/AutoComplete', val);
+  }
 }

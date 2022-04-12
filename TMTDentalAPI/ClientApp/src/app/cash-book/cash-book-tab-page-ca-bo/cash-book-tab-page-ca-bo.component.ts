@@ -10,7 +10,7 @@ import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } fro
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AccountBankCuDialogComponent } from '../account-bank-cu-dialog/account-bank-cu-dialog.component';
-import { CashBookDetailFilter, CashBookService, CashBookSummarySearch } from '../cash-book.service';
+import { AccountAccountPaged, CashBookDetailFilter, CashBookService, CashBookSummarySearch } from '../cash-book.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-ca-bo',
@@ -44,6 +44,14 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   cbxPopupSettings = {
     width: 320
   };
+  filteredPaymentTypes: { [key: string]: string }[] = [
+    { value: 'inbound', text: 'Phiếu thu' },
+    { value: 'outbound', text: 'Phiếu chi' },
+  ];
+
+  paymentType: string = '';
+  accountCode: string = '';
+  filteredAccountCode: any;
   constructor(
     private cashBookService: CashBookService,
     private intlService: IntlService,
@@ -68,6 +76,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     this.loadCashBankTotal();
     this.clickTab('cash_bank');
     this.loadAccounts();
+    this.loadAutoCompleteAccount();
     this.searchUpdate.pipe(
       debounceTime(400),
       distinctUntilChanged())
@@ -90,6 +99,15 @@ export class CashBookTabPageCaBoComponent implements OnInit {
       });
   }
 
+  loadAutoCompleteAccount() {
+    let val = new AccountAccountPaged();
+    val.limit = 0;
+    val.offset = 0;
+    this.cashBookService.getAutoCompleteAccounts(val).subscribe((res: any) => {
+      this.filteredAccountCode = res;
+    }, error => console.log(error));
+  } 
+
   loadCashBankTotal() {
     var companyId = this.authService.userInfo.companyId;
     let cash = this.cashBookService.getSumary({ resultSelection: "cash", companyId: companyId });
@@ -109,6 +127,8 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     summarySearch.companyId = this.authService.userInfo.companyId;
     summarySearch.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
     summarySearch.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
+    summarySearch.accountCode = this.accountCode;
+    summarySearch.paymentType = this.paymentType;
     this.cashBookService.getSumary(summarySearch)
       .subscribe(
         (res) => {
@@ -133,7 +153,8 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';
-
+    gridPaged.accountCode = this.accountCode;
+    gridPaged.paymentType = this.paymentType;
     this.cashBookService.getDetails(gridPaged)
       .pipe(
         map((response: any) =>
@@ -298,5 +319,17 @@ export class CashBookTabPageCaBoComponent implements OnInit {
 
         }
       );
+  }
+
+  onChangePaymentType(event) {
+    this.paymentType = event;
+    this.loadGridData();
+    this.loadDataFromApi();
+  }
+
+  changeAccountCode(event) {
+    this.accountCode = event.join(',');
+    this.loadGridData();
+    this.loadDataFromApi();
   }
 }

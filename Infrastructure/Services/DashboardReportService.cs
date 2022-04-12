@@ -296,7 +296,7 @@ namespace Infrastructure.Services
 
             res.DataThuChiReport = reportThuChi;
             /// load dữ liệu chi tiết
-            var cashbooks = await cashbookObj.GetDetails(dateFrom, dateTo, 0, 0, companyId, null, null, null);
+            var cashbooks = await cashbookObj.GetDetails(dateFrom, dateTo, 0, 0, companyId, null, null, null, null, null);
             res.DataDetails = cashbooks.Items;
 
             return res;
