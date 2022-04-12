@@ -1,5 +1,4 @@
-﻿
-<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
+﻿<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
     <tbody>
         <tr>
             <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
@@ -42,15 +41,15 @@
         </tr>
     </tbody>
 </table>
-
+<!--{{if (o.histories.size > 0 || o.medical_history)}}-->
 <h6>TIỂU SỬ BỆNH</h6>
 <!--{{for history in o.histories}}-->
 - {{history.name}}
 <br />
 <!--{{end}}-->
-
 <p><strong>Tiểu sử bệnh khác: </strong>{{o.medical_history ? o.medical_history : ""}}</p>
-{{if (o.teeth.size > 0)}}
+<!--{{end}}-->
+<!--{{if (o.have_adult_teeth || o.have_child_teeth)}}-->
 <h6>SƠ ĐỒ RĂNG</h6>
 <div class="text-center">
     {{if (o.have_adult_teeth)}}
@@ -97,7 +96,6 @@
                 {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
                 {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
                 <!--{{end}}-->
-
             </div>
             <div class="chia_doi_doc"></div>
             <div class="teethElement">
@@ -113,20 +111,20 @@
                 <!--{{for teeth in o.child_down_right_teeth}}-->
                 {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div>{{end}}
                 {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
-                {{end}}
+                <!--{{end}}-->
             </div>
             <div class="chia_doi_doc"></div>
             <div class="teethElement">
                 <!--{{for teeth in o.child_down_left_teeth}}-->
                 {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
                 {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
-                {{end}}
+                <!--{{end}}-->
             </div>
         </div>
     </div>
     {{end}}
 </div>
-{{end}}
+<!--{{end}}-->
 <div style="display: inline-block">
     <div style="display: flex">
         <div>
@@ -139,7 +137,6 @@
     </div>
 </div>
 <h6>DANH SÁCH DỊCH VỤ</h6>
-
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
@@ -197,7 +194,7 @@
             <td style="text-align:right;width:120px"><strong>Thanh toán</strong></td>
         </tr>
         <!--{{for sop in o.sale_order_payments}}-->
-    <!--{{for item in sop.payment_rels}}-->
+        <!--{{for item in sop.payment_rels}}-->
         <tr>
             <td>{{item.payment?.name}}</td>
             <!--{{if item.payment?.id == sop.payment_rels[0]?.payment.id}}-->
@@ -209,7 +206,7 @@
             <td style="text-align:right">{{item.payment?.amount | math.format "N0"}}</td>
         </tr>
         <!--{{end}}-->
-    <!--{{end}}-->
+        <!--{{end}}-->
     </tbody>
 </table>
 <!--{{end}}-->
