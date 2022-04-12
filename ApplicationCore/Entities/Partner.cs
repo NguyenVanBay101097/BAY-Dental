@@ -313,6 +313,18 @@ namespace ApplicationCore.Entities
             }
         }
 
+        [NotMapped]
+        public string GetBirthDay
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+        }
+
         public string GetDateOfBirth()
         {
             if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";

@@ -1979,13 +1979,15 @@ namespace Infrastructure.Services
             return invoices;
         }
 
-        public async Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids)
+        public async Task<IEnumerable<SaleOrderPrintViewModel>> GetPrintTemplate(IEnumerable<Guid> ids)
         {
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
+            var toothService = GetService<IToothService>();
+            var irModelDataService = GetService<IIRModelDataService>();
             var orders = await SearchQuery(x => ids.Contains(x.Id))
                 .Include(x => x.Company).ThenInclude(x => x.Partner)
-                .Include(x => x.Partner)
+                .Include(x => x.Partner).ThenInclude(x => x.PartnerHistoryRels).ThenInclude(x => x.History)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
                 .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x => x.ToothRels).ThenInclude(x => x.Tooth)
                 .Include(x => x.CreatedBy)
@@ -1999,6 +2001,7 @@ namespace Infrastructure.Services
                     .Where(x => x.ProductUOMQty != 0)
                     .Include(x => x.Product)
                     .Include(x => x.Employee)
+                    .Include(x => x.SaleOrderLineToothRels).ThenInclude(x => x.Tooth)
                     .ToListAsync();
 
                 order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id && x.State == "posted")
@@ -2007,7 +2010,68 @@ namespace Infrastructure.Services
                     .ToListAsync();
             }
 
-            return orders;
+            var orderVMs = _mapper.Map<IEnumerable<SaleOrderPrintViewModel>>(orders);
+            foreach (var orderVm in orderVMs)
+            {
+                // get histories
+                if (orderVm.Partner.PartnerHistoryRels.Any())
+                {
+                    var histories = orderVm.Partner.PartnerHistoryRels.Select(x => x.History).ToList();
+                    orderVm.Histories = histories;
+                }
+                // get medical history
+                orderVm.MedicalHistory = orderVm.Partner.MedicalHistory;
+                var teethSelected = new List<ToothDisplay>();
+                var toothCategories = orderVm.OrderLines.Where(x => x.ToothCategoryId.HasValue).Select(x => x.ToothCategoryId).Distinct().ToList();
+
+                // get teeth selected in order lines
+                foreach (var line in orderVm.OrderLines)
+                {
+                    teethSelected.AddRange(line.Teeth);
+                }
+                var teethIdSelected = teethSelected.Select(x => x.Id).Distinct().ToList();
+
+                // get teeth in order lines
+                var teethQuery =toothService.SearchQuery();
+                if (toothCategories.Any())
+                {
+                    teethQuery = teethQuery.Where(x => toothCategories.Contains(x.CategoryId));
+                }
+                var teeth = await teethQuery.OrderByDescending(x => x.DateCreated).ToListAsync();
+                var teethPrint = _mapper.Map<IEnumerable<ToothPrint>>(teeth);
+
+                // active teeth selected 
+                foreach (var toothPrint in teethPrint)
+                {
+                    if (teethIdSelected.Contains(toothPrint.Id))
+                        toothPrint.IsSelected = true;
+                }
+
+                // get dult teeth
+                var adultTeethModelData = await irModelDataService.GetObjectReference("base.tooth_category_adult");
+                var adultToothCategoryId = new Guid(adultTeethModelData.ResId);
+                var adultTeeth = teethPrint.Where(x => x.CategoryId.Equals(adultToothCategoryId)).ToList();
+                if (adultTeeth.Any())
+                    orderVm.HaveAdultTeeth = true;
+                orderVm.AdultUpRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).ToList();
+                orderVm.AdultUpLeftTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("1_left")).ToList();
+                orderVm.AdultDownRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).ToList();
+                orderVm.AdultDownLeftTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).ToList();
+
+                // get child teeth
+                var childTeethModelData = await irModelDataService.GetObjectReference("base.tooth_category_child");
+                var childToothCategoryId = new Guid(childTeethModelData.ResId);
+                var childTeeth = teethPrint.Where(x => x.CategoryId.Equals(childToothCategoryId)).ToList();
+                if (childTeeth.Any())
+                    orderVm.HaveChildTeeth = true;
+                orderVm.ChildUpRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).ToList();
+                orderVm.ChildUpLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("1_left")).ToList();
+                orderVm.ChildDownRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).ToList();
+                orderVm.ChildDownLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).ToList();
+
+            }
+
+            return orderVMs;
         }
 
         public async Task<SaleOrderPrintVM> GetPrint(Guid id)

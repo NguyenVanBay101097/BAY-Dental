@@ -152,7 +152,7 @@ namespace Infrastructure.Services
                 {
                     case "tmp_sale_order":
                         {
-                            var res = JsonConvert.DeserializeObject<SaleOrder>(item.Data.ToString());
+                            var res = JsonConvert.DeserializeObject<SaleOrderPrintViewModel>(item.Data.ToString());
                             res.Company = company;
                             return res;
                         }

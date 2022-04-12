@@ -1,4 +1,5 @@
-﻿<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
+﻿
+<table border="0" cellpadding="5" cellspacing="0" style="width:100%">
     <tbody>
         <tr>
             <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
@@ -19,15 +20,19 @@
     <strong>Số: {{o.name}}</strong>
 </p>
 
-<h6>THÔNG TIN CHI TIẾT</h6>
+<h6>THÔNG TIN KHÁCH HÀNG</h6>
 
 <table border="0" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
             <td style="width:120px"><strong>Khách hàng</strong></td>
             <td>{{o.partner?.name}}</td>
+            <td style="width:120px"><strong>Giới tính</strong></td>
+            <td>{{o.partner?.get_gender}}</td>
         </tr>
         <tr>
+            <td style="width:120px"><strong>Ngày sinh</strong></td>
+            <td>{{o.partner?.get_birth_day}}</td>
             <td style="width:120px"><strong>Điện thoại</strong></td>
             <td>{{o.partner?.phone}}</td>
         </tr>
@@ -38,12 +43,108 @@
     </tbody>
 </table>
 
-<h6>BẢNG KÊ DỊCH VỤ</h6>
+<h6>TIỂU SỬ BỆNH</h6>
+<!--{{for history in o.histories}}-->
+- {{history.name}}
+<br />
+<!--{{end}}-->
+
+<p><strong>Tiểu sử bệnh khác: </strong>{{o.medical_history ? o.medical_history : ""}}</p>
+{{if (o.teeth.size > 0)}}
+<h6>SƠ ĐỒ RĂNG</h6>
+<div class="text-center">
+    {{if (o.have_adult_teeth)}}
+    <div class="teeth_container">
+        <div class="ham_tren" style="display: flex;">
+            <div class="teethElement" style="flex-flow:row-reverse">
+                <!--{{for teeth in o.adult_up_right_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                <!--{{end}}-->
+            </div>
+            <div class="chia_doi_doc"></div>
+            <div class="teethElement">
+                <!--{{for teeth in o.adult_up_left_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                <!--{{end}}-->
+            </div>
+        </div>
+        <div class="duong_chia_doi"></div>
+        <div class="ham_duoi" style="display: flex;">
+            <div class="teethElement" style="flex-flow:row-reverse">
+                <!--{{for teeth in o.adult_down_right_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div>{{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                <!--{{end}}-->
+            </div>
+            <div class="chia_doi_doc"></div>
+            <div class="teethElement">
+                <!--{{for teeth in o.adult_down_left_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                <!--{{end}}-->
+            </div>
+        </div>
+    </div>
+
+    {{end}}
+    {{if (o.have_child_teeth)}}
+    <div class="teeth_container text-center" style="margin-top: 0.5rem">
+        <div class="ham_tren" style="display: flex;">
+            <div class="teethElement" style="flex-flow:row-reverse">
+                <!--{{for teeth in o.child_up_right_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                <!--{{end}}-->
+
+            </div>
+            <div class="chia_doi_doc"></div>
+            <div class="teethElement">
+                <!--{{for teeth in o.child_up_left_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                <!--{{end}}-->
+            </div>
+        </div>
+        <div class="duong_chia_doi"></div>
+        <div class="ham_duoi" style="display: flex;">
+            <div class="teethElement" style="flex-flow:row-reverse">
+                <!--{{for teeth in o.child_down_right_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div>{{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                {{end}}
+            </div>
+            <div class="chia_doi_doc"></div>
+            <div class="teethElement">
+                <!--{{for teeth in o.child_down_left_teeth}}-->
+                {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{end}}
+<div style="display: inline-block">
+    <div style="display: flex">
+        <div>
+
+        </div>
+        <div></div>
+        <div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<h6>DANH SÁCH DỊCH VỤ</h6>
 
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
             <td><strong>Dịch vụ</strong></td>
+            <td><strong>Răng</strong></td>
             <td><strong>ĐVT</strong></td>
             <td style="text-align:right"><strong>Số lượng</strong></td>
             <td style="text-align:right"><strong>Đơn giá</strong></td>
@@ -51,14 +152,15 @@
             <td style="text-align:right"><strong>Thành tiền</strong></td>
         </tr>
         <!--{{for line in o.order_lines}}-->
-    <tr>
-        <td>{{line.product?.name}}</td>
-        <td>{{line.product_uom?.name}}</td>
-        <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}</td>
-        <td style="text-align:right">{{line.price_unit | math.format "N0" }}</td>
-        <td style="text-align:right">{{line.amount_discount_total | math.format "N0" }}</td>
-        <td style="text-align:right">{{line.price_sub_total | math.format "N0" }}</td>
-    </tr>
+        <tr>
+            <td><strong>{{line.product?.name}}</strong><br />Chẩn đoán: {{line.diagnostic ? line.diagnostic : ""}}</td>
+            <td>{{line.teeth_display ? line.teeth_display : ""}}</td>
+            <td>{{line.product_uom?.name}}</td>
+            <td style="text-align:right">{{(line.product_uomqty ? line.product_uomqty : 0) | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.price_unit | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.amount_discount_total | math.format "N0" }}</td>
+            <td style="text-align:right">{{line.price_sub_total | math.format "N0" }}</td>
+        </tr>
         <!--{{end}}-->
     </tbody>
 </table>
@@ -82,7 +184,7 @@
 
 <div class="clearfix"></div>
 <!--{{if (o.sale_order_payments.size > 0)}}-->
-<h6>THEO DÕI THANH TOÁN</h6>
+<h6>LỊCH SỬ THANH TOÁN</h6>
 
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
@@ -94,7 +196,8 @@
             <td style="width:120px"><strong>Phương thức</strong></td>
             <td style="text-align:right;width:120px"><strong>Thanh toán</strong></td>
         </tr>
-        <!--{{for sop in o.sale_order_payments}}--><!--{{for item in sop.payment_rels}}-->
+        <!--{{for sop in o.sale_order_payments}}-->
+    <!--{{for item in sop.payment_rels}}-->
         <tr>
             <td>{{item.payment?.name}}</td>
             <!--{{if item.payment?.id == sop.payment_rels[0]?.payment.id}}-->
@@ -105,37 +208,31 @@
             <td>{{item.payment?.journal?.name}}</td>
             <td style="text-align:right">{{item.payment?.amount | math.format "N0"}}</td>
         </tr>
-        <!--{{end}}--><!--{{end}}-->
+        <!--{{end}}-->
+    <!--{{end}}-->
     </tbody>
 </table>
 <!--{{end}}-->
 <!--{{if (o.dot_khams.size > 0)}}-->
-<h6>THÔNG TIN ĐỢT KHÁM</h6>
-
+<h6>DANH SÁCH ĐỢT KHÁM</h6>
+<!--{{for dotkham in o.dot_khams}}-->
+<!--{{i = for.index + 1}}-->
+<strong>Đợt khám {{i}} - Ngày {{dotkham.date | date.to_string '%d/%m/%Y' }} - BS.{{dotkham.doctor ? dotkham.doctor?.name : ""}}</strong>
 <table border="1" cellpadding="3" cellspacing="1" style="width:100%">
     <tbody>
         <tr>
-            <td><strong>Đợt khám</strong></td>
-            <td><strong>Ngày</strong></td>
-            <td><strong>Bác sĩ</strong></td>
-            <td><strong>Mô tả</strong></td>
+            <!--<td><strong>Đợt khám</strong></td>-->
+            <!--<td><strong>Ngày</strong></td>-->
+            <!--<td><strong>Bác sĩ</strong></td>-->
+            <!--<td><strong>Mô tả</strong></td>-->
             <td><strong>Dịch vụ</strong></td>
             <td><strong>Công đoạn</strong></td>
             <td><strong>Răng, Chi tiết điều trị</strong></td>
         </tr>
 
-        <!--{{for dotkham in o.dot_khams}}-->
-            <!--{{i = for.index + 1}}-->
-            <!--{{for line in dotkham.lines}}-->
+
+        <!--{{for line in dotkham.lines}}-->
         <tr>
-
-            <!--{{if line.id == (dotkham.lines[0]?.id)}}-->
-            <td rowspan="{{(dotkham.lines | array.size)}}" style="text-align:center">{{i}}</td>
-            <td rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.date | date.to_string '%d/%m/%Y' }}</td>
-            <td rowspan="{{(dotkham.lines | array.size)}}">{{dotkham.doctor ? dotkham.doctor?.name : ""}}</td>
-            <td rowspan="{{(dotkham.lines | array.size)}}" style="vertical-align:top">{{dotkham.reason}}</td>
-
-            <!--{{end}}-->
             <td style="vertical-align:top">{{line.product.name}}</td>
             <td style="vertical-align:top">{{line.name_step}}</td>
             <td style="vertical-align:top">
@@ -144,9 +241,10 @@
             </td>
         </tr>
 
-        <!--{{end}}--><!--{{end}}-->
+        <!--{{end}}-->
     </tbody>
 </table>
+<!--{{end}}-->
 <!--{{end}}-->
 <!--{{if (o.ir_attachments.size > 0)}}-->
 <h6>PHIM XQKTS</h6>
@@ -159,10 +257,15 @@
             <td style="text-align:center;width:50%;">
                 <strong>Người lập phiếu</strong><br />
                 <em>(Ký, họ tên)</em><br />
+                </>
                 <br />
                 <br />
                 <br />
+
+
                 <br />
+
+
                 <strong>{{u.name | string.upcase}}</strong>
             </td>
             <td style="text-align:center;width: 50%;">

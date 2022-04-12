@@ -13,4 +13,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Position { get; set; }
 
     }
+
+    public class ToothPrint : ToothViewModel
+    {
+        public bool IsSelected { get; set; }
+    }
 }

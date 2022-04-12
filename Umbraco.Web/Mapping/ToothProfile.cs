@@ -20,6 +20,7 @@ namespace Umbraco.Web.Mapping
                 .ForMember(x => x.Category, x => x.Ignore());
 
             CreateMap<Tooth, ToothSimplePrintTemplate>();
+            CreateMap<Tooth, ToothPrint>();
         }
     }
 }

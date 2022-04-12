@@ -561,8 +561,12 @@ const keyWorDatas =
             text: 'Thông tin chung',
             value: [
                 { text: 'Họ tên khách hàng', value: '{{o.partner?.name}}' },
+                { text: 'Giới tính', value: '{{o.partner?.get_gender}}' },
+                { text: 'Ngày sinh', value: '{{o.partner?.get_birth_day}}' },
                 { text: 'SĐT khách hàng', value: '{{o.partner?.phone}}' },
                 { text: 'Địa chỉ khách hàng', value: '{{o.partner?.address}}' },
+                { text: 'Tiểu sử bệnh', value: '{{history.name}}' },
+                { text: 'Tiểu sử bệnh khác', value: '{{o.medical_history}}' },
                 { text: 'Tổng thành tiền (chưa giảm giá)', value: '{{o.amount_undiscount_total}}' },
                 { text: 'Tổng giảm giá', value: '{{o.amount_discount_total}}' },
                 { text: 'Tổng tiền', value: '{{o.amount_total}}' },
@@ -576,6 +580,8 @@ const keyWorDatas =
             value: [
                 { text: 'Danh sách dịch vụ', value: '{{o.order_lines}}' },
                 { text: 'Tên dịch vụ', value: '{{line.product?.name}}' },
+                { text: 'Chẩn đoán', value: '{{line.diagnostic}}' },
+                { text: 'Răng', value: '{{line.teeth_display}}' },
                 { text: 'Đơn vị tính', value: '{{line.product_uom?.name}}' },
                 { text: 'Số lượng', value: '{{line.product_uomqty}}' },
                 { text: 'Đơn giá gốc', value: '{{line.price_unit}}' },
