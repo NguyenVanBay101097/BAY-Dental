@@ -144,7 +144,6 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
   }
 
   loadListPartner() {
-    debugger;
     let val = {};
     for (const key in this.filter) {
       const element = this.filter[key];
