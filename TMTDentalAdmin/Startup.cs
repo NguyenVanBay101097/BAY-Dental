@@ -100,7 +100,7 @@ namespace TMTDentalAdmin
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
             services.AddScoped<ITenantOldSaleOrderProcessUpdateService, TenantOldSaleOrderProcessUpdateService>();
             services.AddSingleton<UpdateExpiredDateTenantService>();
-            services.AddHostedService<UpdateExpiredBackgroundService>();
+            //services.AddHostedService<UpdateExpiredBackgroundService>();
             //services.AddCronJob<ScheduleJobService>(c =>
             //{
             //    c.TimeZoneInfo = TimeZoneInfo.Local;
@@ -117,6 +117,8 @@ namespace TMTDentalAdmin
             });
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            services.AddHttpClient();
 
             services.AddCors(options =>
             {

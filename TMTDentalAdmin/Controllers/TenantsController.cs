@@ -38,13 +38,16 @@ namespace TMTDentalAdmin.Controllers
         private readonly IConfiguration _configuration;
         private readonly ITenantExtendHistoryService _tenantExtendHistoryService;
         private readonly ITenantOldSaleOrderProcessUpdateService _tenantOldSaleOrderProcessUpdateService;
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public TenantsController(ITenantService tenantService,
             IMapper mapper, IUnitOfWorkAsync unitOfWork,
             UserManager<ApplicationAdminUser> userManager,
             IConfiguration configuration,
             IOptions<AdminAppSettings> appSettings,
             ITenantExtendHistoryService tenantExtendHistoryService,
-            ITenantOldSaleOrderProcessUpdateService tenantOldSaleOrderProcessUpdateService
+            ITenantOldSaleOrderProcessUpdateService tenantOldSaleOrderProcessUpdateService,
+            IHttpClientFactory httpClientFactory
             )
         {
             _tenantService = tenantService;
@@ -55,6 +58,7 @@ namespace TMTDentalAdmin.Controllers
             _appSettings = appSettings?.Value;
             _configuration = configuration;
             _tenantOldSaleOrderProcessUpdateService = tenantOldSaleOrderProcessUpdateService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -134,32 +138,24 @@ namespace TMTDentalAdmin.Controllers
                 return BadRequest();
 
             var tenant = await _tenantService.GetByIdAsync(val.Id);
-            var oldDateExpired = tenant.DateExpired;
-            var oldActiveCompaniesNbr = tenant.ActiveCompaniesNbr;
-            tenant.DateExpired = val.DateExpired;
-            tenant.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
-            await _tenantService.UpdateAsync(tenant);
 
+            await _unitOfWork.BeginTransactionAsync();
+            tenant.ActiveCompaniesNbr = val.ActiveCompaniesNbr;
+            tenant.DateExpired = val.DateExpired;
+            await _tenantService.UpdateAsync(tenant);
             try
             {
-                HttpClientHandler clientHandler = new HttpClientHandler();
-                clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
-
-                HttpResponseMessage response = null;
-                using (var client = new HttpClient(new RetryHandler(clientHandler)))
+                using (var client = _httpClientFactory.CreateClient())
                 {
-                    response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
+                    var response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
                 }
 
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Có lỗi xảy ra");
+                _unitOfWork.Commit();
             }
             catch (Exception e)
             {
-                tenant.DateExpired = oldDateExpired;
-                tenant.ActiveCompaniesNbr = oldActiveCompaniesNbr;
-                await _tenantService.UpdateAsync(tenant);
-                throw e;
+                _unitOfWork.Rollback();
+                throw new Exception($"Không thể clear cache tenant {e.Message}");
             }
 
             return NoContent();
@@ -173,45 +169,50 @@ namespace TMTDentalAdmin.Controllers
 
             var tenant = await _tenantService.GetByIdAsync(val.TenantId);
             var now = DateTime.Now;
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            var history = new TenantExtendHistory
+            {
+                ActiveCompaniesNbr = val.ActiveCompaniesNbr,
+                TenantId = tenant.Id,
+                ExpirationDate = tenant.DateExpired ?? DateTime.Now
+            };
+
             if (val.CheckOption == "time")
             {
-                //Trường hợp: Tên miền gần hết hạn gia hạn thêm, có thể thêm chi nhánh
-                //Trường hợp đã hết hạn, gia hạn thời gian
-                var startDate = tenant.DateExpired.HasValue ? tenant.DateExpired.Value : DateTime.Now;
-                if (startDate < now)
-                    startDate = now;
-                var endDate = startDate;
+                var dateExpire = tenant.DateExpired.HasValue ? tenant.DateExpired.Value : DateTime.Now;
+                if (dateExpire < now)
+                    dateExpire = now;
+
                 if (val.LimitOption == "day")
-                    endDate = endDate.AddDays(val.Limit);
+                    dateExpire = dateExpire.AddDays(val.Limit);
                 if (val.LimitOption == "month")
-                    endDate = endDate.AddMonths(val.Limit);
+                    dateExpire = dateExpire.AddMonths(val.Limit);
                 if (val.LimitOption == "year")
-                    endDate = endDate.AddYears(val.Limit);
+                    dateExpire = dateExpire.AddYears(val.Limit);
 
-                var history = new TenantExtendHistory
-                {
-                    StartDate = startDate,
-                    ActiveCompaniesNbr = val.ActiveCompaniesNbr,
-                    ExpirationDate = endDate,
-                    TenantId = tenant.Id
-                };
-                await _tenantExtendHistoryService.CreateAsync(history);
+                history.ExpirationDate = dateExpire;
             }
-            else if (val.CheckOption == "company")
+
+            await _tenantExtendHistoryService.CreateAsync(history);
+
+            try
             {
-                //Thêm/bớt chi nhánh trong khi vẫn chưa hết hạn phần mềm, nếu phần mềm đã hết hạn thì ko cho phép
-                if (now > tenant.DateExpired)
-                    throw new Exception("Không thể thêm chi nhánh cho tên miền đã hết hạn");
-
-                var history = new TenantExtendHistory
+                using (var client = _httpClientFactory.CreateClient())
                 {
-                    StartDate = DateTime.Now,
-                    ActiveCompaniesNbr = val.ActiveCompaniesNbr,
-                    ExpirationDate = tenant.DateExpired.HasValue ? tenant.DateExpired.Value : DateTime.Now,
-                    TenantId = tenant.Id
-                };
+                    var response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
+                    tenant.ActiveCompaniesNbr = history.ActiveCompaniesNbr;
+                    tenant.DateExpired = history.ExpirationDate;
+                    await _tenantService.UpdateAsync(tenant);
+                }
 
-                await _tenantExtendHistoryService.CreateAsync(history);
+                _unitOfWork.Commit();
+            }
+            catch (Exception e)
+            {
+                _unitOfWork.Rollback();
+                throw new Exception($"Không thể clear cache tenant {e.Message}");
             }
 
             return NoContent();
