@@ -6,35 +6,56 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { map, catchError, finalize } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { AppLoadingService } from '@shared/app-loading.service';
+import { Router } from '@angular/router';
 
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
 
-    constructor(private notificationService: NotificationService, private loadingService: AppLoadingService) { }
+    constructor(private notificationService: NotificationService, private loadingService: AppLoadingService,
+        private router: Router) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler) {
         this.loadingService.setLoading(true);
         return next.handle(req).pipe(
-            catchError((error: HttpErrorResponse) => {
-                if (error.error && error.error.message) {
-                    this.notificationService.show({
-                        content: error.error.message,
-                        hideAfter: 3000,
-                        position: { horizontal: 'center', vertical: 'top' },
-                        animation: { type: 'fade', duration: 400 },
-                        type: { style: 'error', icon: true }
-                    });
+          map((event: HttpEvent<any>) => {
+                if (event instanceof HttpResponse) {
+                }
+                return event;
+            }),
+          catchError((errorResponse: HttpErrorResponse) => {
+                if (errorResponse.status === 401) {
+                    this.router.navigate(['login']);
                 }
 
-                this.loadingService.setLoading(false);
-                return throwError(error);
-            }))
-            .pipe(map<HttpEvent<any>, any>((evt: HttpEvent<any>) => {
-                if (evt instanceof HttpResponse) {
-                    this.loadingService.setLoading(false);
+                let message;
+                if (errorResponse instanceof HttpErrorResponse) {
+                    // Server Error
+                    const error = errorResponse.error;
+                    if (error) {
+                        message = error.data ? error.data.message : error.message;
+                    }
+
+                    if (message) {
+                        this.notificationService.show({
+                            content: message,
+                            hideAfter: 3000,
+                            position: { horizontal: 'center', vertical: 'top' },
+                            animation: { type: 'fade', duration: 400 },
+                            type: { style: 'error', icon: true }
+                        });
+                    }
+                } else {
+                    // Client Error
+                    if (!navigator.onLine) {
+                        message = 'No Internet Connection';
+                    } else {
+                        message = 'Client error';
+                    }
                 }
-                return evt;
-            }));
+
+                return throwError(errorResponse);
+            }),
+            finalize(() => this.loadingService.setLoading(false)));
     }
 }

@@ -6,12 +6,12 @@ import * as moment from 'moment';
   templateUrl: './header-countdown.component.html',
   styleUrls: ['./header-countdown.component.css']
 })
-export class HeaderCountdownComponent implements OnInit, OnDestroy {
+export class HeaderCountdownComponent implements OnInit, OnDestroy, OnChanges {
 
   timeoutId = 0;
   millis = 0;
-  interval = 1000;
-  @Input() countdown: number = 0;
+  interval = 60000;
+  @Input() countdown: number = 0; //seconds!
 
   seconds: number;
   minutes: number;
@@ -26,6 +26,9 @@ export class HeaderCountdownComponent implements OnInit, OnDestroy {
   @Output() timerStarted = new EventEmitter<any>();
 
   constructor() { }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.start();
+  }
 
   ngOnDestroy(): void {
     this.resetTimeout();
@@ -36,6 +39,10 @@ export class HeaderCountdownComponent implements OnInit, OnDestroy {
   }
 
   start() {
+    if (this.countdown <= 0) {
+      return;
+    }
+
     this.resetTimeout();
     this.tick();
   }
@@ -76,6 +83,7 @@ export class HeaderCountdownComponent implements OnInit, OnDestroy {
   }
 
   calculateTimeUnits() {
+    debugger;
     this.seconds = Math.floor((this.millis / 1000) % 60);
     this.minutes = Math.floor(((this.millis / (60000)) % 60));
     this.hours = Math.floor(((this.millis / (3600000)) % 24));
