@@ -33,6 +33,10 @@ export class PermissionService {
         if (!Array.isArray(permissions))
             throw "permissions parameter is not array.";
         const sessionInfo = this.sessionInfoStorageService.getSessionInfo();
+        if (!sessionInfo) {
+            return false;
+        }
+        
         return permissions.some(v => {
             if (typeof v === "string")
                 return sessionInfo.groups.includes(v);

@@ -55,7 +55,7 @@ export class AuthService {
                         localStorage.setItem('app_version', environment.version + '');
                         this.isLoggedIn = true;
                         this.currentUserSubject.next(result.user);
-                        return this.webSessionService.getSessionInfo();
+                        return of(result);
                     } else {
                         return of(result);
                     }

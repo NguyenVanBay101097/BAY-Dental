@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         alert(data.message);
       } else {
         // localStorage.setItem('user_permission', JSON.stringify(data));
-        localStorage.setItem('session_info', JSON.stringify(data));
+        // localStorage.setItem('session_info', JSON.stringify(data));
         this.router.navigateByUrl('/');
       }
     }, error => {

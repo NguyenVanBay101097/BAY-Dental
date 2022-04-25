@@ -9,6 +9,9 @@ export class CheckPermissionService {
 
     check(permissions: string[]) {
         const sessionInfo = this.sessionInfoStorageService.getSessionInfo();
+        if (!sessionInfo) {
+            return false;
+        }
 
         if (sessionInfo.isAdmin) {
             return true;

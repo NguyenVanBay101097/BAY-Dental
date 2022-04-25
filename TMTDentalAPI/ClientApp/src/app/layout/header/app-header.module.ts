@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { LayoutModule } from '../shared/layout/layout.module';
 import { AppHeaderComponent } from './app-header.component';
+import { HeaderCountdownComponent } from './header-countdown/header-countdown.component';
 
 @NgModule({
   imports: [
@@ -13,10 +14,12 @@ import { AppHeaderComponent } from './app-header.component';
   ],
   exports: [
     AppHeaderComponent,
-    LayoutModule
+    LayoutModule,
+    HeaderCountdownComponent
   ],
   declarations: [
-    AppHeaderComponent
+    AppHeaderComponent,
+    HeaderCountdownComponent
   ]
 })
 export class AppHeaderModule {}
