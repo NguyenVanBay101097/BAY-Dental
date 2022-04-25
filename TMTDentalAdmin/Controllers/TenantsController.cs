@@ -145,7 +145,11 @@ namespace TMTDentalAdmin.Controllers
             await _tenantService.UpdateAsync(tenant);
             try
             {
-                using (var client = _httpClientFactory.CreateClient())
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+                // Pass the handler to httpclient(from you are calling api)
+                using (var client = new HttpClient(clientHandler))
                 {
                     var response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
                 }
@@ -199,7 +203,11 @@ namespace TMTDentalAdmin.Controllers
 
             try
             {
-                using (var client = _httpClientFactory.CreateClient())
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+
+                // Pass the handler to httpclient(from you are calling api)
+                using (var client = new HttpClient(clientHandler))
                 {
                     var response = await client.GetAsync($"{_appSettings.Schema}://{tenant.Hostname}.{_appSettings.CatalogDomain}/api/Companies/ClearCacheTenant");
                     tenant.ActiveCompaniesNbr = history.ActiveCompaniesNbr;
