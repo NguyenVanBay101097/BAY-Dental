@@ -5,6 +5,7 @@ import { AuthService } from './auth/auth.service';
 declare var $: any;
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
+import { WebSessionService } from './core/services/web-session.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ export class AppComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private swUpdate: SwUpdate,
-    private router: Router) {
+    private router: Router,
+    private webSessionService: WebSessionService) {
 
     if (this.swUpdate.isEnabled) {
       this.swUpdate.available.subscribe(() => {
@@ -26,6 +28,16 @@ export class AppComponent implements OnInit {
         }
       });
     }
+
+    if (this.authService.isAuthenticated()) {
+      this.webSessionService.getSessionInfo().subscribe();
+    }
+    
+    this.authService.currentUser.subscribe((user) => {
+      if (user) {
+        this.webSessionService.getSessionInfo().subscribe();
+      }
+    });
   }
 
   ngOnInit(): void {

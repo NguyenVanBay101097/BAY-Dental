@@ -24,7 +24,7 @@ import { UserChangeCurrentCompanyVM, UserService } from '../users/user.service';
   styleUrls: ['./app-home.component.css']
 })
 export class AppHomeComponent implements OnInit {
-
+  expiredIn: number = 0;
   public navItems = [
     {
       name: 'Tổng quan', icon: 'fas fa-home', url: '/dashboard',
@@ -249,12 +249,18 @@ export class AppHomeComponent implements OnInit {
     private irConfigParamService: IrConfigParameterService,
     private sessionInfoStorageService: SessionInfoStorageService,
     private webSessionService: WebSessionService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
   ) { }
 
   ngOnInit() {
-    this.sessionInfo = this.sessionInfoStorageService.getSessionInfo();
-    this.menus = this.filterMenus();
+    //session user info load xong thì mới bắt đầu load menus
+    this.webSessionService.$loaded.subscribe((result: any) => {
+      if (result) {
+        this.menus = this.filterMenus();
+        this.expiredIn = result.expiredIn;
+        this.sessionInfo = this.sessionInfoStorageService.getSessionInfo();
+      }
+    });
     this.loadIrConfigParam();
   }
 
@@ -276,27 +282,15 @@ export class AppHomeComponent implements OnInit {
   }
 
   filterMenus() {
-    var menuItems = this.navItems.filter(x => {
-      if (x.groups) {
-        return this.permissionService.hasDefined(x.groups);
-      }
-
-      return true;
-    });
-
     var list: any[] = [];
-
-    for (var i = 0; i < menuItems.length; i++) {
-      var menuItem = menuItems[i];
-      if (this.hasPermission(menuItem)) {
-        // list.push(menuItem);
+    for (var i = 0; i < this.navItems.length; i++) {
+      var menuItem = this.navItems[i];
+      if (this.checkVisible(menuItem)) {
         if (menuItem.children) {
           var childArr: any[] = [];
           menuItem.children.forEach(child => {
-            if (this.hasGroups(child)) {
-              if (this.hasPermission(child)) {
-                childArr.push(child);
-              }
+            if (this.checkVisible(child)) {
+              childArr.push(child);
             }
           });
           menuItem.children = childArr;
@@ -308,20 +302,20 @@ export class AppHomeComponent implements OnInit {
     return list;
   }
 
-  hasPermission(menuItem) {
-    if (!menuItem.permissions) {
-      return true;
+  checkVisible(menuItem) {
+    if (menuItem.permissions) {
+      if (!this.checkPermissionService.check(menuItem.permissions)) {
+        return false;
+      }
     }
 
-    return this.checkPermissionService.check(menuItem.permissions);
-  }
-
-  hasGroups(menuItem) {
-    if (!menuItem.groups || this.sessionInfo.isAdmin) {
-      return true;
+    if (menuItem.groups) {
+      if (!this.permissionService.hasDefined(menuItem.groups)) {
+        return false;
+      }
     }
 
-    return this.permissionService.hasDefined(menuItem.groups);
+    return true;
   }
 
   toggleMinimize(e) {
@@ -349,16 +343,8 @@ export class AppHomeComponent implements OnInit {
         mergeMap(() => {
           return this.authService.refresh();
         }),
-        mergeMap(() => {
-          return this.webSessionService.getSessionInfo();
-        }),
-        mergeMap((sessionInfo) => {
-          this.sessionInfoStorageService.saveSession(sessionInfo);
-          return this.webSessionService.getCurrentUserInfo();
-        }),
       )
-      .subscribe(userInfo => {
-        localStorage.setItem('user_info', JSON.stringify(userInfo));
+      .subscribe(() => {
         window.location.reload();
       });
   }

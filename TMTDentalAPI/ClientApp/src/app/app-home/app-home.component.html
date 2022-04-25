@@ -6,8 +6,8 @@
         </li>
     </ul>
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown" *ngIf="sessionInfo && sessionInfo.expirationDate">
-            <a class="nav-link text-success">{{showExpirationDate(sessionInfo.expirationDate)}}</a>
+        <li class="nav-item dropdown">
+            <app-header-countdown [countdown]="expiredIn"></app-header-countdown>
         </li>
         <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="bd-setting" role="button" data-toggle="dropdown"

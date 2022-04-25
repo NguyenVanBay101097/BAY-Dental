@@ -55,10 +55,13 @@ namespace TMTDentalAPI.Controllers
 
             var partnerRule = await _modelDataService.GetRef<IRRule>("base.res_partner_rule");
 
+            var dateExpired = _tenant?.DateExpired ?? DateTime.Now;
+            var expiredTimespan = dateExpired - DateTime.Now;
             var sessionInfo = new SessionUserInfo
             {
                 Name = User.Identity.Name,
-                ExpirationDate = _tenant?.DateExpired,
+                ExpirationDate = dateExpired,
+                ExpiredIn = expiredTimespan.Days * 24 * 60 + expiredTimespan.Hours * 60 + expiredTimespan.Minutes,
                 IsAdmin = user.IsUserRoot,
                 Permissions = getPermissionResult.Permission,
                 Groups = groups,
