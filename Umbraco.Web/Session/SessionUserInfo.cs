@@ -23,6 +23,8 @@ namespace Umbraco.Web.Session
         public IEnumerable<string> Groups { get; set; }
 
         public SessionTenantSettings Settings { get; set; }
+
+        public double ExpiredIn { get; set; }
     }
 
     public class SessionUserCompany
