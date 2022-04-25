@@ -1,3 +1,4 @@
+using ApplicationCore;
 using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Middlewares;
@@ -100,6 +101,7 @@ namespace TMTDentalAdmin
             services.AddScoped<ITenantExtendHistoryService, TenantExtendHistoryService>();
             services.AddScoped<ITenantOldSaleOrderProcessUpdateService, TenantOldSaleOrderProcessUpdateService>();
             services.AddSingleton<UpdateExpiredDateTenantService>();
+            services.AddTransient<IExceptionToErrorConverter, DefaultExceptionToErrorConverter>();
             //services.AddHostedService<UpdateExpiredBackgroundService>();
             //services.AddCronJob<ScheduleJobService>(c =>
             //{
