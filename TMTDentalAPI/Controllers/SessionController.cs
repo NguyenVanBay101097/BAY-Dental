@@ -61,7 +61,7 @@ namespace TMTDentalAPI.Controllers
             {
                 Name = User.Identity.Name,
                 ExpirationDate = dateExpired,
-                ExpiredIn = (int)expiredTimespan.TotalSeconds,
+                ExpiredIn = (int)expiredTimespan.TotalMinutes,
                 IsAdmin = user.IsUserRoot,
                 Permissions = getPermissionResult.Permission,
                 Groups = groups,
