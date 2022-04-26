@@ -343,8 +343,16 @@ export class AppHomeComponent implements OnInit {
         mergeMap(() => {
           return this.authService.refresh();
         }),
+        mergeMap(() => {
+          return this.webSessionService.getSessionInfo();
+        }),
+        mergeMap((sessionInfo) => {
+          this.sessionInfoStorageService.saveSession(sessionInfo);
+          return this.webSessionService.getCurrentUserInfo();
+        }),
       )
-      .subscribe(() => {
+      .subscribe(userInfo => {
+        localStorage.setItem('user_info', JSON.stringify(userInfo));
         window.location.reload();
       });
   }

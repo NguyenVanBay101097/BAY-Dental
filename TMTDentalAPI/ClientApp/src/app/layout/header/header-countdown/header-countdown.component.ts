@@ -48,7 +48,7 @@ export class HeaderCountdownComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   tick() {
-    this.millis = this.countdown * 1000;
+    this.millis = this.countdown * 60 * 1000;
     if (this.millis < 0) {
       this.stop();
       this.millis = 0;
