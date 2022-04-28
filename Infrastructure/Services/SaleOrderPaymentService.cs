@@ -230,7 +230,7 @@ namespace Infrastructure.Services
                     var saleOrderLine = saleLines.FirstOrDefault(x => x.Id == line.SaleOrderLineId);
 
                     //Tổng thanh toán 
-                    var totalPaid = (saleOrderLine.AmountPaid ?? 0) + line.Amount;
+                    var totalPaid = (saleOrderLine.AmountInvoiced ?? 0) + line.Amount;
 
                     //Tổng giá vốn
                     var productStdPrice = (decimal)(await productObj.GetHistoryPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId.Value, date: saleOrderLine.Date));
