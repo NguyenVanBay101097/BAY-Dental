@@ -344,7 +344,7 @@ namespace Infrastructure.Services
             {
                 EmployeeId = x.EmployeeId.Value,
                 EmployeeName = x.Employee.Name,
-                Date = x.Date.Value.Date,
+                //Date = x.Date.Value.Date,
                 CommissionType = x.Commission.Type
             }).Select(x => new CommissionSettlementReportRes()
             {
