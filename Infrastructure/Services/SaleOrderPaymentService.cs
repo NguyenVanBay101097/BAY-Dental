@@ -237,7 +237,18 @@ namespace Infrastructure.Services
                     var totalStandPrice = productStdPrice * saleOrderLine.ProductUOMQty;
 
                     //Tổng tiền đã tính hoa hồng trước đó
-                    var totalBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId).SumAsync(x => x.BaseAmount ?? 0);
+                    //Tính tổng lợi nhuận đã tính hoa hồng trước đó 
+                    var allSettles = await commSetObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId).ToListAsync();
+
+                    //đổi bảng hoa hồng sẽ dẫn đến sai
+                    var commissionBaseAmount = await commSetObj.SearchQuery(x => x.SaleOrderLineId == line.SaleOrderLineId)
+                        .GroupBy(x => x.CommissionId)
+                        .Select(x => new { 
+                            CommissionId = x.Key,
+                            TotalBaseAmount = x.Sum(s => s.BaseAmount)
+                        }).ToListAsync();
+
+                    var totalBaseAmount = commissionBaseAmount.Any() ? commissionBaseAmount.Max(x => x.TotalBaseAmount) : 0;
 
                     //Tổng tiền lợi nhuận cho lần thanh toán này
                     var totalProfitAmount = totalPaid - totalStandPrice - totalBaseAmount;
