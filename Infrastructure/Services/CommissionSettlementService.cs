@@ -406,5 +406,159 @@ namespace Infrastructure.Services
 
             return res;
         }
+
+        public async Task Recompute()
+        {
+            var productObj = GetService<IProductService>();
+            var commissionObj = GetService<ICommissionService>();
+            var saleLineObj = GetService<ISaleOrderLineService>();
+            var paymentLineObj = GetService<ISaleOrderPaymentHistoryLineService>();
+            var commissionSettlementObj = GetService<ICommissionSettlementService>();
+
+            IList<SaleOrderLine> saleOrderLines = await saleLineObj.SearchQuery(x => x.State != "draft")
+                .Include(x => x.Employee).ThenInclude(x => x.Commission)
+                .Include(x => x.Assistant).ThenInclude(x => x.AssistantCommission)
+                .Include(x => x.Counselor).ThenInclude(x => x.CounselorCommission)
+                .ToListAsync();
+
+            IList<SaleOrderPaymentHistoryLine> allPaymentLines = await paymentLineObj.SearchQuery(x => x.SaleOrderPayment.State == "posted")
+                .Include(x => x.SaleOrderPayment)
+                .ToListAsync();
+
+            IList<CommissionSettlement> allSettlements = await commissionSettlementObj.SearchQuery().ToListAsync();
+
+            IList<CommissionSettlement> createSettlements = new List<CommissionSettlement>();
+            IList<CommissionSettlement> updateSettlements = new List<CommissionSettlement>();
+
+            foreach (var saleOrderLine in saleOrderLines)
+            {
+                decimal totalPaid = 0;
+                decimal commissionProfitAmount = 0; //Tổng tiền lợi nhuận đã tính hoa hồng
+
+                //Tổng giá vốn
+                var productStdPrice = (decimal)(await productObj.GetHistoryPrice(saleOrderLine.ProductId.Value, saleOrderLine.CompanyId.Value, date: saleOrderLine.Date));
+                var totalStandPrice = productStdPrice * saleOrderLine.ProductUOMQty;
+
+                var paymentLines = allPaymentLines.Where(x => x.SaleOrderLineId == saleOrderLine.Id).OrderBy(x => x.SaleOrderPayment.Date).ToList();
+                if (paymentLines.Count == 1)
+                    continue;
+
+                foreach (var paymentLine in paymentLines)
+                {
+                    var amountPaid = paymentLine.Amount + totalPaid;
+                    var paymentDate = paymentLine.SaleOrderPayment.Date;
+
+                    //Tính lợi nhuận = Số tiền thanh toán - tổng giá vốn
+                    var baseAmount = Math.Max(amountPaid - totalStandPrice - commissionProfitAmount, 0);
+
+                    commissionProfitAmount += baseAmount;
+                    totalPaid += paymentLine.Amount;
+
+                    var commissionSettlements = allSettlements.Where(x => x.HistoryLineId == paymentLine.Id && x.SaleOrderLineId == saleOrderLine.Id).ToList();
+
+                    if (saleOrderLine.Employee != null && saleOrderLine.Employee.Commission != null)
+                    {
+                        var commissionPercent = await commissionObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Employee.CommissionId);
+
+                        var settlement = commissionSettlements.FirstOrDefault(x => x.CommissionId == saleOrderLine.Employee.Commission.Id && x.HistoryLineId == paymentLine.Id);
+                        if (settlement != null)
+                        {
+                            settlement.BaseAmount = baseAmount;
+                            settlement.Percentage = commissionPercent;
+                            settlement.TotalAmount = paymentLine.Amount;
+                            settlement.Amount = baseAmount * commissionPercent / 100;
+
+                            updateSettlements.Add(settlement);
+                        }
+                        else
+                        {
+                            createSettlements.Add(new CommissionSettlement
+                            {
+                                PartnerId = saleOrderLine.Employee.PartnerId,
+                                EmployeeId = saleOrderLine.Employee.Id,
+                                CommissionId = saleOrderLine.Employee.CommissionId,
+                                ProductId = saleOrderLine.ProductId,
+                                SaleOrderLineId = saleOrderLine.Id,
+                                HistoryLineId = paymentLine.Id,
+                                BaseAmount = baseAmount,
+                                Amount = baseAmount * commissionPercent / 100,
+                                Percentage = commissionPercent,
+                                TotalAmount = paymentLine.Amount,
+                                CompanyId = saleOrderLine.CompanyId.Value
+                            });
+                        }
+                    }
+
+                    if (saleOrderLine.Assistant != null && saleOrderLine.Assistant.AssistantCommission != null)
+                    {
+                        var commissionPercent = await commissionObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Assistant.AssistantCommission.Id);
+
+                        var settlement = commissionSettlements.FirstOrDefault(x => x.CommissionId == saleOrderLine.Assistant.AssistantCommission.Id && x.HistoryLineId == paymentLine.Id);
+                        if (settlement != null)
+                        {
+                            settlement.BaseAmount = baseAmount;
+                            settlement.Percentage = commissionPercent;
+                            settlement.TotalAmount = paymentLine.Amount;
+                            settlement.Amount = baseAmount * commissionPercent / 100;
+
+                            updateSettlements.Add(settlement);
+                        }
+                        else
+                        {
+                            createSettlements.Add(new CommissionSettlement
+                            {
+                                PartnerId = saleOrderLine.Assistant.PartnerId,
+                                EmployeeId = saleOrderLine.Assistant.Id,
+                                CommissionId = saleOrderLine.Assistant.AssistantCommission.Id,
+                                ProductId = saleOrderLine.ProductId,
+                                SaleOrderLineId = saleOrderLine.Id,
+                                HistoryLineId = paymentLine.Id,
+                                BaseAmount = baseAmount,
+                                Amount = baseAmount * commissionPercent / 100,
+                                Percentage = commissionPercent,
+                                TotalAmount = paymentLine.Amount,
+                                CompanyId = saleOrderLine.CompanyId.Value
+                            });
+                        }
+                    }
+
+                    if (saleOrderLine.Counselor != null && saleOrderLine.Counselor.CounselorCommission != null)
+                    {
+                        var commissionPercent = await commissionObj.getCommissionPercent(saleOrderLine.ProductId, saleOrderLine.Counselor.CounselorCommission.Id);
+
+                        var settlement = commissionSettlements.FirstOrDefault(x => x.CommissionId == saleOrderLine.Counselor.CounselorCommission.Id && x.HistoryLineId == paymentLine.Id);
+                        if (settlement != null)
+                        {
+                            settlement.BaseAmount = baseAmount;
+                            settlement.Percentage = commissionPercent;
+                            settlement.TotalAmount = paymentLine.Amount;
+                            settlement.Amount = baseAmount * commissionPercent / 100;
+
+                            updateSettlements.Add(settlement);
+                        }
+                        else
+                        {
+                            createSettlements.Add(new CommissionSettlement
+                            {
+                                PartnerId = saleOrderLine.Counselor.PartnerId,
+                                EmployeeId = saleOrderLine.Counselor.Id,
+                                CommissionId = saleOrderLine.Counselor.CounselorCommission.Id,
+                                ProductId = saleOrderLine.ProductId,
+                                SaleOrderLineId = saleOrderLine.Id,
+                                HistoryLineId = paymentLine.Id,
+                                BaseAmount = baseAmount,
+                                Amount = baseAmount * commissionPercent / 100,
+                                Percentage = commissionPercent,
+                                TotalAmount = amountPaid,
+                                CompanyId = saleOrderLine.CompanyId.Value
+                            });
+                        }
+                    }
+                }
+            }
+
+            await commissionSettlementObj.UpdateAsync(updateSettlements);
+            await commissionSettlementObj.CreateAsync(createSettlements);
+        }
     }
 }

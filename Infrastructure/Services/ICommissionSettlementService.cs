@@ -26,5 +26,6 @@ namespace Infrastructure.Services
 
         string Classify(string val);
 
+        Task Recompute();
     }
 }

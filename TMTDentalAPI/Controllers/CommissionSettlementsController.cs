@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApplicationCore.Interfaces;
 using Infrastructure.Services;
+using Infrastructure.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -21,10 +22,13 @@ namespace TMTDentalAPI.Controllers
     {
         private readonly ICommissionSettlementService _commissionSettlementService;
         private readonly IExportExcelService _exportExcelService;
-        public CommissionSettlementsController(ICommissionSettlementService commissionSettlementService, IExportExcelService exportExcelService)
+        private readonly IUnitOfWorkAsync _unitOfWork;
+        public CommissionSettlementsController(ICommissionSettlementService commissionSettlementService, IExportExcelService exportExcelService,
+            IUnitOfWorkAsync unitOfWork)
         {
             _commissionSettlementService = commissionSettlementService;
             _exportExcelService = exportExcelService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("[action]")]      
@@ -68,6 +72,15 @@ namespace TMTDentalAPI.Controllers
         {
             var result = await _commissionSettlementService.GetSumAmountTotalReport(val);
             return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Recompute()
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            await _commissionSettlementService.Recompute();
+            _unitOfWork.Commit();
+            return NoContent();
         }
 
         [HttpGet("[action]")]
