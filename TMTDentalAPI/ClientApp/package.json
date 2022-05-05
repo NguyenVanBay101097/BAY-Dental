@@ -75,6 +75,7 @@
     "ng2-daterangepicker": "^3.0.1",
     "ng2-search-filter": "^0.5.1",
     "ngx-autosize": "^1.7.5",
+    "ngx-clipboard": "^12.3.0",
     "ngx-echarts": "^5.0.0",
     "ngx-facebook": "^3.0.0-0",
     "ngx-moment": "^3.5.0",
