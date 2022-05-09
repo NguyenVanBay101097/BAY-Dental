@@ -667,6 +667,7 @@ namespace Infrastructure.Services
         {
             var amlObj = GetService<IAccountMoveLineService>();
             var accObj = GetService<IAccountAccountService>();
+            var partnerObj = GetService<IPartnerService>();
 
             IQueryable<AccountMoveLine> getQueryable(IQueryable<AccountMoveLine> query, ReportPartnerDebitReq val)
             {
@@ -686,79 +687,87 @@ namespace Infrastructure.Services
             var date_from = val.FromDate.HasValue ? val.FromDate.Value.AbsoluteBeginOfDate() : (DateTime?)null;
             var date_to = val.ToDate.HasValue ? val.ToDate.Value.AbsoluteEndOfDate() : (DateTime?)null;
 
+            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
+            query2 = getQueryable(query2, val);
+
+            var groupDebitCredit = query2
+                      .GroupBy(x => x.Partner.Id)
+                    .Select(x => new ReportPartnerDebitRes
+                    {
+                        PartnerId = x.Key,
+                        Debit = x.Sum(s => s.Debit),
+                        Credit = x.Sum(s => s.Credit),
+                    });
+
+            var list = new List<ReportPartnerDebitRes>();
             var res = new List<ReportPartnerDebitRes>();
             if (date_from.HasValue)
             {
                 var query = amlObj._QueryGet(dateFrom: date_from, dateTo: null, initBal: true, companyId: val.CompanyId);
                 query = getQueryable(query, val);
 
-                res = await query
-                   .GroupBy(x => new
-                   {
-                       PartnerId = x.Partner.Id,
-                       PartnerName = x.Partner.Name,
-                       PartnerRef = x.Partner.Ref,
-                       PartnerPhone = x.Partner.Phone,
-                   })
+                var groupBegin = query
+                   .GroupBy(x => x.Partner.Id)
                    .Select(x => new ReportPartnerDebitRes
                    {
-                       PartnerId = x.Key.PartnerId,
-                       PartnerName = x.Key.PartnerName,
-                       PartnerRef = x.Key.PartnerRef,
-                       PartnerPhone = x.Key.PartnerPhone,
+                       PartnerId = x.Key,
                        Begin = x.Sum(s => s.Debit - s.Credit),
-                   }).ToListAsync();
+                   });
+
+                //To achieve full outer join in LINQ we require performing logical union of a left outer join and a right outer join result.
+                //LINQ does not support full outer joins directly, the same as right outer joins
+
+                var groupDebitCreditBeginLeft = (from dc in groupDebitCredit
+                                            join b in groupBegin on dc.PartnerId equals b.PartnerId into g
+                                            from sb in g.DefaultIfEmpty()
+                                            select new ReportPartnerDebitRes
+                                            {
+                                                PartnerId = dc.PartnerId,
+                                                Begin = sb == null ? 0 : sb.Begin,
+                                                Debit = dc.Debit,
+                                                Credit = dc.Credit
+                                            }).ToList();
+
+                var groupDebitCreditBeginRight = (from b in groupBegin
+                                                 join dc in groupDebitCredit on b.PartnerId equals dc.PartnerId into g
+                                                from sdc in g.DefaultIfEmpty()
+                                                select new ReportPartnerDebitRes
+                                                {
+                                                    PartnerId = b.PartnerId,
+                                                    Begin = b.Begin,
+                                                    Debit = sdc == null ? 0 : sdc.Debit,
+                                                    Credit = sdc == null ? 0 : sdc.Credit
+                                                }).ToList();
+
+                //paging trên groupDebitCreditBegin
+                list = groupDebitCreditBeginLeft.Union(groupDebitCreditBeginRight, new ReportPartnerDebitResComparer()).ToList();
+            }
+            else
+            {
+                list = await groupDebitCredit.ToListAsync();
             }
 
-            var query2 = amlObj._QueryGet(dateFrom: date_from, dateTo: date_to, companyId: val.CompanyId);
-            query2 = getQueryable(query2, val);
+            var partnerIds = list.Select(x => x.PartnerId).ToList();
+            var partners = await partnerObj.SearchQuery(x => partnerIds.Contains(x.Id)).ToListAsync();
+            var partnerDict = partners.ToDictionary(x => x.Id, x => x);
 
-            var list2 = await query2
-                      .GroupBy(x => new
-                      {
-                          PartnerId = x.Partner.Id,
-                          PartnerName = x.Partner.Name,
-                          PartnerRef = x.Partner.Ref,
-                          PartnerPhone = x.Partner.Phone,
-                      })
-                    .Select(x => new ReportPartnerDebitRes
-                    {
-                        PartnerId = x.Key.PartnerId,
-                        PartnerName = x.Key.PartnerName,
-                        PartnerRef = x.Key.PartnerRef,
-                        PartnerPhone = x.Key.PartnerPhone,
-                        Debit = x.Sum(s => s.Debit),
-                        Credit = x.Sum(s => s.Credit),
-                        Begin = 0
-                    }).ToListAsync();
-
-            foreach (var item in list2)
+            foreach (var item in list)
             {
-                var resItem = res.FirstOrDefault(x => x.PartnerId == item.PartnerId);
-                if (resItem == null)
-                {
-                    res.Add(item);
-                }
-                else
-                {
-                    resItem.Debit = item.Debit;
-                    resItem.Credit = item.Credit;
-                }
-            }
+                if (item.Begin == 0 && item.Debit == 0 && item.Credit == 0)
+                    continue;
+                var partner = partnerDict[item.PartnerId];
 
-            foreach (var item in res)
-            {
+                item.PartnerName = partner.Name;
+                item.PartnerPhone = partner.Phone;
+                item.PartnerRef = partner.Ref;
                 item.End = item.Begin + item.Debit - item.Credit;
                 item.DateFrom = val.FromDate;
                 item.DateTo = val.ToDate;
                 item.CompanyId = val.CompanyId;
-            }
 
-            res = res.FindAll(x => x.Begin != 0 || x.Debit != 0 || x.Credit != 0 || x.End != 0);
-
-            if (!string.IsNullOrWhiteSpace(val.Type))
-            {
-                res = res.FindAll(x => val.Type == "has-debt" ? x.End > 0 : x.End == 0);
+                if (item.End == 0 && val.Type == "has-debt")
+                    continue;
+                res.Add(item);
             }
 
             return res;
