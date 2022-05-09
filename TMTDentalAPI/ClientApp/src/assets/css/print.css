@@ -561,10 +561,11 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
 }
 
 .teeth_nameTeeth {
+  display: flex;
+  align-items: center;
   padding: 0.25rem 0.5rem;
   border: 1px solid #ccc;
   margin: 5px;
-  cursor: pointer;
 }
 
 .teeth_container {
@@ -577,6 +578,14 @@ body.A5 .o_form_view .o_group.o_inner_group > tbody > tr > td.o_td_label {
   /*flex-flow: column;*/
   /* justify-content: center; */
   user-select: none;
+}
+
+.ham_tren {
+  display: flex;
+}
+
+.ham_duoi {
+  display: flex;
 }
 
 .ham_tren .teethElement .teeth_nameTeeth {

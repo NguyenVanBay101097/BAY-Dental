@@ -18,104 +18,80 @@ export class KeywordListDialogComponent implements OnInit {
   boxKeyWordList = [];
   type: string;
   content = `<!--{{if (o.have_adult_teeth || o.have_child_teeth)}}-->
+  <div class="text-center">
+      {{if (o.have_adult_teeth)}}
+      <div class="teeth_container">
+          <div class="ham_tren">
+              <div class="teethElement flex-row-reverse">
+                  <!--{{for teeth in o.adult_up_right_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+              <div class="chia_doi_doc"></div>
+              <div class="teethElement">
+                  <!--{{for teeth in o.adult_up_left_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+          </div>
+          <div class="duong_chia_doi"></div>
+          <div class="ham_duoi">
+              <div class="teethElement flex-row-reverse">
+                  <!--{{for teeth in o.adult_down_right_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div>{{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+              <div class="chia_doi_doc"></div>
+              <div class="teethElement">
+                  <!--{{for teeth in o.adult_down_left_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+          </div>
+      </div>
   
-  <h6>SƠ ĐỒ RĂNG</h6>
-  
-  <div class="text-center">{{if (o.have_adult_teeth)}}
-  <div class="teeth_container">
-  <div class="ham_tren" style="display: flex;">
-  <div class="teethElement" style="flex-flow:row-reverse"><!--{{for teeth in o.adult_up_right_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  
-  <div class="chia_doi_doc">&nbsp;</div>
-  
-  <div class="teethElement"><!--{{for teeth in o.adult_up_left_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
+      {{end}}
+      {{if (o.have_child_teeth)}}
+      <div class="teeth_container mt-1">
+          <div class="ham_tren">
+              <div class="teethElement flex-row-reverse">
+                  <!--{{for teeth in o.child_up_right_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+              <div class="chia_doi_doc"></div>
+              <div class="teethElement">
+                  <!--{{for teeth in o.child_up_left_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+          </div>
+          <div class="duong_chia_doi"></div>
+          <div class="ham_duoi">
+              <div class="teethElement flex-row-reverse">
+                  <!--{{for teeth in o.child_down_right_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div>{{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+              <div class="chia_doi_doc"></div>
+              <div class="teethElement">
+                  <!--{{for teeth in o.child_down_left_teeth}}-->
+                  {{if (teeth.is_selected)}} <div class="teeth_nameTeeth selected">{{teeth.name}}</div> {{end}}
+                  {{if (!teeth.is_selected)}} <div class="teeth_nameTeeth">{{teeth.name}}</div> {{end}}
+                  <!--{{end}}-->
+              </div>
+          </div>
+      </div>
+      {{end}}
   </div>
-  
-  <div class="duong_chia_doi">&nbsp;</div>
-  
-  <div class="ham_duoi" style="display: flex;">
-  <div class="teethElement" style="flex-flow:row-reverse"><!--{{for teeth in o.adult_down_right_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  
-  <div class="chia_doi_doc">&nbsp;</div>
-  
-  <div class="teethElement"><!--{{for teeth in o.adult_down_left_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  </div>
-  </div>
-  {{end}} {{if (o.have_child_teeth)}}
-  
-  <div class="teeth_container text-center" style="margin-top: 0.5rem">
-  <div class="ham_tren" style="display: flex;">
-  <div class="teethElement" style="flex-flow:row-reverse"><!--{{for teeth in o.child_up_right_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  
-  <div class="chia_doi_doc">&nbsp;</div>
-  
-  <div class="teethElement"><!--{{for teeth in o.child_up_left_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  </div>
-  
-  <div class="duong_chia_doi">&nbsp;</div>
-  
-  <div class="ham_duoi" style="display: flex;">
-  <div class="teethElement" style="flex-flow:row-reverse"><!--{{for teeth in o.child_down_right_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  
-  <div class="chia_doi_doc">&nbsp;</div>
-  
-  <div class="teethElement"><!--{{for teeth in o.child_down_left_teeth}}-->{{if (teeth.is_selected)}}
-  <div class="teeth_nameTeeth selected">{{teeth.name}}</div>
-  {{end}} {{if (!teeth.is_selected)}}
-  
-  <div class="teeth_nameTeeth">{{teeth.name}}</div>
-  {{end}} <!--{{end}}--></div>
-  </div>
-  </div>
-  {{end}}</div>
-  <!--{{end}}-->
-  
-  <div style="display: inline-block">
-  <div style="display: flex">
-  <div>&nbsp;</div>
-  
-  <div>&nbsp;</div>
-  
-  <div>
-  <div>&nbsp;</div>
-  </div>
-  </div>
-  </div>`;
+  <!--{{end}}-->`;
   constructor(
     public activeModal: NgbActiveModal,
     private clipboardApi: ClipboardService,
