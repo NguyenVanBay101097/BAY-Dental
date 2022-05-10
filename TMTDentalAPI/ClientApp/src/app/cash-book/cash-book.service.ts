@@ -104,10 +104,11 @@ export class SumaryCashBook {
   balance: number;
 }
 
-export class AccountAccountPaged {
+export class AccountAccountGetListCanPayOrReceiveRequest {
   limit: number;
   offset: number;
   search: string;
+  companyId: string;
 }
 @Injectable({
   providedIn: "root",
@@ -177,7 +178,7 @@ export class CashBookService {
     return this.http.post(this.baseApi + this.apiUrl + "/ChangeData", null);
   }
 
-  getAutoCompleteAccounts(val: AccountAccountPaged) {
-    return this.http.post(this.baseApi + this.apiUrlAccount + '/AutoComplete', val);
+  getListCanPayOrReceive(val: AccountAccountGetListCanPayOrReceiveRequest) {
+    return this.http.post(this.baseApi + this.apiUrlAccount + '/GetListCanPayOrReceive', val);
   }
 }

@@ -24,6 +24,6 @@ namespace Infrastructure.Services
         Task<AccountAccount> GetAccountInsuranceDebtCompany();
 
         Task<string> SearchNewAccountCode(Guid companyId, int digits, string prefix);
-        Task<IEnumerable<AccountAccount>> GetAutoCompleteAsync(AccountAccountPaged val);
+        Task<IEnumerable<AccountAccount>> GetListCanPayOrReceive(AccountAccountGetListCanPayOrReceiveRequest val);
     }
 }

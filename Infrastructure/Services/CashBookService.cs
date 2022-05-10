@@ -105,7 +105,7 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrWhiteSpace(accountCode))
             {
-                query = query.Where(x => accountCode == x.Account.Code);
+                query = query.Where(x => accountCode.Contains(x.Account.Code));
             }
 
             if (!string.IsNullOrWhiteSpace(paymentType))
@@ -237,7 +237,7 @@ namespace Infrastructure.Services
 
             if (!string.IsNullOrWhiteSpace(accountCode))
             {
-                query = query.Where(x => accountCode == x.Account.Code);
+                query = query.Where(x => accountCode.Contains(x.Account.Code));
             }
 
             if (!string.IsNullOrWhiteSpace(paymentType))

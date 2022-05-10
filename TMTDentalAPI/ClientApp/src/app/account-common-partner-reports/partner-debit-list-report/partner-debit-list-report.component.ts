@@ -42,10 +42,7 @@ export class PartnerDebitListReportComponent implements OnInit {
     { field: 'end', aggregate: 'sum' },
   ];
   type: string = 'has-debt';
-  filteredTypes: { [key: string]: string }[] = [
-    { key: 'has-debt', value: 'Có công nợ' },
-    { key: 'no-debt', value: 'Không có công nợ' },
-  ];
+
   constructor(private reportService: AccountCommonPartnerReportService,
     private intlService: IntlService,
     private companyService: CompanyService,
@@ -147,6 +144,7 @@ export class PartnerDebitListReportComponent implements OnInit {
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.search = this.search ? this.search : '';
     val.companyId = this.companyId || '';
+    val.type = this.type || '';
     this.reportService.exportReportPartnerDebitExcel(val).subscribe((rs) => {
       let filename = "BaoCaoCongNo_KH";
       let newBlob = new Blob([rs], {
@@ -172,6 +170,7 @@ export class PartnerDebitListReportComponent implements OnInit {
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.search = this.search ? this.search : '';
     val.companyId = this.companyId || '';
+    val.type = this.type || '';
     this.reportService.getReportPartnerDebitPdf(val).subscribe(result => {
       this.loading = false;
       let filename ="BaoCaoCongNo_KH";

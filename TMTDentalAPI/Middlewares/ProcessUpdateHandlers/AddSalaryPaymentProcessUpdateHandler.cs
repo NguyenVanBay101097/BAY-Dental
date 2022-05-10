@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 {
-    public class AccountMoveLineProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
+    public class AddSalaryPaymentProcessUpdateHandler : INotificationHandler<ProcessUpdateNotification>
     {
         private const string _version = "1.0.2.4";
         private IServiceScopeFactory _serviceScopeFactory;
 
-        public AccountMoveLineProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory)
+        public AddSalaryPaymentProcessUpdateHandler(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
         }
@@ -36,7 +36,7 @@ namespace TMTDentalAPI.Middlewares.ProcessUpdateHandlers
 
                 var scopedService = scope.ServiceProvider;
                 var context = scope.ServiceProvider.GetService<CatalogDbContext>();
-                var salaryPayments = context.SalaryPayments.Include(x => x.Move).ThenInclude(x => x.Lines).ToList();
+                var salaryPayments = context.SalaryPayments.Where(x => x.State == "done" && x.Move != null).Include(x => x.Move).ThenInclude(x => x.Lines).ToList();
                 var dict = new Dictionary<Guid, List<AccountMoveLine>>();
 
                 foreach (var salary in salaryPayments)

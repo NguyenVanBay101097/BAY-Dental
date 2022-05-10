@@ -8,7 +8,9 @@
                 <kendo-combobox [placeholder]="'Tất cả chi nhánh'" [popupSettings]="{width: 'auto'}" width="auto" class="mr-1 kendo-combobox" [valueField]="'id'" [textField]="'name'" [filterable]="true" [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
                 </kendo-combobox>
                 <select class="form-control w-auto mr-1" (change)="onChangeType($event)">
-                    <option [value]="type.key" *ngFor="let type of filteredTypes">{{type.value}}</option>
+                    <option [value]="'has-debt'">Có công nợ</option>
+                    <option [value]="'no-debt'">Không có công nợ</option>
+                    <option [value]="'all'">Tất cả</option>
                 </select>
                 <div class="dropdown mr-1">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

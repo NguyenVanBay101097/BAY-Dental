@@ -767,6 +767,10 @@ namespace Infrastructure.Services
 
                 if (item.End == 0 && val.Type == "has-debt")
                     continue;
+
+                if (item.End != 0 && val.Type == "no-debt")
+                    continue;
+
                 res.Add(item);
             }
 

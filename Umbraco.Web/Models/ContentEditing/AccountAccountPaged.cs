@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
 {
-    public class AccountAccountPaged
+    public class AccountAccountGetListCanPayOrReceiveRequest
     {
-        public AccountAccountPaged()
+        public AccountAccountGetListCanPayOrReceiveRequest()
         {
             Limit = 20;
         }
@@ -14,6 +14,8 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
   
         public string Search { get; set; }
+
+        public Guid? CompanyId { get; set; }
     }
 
     public class AccountAccountThuChiPaged

@@ -144,12 +144,39 @@ namespace Infrastructure.Services
             throw new Exception("Cannot generate an unused account code.");
         }
 
-        public async Task<IEnumerable<AccountAccount>> GetAutoCompleteAsync(AccountAccountPaged val)
+        public async Task<IEnumerable<AccountAccount>> GetListCanPayOrReceive(AccountAccountGetListCanPayOrReceiveRequest val)
         {
-            var query = SearchQuery(x => x.Active);
+            var modelDataObj = GetService<IIRModelDataService>();
+
+            var query = SearchQuery(x => x.Active && x.InternalType != "liquidity");
+
+            var excludeAccountTypeIds = new List<Guid>();
+
+            var revenueAccountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_revenue");
+            excludeAccountTypeIds.Add(revenueAccountType.Id);
+
+            var expensesAccountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_expenses");
+            excludeAccountTypeIds.Add(expensesAccountType.Id);
+
+            var equityAccountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_equity"); //632
+            excludeAccountTypeIds.Add(equityAccountType.Id);
+
+            var otherIncomeAccountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_other_income");
+            excludeAccountTypeIds.Add(otherIncomeAccountType.Id);
+
+            var liquidityAccountType = await modelDataObj.GetRef<AccountAccountType>("account.data_account_type_liquidity");
+            excludeAccountTypeIds.Add(liquidityAccountType.Id);
+
+            query = query.Where(x => !excludeAccountTypeIds.Contains(x.UserTypeId));
+
+            var excludeAccountCodes = new string[] { "1561", "338" };
+            query = query.Where(x => !excludeAccountCodes.Contains(x.Code));
 
             if (!string.IsNullOrWhiteSpace(val.Search))
                 query = query.Where(x => x.Name.Contains(val.Search) || x.Code.Contains(val.Search));
+
+            if (val.CompanyId.HasValue)
+                query = query.Where(x => x.CompanyId == val.CompanyId);
 
             var items = await query.ToListAsync();
 

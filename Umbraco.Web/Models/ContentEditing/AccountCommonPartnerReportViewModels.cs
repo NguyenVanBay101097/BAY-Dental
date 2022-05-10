@@ -315,6 +315,12 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Search { get; set; }
         public Guid? CompanyId { get; set; }
+
+        /// <summary>
+        /// has-debit
+        /// no-debit
+        /// all
+        /// </summary>
         public string? Type { get; set; }
     }
 

@@ -10,7 +10,7 @@ import { AccountJournalFilter, AccountJournalService, AccountJournalSimple } fro
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { AccountBankCuDialogComponent } from '../account-bank-cu-dialog/account-bank-cu-dialog.component';
-import { AccountAccountPaged, CashBookDetailFilter, CashBookService, CashBookSummarySearch } from '../cash-book.service';
+import { AccountAccountGetListCanPayOrReceiveRequest, CashBookDetailFilter, CashBookService, CashBookSummarySearch } from '../cash-book.service';
 
 @Component({
   selector: 'app-cash-book-tab-page-ca-bo',
@@ -100,10 +100,12 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   }
 
   loadAutoCompleteAccount() {
-    let val = new AccountAccountPaged();
+    let val = new AccountAccountGetListCanPayOrReceiveRequest();
     val.limit = 0;
     val.offset = 0;
-    this.cashBookService.getAutoCompleteAccounts(val).subscribe((res: any) => {
+    val.companyId = this.authService.userInfo.companyId;
+
+    this.cashBookService.getListCanPayOrReceive(val).subscribe((res: any) => {
       this.filteredAccountCode = res;
     }, error => console.log(error));
   } 
@@ -261,6 +263,8 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';
+    gridPaged.accountCode = this.accountCode;
+    gridPaged.paymentType = this.paymentType;
 
     this.cashBookService.exportExcelFile(gridPaged).subscribe((res: any) => {
       let filename = "TongSoQuy";

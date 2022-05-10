@@ -26,13 +26,11 @@ namespace TMTDentalAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AutoComplete(AccountAccountPaged val)
+        public async Task<IActionResult> GetListCanPayOrReceive(AccountAccountGetListCanPayOrReceiveRequest val)
         {
-            var res = await _accountAccountService.GetAutoCompleteAsync(val);
-
+            //Lấy danh sách những tài khoản mà có thể thu hoặc chi, xuất hiện trong sỗ quỹ
+            var res = await _accountAccountService.GetListCanPayOrReceive(val);
             return Ok(_mapper.Map<IEnumerable<AccountAccountBasic>>(res));
         }
-
-
     }
 }
