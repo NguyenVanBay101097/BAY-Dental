@@ -13,6 +13,7 @@ namespace Umbraco.Web.Mapping
         {
             CreateMap<IrAttachment, IrAttachmentBasic>();
             CreateMap<IrAttachmentSave, IrAttachment>();
+            CreateMap<IrAttachment, SaleOrderOrderIrAttachmentPrintVM>();
         }
     }
 }

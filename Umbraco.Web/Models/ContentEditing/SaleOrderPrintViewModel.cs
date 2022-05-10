@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using MyERP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -42,36 +43,26 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<SaleOrderOrderLinePrintVM> OrderLines { get; set; } = new List<SaleOrderOrderLinePrintVM>();
 
-        public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
+        public IEnumerable<SaleOrderOrderPaymentPrintVMDotKhamPrintVM> DotKhams { get; set; } = new List<SaleOrderOrderPaymentPrintVMDotKhamPrintVM>();
 
         public IEnumerable<SaleOrderOrderPaymentPrintVM> SaleOrderPayments { get; set; } = new List<SaleOrderOrderPaymentPrintVM>();
 
-        public ICollection<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; } = new List<SaleOrderPaymentRel>();
-
         public Guid CompanyId { get; set; }
-        public Company Company { get; set; }
+        public CompanyPrintVM Company { get; set; }
 
         public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public SaleOrderOrderUserPrintVM User { get; set; }
 
         public string InvoiceStatus { get; set; }
 
         public decimal? Residual { get; set; }
-
-        /// <summary>
-        /// bác sĩ đại diện
-        /// </summary>
-        public Guid? DoctorId { get; set; }
-        public Employee Doctor { get; set; }
-
         /// <summary>
         /// Tổng thanh toán
         /// </summary>
         public decimal? TotalPaid { get; set; }
 
         [NotMapped]
-        public ICollection<IrAttachment> IrAttachments { get; set; } = new List<IrAttachment>();
-        public IEnumerable<History> Histories { get; set; } = new List<History>();
+        public IEnumerable<SaleOrderOrderIrAttachmentPrintVM> IrAttachments { get; set; } = new List<SaleOrderOrderIrAttachmentPrintVM>();
         public string MedicalHistory { get; set; }
 
         // răng được chọn
@@ -88,30 +79,33 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool HaveChildTeeth { get; set; }
         public bool HaveAdultTeeth { get; set; }
 
+        [NotMapped]
         public decimal? AmountUndiscountTotal
         {
             get
             {
-                return OrderLines.Sum(x => x.PriceUnit * x.ProductUomqty);
+                return OrderLines.Sum(x => x.PriceUnit * x.ProductUOMQty);
             }
         }
+
+
 
         /// <summary>
         /// Tổng tiền giảm giá
         /// </summary>
-        //[NotMapped]
-        //public decimal? AmountDiscountTotal
-        //{
-        //    get
-        //    {
-        //        var total = 0.0M;
-        //        foreach (var item in OrderLines)
-        //        {
-        //            total += (decimal)(item.AmountDiscountTotal ?? 0) * item.ProductUOMQty;
-        //        }
-        //        return total;
-        //    }
-        //}
+        [NotMapped]
+        public decimal? AmountDiscountTotal
+        {
+            get
+            {
+                var total = 0.0M;
+                foreach (var item in OrderLines)
+                {
+                    total += (decimal)(item.AmountDiscountTotal ?? 0) * item.ProductUOMQty;
+                }
+                return total;
+            }
+        }
     }
 
     public class SaleOrderPartnerPrintVM
@@ -197,6 +191,9 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SaleOrderOrderLinePrintVM
     {
+        public DateTime DateOrder { get; set; }
+        public string Name { get; set; }
+
         public SaleOrderOrderLineProductPrintVM Product { get; set; }
 
         public string Diagnostic { get; set; }
@@ -208,15 +205,59 @@ namespace Umbraco.Web.Models.ContentEditing
                 return string.Join(", ", Teeth);
             }
         }
+        public SaleOrderOrderLineUomPrintVM ProductUom { get; set; }
 
         public IEnumerable<string> Teeth { get; set; } = new List<string>();
 
-        public decimal ProductUomqty { get; set; }
+        public decimal ProductUOMQty { get; set; }
 
         public decimal PriceUnit { get; set; }
+        public double? AmountDiscountTotal { get; set; }
+        public string ToothType { get; set; }
+
+
+        [NotMapped]
+        public decimal PriceWithDiscount
+        {
+            get
+            {
+                return PriceUnit - (decimal)FloatUtils.FloatRound((AmountDiscountTotal ?? 0), precisionDigits: 0);
+            }
+        }
+
+        /// <summary>
+        /// Tổng tiền giảm
+        /// </summary>
+        [NotMapped]
+        public decimal TotalDiscountAmount
+        {
+            get
+            {
+                return (decimal)FloatUtils.FloatRound((AmountDiscountTotal ?? 0) * (double)ProductUOMQty, precisionDigits: 0);
+            }
+        }
+
+        public decimal PriceSubTotal { get; set; }
+        [NotMapped]
+        public decimal TotalUndiscountAmount
+        {
+            get
+            {
+                return ProductUOMQty * PriceUnit;
+            }
+        }
+
+        public Guid? ToothCategoryId { get; set; }
+        public ToothCategoryPrintVM ToothCategory { get; set; }
+        public IEnumerable<SaleOrderLineToothRelPrintVM> SaleOrderLineToothRels { get; set; } = new List<SaleOrderLineToothRelPrintVM>();
     }
 
     public class SaleOrderOrderLineProductPrintVM
+    {
+        public string Name { get; set; }
+    }
+
+    public class SaleOrderOrderLineUomPrintVM
     {
         public string Name { get; set; }
     }
@@ -258,5 +299,52 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SaleOrderOrderPaymentRelPaymentJournalPrintVM
     {
         public string Name { get; set; }
+    }
+
+    public class SaleOrderOrderPaymentPrintVMDotKhamPrintVM
+    {
+        public IEnumerable<SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM> Lines { get; set; } = new List<SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM>();
+        public DateTime Date { get; set; }
+    }
+
+    public class SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM
+    {
+        public SaleOrderOrderLineProductPrintVM Product { get; set; }
+        public string NameStep { get; set; }
+        public ICollection<DotKhamLineToothRel> ToothRels { get; set; } = new List<DotKhamLineToothRel>();
+        [NotMapped]
+        public string TeethDisplay
+        {
+            get
+            {
+                return ToothRels.Count > 0 ? string.Join(" ,", ToothRels.Select(x => x.Tooth.Name)) : "";
+            }
+        }
+
+        public string Note { get; set; }
+
+    }
+
+    public class SaleOrderOrderIrAttachmentPrintVM
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+    }
+
+    public class SaleOrderOrderUserPrintVM
+    {
+        public string Name { get; set; }
+    }
+
+    public class ToothCategoryPrintVM
+    {
+        public string Name { get; set; }
+        public int? Sequence { get; set; }
+    }
+
+    public class SaleOrderLineToothRelPrintVM
+    {
+        public Guid SaleLineId { get; set; }
+        public Guid ToothId { get; set; }
     }
 }
