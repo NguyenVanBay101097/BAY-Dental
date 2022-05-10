@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace Umbraco.Web.Models.ContentEditing
@@ -9,24 +10,18 @@ namespace Umbraco.Web.Models.ContentEditing
     public class SaleOrderPrintViewModel
     {
         public Guid Id { get; set; }
+
         /// <summary>
         /// Ngày điều trị
         /// </summary>
         public DateTime DateOrder { get; set; }
 
-        /// <summary>
-        /// ngày hoàn thành
-        /// </summary>
-        public DateTime? DateDone { get; set; }
+        public Guid PartnerId { get; set; }
 
         /// <summary>
         /// Khách hàng
         /// </summary>
-        public Guid PartnerId { get; set; }
-        public Partner Partner { get; set; }
-
-
-        public decimal? AmountTax { get; set; }
+        public SaleOrderPartnerPrintVM Partner { get; set; }
 
         public decimal? AmountUntaxed { get; set; }
 
@@ -45,11 +40,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public string Name { get; set; }
 
-        public ICollection<SaleOrderLineDisplay> OrderLines { get; set; } = new List<SaleOrderLineDisplay>();
+        public IEnumerable<SaleOrderOrderLinePrintVM> OrderLines { get; set; } = new List<SaleOrderOrderLinePrintVM>();
 
         public ICollection<DotKham> DotKhams { get; set; } = new List<DotKham>();
 
-        public ICollection<SaleOrderPayment> SaleOrderPayments { get; set; } = new List<SaleOrderPayment>();
+        public IEnumerable<SaleOrderOrderPaymentPrintVM> SaleOrderPayments { get; set; } = new List<SaleOrderOrderPaymentPrintVM>();
 
         public ICollection<SaleOrderPaymentRel> SaleOrderPaymentRels { get; set; } = new List<SaleOrderPaymentRel>();
 
@@ -63,70 +58,11 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? Residual { get; set; }
 
-
-        /// <summary>
-        /// Ghi nhận lại sale order có sử dụng thẻ thành viên
-        /// </summary>
-        public Guid? CardId { get; set; }
-        public CardCard Card { get; set; }
-
-        public Guid? PricelistId { get; set; }
-        public ProductPricelist Pricelist { get; set; }
-
-        /// <summary>
-        /// Phân loại phiếu tư vấn và phiếu điều trị: quotation, sale_order
-        /// </summary>
-        public string Type { get; set; }
-
-        /// <summary>
-        /// Là phiếu tư vấn
-        /// </summary>
-        public bool? IsQuotation { get; set; }
-
-        /// <summary>
-        /// Cho phiếu điều trị tham chiếu đến phiếu tư vấn
-        /// </summary>
-        public Guid? QuoteId { get; set; }
-        public SaleOrder Quote { get; set; }
-
-        /// <summary>
-        /// Cho phiếu tư vấn tham chiếu đến phiếu điều trị
-        /// </summary>
-        public Guid? OrderId { get; set; }
-        public SaleOrder Order { get; set; }
         /// <summary>
         /// bác sĩ đại diện
         /// </summary>
         public Guid? DoctorId { get; set; }
         public Employee Doctor { get; set; }
-
-        public Guid? CodePromoProgramId { get; set; }
-        public SaleCouponProgram CodePromoProgram { get; set; }
-
-        public ICollection<SaleOrderNoCodePromoProgram> NoCodePromoPrograms { get; set; } = new List<SaleOrderNoCodePromoProgram>();
-
-        public ICollection<SaleCoupon> AppliedCoupons { get; set; } = new List<SaleCoupon>();
-
-        public ICollection<SaleCoupon> GeneratedCoupons { get; set; } = new List<SaleCoupon>();
-
-        public ICollection<SaleOrderServiceCardCardRel> SaleOrderCardRels { get; set; } = new List<SaleOrderServiceCardCardRel>();
-
-        public bool IsFast { get; set; }
-
-        public Guid? JournalId { get; set; }
-        public AccountJournal Journal { get; set; }
-        /// <summary>
-        /// list phân việc khảo sát
-        /// </summary>
-        public ICollection<SurveyAssignment> Assignments { get; set; } = new List<SurveyAssignment>();
-
-        /// <summary>
-        /// danh sách chương trình ưu đãi
-        /// </summary>
-        public ICollection<SaleOrderPromotion> Promotions { get; set; } = new List<SaleOrderPromotion>();
-
-        public Guid? QuotationId { get; set; }
-        public Quotation Quotation { get; set; }
 
         /// <summary>
         /// Tổng thanh toán
@@ -152,22 +88,13 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool HaveChildTeeth { get; set; }
         public bool HaveAdultTeeth { get; set; }
 
-        /// <summary>
-        /// Tổng tiền chưa giảm
-        /// </summary>
-        //[NotMapped]
-        //public decimal? AmountUndiscountTotal
-        //{
-        //    get
-        //    {
-        //        var total = 0.0M;
-        //        foreach (var item in OrderLines)
-        //        {
-        //            total += item.PriceUnit * item.ProductUOMQty;
-        //        }
-        //        return total;
-        //    }
-        //}
+        public decimal? AmountUndiscountTotal
+        {
+            get
+            {
+                return OrderLines.Sum(x => x.PriceUnit * x.ProductUomqty);
+            }
+        }
 
         /// <summary>
         /// Tổng tiền giảm giá
@@ -185,5 +112,151 @@ namespace Umbraco.Web.Models.ContentEditing
         //        return total;
         //    }
         //}
+    }
+
+    public class SaleOrderPartnerPrintVM
+    {
+        public string Name { get; set; }
+
+        public string Gender { get; set; }
+
+        public string GetGender
+        {
+            get
+            {
+                if (Gender == "male")
+                    return "Nam";
+                else if (Gender == "female")
+                    return "Nữ";
+                else
+                    return "Khác";
+            }
+            set { }
+        }
+
+        public int? BirthYear { get; set; }
+
+        public int? BirthMonth { get; set; }
+
+        public int? BirthDay { get; set; }
+
+        public string GetBirthDay
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+        }
+
+        public string Phone { get; set; }
+
+        public string Address
+        {
+            get
+            {
+                var list = new List<string>();
+                if (!string.IsNullOrEmpty(Street))
+                    list.Add(Street);
+                if (!string.IsNullOrEmpty(WardName))
+                    list.Add(WardName);
+                if (!string.IsNullOrEmpty(DistrictName))
+                    list.Add(DistrictName);
+                if (!string.IsNullOrEmpty(CityName))
+                    list.Add(CityName);
+                return string.Join(", ", list);
+            }
+            set { }
+        }
+
+        public string Street { get; set; }
+
+        public string WardName { get; set; }
+
+        public string DistrictName { get; set; }
+
+        public string CityName { get; set; }
+
+        /// <summary>
+        /// Danh sách tiểu sử bệnh
+        /// </summary>
+        public string HistoryList
+        {
+            get
+            {
+                return string.Join(", ", Histories);
+            }
+        }
+
+        public IEnumerable<string> Histories { get; set; } = new List<string>();
+
+        public string MedicalHistory { get; set; }
+    }
+
+    public class SaleOrderOrderLinePrintVM
+    {
+        public SaleOrderOrderLineProductPrintVM Product { get; set; }
+
+        public string Diagnostic { get; set; }
+
+        public string TeethDisplay
+        {
+            get
+            {
+                return string.Join(", ", Teeth);
+            }
+        }
+
+        public IEnumerable<string> Teeth { get; set; } = new List<string>();
+
+        public decimal ProductUomqty { get; set; }
+
+        public decimal PriceUnit { get; set; }
+    }
+
+    public class SaleOrderOrderLineProductPrintVM
+    {
+        public string Name { get; set; }
+    }
+
+    public class SaleOrderOrderPaymentPrintVM
+    {
+        public decimal Amount { get; set; }
+
+        public string LinesDisplay
+        {
+            get
+            {
+                return string.Join(", ", LinesName);
+            }
+        }
+
+        public IEnumerable<string> LinesName { get; set; } = new List<string>();
+
+        public IEnumerable<SaleOrderOrderPaymentRelPrintVM> PaymentRels { get; set; } = new List<SaleOrderOrderPaymentRelPrintVM>();
+        
+    }
+
+    public class SaleOrderOrderPaymentRelPrintVM
+    {
+        public SaleOrderOrderPaymentRelPaymentPrintVM Payment { get; set; }
+    }
+
+    public class SaleOrderOrderPaymentRelPaymentPrintVM
+    {
+        public string Name { get; set; }
+
+        public DateTime PaymentDate { get; set; }
+
+        public SaleOrderOrderPaymentRelPaymentJournalPrintVM Journal { get; set; }
+
+        public decimal Amount { get; set; }
+    }
+
+    public class SaleOrderOrderPaymentRelPaymentJournalPrintVM
+    {
+        public string Name { get; set; }
     }
 }
