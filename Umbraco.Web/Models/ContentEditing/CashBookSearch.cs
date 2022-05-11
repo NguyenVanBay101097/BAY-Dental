@@ -63,8 +63,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
 
         public int Offset { get; set; }
-        public string AccountCode { get; set; }
-        public string PaymentType{ get; set; }
+
+        public IEnumerable<Guid> AccountIds { get; set; }
+
+        /// <summary>
+        /// inbound: Loại thu
+        /// outbound: Loại chi
+        /// null: Tất cả
+        /// </summary>
+        public string PaymentType { get; set; }
     }
 
     public class DataInvoiceFilter

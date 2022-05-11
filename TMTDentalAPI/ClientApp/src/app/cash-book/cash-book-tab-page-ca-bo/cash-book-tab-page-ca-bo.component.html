@@ -38,8 +38,8 @@
             <kendo-combobox class="ml-1 w-auto" [placeholder]="'Loại thu'" (valueChange)="onChangePaymentType($event)"
                 [data]="filteredPaymentTypes" [valueField]="'value'" [textField]="'text'" [valuePrimitive]="true"></kendo-combobox>
             <kendo-multiselect [placeholder]="'Loại thu chi'" class="ml-1" style="width: 250px;" [filterable]="true"
-                [data]="filteredAccountCode" [textField]="'name'" [valueField]="'code'" [valuePrimitive]="true"
-                (valueChange)="changeAccountCode($event)"></kendo-multiselect>
+                [data]="filteredAccountCode" [textField]="'name'" [valueField]="'id'" [valuePrimitive]="true"
+                [(ngModel)]="accountIds" (valueChange)="onAccountValueChange($event)"></kendo-multiselect>
             <button type="button" class="btn btn-primary ml-1" (click)="exportExcelFile()">
                 <i class="fas fa-download ml-2"></i>Xuất file
             </button>

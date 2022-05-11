@@ -50,7 +50,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   ];
 
   paymentType: string = '';
-  accountCode: string = '';
+  accountIds: string[];
   filteredAccountCode: any;
   constructor(
     private cashBookService: CashBookService,
@@ -129,7 +129,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     summarySearch.companyId = this.authService.userInfo.companyId;
     summarySearch.dateFrom = this.dateFrom ? this.intlService.formatDate(this.dateFrom, "yyyy-MM-dd") : null;
     summarySearch.dateTo = this.dateTo ? this.intlService.formatDate(this.dateTo, "yyyy-MM-dd") : null;
-    summarySearch.accountCode = this.accountCode;
+    summarySearch.accountIds = this.accountIds;
     summarySearch.paymentType = this.paymentType;
     this.cashBookService.getSumary(summarySearch)
       .subscribe(
@@ -155,7 +155,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';
-    gridPaged.accountCode = this.accountCode;
+    gridPaged.accountIds = this.accountIds;
     gridPaged.paymentType = this.paymentType;
     this.cashBookService.getDetails(gridPaged)
       .pipe(
@@ -263,7 +263,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     gridPaged.offset = this.skip;
     gridPaged.limit = this.limit;
     gridPaged.search = this.search || '';
-    gridPaged.accountCode = this.accountCode;
+    gridPaged.accountIds = this.accountIds;
     gridPaged.paymentType = this.paymentType;
 
     this.cashBookService.exportExcelFile(gridPaged).subscribe((res: any) => {
@@ -331,8 +331,7 @@ export class CashBookTabPageCaBoComponent implements OnInit {
     this.loadDataFromApi();
   }
 
-  changeAccountCode(event) {
-    this.accountCode = event.join(',');
+  onAccountValueChange(event) {
     this.loadGridData();
     this.loadDataFromApi();
   }

@@ -20,7 +20,7 @@ export class CashBookSummarySearch {
   journalId: string;
   dateFrom: string;
   dateTo: string;
-  accountCode: string;
+  accountIds: string[];
   paymentType: string;
 }
 
@@ -62,7 +62,7 @@ export class CashBookDetailFilter {
   search: string;
   limit: number;
   offset: number;
-  accountCode: string;
+  accountIds: string[];
   paymentType: string;
 }
 

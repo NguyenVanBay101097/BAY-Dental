@@ -12,7 +12,17 @@ namespace Infrastructure.Services
     {
         Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId, string accountCode, string paymentType);
 
-        Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit, int offset, Guid? companyId, string search, string resultSelection, Guid? journalId, string accountCode, string paymentType);
+        Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom,
+              DateTime? dateTo,
+              int limit,
+              int offset,
+              Guid? companyId,
+              string search,
+              string resultSelection,
+              Guid? journalId,
+              IEnumerable<Guid> accountIds = null,
+              string paymentType = "all");
+
         Task<decimal> GetTotal(CashBookSearch val);
 
         Task<IEnumerable<CashBookReportItem>> GetChartReport(CashBookReportFilter val);

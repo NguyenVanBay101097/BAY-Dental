@@ -210,7 +210,16 @@ namespace Infrastructure.Services
             return SumaryCashBook;
         }
 
-        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom, DateTime? dateTo, int limit, int offset, Guid? companyId, string search, string resultSelection, Guid? journalId, string accountCode, string paymentType)
+        public async Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom,
+            DateTime? dateTo,
+            int limit,
+            int offset,
+            Guid? companyId,
+            string search,
+            string resultSelection,
+            Guid? journalId,
+            IEnumerable<Guid> accountIds = null,
+            string paymentType = "all")
         {
             var amlObj = GetService<IAccountMoveLineService>();
 
@@ -235,21 +244,21 @@ namespace Infrastructure.Services
             if (journalId.HasValue)
                 query = query.Where(x => x.JournalId == journalId);
 
-            if (!string.IsNullOrWhiteSpace(accountCode))
+            if (accountIds != null)
             {
-                query = query.Where(x => accountCode.Contains(x.Account.Code));
+                if (accountIds.Any())
+                    query = query.Where(x => accountIds.Contains(x.AccountId));
             }
 
             if (!string.IsNullOrWhiteSpace(paymentType))
             {
-                query = query.Include(x => x.Payment).Include(x => x.PhieuThuChi);
                 if (paymentType == "inbound")
                 {
-                    query = query.Where(x => (x.PhieuThuChiId.HasValue && x.PhieuThuChi.Type.Equals("thu")) || (x.PaymentId.HasValue && x.Payment.PaymentType.Equals("inbound")) );
+                    query = query.Where(x => x.Credit > 0);
                 }
                 else if (paymentType == "outbound")
                 {
-                    query = query.Where(x => (x.PhieuThuChiId.HasValue && x.PhieuThuChi.Type.Equals("chi")) || (x.PaymentId.HasValue && x.Payment.PaymentType.Equals("outbound")) || (x.SalaryPaymentId.HasValue));
+                    query = query.Where(x => x.Debit > 0);
                 }
             }
 
