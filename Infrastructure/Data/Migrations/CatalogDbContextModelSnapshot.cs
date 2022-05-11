@@ -938,9 +938,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Ref")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SalaryPaymentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("SalesmanId")
                         .HasColumnType("nvarchar(450)");
 
@@ -982,8 +979,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ProductUoMId");
 
                     b.HasIndex("PurchaseLineId");
-
-                    b.HasIndex("SalaryPaymentId");
 
                     b.HasIndex("SalesmanId");
 
@@ -12981,10 +12976,6 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("MoveLines")
                         .HasForeignKey("PurchaseLineId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("ApplicationCore.Entities.SalaryPayment", "SalaryPayment")
-                        .WithMany()
-                        .HasForeignKey("SalaryPaymentId");
 
                     b.HasOne("ApplicationCore.Entities.ApplicationUser", "Salesman")
                         .WithMany()
