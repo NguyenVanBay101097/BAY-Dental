@@ -28,7 +28,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetSumary(CashBookSearch val)
         {
-            var res = await _cashBookService.GetSumary(val.DateFrom, val.DateTo, val.CompanyId, val.ResultSelection,val.JournalId, val.AccountCode, val.PaymentType);
+            var res = await _cashBookService.GetSumary(val.DateFrom, val.DateTo, val.CompanyId, val.ResultSelection, val.JournalId);
             return Ok(res);
         }
 
@@ -51,7 +51,7 @@ namespace TMTDentalAPI.Controllers
         [CheckAccess(Actions = "Account.Read")]
         public async Task<IActionResult> GetDetails(CashBookDetailFilter val)
         {
-            var res = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId, val.Search, val.ResultSelection , val.JournalId, accountIds: val.AccountIds, paymentType: val.PaymentType);
+            var res = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId, val.Search, val.ResultSelection, val.JournalId, accountIds: val.AccountIds, paymentType: val.PaymentType);
             return Ok(res);
         }
 
@@ -86,7 +86,7 @@ namespace TMTDentalAPI.Controllers
             var stream = new MemoryStream();
             val.Limit = int.MaxValue;
             val.Offset = 0;
-            var services = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId.Value, val.Search, val.ResultSelection , val.JournalId, val.AccountIds, val.PaymentType);
+            var services = await _cashBookService.GetDetails(val.DateFrom, val.DateTo, val.Limit, val.Offset, val.CompanyId.Value, val.Search, val.ResultSelection, val.JournalId, val.AccountIds, val.PaymentType);
             var sheetName = "Tổng sổ quỹ";
             if (val.ResultSelection == "cash")
             {

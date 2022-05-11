@@ -281,7 +281,6 @@ namespace Infrastructure.Services
                     Move = move,
                     Ref = payment.Name,
                     PartnerId = partnerId,
-                    SalaryPaymentId = payment.Id
                 },
                 new AccountMoveLine
                 {
@@ -293,7 +292,6 @@ namespace Infrastructure.Services
                     Move = move,
                     Ref = payment.Name,
                     PartnerId = partnerId,
-                    SalaryPaymentId = payment.Id
                 },
             };
 

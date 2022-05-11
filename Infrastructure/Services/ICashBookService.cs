@@ -10,7 +10,7 @@ namespace Infrastructure.Services
 {
     public interface ICashBookService
     {
-        Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId, string accountCode, string paymentType);
+        Task<CashBookReport> GetSumary(DateTime? dateFrom, DateTime? dateTo, Guid? companyId, string resultSelection, Guid? journalId);
 
         Task<PagedResult2<CashBookReportDetail>> GetDetails(DateTime? dateFrom,
               DateTime? dateTo,

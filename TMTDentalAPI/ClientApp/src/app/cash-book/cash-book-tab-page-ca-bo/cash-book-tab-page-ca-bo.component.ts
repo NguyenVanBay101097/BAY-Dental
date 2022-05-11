@@ -328,11 +328,9 @@ export class CashBookTabPageCaBoComponent implements OnInit {
   onChangePaymentType(event) {
     this.paymentType = event;
     this.loadGridData();
-    this.loadDataFromApi();
   }
 
   onAccountValueChange(event) {
     this.loadGridData();
-    this.loadDataFromApi();
   }
 }

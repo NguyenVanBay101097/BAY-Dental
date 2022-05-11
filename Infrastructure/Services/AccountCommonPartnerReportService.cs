@@ -755,6 +755,10 @@ namespace Infrastructure.Services
             {
                 if (item.Begin == 0 && item.Debit == 0 && item.Credit == 0)
                     continue;
+
+                if (!partnerDict.ContainsKey(item.PartnerId))
+                    continue;
+                    
                 var partner = partnerDict[item.PartnerId];
 
                 item.PartnerName = partner.Name;

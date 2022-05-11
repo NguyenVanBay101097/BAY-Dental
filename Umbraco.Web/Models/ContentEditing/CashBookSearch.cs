@@ -26,8 +26,6 @@ namespace Umbraco.Web.Models.ContentEditing
         /// cash_bank: tong quy
         /// </summary>
         public string ResultSelection { get; set; }
-        public string AccountCode { get; set; }
-        public string PaymentType { get; set; }
     }
 
     public class CashBookDetailFilter
