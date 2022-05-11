@@ -287,6 +287,7 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SaleOrderOrderPaymentRelPaymentPrintVM
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public DateTime PaymentDate { get; set; }
@@ -303,21 +304,23 @@ namespace Umbraco.Web.Models.ContentEditing
 
     public class SaleOrderOrderPaymentPrintVMDotKhamPrintVM
     {
+        public Guid Id { get; set; }
         public IEnumerable<SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM> Lines { get; set; } = new List<SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM>();
         public DateTime Date { get; set; }
     }
 
     public class SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM
     {
+        public Guid DotKhamId { get; set; }
         public SaleOrderOrderLineProductPrintVM Product { get; set; }
         public string NameStep { get; set; }
-        public ICollection<DotKhamLineToothRel> ToothRels { get; set; } = new List<DotKhamLineToothRel>();
+        public IEnumerable<DotKhamLineToothRel> ToothRels { get; set; } = new List<DotKhamLineToothRel>();
         [NotMapped]
         public string TeethDisplay
         {
             get
             {
-                return ToothRels.Count > 0 ? string.Join(" ,", ToothRels.Select(x => x.Tooth.Name)) : "";
+                return ToothRels.Any()  ? string.Join(" ,", ToothRels.Select(x => x.Tooth.Name)) : "";
             }
         }
 
