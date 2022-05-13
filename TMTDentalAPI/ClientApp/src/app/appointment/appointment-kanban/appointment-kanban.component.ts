@@ -149,53 +149,53 @@ export class AppointmentKanbanComponent implements OnInit {
 
     this.loadListEmployees();
     // this.loadDoctorList();
-    const token = this.authService.getAuthorizationToken();
-    this.connection = new signalR.HubConnectionBuilder()
-      .configureLogging(signalR.LogLevel.Information)
-      .withUrl(this.baseApi + 'appointmentHub',
-        {
-          skipNegotiation: true,
-          transport: signalR.HttpTransportType.WebSockets,
-          accessTokenFactory: () => token
-        })
-      .withAutomaticReconnect()
-      .build();
+    // const token = this.authService.getAuthorizationToken();
+    // this.connection = new signalR.HubConnectionBuilder()
+    //   .configureLogging(signalR.LogLevel.Information)
+    //   .withUrl(this.baseApi + 'appointmentHub',
+    //     {
+    //       skipNegotiation: true,
+    //       transport: signalR.HttpTransportType.WebSockets,
+    //       accessTokenFactory: () => token
+    //     })
+    //   .withAutomaticReconnect()
+    //   .build();
 
-    this.connection.start().then(function () {
-      console.log('SignalR Connected!');
-    }).catch(function (err) {
-      return console.error(err.toString());
-    });
+    // this.connection.start().then(function () {
+    //   console.log('SignalR Connected!');
+    // }).catch(function (err) {
+    //   return console.error(err.toString());
+    // });
 
-    this.connection.on("Receive", (res) => {
-      this._ngZone.run(() => {  
-        const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
-        if (idx != -1) {
-          console.log('update appointment', res);
-          this.appointments[idx] = res[0];
-        }
-        else {
-          console.log('create appointment', res);
-          this.appointments.push(...res);
-        }
-        this.filterDataClient();
-      });  
-    });
+    // this.connection.on("Receive", (res) => {
+    //   this._ngZone.run(() => {  
+    //     const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
+    //     if (idx != -1) {
+    //       console.log('update appointment', res);
+    //       this.appointments[idx] = res[0];
+    //     }
+    //     else {
+    //       console.log('create appointment', res);
+    //       this.appointments.push(...res);
+    //     }
+    //     this.filterDataClient();
+    //   });  
+    // });
 
-    this.connection.on("ReceiveDelete", (res) => {
-      this._ngZone.run(() => {  
-        const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
-        this.appointments.splice(idx, 1);
-        this.filterDataClient();
-        console.log('delete appointment', res);
-      });  
-    });
+    // this.connection.on("ReceiveDelete", (res) => {
+    //   this._ngZone.run(() => {  
+    //     const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
+    //     this.appointments.splice(idx, 1);
+    //     this.filterDataClient();
+    //     console.log('delete appointment', res);
+    //   });  
+    // });
     
-    this.connection.on("test", (res) => {
-      this._ngZone.run(() => {  
-        console.log('test stop connect', res);
-      });  
-    });
+    // this.connection.on("test", (res) => {
+    //   this._ngZone.run(() => {  
+    //     console.log('test stop connect', res);
+    //   });  
+    // });
   }
 
   processSearch(value: string) {
@@ -1031,6 +1031,8 @@ export class AppointmentKanbanComponent implements OnInit {
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);
+    // dateEventV2El.style.backgroundColor = '#28A745'
+    // dateEventV2El.style.filter = 'brightness(125%);'
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {

@@ -57,6 +57,19 @@ tbody {
   width: 100% !important;
 }
 
+tbody tr td {
+  padding-top: 5px;
+  padding-right: 5px;
+}
+
 .o_td_label{
   width: 200px !important;
+}
+
+.btn-item-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 20px;
+  border-radius: 50%;
+  padding: 0;
 }

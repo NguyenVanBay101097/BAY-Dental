@@ -104,6 +104,8 @@ namespace Umbraco.Web.Models.ContentEditing
             }
         }
 
+        public string Color { get; set; }
+
     }
 
     public class AppointmentDisplay
@@ -174,6 +176,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public bool HasDotKhamRef { get; set; }
         public Guid? SaleOrderId { get; set; }
         public bool IsRepeatCustomer { get; set; }
+        public string Color { get; set; }
     }
 
     public class AppointmentPaged

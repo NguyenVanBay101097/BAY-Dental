@@ -13,6 +13,8 @@ namespace TMTDentalAPI.Hubs
     {
         public async Task CreateUpdate(IEnumerable<AppointmentBasic> agr)
         {
+            //luu
+
             //await Clients.All.SendAsync("ReceiveMessage", agr);
             var temp = CurrentTenantCompanyId();
 

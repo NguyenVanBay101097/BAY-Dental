@@ -66,7 +66,20 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   private btnDeleteSubject = new Subject<any>();
 
   get f() { return this.formGroup.controls; }
-
+  colors = [{name: '', code: '#2395FF'},
+            {name: '', code: '#28A745'},
+            {name: '', code: '#FFC107'},
+            {name: '', code: '#EB3B5B'},
+            {name: '', code: '#B5076B'},
+            {name: '', code: '#A70000'},
+            {name: '', code: '#034A93'},
+            {name: '', code: '#42526E'},
+            {name: '', code: '#0C9AB2'},
+            {name: '', code: '#FF8900'},
+            {name: '', code: '#00875A'},
+            {name: '', code: '#EB2E94'}
+          ];
+  codeColorSelected: string = '#2395FF';
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
@@ -105,7 +118,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       services: [],
       isRepeatCustomer: false,
       isNotExamination: false,
-      showReason: false
+      showReason: false,
+      color: '#2395FF'
     })
 
     setTimeout(() => {
@@ -225,7 +239,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm');;
     appoint.date = `${apptDate}T${appTime}`;
     appoint.timeExpected = appoint.timeExpected || 0;
-
+    appoint.color = this.codeColorSelected;
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
@@ -463,6 +477,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   loadAppointmentToForm() {
+    debugger
     if (this.appointId != null) {
       this.appointmentService.get(this.appointId).subscribe(
         (rs: any) => {
@@ -470,6 +485,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           let date = new Date(rs.date);
           this.formGroup.get('dateObj').patchValue(date);
           this.formGroup.get('timeObj').patchValue(date);
+          this.codeColorSelected = rs.color;
           // this.formGroup.get('apptHour').patchValue(date.getHours());
           // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
@@ -602,5 +618,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.appointmentService.print(this.appointId).subscribe((res: any) => {
       this.printService.printHtml(res.html);
     });
+  }
+
+  clickColor(color) {
+    this.codeColorSelected = color.code;
   }
 }

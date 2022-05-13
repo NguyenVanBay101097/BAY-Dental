@@ -164,6 +164,17 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Gắn màu</label>
+                            </td>
+                            <td colspan="1" style="width:100%">
+                                <button (click) = "clickColor(color)" *ngFor="let color of colors"
+                                class="btn btn-item-color" [style.background-color]="color.code">
+                                    <i *ngIf="color.code == codeColorSelected" class="fas fa-check text-light"></i>
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -285,10 +285,8 @@
     /* cursor: pointer; */
     width: 100%;
     max-width: 200px;
-    border-left: 3px solid #2395FF;
-    /* default */
-    background: #E5F2FF;
-    /* default */
+    /* border-left: 3px solid #2395FF;
+    background: #E5F2FF; */
     cursor: default;
 }
 
@@ -345,7 +343,7 @@
 .date-event-v2 .content i {
     width: 16px;
     opacity: 0.5;
-    color: #1A6DE3;
+    /* color: #1A6DE3; */
     /* default */
 }
 
@@ -504,60 +502,60 @@
 }
 
 /* đang hẹn */
-.event-confirmed {
+/* .event-confirmed {
     border-left: 3px solid #2395FF;
     background: #E5F2FF;
-}
+} */
 
-.event-confirmed .header .status {
+/* .event-confirmed .header .status {
     background: #2395FF;
 }
 
 .event-confirmed .content i {
     color: #1A6DE3;
-}
+} */
 
 /* đã đến */
-.event-arrived {
+/* .event-arrived {
     border-left: 3px solid #28A745;
     background: #E9F6EC;
-}
+} */
 
-.event-arrived .header .status {
+/* .event-arrived .header .status {
     background: #28A745;
 }
 
 .event-arrived .content i {
     color: #28A745;
-}
+} */
 
 /* hủy hẹn */
-.event-cancel {
+/* .event-cancel {
     border-left: 3px solid #EB3B5B;
     background: #FDEBE9;
-}
+} */
 
-.event-cancel .header .status {
+/* .event-cancel .header .status {
     background: #EB3B5B;
 }
 
 .event-cancel .content i {
     color: #EB3B5B;
-}
+} */
 
 /* quá hạn */
-.event-overdue {
+/* .event-overdue {
     border-left: 3px solid #FFC107;
     background: #FEF6E9;
-}
+} */
 
 .event-overdue .header .status {
     background: #FFC107;
 }
 
-.event-overdue .content i {
+/* .event-overdue .content i {
     color: #FFC107;
-}
+} */
 
 /* Dialog Calendar */
 .cont-dialog-calendar {
