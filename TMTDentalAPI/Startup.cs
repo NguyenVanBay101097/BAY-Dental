@@ -776,6 +776,8 @@ namespace TMTDentalAPI
 
             app.UseMultitenancy<AppTenant>();
 
+            
+
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -835,10 +837,15 @@ namespace TMTDentalAPI
 
                 spa.Options.SourcePath = "ClientApp";
 
-                //if (env.IsDevelopment())
-                //{
-                //    spa.UseAngularCliServer(npmScript: "start");
-                //}
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<AppointmentHub>("/appointmentHub");
             });
         }
 

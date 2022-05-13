@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, NgZone, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import * as signalR from '@microsoft/signalr';
 import { NgbDropdownToggle, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -8,6 +9,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -20,6 +22,7 @@ import {
 } from '../appointment';
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
 import { AppointmentService } from '../appointment.service';
+
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -113,6 +116,7 @@ export class AppointmentKanbanComponent implements OnInit {
   titleToolbar = "";
   clientFilter: boolean = false;
   dataAppointmentsForFilter: any[] = [];
+  connection: any;
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
@@ -122,7 +126,10 @@ export class AppointmentKanbanComponent implements OnInit {
     private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService,
     private receiveAppointmentService: ReceiveAppointmentService,
-    private printService: PrintService
+    private printService: PrintService,
+    private authService: AuthService,
+    @Inject('BASE_API') private baseApi: string,
+    private _ngZone: NgZone
   ) { }
 
   ngOnInit() {
@@ -137,11 +144,57 @@ export class AppointmentKanbanComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((value) => {
-         this.processSearch(value);
+        this.processSearch(value);
       });
 
     this.loadListEmployees();
     // this.loadDoctorList();
+    const token = this.authService.getAuthorizationToken();
+    this.connection = new signalR.HubConnectionBuilder()
+      .configureLogging(signalR.LogLevel.Information)
+      .withUrl(this.baseApi + 'appointmentHub',
+        {
+          skipNegotiation: true,
+          transport: signalR.HttpTransportType.WebSockets,
+          accessTokenFactory: () => token
+        })
+      .build();
+
+    this.connection.start().then(function () {
+      console.log('SignalR Connected!');
+    }).catch(function (err) {
+      return console.error(err.toString());
+    });
+
+    this.connection.on("Receive", (res) => {
+      this._ngZone.run(() => {  
+        const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
+        if (idx != -1) {
+          console.log('update appointment', res);
+          this.appointments[idx] = res[0];
+        }
+        else {
+          console.log('create appointment', res);
+          this.appointments.push(...res);
+        }
+        this.filterDataClient();
+      });  
+    });
+
+    this.connection.on("ReceiveDelete", (res) => {
+      this._ngZone.run(() => {  
+        const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
+        this.appointments.splice(idx, 1);
+        this.filterDataClient();
+        console.log('delete appointment', res);
+      });  
+    });
+    
+    this.connection.on("test", (res) => {
+      this._ngZone.run(() => {  
+        console.log('test stop connect', res);
+      });  
+    });
   }
 
   processSearch(value: string) {
@@ -164,7 +217,7 @@ export class AppointmentKanbanComponent implements OnInit {
       let daysInMonth = new Date(beginMonth.getFullYear(), beginMonth.getMonth() + 1, 0).getDate();;
       const endMonth = new Date(beginMonth.getFullYear(), beginMonth.getMonth(), daysInMonth);
 
-      this.dateFrom = new Date(beginMonth.getFullYear(), beginMonth.getMonth(), beginMonth.getDate() - (beginMonth.getDay() == 0 ? 6 : beginMonth.getDay() -1));
+      this.dateFrom = new Date(beginMonth.getFullYear(), beginMonth.getMonth(), beginMonth.getDate() - (beginMonth.getDay() == 0 ? 6 : beginMonth.getDay() - 1));
       this.dateTo = new Date(endMonth.getFullYear(), endMonth.getMonth(), endMonth.getDate() + (endMonth.getDay() == 0 ? 0 : 7 - endMonth.getDay()));
     }
   }
@@ -939,6 +992,7 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   getEventDayNWeek(appointment, isDay = true) {
+    // console.log(appointment)
     if (!appointment) {
       return document.createElement('div');
     }
@@ -1085,7 +1139,13 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.result.then(result => {
-      this.loadDataFromApi(); // Render Calendar
+      if (result.isDetele) {
+        this.connection.send("Delete", [result.id]);
+      }
+      else {
+        this.connection.send("CreateUpdate", [result]);
+      }
+      // this.loadDataFromApi(); // Render Calendar
     }, () => { });
   }
 
@@ -1127,5 +1187,11 @@ export class AppointmentKanbanComponent implements OnInit {
     const h = (timeExpected - m) / 60;
     const HHMM = h.toString() + 'g' + (m < 10 ? '0' : '') + m.toString() + 'p';
     return HHMM;
+  }
+
+  ngOnDestroy(): void {
+    this.connection.stop().then(res => {
+      console.log('stop connection');
+    })
   }
 }

@@ -416,12 +416,13 @@ namespace Infrastructure.Services
             return appointment;
         }
 
-        public async Task UpdateAsync(Guid id, AppointmentDisplay val)
+        public async Task<AppointmentBasic> UpdateAsync(Guid id, AppointmentDisplay val)
         {
-            var appointment = await SearchQuery(x => x.Id == id).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
+            var appointment = await SearchQuery(x => x.Id == id).Include(x => x.Partner).Include(x => x.Doctor).Include(x => x.AppointmentServices).ThenInclude(x => x.Product).FirstOrDefaultAsync();
             await ComputeAppointmentService(appointment, val);
             appointment = _mapper.Map(val, appointment);
             await UpdateAsync(appointment);
+            return _mapper.Map<AppointmentBasic>(appointment);
         }
 
         public async Task ComputeAppointmentService(Appointment app, AppointmentDisplay appD)

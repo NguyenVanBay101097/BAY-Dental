@@ -88,7 +88,7 @@ namespace TMTDentalAPI.Controllers
             var res = await _appointmentService.CreateAsync(val);
             _unitOfWork.Commit();
 
-            return Ok(_mapper.Map<AppointmentDisplay>(res));
+            return Ok(_mapper.Map<AppointmentBasic>(res));
         }
 
         [HttpPut("{id}")]
@@ -97,9 +97,9 @@ namespace TMTDentalAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            await _appointmentService.UpdateAsync(id, val);
+            var appointment = await _appointmentService.UpdateAsync(id, val);
 
-            return NoContent();
+            return Ok(appointment);
         }
 
         ///Cập nhật trạng thái lịch hẹn đã quá hạn

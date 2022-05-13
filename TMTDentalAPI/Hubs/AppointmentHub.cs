@@ -4,12 +4,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
 
 namespace TMTDentalAPI.Hubs
 {
     [Authorize]
     public class AppointmentHub : Hub
     {
+        public async Task CreateUpdate(IEnumerable<AppointmentBasic> agr)
+        {
+            //await Clients.All.SendAsync("ReceiveMessage", agr);
+            var temp = CurrentTenantCompanyId();
+
+            await Clients.Groups(CurrentTenantCompanyId()).SendAsync("Receive", agr);
+        }
+
+        public async Task Delete(IEnumerable<Guid> ids)
+        {
+            //await Clients.All.SendAsync("ReceiveMessage", agr);
+            await Clients.Groups(CurrentTenantCompanyId()).SendAsync("ReceiveDelete", ids);
+        }
+
         /// <summary>
         /// Called when an authenticated client connects, store in group for tenant
         /// </summary>
@@ -17,6 +32,7 @@ namespace TMTDentalAPI.Hubs
         public override async Task OnConnectedAsync()
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, CurrentTenantCompanyId());
+
             await base.OnConnectedAsync();
         }
 
@@ -29,6 +45,7 @@ namespace TMTDentalAPI.Hubs
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, CurrentTenantCompanyId());
             await base.OnDisconnectedAsync(exception);
+
         }
 
         protected string CurrentTenantCompanyId()
