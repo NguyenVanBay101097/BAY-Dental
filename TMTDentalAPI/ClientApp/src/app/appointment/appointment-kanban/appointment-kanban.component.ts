@@ -158,6 +158,7 @@ export class AppointmentKanbanComponent implements OnInit {
           transport: signalR.HttpTransportType.WebSockets,
           accessTokenFactory: () => token
         })
+      .withAutomaticReconnect()
       .build();
 
     this.connection.start().then(function () {
