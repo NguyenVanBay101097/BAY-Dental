@@ -146,4 +146,47 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     }
   }
 
+  exportExcel() {
+    var val = this.getDataApiParam();
+    this.saleOrderLineService.exportExcel(val).subscribe((rs) => {
+      let filename = `Lich_su_dieu_tri`;
+      let newBlob = new Blob([rs], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+  onExportPDF() {
+    var val = this.getDataApiParam();
+    this.saleOrderLineService.exportPdf(val).subscribe(res => {
+      let filename = "Lich_su_dieu_tr";
+
+      let newBlob = new Blob([res], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
 }

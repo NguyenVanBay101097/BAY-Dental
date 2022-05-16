@@ -272,4 +272,85 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public bool IsListLabo { get; set; }
     }
+
+    public class SaleOrderLineExcel
+    {
+        [EpplusDisplay("Ngày")]
+        public DateTime? Date { get; set; }
+        [EpplusDisplay("Dịch vụ")]
+        public string ProductName { get; set; }
+        [EpplusDisplay("Phiếu điều trị")]
+        public string OrderName { get; set; }
+        [EpplusDisplay("Số lượng")]
+        public decimal ProductUOMQty { get; set; }
+        [EpplusDisplay("Đơn vị tính")]
+        public string ProductUOMName { get; set; }
+        [EpplusDisplay("Thành tiền")]
+        public decimal PriceSubTotal { get; set; }
+        [EpplusDisplay("Thanh toán")]
+        public decimal? AmountInvoiced { get; set; }
+
+
+        [EpplusDisplay("Còn lại")]
+        public decimal? AmountResidual
+        {
+            get
+            {
+                return PriceSubTotal - (AmountInvoiced ?? 0);
+            }
+        }
+        [EpplusDisplay("Răng")]
+        public string TeethDisplay
+        {
+            get
+            {
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        return "Nguyên hàm";
+                    case "upper_jaw":
+                        return "Hàm trên";
+                    case "lower_jaw":
+                        return "Hàm dưới";
+                    default:
+                        return string.Join(", ", Teeth2);
+                }
+            }
+        }
+        [EpplusDisplay("Bác sĩ")]
+        public string EmployeeName { get; set; }
+        [EpplusDisplay("Chẩn đoán")]
+        public string Diagnostic { get; set; }
+        [EpplusDisplay("Trạng thái")]
+        public string StateDisplay
+        {
+            get
+            {
+                switch (State)
+                {
+                    case "sale":
+                        return "Đang điều trị";
+                    case "cancel":
+                        return "Ngừng điều trị";
+                    case "done":
+                        return "Hoàn thành";
+                    default:
+                        return "Mới";
+                }
+            }
+        }
+        public IEnumerable<string> Teeth2 { get; set; } = new List<string>();
+        public string State { get; set; }
+        public string ToothType { get; set; }
+
+        public bool IsActive { get; set; }
+    }
+
+    public class SaleOrderLineHistoryPrint
+    {
+        public IEnumerable<SaleOrderLineBasic> data { get; set; } = new List<SaleOrderLineBasic>();
+        public PartnerPrintVM Partner { get; set; }
+        public CompanyPrintVM Company { get; set; }
+        public ApplicationUserSimple User { get; set; }
+    }
 }

@@ -9,6 +9,15 @@
           <span class="fas fa-plus-circle"></span>
           <span> Tạo điều trị</span>
         </button>
+        <div class="dropdown mr-2">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-download"></i> Xuất File</button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
+              <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+          </div>
+      </div>
         <button type="button" (click)="printTreatmentHistories()" class="btn btn-primary d-flex">
           <span>In hồ sơ điều trị</span>
         </button>

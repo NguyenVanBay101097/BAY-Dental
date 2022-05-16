@@ -227,4 +227,12 @@ export class SaleOrderLineService {
     debtPayment(id) {
         return this.http.post(this.baseApi + this.apiUrl + "/" + id + '/DebtPayment', null);
     }
+
+    exportExcel(val){
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportExcel" , {params: new HttpParams({fromObject: val}), responseType: 'blob'})
+    }
+
+    exportPdf(val){
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportPdf" , {params: new HttpParams({fromObject: val}), responseType: 'blob'})
+    }
 }

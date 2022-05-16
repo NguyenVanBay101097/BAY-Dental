@@ -95,6 +95,6 @@ namespace Infrastructure.Services
         Task DebtPayment(Guid id);
 
         Task CreateSaleProduction(IEnumerable<SaleOrderLine> seft);
-
+        Task<SaleOrderLineHistoryPrint> ExportPdfData(SaleOrderLinesPaged val);
     }
 }
