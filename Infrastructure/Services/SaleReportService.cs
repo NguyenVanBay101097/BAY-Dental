@@ -768,7 +768,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.IsActive == val.Active);
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
+                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Ref.Contains(val.Search)
                                          || x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
 
             return query;

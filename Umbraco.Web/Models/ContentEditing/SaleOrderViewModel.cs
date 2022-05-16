@@ -66,6 +66,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
         public decimal? AmountTotal { get; set; }
         public decimal? Residual { get; set; }
         public decimal? TotalPaid { get; set; }

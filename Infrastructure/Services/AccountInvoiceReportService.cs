@@ -415,7 +415,7 @@ namespace Infrastructure.Services
                 EmployeeId = x.EmployeeId,
                 AssistantId = x.AssistantId,
                 InvoiceOrigin = x.InvoiceOrigin,
-                PartnerName = x.Partner.Name,
+                PartnerName = x.Partner.DisplayName,
                 PartnerId = x.PartnerId,
                 PriceSubTotal = Math.Abs(x.PriceSubTotal),
                 ProductName = x.Product.Name,
@@ -444,12 +444,12 @@ namespace Infrastructure.Services
         {
             var query = GetRevenueReportQuery(new RevenueReportQueryCommon(val.DateFrom, val.DateTo, val.CompanyId, val.Search));
 
-            var queryRes = query.GroupBy(x => new { x.PartnerId, x.Partner.Name });
+            var queryRes = query.GroupBy(x => new { x.PartnerId, x.Partner.DisplayName });
 
             var res = await queryRes.Select(x => new RevenuePartnerReportDisplay
             {
                 PartnerId = x.Key.PartnerId.Value,
-                PartnerName = x.Key.Name,
+                PartnerName = x.Key.DisplayName,
                 PriceSubTotal = Math.Abs(x.Sum(z => z.PriceSubTotal)),
                 DateTo = val.DateTo,
                 DateFrom = val.DateFrom,
