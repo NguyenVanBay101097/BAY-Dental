@@ -309,7 +309,7 @@
 .date-event-v2 .header .t-action {
     display: flex;
     align-items: center;
-    color: #858F9B;
+    /* color: #858F9B; */
 }
 
 .date-event-v2 .header .t-action div {
@@ -343,12 +343,15 @@
 .date-event-v2 .content i {
     width: 16px;
     opacity: 0.5;
+    color: white !important;
     /* color: #1A6DE3; */
     /* default */
 }
 
+
 .date-event-v2 .content span {
-    color: #6B7280;
+    /* color: #6B7280; */
+    color: white;
 }
 
 /* .list-data-event-day */
@@ -507,47 +510,47 @@
     background: #E5F2FF;
 } */
 
-/* .event-confirmed .header .status {
+.event-confirmed .header .status {
     background: #2395FF;
 }
 
-.event-confirmed .content i {
+/* .event-confirmed .content i {
     color: #1A6DE3;
 } */
 
 /* đã đến */
-/* .event-arrived {
+.event-arrived {
     border-left: 3px solid #28A745;
-    background: #E9F6EC;
-} */
+    /* background: #E9F6EC; */
+}
 
-/* .event-arrived .header .status {
+.event-arrived .header .status {
     background: #28A745;
 }
 
-.event-arrived .content i {
+/* .event-arrived .content i {
     color: #28A745;
 } */
 
 /* hủy hẹn */
-/* .event-cancel {
+.event-cancel {
     border-left: 3px solid #EB3B5B;
-    background: #FDEBE9;
-} */
+    /* background: #FDEBE9; */
+}
 
-/* .event-cancel .header .status {
+.event-cancel .header .status {
     background: #EB3B5B;
 }
 
-.event-cancel .content i {
+/* .event-cancel .content i {
     color: #EB3B5B;
 } */
 
 /* quá hạn */
-/* .event-overdue {
+.event-overdue {
     border-left: 3px solid #FFC107;
-    background: #FEF6E9;
-} */
+    /* background: #FEF6E9; */
+}
 
 .event-overdue .header .status {
     background: #FFC107;
@@ -712,4 +715,24 @@ input[type=number] {
     border-color: #dfdfdf;
     color: #007bff;
     font-weight: 600;
+}
+
+.date-event-v2.o_tag_color_default {
+    background-color: white;
+}
+
+.date-event-v2.o_tag_color_default .customer-name {
+    color: #6b7280;
+}
+
+.date-event-v2.o_tag_color_default .content i {
+    color: #6b7280 !important;
+}
+
+.date-event-v2.o_tag_color_default .content span {
+    color: #6b7280;
+}
+
+.date-event-v2.o_tag_color_default .t-action {
+    color: #858F9B;
 }

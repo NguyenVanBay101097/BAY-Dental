@@ -79,7 +79,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
             {name: '', code: '#00875A'},
             {name: '', code: '#EB2E94'}
           ];
-  codeColorSelected: string = '#2395FF';
+  codeColorSelected: number;
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
@@ -119,7 +119,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       isRepeatCustomer: false,
       isNotExamination: false,
       showReason: false,
-      color: '#2395FF'
+      color: ''
     })
 
     setTimeout(() => {
@@ -239,7 +239,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm');;
     appoint.date = `${apptDate}T${appTime}`;
     appoint.timeExpected = appoint.timeExpected || 0;
-    appoint.color = this.codeColorSelected;
+    appoint.color = this.codeColorSelected != undefined ? this.codeColorSelected : null;
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
@@ -296,6 +296,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     basic.note = res.note;
     basic.time = res.time;
     basic.state = res.state;
+    basic.color = res.color;
     return basic;
   }
 
@@ -477,7 +478,6 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   loadAppointmentToForm() {
-    debugger
     if (this.appointId != null) {
       this.appointmentService.get(this.appointId).subscribe(
         (rs: any) => {
@@ -621,6 +621,9 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   }
 
   clickColor(color) {
-    this.codeColorSelected = color.code;
+    if (this.codeColorSelected == color)
+      this.codeColorSelected = undefined;
+    else 
+      this.codeColorSelected = color;
   }
 }

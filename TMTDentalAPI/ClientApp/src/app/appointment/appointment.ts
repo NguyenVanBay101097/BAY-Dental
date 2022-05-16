@@ -19,6 +19,7 @@ export class AppointmentBasic {
     doctorName: string;
     partnerPhone: string;
     userName: string;
+    color: string;
 }
 
 export class AppointmentDisplay extends AppointmentBasic {

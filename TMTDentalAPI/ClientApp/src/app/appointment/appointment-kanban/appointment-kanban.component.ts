@@ -162,7 +162,6 @@ export class AppointmentKanbanComponent implements OnInit {
     //   .build();
 
     // this.connection.start().then(function () {
-    //   console.log('SignalR Connected!');
     // }).catch(function (err) {
     //   return console.error(err.toString());
     // });
@@ -171,11 +170,9 @@ export class AppointmentKanbanComponent implements OnInit {
     //   this._ngZone.run(() => {  
     //     const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
     //     if (idx != -1) {
-    //       console.log('update appointment', res);
     //       this.appointments[idx] = res[0];
     //     }
     //     else {
-    //       console.log('create appointment', res);
     //       this.appointments.push(...res);
     //     }
     //     this.filterDataClient();
@@ -187,13 +184,11 @@ export class AppointmentKanbanComponent implements OnInit {
     //     const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
     //     this.appointments.splice(idx, 1);
     //     this.filterDataClient();
-    //     console.log('delete appointment', res);
     //   });  
     // });
     
     // this.connection.on("test", (res) => {
     //   this._ngZone.run(() => {  
-    //     console.log('test stop connect', res);
     //   });  
     // });
   }
@@ -472,7 +467,6 @@ export class AppointmentKanbanComponent implements OnInit {
   //   paged.limit = 1;
   //   this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
   //     if (rs.items.length) {
-  //       console.log(rs.items);
   //       let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
   //       modalRef.componentInstance.title = 'Tạo đợt khám';
   //       modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
@@ -993,7 +987,6 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   getEventDayNWeek(appointment, isDay = true) {
-    // console.log(appointment)
     if (!appointment) {
       return document.createElement('div');
     }
@@ -1031,8 +1024,12 @@ export class AppointmentKanbanComponent implements OnInit {
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);
-    // dateEventV2El.style.backgroundColor = '#28A745'
-    // dateEventV2El.style.filter = 'brightness(125%);'
+    let color = appointment.color || 0;
+    if (color == '') {
+      dateEventV2El.classList.add(`o_tag_color_default`);
+    }else {
+      dateEventV2El.classList.add(`o_tag_color_${color}`);
+    }
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {
@@ -1065,7 +1062,10 @@ export class AppointmentKanbanComponent implements OnInit {
     headerEl.appendChild(statusEl);
     headerEl.appendChild(actionEl);
     let customerNameEl = document.createElement('a');
-    customerNameEl.classList.add("customer-name", "text-primary");
+    customerNameEl.classList.add("customer-name");
+    if (color != '')
+      dateEventV2El.classList.add("text-white");
+
     customerNameEl.title = "Xem hồ sơ khách hàng";
     customerNameEl.innerText = appointment.partnerName;
     customerNameEl.addEventListener("click", () => {
@@ -1142,13 +1142,13 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.result.then(result => {
-      if (result.isDetele) {
-        this.connection.send("Delete", [result.id]);
-      }
-      else {
-        this.connection.send("CreateUpdate", [result]);
-      }
-      // this.loadDataFromApi(); // Render Calendar
+      // if (result.isDetele) {
+      //   this.connection.send("Delete", [result.id]);
+      // }
+      // else {
+      //   this.connection.send("CreateUpdate", [result]);
+      // }
+      this.loadDataFromApi(); // Render Calendar
     }, () => { });
   }
 
@@ -1194,7 +1194,6 @@ export class AppointmentKanbanComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.connection.stop().then(res => {
-      console.log('stop connection');
     })
   }
 }
