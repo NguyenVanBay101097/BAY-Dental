@@ -148,6 +148,7 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
 
   exportExcel() {
     var val = this.getDataApiParam();
+    val.limit = 0;
     this.saleOrderLineService.exportExcel(val).subscribe((rs) => {
       let filename = `Lich_su_dieu_tri`;
       let newBlob = new Blob([rs], {
@@ -169,6 +170,7 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
 
   onExportPDF() {
     var val = this.getDataApiParam();
+    val.limit = 0;
     this.saleOrderLineService.exportPdf(val).subscribe(res => {
       let filename = "Lich_su_dieu_tr";
 

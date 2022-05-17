@@ -126,19 +126,23 @@
             </div>
         }
         <table class="table table-sm table-bordered mb-1">
+            <colgroup>
+                <col width="120" />
+                <col width="200" />
+            </colgroup>
             <thead>
                 <tr>
                     <th width="120">Ngày</th>
-                    <th width="150">Dịch vụ</th>
-                    <th width="120">Phiếu điều trị</th>
-                    <th width="120" class="text-right">Số lượng</th>
-                    <th width="120">ĐVT</th>
-                    <th width="120" class="text-right">Thành tiền</th>
-                    <th width="120" class="text-right">Thanh toán</th>
-                    <th width="120" class="text-right">Còn lại</th>
+                    <th width="200">Dịch vụ</th>
+                    <th width="100">Phiếu điều trị</th>
+                    <th width="100">Số lượng</th>
+                    <th width="100">ĐVT</th>
+                    <th width="100">Thành tiền</th>
+                    <th width="100">Thanh toán</th>
+                    <th width="100">Còn lại</th>
                     <th width="120">Răng</th>
-                    <th width="150">Bác sĩ</th>
-                    <th width="150">Chẩn đoán</th>
+                    <th width="120">Bác sĩ</th>
+                    <th width="120">Chẩn đoán</th>
                     <th width="120">Trạng thái</th>
                 </tr>
             </thead>
@@ -170,7 +174,7 @@
         </div>
         <div class="col-6">
             <div class="text-center">
-                <div>Ngày @DateTime.Now.Day,tháng @DateTime.Now.Month, năm @DateTime.Now.Year.</div>
+                @*<div>Ngày @DateTime.Now.Day,tháng @DateTime.Now.Month, năm @DateTime.Now.Year.</div>*@
                 <span class="font-semibold">Bác sĩ điều trị</span> <br />
                 <i>(Ký và ghi họ tên)</i> <br />
                 <span></span> <br />
