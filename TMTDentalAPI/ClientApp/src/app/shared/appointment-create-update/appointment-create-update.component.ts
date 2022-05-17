@@ -66,19 +66,19 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   private btnDeleteSubject = new Subject<any>();
 
   get f() { return this.formGroup.controls; }
-  colors = [{name: '', code: '#2395FF'},
-            {name: '', code: '#28A745'},
-            {name: '', code: '#FFC107'},
-            {name: '', code: '#EB3B5B'},
-            {name: '', code: '#B5076B'},
-            {name: '', code: '#A70000'},
-            {name: '', code: '#034A93'},
-            {name: '', code: '#42526E'},
-            {name: '', code: '#0C9AB2'},
-            {name: '', code: '#FF8900'},
-            {name: '', code: '#00875A'},
-            {name: '', code: '#EB2E94'}
-          ];
+  colors = [{ name: '', code: '#2395FF' },
+  { name: '', code: '#28A745' },
+  { name: '', code: '#FFC107' },
+  { name: '', code: '#EB3B5B' },
+  { name: '', code: '#B5076B' },
+  { name: '', code: '#A70000' },
+  { name: '', code: '#034A93' },
+  { name: '', code: '#42526E' },
+  { name: '', code: '#0C9AB2' },
+  { name: '', code: '#FF8900' },
+  { name: '', code: '#00875A' },
+  { name: '', code: '#EB2E94' }
+  ];
   codeColorSelected: number;
   constructor(
     private fb: FormBuilder,
@@ -564,7 +564,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.get('partnerAge').patchValue(rs.age);
         this.formGroup.get('partnerPhone').patchValue(rs.phone);
       });
-    }else {
+    } else {
       this.getCustomerList();
     }
   }
@@ -623,7 +623,36 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   clickColor(color) {
     if (this.codeColorSelected == color)
       this.codeColorSelected = undefined;
-    else 
+    else
       this.codeColorSelected = color;
+  }
+
+  getColorName(index) {
+    switch (index) {
+      case 0:
+        return 'Red';
+      case 1:
+        return 'Orange';
+      case 2:
+        return 'Amber';
+      case 3:
+        return 'Yellow';
+      case 4:
+        return 'Lime';
+      case 5:
+        return 'Green';
+      case 6:
+        return 'Teal';
+      case 7:
+        return 'Sky';
+      case 8:
+        return 'Blue';
+      case 9:
+        return 'Indigo';
+      case 10:
+        return 'Purple';
+      case 11:
+        return 'Pink';
+    }
   }
 }

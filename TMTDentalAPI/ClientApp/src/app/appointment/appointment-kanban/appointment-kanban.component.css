@@ -309,7 +309,7 @@
 .date-event-v2 .header .t-action {
     display: flex;
     align-items: center;
-    /* color: #858F9B; */
+    color: #858F9B;
 }
 
 .date-event-v2 .header .t-action div {
@@ -343,15 +343,15 @@
 .date-event-v2 .content i {
     width: 16px;
     opacity: 0.5;
-    color: white !important;
+    /* color: white !important; */
     /* color: #1A6DE3; */
     /* default */
 }
 
 
 .date-event-v2 .content span {
-    /* color: #6B7280; */
-    color: white;
+    color: #6B7280;
+    /* color: white; */
 }
 
 /* .list-data-event-day */
@@ -724,7 +724,7 @@ input[type=number] {
 .date-event-v2.o_tag_color_default .customer-name {
     color: #6b7280;
 }
-
+/* 
 .date-event-v2.o_tag_color_default .content i {
     color: #6b7280 !important;
 }
@@ -735,4 +735,8 @@ input[type=number] {
 
 .date-event-v2.o_tag_color_default .t-action {
     color: #858F9B;
+} */
+
+.text-name-color {
+    color: #6B7280;
 }

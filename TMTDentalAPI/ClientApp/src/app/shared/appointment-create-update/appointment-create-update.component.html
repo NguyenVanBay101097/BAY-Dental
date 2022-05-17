@@ -169,10 +169,17 @@
                                 <label class="o_form_label">Gắn màu</label>
                             </td>
                             <td colspan="1" style="width:100%">
-                                <button (click) = "clickColor(i)" *ngFor="let item of [].constructor(12); index as i"
-                                class="btn btn-item-color" [ngClass]="'o_tag_color_' + i">
-                                    <i *ngIf="i == codeColorSelected" class="fas fa-check text-light"></i>
-                                </button>
+                                <div class="d-flex">
+                                    <ng-container class="" *ngFor="let item of [].constructor(12); index as i">
+                                        <div class="d-flex flex-column">
+                                            <button (click) = "clickColor(i)" 
+                                            class="btn btn-item-color" [ngClass]="'appointment_color_' + i">
+                                                <i *ngIf="i == codeColorSelected" class="fas fa-check text-primary"></i>
+                                            </button>
+                                            <div>{{this.getColorName(i)}}</div>
+                                            </div>
+                                    </ng-container>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

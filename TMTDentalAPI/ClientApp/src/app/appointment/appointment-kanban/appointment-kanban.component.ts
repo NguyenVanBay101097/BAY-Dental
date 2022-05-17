@@ -1020,6 +1020,7 @@ export class AppointmentKanbanComponent implements OnInit {
       statusShow = 'Quá hẹn';
       classEvent = 'event-overdue';
     }
+    classEvent = `appointment_border_color_${appointment.color}`;
 
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
@@ -1028,7 +1029,7 @@ export class AppointmentKanbanComponent implements OnInit {
     if (color == '') {
       dateEventV2El.classList.add(`o_tag_color_default`);
     }else {
-      dateEventV2El.classList.add(`o_tag_color_${color}`);
+      dateEventV2El.classList.add(`appointment_color_${color}`);
     }
     dateEventV2El.id = `appointment-${appointment.id}`;
 
@@ -1064,7 +1065,7 @@ export class AppointmentKanbanComponent implements OnInit {
     let customerNameEl = document.createElement('a');
     customerNameEl.classList.add("customer-name");
     if (color != '')
-      dateEventV2El.classList.add("text-white");
+      dateEventV2El.classList.add("text-name-color");
 
     customerNameEl.title = "Xem hồ sơ khách hàng";
     customerNameEl.innerText = appointment.partnerName;
