@@ -1,32 +1,31 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { debounceTime, tap, switchMap } from 'rxjs/operators';
+import { FormBuilder } from '@angular/forms';
+import { PartnerSourceSimple } from './../../partners/partner-simple';
+import { CardTypeBasic, CardTypeService, CardTypePaged } from './../../card-types/card-type.service';
+import { PartnerCategoryBasic, PartnerCategoryService, PartnerCategoryPaged } from './../../partner-categories/partner-category.service';
+import { FormGroup } from '@angular/forms';
 import { MultiSelectComponent, PopupSettings } from '@progress/kendo-angular-dropdowns';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { PartnerSourcePaged, PartnerSourceService } from './../../partner-sources/partner-source.service';
+import { Component, OnInit, Input, Output, ViewChild, EventEmitter, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
-import { CardTypeBasic, CardTypePaged, CardTypeService } from 'src/app/card-types/card-type.service';
-import { PartnerCategoryBasic, PartnerCategoryPaged, PartnerCategoryService } from 'src/app/partner-categories/partner-category.service';
-import { PartnerSourcePaged, PartnerSourceService } from 'src/app/partner-sources/partner-source.service';
-import { PartnerSourceSimple } from 'src/app/partners/partner-simple';
 
 @Component({
-  selector: 'app-partner-report-filter-popup',
-  templateUrl: './partner-report-filter-popup.component.html',
-  styleUrls: ['./partner-report-filter-popup.component.css']
+  selector: 'app-partner-treatment-report-filter-popup',
+  templateUrl: './partner-treatment-report-filter-popup.component.html',
+  styleUrls: ['./partner-treatment-report-filter-popup.component.css']
 })
-export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit, OnChanges {
+export class PartnerTreatmentReportFilterPopupComponent implements OnInit {
   @Input() filter: any;
   @Input() placement: any;
   @Output() valueChange = new EventEmitter();
   @ViewChild('partnerCategoryMultiSelect', { static: false }) partnerCategoryMultiSelect: MultiSelectComponent;
   @ViewChild('partnerSourcesMultiSelect', { static: false }) partnerSourcesMultiSelect: MultiSelectComponent;
-  @ViewChild('cardTypesMultiSelect', { static: false }) cardTypesMultiSelect: MultiSelectComponent;
   @ViewChild('myDrop', { static: true }) myDrop: NgbDropdown;
 
   formGroup: FormGroup;
 
   listPartnerCategory: PartnerCategoryBasic[] = [];
-  listCardType: CardTypeBasic[] = [];
   listPartnerSource: PartnerSourceSimple[] = [];
   popupSettings: PopupSettings = {
     appendTo: "component",
@@ -35,17 +34,20 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit,
     { text: 'Nam', value: 'male' },
     { text: 'Nữ', value: 'female' },
     { text: 'Khác', value: 'other' },
-  ]
+  ];
+  partnerTypes = [
+    { text: 'Khách mới', value: 'new' },
+    { text: 'Khách quay lại', value: 'old' }
+  ];
 
   constructor(
     private fb: FormBuilder,
     private partnerCategoryService: PartnerCategoryService,
-    private cardTypeService: CardTypeService,
     private partnerSourceService: PartnerSourceService,
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.formGroup) {
+    if (this.formGroup && this.filter) {
       this.formGroup.patchValue(this.filter);
     }
   }
@@ -54,18 +56,11 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit,
     this.formGroup = this.fb.group({
       categs: this.filter?.categs || [null],
       partnerSources: this.filter?.partnerSources || [null],
-      cardTypes: this.filter?.cardTypes || [null],
-      ageFrom: this.filter?.ageFrom,
-      ageTo: this.filter?.ageTo,
-      revenueFrom: this.filter?.revenueFrom,
-      revenueTo: this.filter?.revenueTo,
-      amountTotalFrom: this.filter?.amountTotalFrom,
-      amountTotalTo: this.filter?.amountTotalTo,
-      gender: this.filter?.gender,
+      typeReport: this.filter?.typeReport || null,
+      gender: this.filter?.gender || null,
     });
 
     setTimeout(() => {
-      this.loadListCardType();
       this.loadSourceList();
       this.loadPartnerCategoryList();
     }, 200);
@@ -93,15 +88,6 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit,
       this.listPartnerSource = result;
       this.partnerSourcesMultiSelect.loading = false;
     });
-
-    this.cardTypesMultiSelect.filterChange.asObservable().pipe(
-      debounceTime(300),
-      tap(() => (this.cardTypesMultiSelect.loading = true)),
-      switchMap(value => this.searchCardTypes(value))
-    ).subscribe((result: any) => {
-      this.listCardType = result;
-      this.cardTypesMultiSelect.loading = false;
-    });
   }
 
   loadPartnerCategoryList() {
@@ -114,18 +100,6 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit,
     var val = new PartnerCategoryPaged();
     val.search = q || '';
     return this.partnerCategoryService.autocomplete(val);
-  }
-
-  loadListCardType() {
-    this.searchCardTypes().subscribe(result => {
-      this.listCardType = _.unionBy(this.listCardType, result, 'id');
-    })
-  }
-
-  searchCardTypes(search?: string) {
-    var val = new CardTypePaged();
-    val.search = search || '';
-    return this.cardTypeService.autoComplete(val);
   }
 
   loadSourceList() {
@@ -155,6 +129,9 @@ export class PartnerReportFilterPopupComponent implements OnInit, AfterViewInit,
   }
 
   onToggleDropdown(event?: boolean) {
-    this.formGroup.patchValue(this.filter);
+    if (this.filter) {
+      this.formGroup.patchValue(this.filter);
+    }
   }
+
 }

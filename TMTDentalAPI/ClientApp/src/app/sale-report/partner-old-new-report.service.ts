@@ -38,7 +38,7 @@ export class PartnerOldNewReportReq {
   cityCode: string;
   districtCode: string;
   wardCode: string;
-  sourceId: string;
+  sourceIds: string[];
   categIds: string[];
   memberLevelId: string;
   gender: string;
@@ -47,6 +47,8 @@ export class PartnerOldNewReportReq {
   offset: number;
   partnerId: string;
   isHasNullSourceId: boolean;
+  overIntervalNbr: number;
+  overInterval: string;
 }
 
 export class GetSaleOrderPagedReq {

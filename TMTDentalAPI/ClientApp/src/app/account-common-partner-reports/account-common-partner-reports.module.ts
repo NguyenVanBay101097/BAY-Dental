@@ -23,6 +23,7 @@ import { PartnerReportSourceComponent } from './partner-report-source/partner-re
 import { PartnerReportAgeGenderComponent } from './partner-report-age-gender/partner-report-age-gender.component';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { PartnerReportFilterPopupComponent } from './partner-report-filter-popup/partner-report-filter-popup.component';
+import { PartnerTreatmentReportFilterPopupComponent } from './partner-treatment-report-filter-popup/partner-treatment-report-filter-popup.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { PartnerReportFilterPopupComponent } from './partner-report-filter-popup
     PartnerReportAreaComponent,
     PartnerReportSourceComponent,
     PartnerReportAgeGenderComponent,
-    PartnerReportFilterPopupComponent],
+    PartnerReportFilterPopupComponent,
+    PartnerTreatmentReportFilterPopupComponent],
   imports: [
     CommonModule,
     AccountCommonPartnerReportsRoutingModule,

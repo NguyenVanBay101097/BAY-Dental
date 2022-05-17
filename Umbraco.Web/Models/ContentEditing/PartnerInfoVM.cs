@@ -52,6 +52,7 @@ namespace Umbraco.Web.Models.ContentEditing
             set { }
         }
         public DateTime? DateCreated { get; set; }
+        public DateTime LastDateOfTreatment { get; set; }
         public string TitleName { get; set; }
         public bool Active { get; set; }
     }

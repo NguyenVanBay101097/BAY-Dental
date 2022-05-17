@@ -1,3 +1,7 @@
+.filter {
+    margin-bottom: 14px;
+}
+
 .filter-right {
     flex-basis: 400px;
 }
@@ -24,4 +28,17 @@
 
 .filter-2>* {
     margin-top: .5rem !important;
+}
+
+.data-filter {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.filter-info {
+    width: fit-content;
+    margin: 0 10px 10px 0;
+    padding: 2.5px 5px;
+    background-color: #E7F7FE;
+    border-radius: 6px;
 }
