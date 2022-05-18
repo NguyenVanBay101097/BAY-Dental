@@ -742,6 +742,11 @@ export class AppointmentKanbanComponent implements OnInit {
       let cell = document.createElement('td');
       cell.classList.add('td-day');
       cell.id = moment(dateTmp).format('DD-MM-YYYY-HH');
+      cell.addEventListener('click', (e) => {
+        e.preventDefault();
+        const dateTime = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate(), i);
+        this.createUpdateAppointment(null, dateTime);
+      });
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
@@ -1103,10 +1108,11 @@ export class AppointmentKanbanComponent implements OnInit {
     return htmlString;
   }
 
-  createUpdateAppointment(id = null) {
+  createUpdateAppointment(id = null, dateTime = null) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
+    modalRef.componentInstance.dateTime = dateTime;
     modalRef.result.then(result => {
     }, () => { });
   }
@@ -1152,7 +1158,8 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.connection.stop().then(res => {
-    })
+    // this.connection.stop().then(res => {
+    //   console.log('stop connection');
+    // })
   }
 }
