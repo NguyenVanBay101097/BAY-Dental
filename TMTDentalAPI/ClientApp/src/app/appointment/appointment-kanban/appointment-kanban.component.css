@@ -287,6 +287,7 @@
     max-width: 200px;
     /* border-left: 3px solid #2395FF;
     background: #E5F2FF; */
+    background: #FEFAF9;
     cursor: default;
     border-left: 3px solid white;
 }
@@ -334,6 +335,7 @@
     font-size: 14px;
     font-weight: 600;
     text-decoration: underline !important;
+    color: #6B7280 !important;
 }
 
 .date-event-v2 .content {
@@ -718,13 +720,13 @@ input[type=number] {
     font-weight: 600;
 }
 
-.date-event-v2.o_tag_color_default {
+/* .date-event-v2.o_tag_color_default {
     background-color: white;
 }
 
 .date-event-v2.o_tag_color_default .customer-name {
     color: #6b7280;
-}
+} */
 /* 
 .date-event-v2.o_tag_color_default .content i {
     color: #6b7280 !important;

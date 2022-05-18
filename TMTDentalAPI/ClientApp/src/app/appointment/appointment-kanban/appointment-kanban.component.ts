@@ -1026,9 +1026,7 @@ export class AppointmentKanbanComponent implements OnInit {
     dateEventV2El.classList.add(`${classEvent}`);
     dateEventV2El.classList.add(`appointment_border_color_${appointment.color}`);
     let color = appointment.color || 0;
-    if (color == '') {
-      dateEventV2El.classList.add(`o_tag_color_default`);
-    }else {
+    if (color != '') {
       dateEventV2El.classList.add(`appointment_color_${color}`);
     }
     dateEventV2El.id = `appointment-${appointment.id}`;
