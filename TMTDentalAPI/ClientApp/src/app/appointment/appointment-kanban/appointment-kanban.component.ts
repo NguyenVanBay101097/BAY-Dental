@@ -118,6 +118,9 @@ export class AppointmentKanbanComponent implements OnInit {
   clientFilter: boolean = false;
   dataAppointmentsForFilter: any[] = [];
   connection: any;
+
+  connectionEstablished = false;
+
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
@@ -151,10 +154,34 @@ export class AppointmentKanbanComponent implements OnInit {
 
     this.loadListEmployees();
 
-    this.appointmentSignalRService.appointmentChanged$.subscribe(() => {
-      this._ngZone.run(() => {  
-        this.loadDataFromApi(); 
-      });  
+    this.appointmentSignalRService.connectionEstablished$.subscribe((res) => {
+      this._ngZone.run(() => {
+        this.connectionEstablished = res;
+      });
+    });
+
+    this.appointmentSignalRService.appointmentChanged$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointments.findIndex((x: any) => x.id === res.id);
+        if (idx != -1) {
+          this.appointments[idx] = res;
+        }
+        else {
+          this.appointments.push(res);
+        }
+
+        this.filterDataClient();
+      });
+    });
+
+    this.appointmentSignalRService.appointmentDeleted$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointments.findIndex((x: any) => x.id === res);
+        if (idx != -1) {
+          this.appointments.splice(idx, 1);
+          this.filterDataClient();
+        }
+      });
     });
   }
 
@@ -906,12 +933,14 @@ export class AppointmentKanbanComponent implements OnInit {
           const dateKey = new Date(parseInt(key));
           const idCell = moment(dateKey).format('DD-MM-YYYY');
           let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .list-data-event-week`);
-          const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
-          cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
-          this.dataAppointmentsGrouped[key].forEach(appointment => {
-            cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
-          });
-          cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          if (cell_dateEventEl) {
+            const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
+            cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
+            this.dataAppointmentsGrouped[key].forEach(appointment => {
+              cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
+            });
+            cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          }
         }
       }
     } else {
@@ -998,7 +1027,7 @@ export class AppointmentKanbanComponent implements OnInit {
     let color = appointment.color || 0;
     if (color == '') {
       dateEventV2El.classList.add(`o_tag_color_default`);
-    }else {
+    } else {
       dateEventV2El.classList.add(`appointment_color_${color}`);
     }
     dateEventV2El.id = `appointment-${appointment.id}`;
@@ -1114,6 +1143,9 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.componentInstance.dateTime = dateTime;
     modalRef.result.then(result => {
+      if (!this.connectionEstablished) {
+        this.loadDataFromApi();
+      }
     }, () => { });
   }
 
@@ -1127,7 +1159,6 @@ export class AppointmentKanbanComponent implements OnInit {
         modalRef.componentInstance.appointId = id;
         modalRef.componentInstance.receiveAppointmentDisplay = res;
         modalRef.result.then(result => {
-          this.loadDataFromApi(); // Render Calendar
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -1135,6 +1166,10 @@ export class AppointmentKanbanComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+
+          if (!this.connectionEstablished) {
+            this.loadDataFromApi(); // Render Calendar
+          }
         }, () => { });
       })
     }
@@ -1158,8 +1193,5 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    // this.connection.stop().then(res => {
-    //   console.log('stop connection');
-    // })
   }
 }

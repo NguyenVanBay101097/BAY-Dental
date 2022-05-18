@@ -422,6 +422,12 @@ namespace Infrastructure.Services
             await ComputeAppointmentService(appointment, val);
             appointment = _mapper.Map(val, appointment);
             await UpdateAsync(appointment);
+
+            appointment = await SearchQuery(x => x.Id == id)
+                .Include(x => x.Partner)
+                .Include(x => x.Doctor)
+                .FirstOrDefaultAsync();
+
             return _mapper.Map<AppointmentBasic>(appointment);
         }
 

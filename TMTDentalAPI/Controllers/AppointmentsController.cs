@@ -117,6 +117,7 @@ namespace TMTDentalAPI.Controllers
             var appointment = await _appointmentService.UpdateAsync(id, val);
 
             var apmt = await _appointmentService.GetByIdAsync(id);
+
             await _appointmentHubContext.Clients.Groups(GetGroupName(apmt)).SendAsync("updated", appointment);
 
             return Ok(appointment);
@@ -174,6 +175,8 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             await _appointmentService.DeleteAsync(appointment);
+
+            await _appointmentHubContext.Clients.Groups(GetGroupName(appointment)).SendAsync("deleted", id);
 
             return NoContent();
         }
