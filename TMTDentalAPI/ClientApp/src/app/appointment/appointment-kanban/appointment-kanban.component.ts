@@ -21,6 +21,7 @@ import {
   AppointmentPaged
 } from '../appointment';
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
+import { AppointmentSignalRService } from '../appointment-signalr.service';
 import { AppointmentService } from '../appointment.service';
 
 @Component({
@@ -129,7 +130,8 @@ export class AppointmentKanbanComponent implements OnInit {
     private printService: PrintService,
     private authService: AuthService,
     @Inject('BASE_API') private baseApi: string,
-    private _ngZone: NgZone
+    private _ngZone: NgZone,
+    private appointmentSignalRService: AppointmentSignalRService
   ) { }
 
   ngOnInit() {
@@ -148,49 +150,12 @@ export class AppointmentKanbanComponent implements OnInit {
       });
 
     this.loadListEmployees();
-    // this.loadDoctorList();
-    // const token = this.authService.getAuthorizationToken();
-    // this.connection = new signalR.HubConnectionBuilder()
-    //   .configureLogging(signalR.LogLevel.Information)
-    //   .withUrl(this.baseApi + 'appointmentHub',
-    //     {
-    //       skipNegotiation: true,
-    //       transport: signalR.HttpTransportType.WebSockets,
-    //       accessTokenFactory: () => token
-    //     })
-    //   .withAutomaticReconnect()
-    //   .build();
 
-    // this.connection.start().then(function () {
-    // }).catch(function (err) {
-    //   return console.error(err.toString());
-    // });
-
-    // this.connection.on("Receive", (res) => {
-    //   this._ngZone.run(() => {  
-    //     const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
-    //     if (idx != -1) {
-    //       this.appointments[idx] = res[0];
-    //     }
-    //     else {
-    //       this.appointments.push(...res);
-    //     }
-    //     this.filterDataClient();
-    //   });  
-    // });
-
-    // this.connection.on("ReceiveDelete", (res) => {
-    //   this._ngZone.run(() => {  
-    //     const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
-    //     this.appointments.splice(idx, 1);
-    //     this.filterDataClient();
-    //   });  
-    // });
-    
-    // this.connection.on("test", (res) => {
-    //   this._ngZone.run(() => {  
-    //   });  
-    // });
+    this.appointmentSignalRService.appointmentChanged$.subscribe(() => {
+      this._ngZone.run(() => {  
+        this.loadDataFromApi(); 
+      });  
+    });
   }
 
   processSearch(value: string) {
@@ -1143,13 +1108,6 @@ export class AppointmentKanbanComponent implements OnInit {
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
     modalRef.result.then(result => {
-      // if (result.isDetele) {
-      //   this.connection.send("Delete", [result.id]);
-      // }
-      // else {
-      //   this.connection.send("CreateUpdate", [result]);
-      // }
-      this.loadDataFromApi(); // Render Calendar
     }, () => { });
   }
 
