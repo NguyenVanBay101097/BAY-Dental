@@ -162,6 +162,7 @@ export class AppointmentKanbanComponent implements OnInit {
     //   .build();
 
     // this.connection.start().then(function () {
+    //   console.log('SignalR Connected!');
     // }).catch(function (err) {
     //   return console.error(err.toString());
     // });
@@ -170,9 +171,11 @@ export class AppointmentKanbanComponent implements OnInit {
     //   this._ngZone.run(() => {  
     //     const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
     //     if (idx != -1) {
+    //       console.log('update appointment', res);
     //       this.appointments[idx] = res[0];
     //     }
     //     else {
+    //       console.log('create appointment', res);
     //       this.appointments.push(...res);
     //     }
     //     this.filterDataClient();
@@ -184,11 +187,13 @@ export class AppointmentKanbanComponent implements OnInit {
     //     const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
     //     this.appointments.splice(idx, 1);
     //     this.filterDataClient();
+    //     console.log('delete appointment', res);
     //   });  
     // });
     
     // this.connection.on("test", (res) => {
     //   this._ngZone.run(() => {  
+    //     console.log('test stop connect', res);
     //   });  
     // });
   }
@@ -777,6 +782,11 @@ export class AppointmentKanbanComponent implements OnInit {
       let cell = document.createElement('td');
       cell.classList.add('td-day');
       cell.id = moment(dateTmp).format('DD-MM-YYYY-HH');
+      cell.addEventListener('click', (e) => {
+        e.preventDefault();
+        const dateTime = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate(), i);
+        this.createUpdateAppointment(null, dateTime);
+      });
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
@@ -1138,10 +1148,11 @@ export class AppointmentKanbanComponent implements OnInit {
     return htmlString;
   }
 
-  createUpdateAppointment(id = null) {
+  createUpdateAppointment(id = null, dateTime = null) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
+    modalRef.componentInstance.dateTime = dateTime;
     modalRef.result.then(result => {
       // if (result.isDetele) {
       //   this.connection.send("Delete", [result.id]);
@@ -1194,7 +1205,8 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.connection.stop().then(res => {
-    })
+    // this.connection.stop().then(res => {
+    //   console.log('stop connection');
+    // })
   }
 }

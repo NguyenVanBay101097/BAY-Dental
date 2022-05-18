@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
@@ -35,6 +35,7 @@ import { UserPaged, UserService } from './../../users/user.service';
 })
 
 export class AppointmentCreateUpdateComponent implements OnInit {
+  @Input() dateTime: any;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('serviceMultiSelect', { static: true }) serviceMultiSelect: MultiSelectComponent
@@ -587,7 +588,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       (rs: any) => {
         this.formGroup.patchValue(rs);
 
-        let date = new Date(rs.date);
+        let date = this.dateTime ? new Date(this.dateTime) : new Date(rs.date);
         this.formGroup.get('dateObj').patchValue(date);
         this.formGroup.get('timeObj').patchValue(date);
         this.formGroup.get('timeExpected').patchValue(30);
