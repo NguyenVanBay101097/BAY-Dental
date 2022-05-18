@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,20 +14,14 @@ namespace TMTDentalAPI.Hubs
     [Authorize]
     public class AppointmentHub : Hub
     {
-        public async Task CreateUpdate(IEnumerable<AppointmentBasic> agr)
+        private readonly AppTenant _tenant;
+        private readonly ICurrentUser _currentUser;
+
+        public AppointmentHub(IOptions<AppTenant> tenant,
+            ICurrentUser currentUser)
         {
-            //luu
-
-            //await Clients.All.SendAsync("ReceiveMessage", agr);
-            var temp = CurrentTenantCompanyId();
-
-            await Clients.Groups(CurrentTenantCompanyId()).SendAsync("Receive", agr);
-        }
-
-        public async Task Delete(IEnumerable<Guid> ids)
-        {
-            //await Clients.All.SendAsync("ReceiveMessage", agr);
-            await Clients.Groups(CurrentTenantCompanyId()).SendAsync("ReceiveDelete", ids);
+            _tenant = tenant?.Value;
+            _currentUser = currentUser;
         }
 
         /// <summary>
@@ -33,8 +30,7 @@ namespace TMTDentalAPI.Hubs
         /// <returns>A task</returns>
         public override async Task OnConnectedAsync()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, CurrentTenantCompanyId());
-
+            await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName());
             await base.OnConnectedAsync();
         }
 
@@ -45,34 +41,14 @@ namespace TMTDentalAPI.Hubs
         /// <returns>A task</returns>
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, CurrentTenantCompanyId());
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName());
             await base.OnDisconnectedAsync(exception);
 
         }
 
-        protected string CurrentTenantCompanyId()
+        protected string GetGroupName()
         {
-            var httpContext = Context.GetHttpContext();
-            var host = httpContext.Request.Host.Host;
-            var subDomain = string.Empty;
-            if (!string.IsNullOrWhiteSpace(host))
-            {
-                subDomain = host.Split('.')[0];
-            }
-
-            subDomain = subDomain.Trim().ToLower();
-            return subDomain + "-" + CompanyId.ToString();
-        }
-
-        protected Guid CompanyId
-        {
-            get
-            {
-                if (!Context.User.Identity.IsAuthenticated)
-                    return Guid.Empty;
-                var claim = Context.User.Claims.FirstOrDefault(x => x.Type == "company_id");
-                return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
-            }
+            return $"{(_tenant?.Id.ToString() ?? "localhost")}-{_currentUser.CompanyId?.ToString()}";
         }
     }
 }

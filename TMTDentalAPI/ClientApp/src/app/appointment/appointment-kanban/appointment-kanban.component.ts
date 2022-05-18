@@ -21,6 +21,7 @@ import {
   AppointmentPaged
 } from '../appointment';
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
+import { AppointmentSignalRService } from '../appointment-signalr.service';
 import { AppointmentService } from '../appointment.service';
 
 @Component({
@@ -117,6 +118,9 @@ export class AppointmentKanbanComponent implements OnInit {
   clientFilter: boolean = false;
   dataAppointmentsForFilter: any[] = [];
   connection: any;
+
+  connectionEstablished = false;
+
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
@@ -129,7 +133,8 @@ export class AppointmentKanbanComponent implements OnInit {
     private printService: PrintService,
     private authService: AuthService,
     @Inject('BASE_API') private baseApi: string,
-    private _ngZone: NgZone
+    private _ngZone: NgZone,
+    private appointmentSignalRService: AppointmentSignalRService
   ) { }
 
   ngOnInit() {
@@ -148,49 +153,36 @@ export class AppointmentKanbanComponent implements OnInit {
       });
 
     this.loadListEmployees();
-    // this.loadDoctorList();
-    // const token = this.authService.getAuthorizationToken();
-    // this.connection = new signalR.HubConnectionBuilder()
-    //   .configureLogging(signalR.LogLevel.Information)
-    //   .withUrl(this.baseApi + 'appointmentHub',
-    //     {
-    //       skipNegotiation: true,
-    //       transport: signalR.HttpTransportType.WebSockets,
-    //       accessTokenFactory: () => token
-    //     })
-    //   .withAutomaticReconnect()
-    //   .build();
 
-    // this.connection.start().then(function () {
-    // }).catch(function (err) {
-    //   return console.error(err.toString());
-    // });
+    this.appointmentSignalRService.connectionEstablished$.subscribe((res) => {
+      this._ngZone.run(() => {
+        this.connectionEstablished = res;
+      });
+    });
 
-    // this.connection.on("Receive", (res) => {
-    //   this._ngZone.run(() => {  
-    //     const idx = this.appointments.findIndex((x: any) => x.id === res[0].id);
-    //     if (idx != -1) {
-    //       this.appointments[idx] = res[0];
-    //     }
-    //     else {
-    //       this.appointments.push(...res);
-    //     }
-    //     this.filterDataClient();
-    //   });  
-    // });
+    this.appointmentSignalRService.appointmentChanged$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointments.findIndex((x: any) => x.id === res.id);
+        if (idx != -1) {
+          this.appointments[idx] = res;
+        }
+        else {
+          this.appointments.push(res);
+        }
 
-    // this.connection.on("ReceiveDelete", (res) => {
-    //   this._ngZone.run(() => {  
-    //     const idx = this.appointments.findIndex((x: any) => x.id === res[0]);
-    //     this.appointments.splice(idx, 1);
-    //     this.filterDataClient();
-    //   });  
-    // });
-    
-    // this.connection.on("test", (res) => {
-    //   this._ngZone.run(() => {  
-    //   });  
-    // });
+        this.filterDataClient();
+      });
+    });
+
+    this.appointmentSignalRService.appointmentDeleted$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointments.findIndex((x: any) => x.id === res);
+        if (idx != -1) {
+          this.appointments.splice(idx, 1);
+          this.filterDataClient();
+        }
+      });
+    });
   }
 
   processSearch(value: string) {
@@ -777,6 +769,11 @@ export class AppointmentKanbanComponent implements OnInit {
       let cell = document.createElement('td');
       cell.classList.add('td-day');
       cell.id = moment(dateTmp).format('DD-MM-YYYY-HH');
+      cell.addEventListener('click', (e) => {
+        e.preventDefault();
+        const dateTime = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate(), i);
+        this.createUpdateAppointment(null, dateTime);
+      });
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
@@ -936,12 +933,14 @@ export class AppointmentKanbanComponent implements OnInit {
           const dateKey = new Date(parseInt(key));
           const idCell = moment(dateKey).format('DD-MM-YYYY');
           let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .list-data-event-week`);
-          const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
-          cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
-          this.dataAppointmentsGrouped[key].forEach(appointment => {
-            cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
-          });
-          cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          if (cell_dateEventEl) {
+            const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
+            cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
+            this.dataAppointmentsGrouped[key].forEach(appointment => {
+              cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
+            });
+            cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          }
         }
       }
     } else {
@@ -1136,18 +1135,15 @@ export class AppointmentKanbanComponent implements OnInit {
     return htmlString;
   }
 
-  createUpdateAppointment(id = null) {
+  createUpdateAppointment(id = null, dateTime = null) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
+    modalRef.componentInstance.dateTime = dateTime;
     modalRef.result.then(result => {
-      // if (result.isDetele) {
-      //   this.connection.send("Delete", [result.id]);
-      // }
-      // else {
-      //   this.connection.send("CreateUpdate", [result]);
-      // }
-      this.loadDataFromApi(); // Render Calendar
+      if (!this.connectionEstablished) {
+        this.loadDataFromApi();
+      }
     }, () => { });
   }
 
@@ -1161,7 +1157,6 @@ export class AppointmentKanbanComponent implements OnInit {
         modalRef.componentInstance.appointId = id;
         modalRef.componentInstance.receiveAppointmentDisplay = res;
         modalRef.result.then(result => {
-          this.loadDataFromApi(); // Render Calendar
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -1169,6 +1164,10 @@ export class AppointmentKanbanComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+
+          if (!this.connectionEstablished) {
+            this.loadDataFromApi(); // Render Calendar
+          }
         }, () => { });
       })
     }
@@ -1192,7 +1191,5 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.connection.stop().then(res => {
-    })
   }
 }

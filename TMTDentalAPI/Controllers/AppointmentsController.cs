@@ -15,8 +15,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OfficeOpenXml;
+using TMTDentalAPI.Hubs;
 using TMTDentalAPI.JobFilters;
 using TMTDentalAPI.Services;
 using Umbraco.Web.Models.ContentEditing;
@@ -37,6 +40,8 @@ namespace TMTDentalAPI.Controllers
         private readonly IPrintTemplateConfigService _printTemplateConfigService;
         private readonly IPrintTemplateService _printTemplateService;
         private readonly IIRModelDataService _modelDataService;
+        private readonly IHubContext<AppointmentHub> _appointmentHubContext;
+        private readonly AppTenant _tenant;
 
         public AppointmentsController(IAppointmentService appointmentService,
             IMapper mapper, UserManager<ApplicationUser> userManager,
@@ -46,7 +51,9 @@ namespace TMTDentalAPI.Controllers
             IDotKhamService dotKhamService,
             IPrintTemplateConfigService printTemplateConfigService,
             IPrintTemplateService printTemplateService,
-            IIRModelDataService modelDataService
+            IIRModelDataService modelDataService,
+            IHubContext<AppointmentHub> appointmentHubContext,
+            IOptions<AppTenant> tenant
             )
         {
             _appointmentService = appointmentService;
@@ -59,6 +66,8 @@ namespace TMTDentalAPI.Controllers
             _printTemplateConfigService = printTemplateConfigService;
             _printTemplateService = printTemplateService;
             _modelDataService = modelDataService;
+            _appointmentHubContext = appointmentHubContext;
+            _tenant = tenant?.Value;
         }
 
         [HttpGet]
@@ -88,7 +97,15 @@ namespace TMTDentalAPI.Controllers
             var res = await _appointmentService.CreateAsync(val);
             _unitOfWork.Commit();
 
-            return Ok(_mapper.Map<AppointmentBasic>(res));
+            var basic = _mapper.Map<AppointmentBasic>(res);
+            await _appointmentHubContext.Clients.Groups(GetGroupName(res)).SendAsync("created", basic);
+
+            return Ok(basic);
+        }
+
+        private string GetGroupName(Appointment appointment)
+        {
+            return $"{(_tenant?.Id.ToString() ?? "localhost")}-{appointment.CompanyId}";
         }
 
         [HttpPut("{id}")]
@@ -98,6 +115,10 @@ namespace TMTDentalAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
             var appointment = await _appointmentService.UpdateAsync(id, val);
+
+            var apmt = await _appointmentService.GetByIdAsync(id);
+
+            await _appointmentHubContext.Clients.Groups(GetGroupName(apmt)).SendAsync("updated", appointment);
 
             return Ok(appointment);
         }
@@ -154,6 +175,8 @@ namespace TMTDentalAPI.Controllers
                 return NotFound();
 
             await _appointmentService.DeleteAsync(appointment);
+
+            await _appointmentHubContext.Clients.Groups(GetGroupName(appointment)).SendAsync("deleted", id);
 
             return NoContent();
         }
