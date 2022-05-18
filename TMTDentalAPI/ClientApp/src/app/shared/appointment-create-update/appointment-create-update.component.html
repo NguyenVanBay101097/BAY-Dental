@@ -17,7 +17,7 @@
                         </tr>
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">Khách hàng</label>
+                                <label class="o_form_label">Khách hàng <span class="text-danger">*</span></label>
                             </td>
                             <td colspan="1">
                                 <div class="d-flex">
@@ -139,19 +139,7 @@
                                     [placeholder]="'Nhập nội dung'"></textarea>
                             </td>
                         </tr>
-                        <tr *ngIf="appointId">
-                            <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">Trạng thái</label>
-                            </td>
-                            <td colspan="1">
-                                <select class="form-control mr-1" formControlName="state"
-                                    (change)="onChange($event.target.value)">
-                                    <option value="confirmed">Đang hẹn</option>
-                                    <option value="done">Đã đến</option>
-                                    <option value="cancel">Hủy hẹn</option>
-                                </select>
-                            </td>
-                        </tr>
+                        
                         <tr *ngIf="appointId && stateControl == 'cancel'">
                             <td colspan="1" class="o_td_label">
                                 <label class="o_form_label">Lý do</label>
@@ -166,20 +154,44 @@
                         </tr>
                         <tr>
                             <td colspan="1" class="o_td_label">
-                                <label class="o_form_label">Gắn màu</label>
+                                <label class="o_form_label">Nhãn màu</label>
                             </td>
                             <td colspan="1" style="width:100%">
                                 <div class="d-flex">
-                                    <ng-container class="" *ngFor="let item of [].constructor(12); index as i">
-                                        <div class="d-flex flex-column">
+                                    <ng-container *ngFor="let item of [].constructor(6); index as i">
+                                        <div class="d-flex flex-column mr-5">
                                             <button (click) = "clickColor(i)" 
                                             class="btn btn-item-color" [ngClass]="'appointment_color_' + i">
                                                 <i *ngIf="i == codeColorSelected" class="fas fa-check text-primary"></i>
                                             </button>
                                             <div>{{this.getColorName(i)}}</div>
-                                            </div>
+                                        </div>
                                     </ng-container>
                                 </div>
+                                <div class="d-flex mt-2">
+                                    <ng-container *ngFor="let item of [].constructor(6); index as i">
+                                        <div class="d-flex flex-column mr-5">
+                                            <button (click) = "clickColor(i + 6)" 
+                                            class="btn btn-item-color" [ngClass]="'appointment_color_'+(i+6)">
+                                                <i *ngIf="i + 6 == codeColorSelected" class="fas fa-check text-primary"></i>
+                                            </button>
+                                            <div>{{this.getColorName(i + 6)}}</div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="appointId">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Trạng thái</label>
+                            </td>
+                            <td colspan="1">
+                                <select class="form-control mr-1" formControlName="state"
+                                    (change)="onChange($event.target.value)">
+                                    <option value="confirmed">Đang hẹn</option>
+                                    <option value="done">Đã đến</option>
+                                    <option value="cancel">Hủy hẹn</option>
+                                </select>
                             </td>
                         </tr>
                     </tbody>

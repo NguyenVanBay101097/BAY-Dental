@@ -288,6 +288,7 @@
     /* border-left: 3px solid #2395FF;
     background: #E5F2FF; */
     cursor: default;
+    border-left: 3px solid white;
 }
 
 .date-event-v2 .header {
@@ -519,10 +520,10 @@
 } */
 
 /* đã đến */
-.event-arrived {
+/* .event-arrived {
     border-left: 3px solid #28A745;
-    /* background: #E9F6EC; */
-}
+    background: #E9F6EC;
+} */
 
 .event-arrived .header .status {
     background: #28A745;
@@ -533,10 +534,10 @@
 } */
 
 /* hủy hẹn */
-.event-cancel {
+/* .event-cancel {
     border-left: 3px solid #EB3B5B;
-    /* background: #FDEBE9; */
-}
+     background: #FDEBE9; 
+} */
 
 .event-cancel .header .status {
     background: #EB3B5B;
@@ -547,10 +548,10 @@
 } */
 
 /* quá hạn */
-.event-overdue {
+/* .event-overdue {
     border-left: 3px solid #FFC107;
-    /* background: #FEF6E9; */
-}
+    background: #FEF6E9;
+} */
 
 .event-overdue .header .status {
     background: #FFC107;

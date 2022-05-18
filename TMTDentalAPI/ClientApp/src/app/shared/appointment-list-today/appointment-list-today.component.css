@@ -128,7 +128,7 @@
 .box-header .appointment-state {
   font-size: 14px;
   line-height: 35px;
-  font-weight: 700;
+  /* font-weight: 700; */
   margin: 0;
 }
 
@@ -162,4 +162,24 @@
   color: #fff !important;
   background-color: #007bff !important;
   border-color: #007bff !important;
+}
+
+.appointment-state .status {
+  font-size: 12px;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  color: #fff;
+  /* background: #2395ff; */
+}
+
+.event-confirmed {
+  background-color: #2395FF;
+}
+
+.event-done {
+  background-color: #28A745;
+}
+
+.event-cancel {
+  background-color: #EB3B5B;
 }

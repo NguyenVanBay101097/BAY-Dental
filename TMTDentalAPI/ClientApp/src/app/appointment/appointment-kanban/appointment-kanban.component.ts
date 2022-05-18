@@ -1020,11 +1020,11 @@ export class AppointmentKanbanComponent implements OnInit {
       statusShow = 'Quá hẹn';
       classEvent = 'event-overdue';
     }
-    classEvent = `appointment_border_color_${appointment.color}`;
 
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);
+    dateEventV2El.classList.add(`appointment_border_color_${appointment.color}`);
     let color = appointment.color || 0;
     if (color == '') {
       dateEventV2El.classList.add(`o_tag_color_default`);

@@ -173,14 +173,18 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
     }
   }
 
+  getBackgroundColor(color) {
+    return 'appointment_color_'+color + ' ' + 'appointment_border_color_'+color;
+  }
+
   getTextColorState(state) {
     switch (state) {
       case 'confirmed':
-        return 'text-primary';
+        return 'event-confirmed';
       case 'done':
-        return 'text-success';
+        return 'event-done';
       case 'cancel':
-        return 'text-danger';
+        return 'event-cancel';
     }
   }
 
