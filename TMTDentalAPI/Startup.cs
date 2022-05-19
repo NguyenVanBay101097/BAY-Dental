@@ -628,7 +628,8 @@ namespace TMTDentalAPI
                 {
                     builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Content-Disposition");
                 });
             });
             services.AddCors();

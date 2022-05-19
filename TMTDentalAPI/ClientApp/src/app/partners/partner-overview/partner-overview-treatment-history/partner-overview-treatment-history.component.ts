@@ -150,8 +150,9 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     var val = this.getDataApiParam();
     val.limit = 0;
     this.saleOrderLineService.exportExcel(val).subscribe((rs) => {
-      let filename = `Lich_su_dieu_tri`;
-      let newBlob = new Blob([rs], {
+      var contentDisposition = rs.headers.get('content-disposition');
+      var filename = contentDisposition.split(';')[1].split('=')[1].replace(/\"/g, '');
+      let newBlob = new Blob([rs.body], {
         type:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
@@ -172,9 +173,10 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     var val = this.getDataApiParam();
     val.limit = 0;
     this.saleOrderLineService.exportPdf(val).subscribe(res => {
-      let filename = "Lich_su_dieu_tr";
+      var contentDisposition = res.headers.get('content-disposition');
+      var filename = contentDisposition.split(';')[1].split('=')[1].replace(/\"/g, '');
 
-      let newBlob = new Blob([res], {
+      let newBlob = new Blob([res.body], {
         type:
           "application/pdf",
       });

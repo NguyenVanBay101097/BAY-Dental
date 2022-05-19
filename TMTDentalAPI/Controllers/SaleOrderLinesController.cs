@@ -473,6 +473,7 @@ namespace TMTDentalAPI.Controllers
             var data = _mapper.Map<IEnumerable<SaleOrderLineExcel>>(initData);
             var exportbytes = await _exportExcelService.createExcel(data,"Lịch sử điều trị");
             var partner = await _partnerService.SearchQuery(x=> x.Id == val.PartnerId).Select(x=> new {x.Id, x.DisplayName, x.Ref}).FirstOrDefaultAsync();
+            
             ExcelPackage package;
 
             using (MemoryStream memStream = new MemoryStream(exportbytes as byte[]))
@@ -490,15 +491,18 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 worksheet.Cells[1, 1].Style.Font.Bold = true;
                 worksheet.Cells[1, 1].Style.Font.Color.SetColor(Color.Blue);
-                worksheet.Cells[2, 1, 2, worksheet.Dimension.Columns].Merge = true;
-                worksheet.Cells[2, 1].Value = $"Khách hàng: {partner.DisplayName}";
-                worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells[2, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                if(partner != null)
+                {
+                    worksheet.Cells[2, 1, 2, worksheet.Dimension.Columns].Merge = true;
+                    worksheet.Cells[2, 1].Value = $"Khách hàng: {partner.DisplayName}";
+                    worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[2, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                }
 
                 worksheet.Cells.AutoFitColumns();
 
             }
-            return File(package.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"lichsudieutri_{DateTime.Now.ToString("yyyyMMddHHmmss")}");
+            return File(package.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"lich_su_dieu_tri_[{partner.Ref}]");
         }
 
         [HttpGet("[action]")]
@@ -529,7 +533,7 @@ namespace TMTDentalAPI.Controllers
                 Objects = { objectSettings }
             };
             var file = _converter.Convert(pdf);
-            return File(file, "application/pdf", $"lichsudieutri_{DateTime.Now.ToString("yyyyMMddHHmmss")}");
+            return File(file, "application/pdf", $"lich_su_dieu_tri_[{data.Partner.Ref}]");
         }
     }
 }

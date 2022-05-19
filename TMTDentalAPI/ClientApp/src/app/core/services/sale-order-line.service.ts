@@ -229,10 +229,10 @@ export class SaleOrderLineService {
     }
 
     exportExcel(val){
-        return this.http.get(this.baseApi + this.apiUrl + "/ExportExcel" , {params: new HttpParams({fromObject: val}), responseType: 'blob'})
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportExcel" , {params: new HttpParams({fromObject: val}), responseType: 'blob', observe: 'response'})
     }
 
     exportPdf(val){
-        return this.http.get(this.baseApi + this.apiUrl + "/ExportPdf" , {params: new HttpParams({fromObject: val}), responseType: 'blob'})
+        return this.http.get(this.baseApi + this.apiUrl + "/ExportPdf" , {params: new HttpParams({fromObject: val}), responseType: 'blob', observe: 'response'})
     }
 }
