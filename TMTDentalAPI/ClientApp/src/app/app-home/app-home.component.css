@@ -6,17 +6,17 @@
 }
 
 .o_helpfull_link {
-    display: inline-block;
-    width: 45px;
-    height: 45px;
-    position: fixed;
-    bottom: 16px;
-    left: 16px;
-    z-index: 43438080;
+    width: 30px;
+    height: 30px;
 }
 
 .o_helpfull_link img{
     width: 100%;
     height: auto;
     cursor: pointer;
+}
+
+.sidebar .sidebar-minimizer {
+    display: flex;
+    align-items: center;
 }
