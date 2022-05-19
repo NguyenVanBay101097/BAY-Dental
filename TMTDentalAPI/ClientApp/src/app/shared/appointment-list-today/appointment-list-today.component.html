@@ -28,10 +28,10 @@
         <div class="appointment-today-items">
             <ng-container *ngFor="let item of listAppointment">
                 <div class="appointment-today-box">
-                    <div class="box-content" [ngClass]="getBgBoxContent(item.state)">
+                    <div class="box-content" [ngClass]="getBackgroundColor(item.color)">
                         <div class="box-header">
                             <div class="appointment-state">
-                                <span [ngClass]="getTextColorState(item.state)">{{stateGet(item.state)}}</span>
+                                <span class="status" [ngClass]="getTextColorState(item.state)">{{stateGet(item.state)}}</span>
                             </div>
                             <div class="appointment-manipulation text-center show-on-hover">
                                 <i class="fas fa-pen text-primary icon-more" (click)="editItem(item)"></i>

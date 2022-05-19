@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
@@ -35,6 +35,7 @@ import { UserPaged, UserService } from './../../users/user.service';
 })
 
 export class AppointmentCreateUpdateComponent implements OnInit {
+  @Input() dateTime: any;
   @ViewChild('partnerCbx', { static: true }) partnerCbx: ComboBoxComponent;
   @ViewChild('doctorCbx', { static: true }) doctorCbx: ComboBoxComponent;
   @ViewChild('serviceMultiSelect', { static: true }) serviceMultiSelect: MultiSelectComponent
@@ -66,7 +67,20 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   private btnDeleteSubject = new Subject<any>();
 
   get f() { return this.formGroup.controls; }
-
+  colors = [{ name: '', code: '#2395FF' },
+  { name: '', code: '#28A745' },
+  { name: '', code: '#FFC107' },
+  { name: '', code: '#EB3B5B' },
+  { name: '', code: '#B5076B' },
+  { name: '', code: '#A70000' },
+  { name: '', code: '#034A93' },
+  { name: '', code: '#42526E' },
+  { name: '', code: '#0C9AB2' },
+  { name: '', code: '#FF8900' },
+  { name: '', code: '#00875A' },
+  { name: '', code: '#EB2E94' }
+  ];
+  codeColorSelected: number;
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
@@ -105,7 +119,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       services: [],
       isRepeatCustomer: false,
       isNotExamination: false,
-      showReason: false
+      showReason: false,
+      color: ''
     })
 
     setTimeout(() => {
@@ -225,7 +240,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm');;
     appoint.date = `${apptDate}T${appTime}`;
     appoint.timeExpected = appoint.timeExpected || 0;
-
+    appoint.color = this.codeColorSelected != undefined ? this.codeColorSelected : null;
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
@@ -282,6 +297,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     basic.note = res.note;
     basic.time = res.time;
     basic.state = res.state;
+    basic.color = res.color;
     return basic;
   }
 
@@ -470,6 +486,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           let date = new Date(rs.date);
           this.formGroup.get('dateObj').patchValue(date);
           this.formGroup.get('timeObj').patchValue(date);
+          this.codeColorSelected = rs.color;
           // this.formGroup.get('apptHour').patchValue(date.getHours());
           // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 
@@ -548,7 +565,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
         this.formGroup.get('partnerAge').patchValue(rs.age);
         this.formGroup.get('partnerPhone').patchValue(rs.phone);
       });
-    }else {
+    } else {
       this.getCustomerList();
     }
   }
@@ -571,7 +588,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       (rs: any) => {
         this.formGroup.patchValue(rs);
 
-        let date = new Date(rs.date);
+        let date = this.dateTime ? new Date(this.dateTime) : new Date(rs.date);
         this.formGroup.get('dateObj').patchValue(date);
         this.formGroup.get('timeObj').patchValue(date);
         this.formGroup.get('timeExpected').patchValue(30);
@@ -602,5 +619,41 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     this.appointmentService.print(this.appointId).subscribe((res: any) => {
       this.printService.printHtml(res.html);
     });
+  }
+
+  clickColor(color) {
+    if (this.codeColorSelected == color)
+      this.codeColorSelected = undefined;
+    else
+      this.codeColorSelected = color;
+  }
+
+  getColorName(index) {
+    switch (index) {
+      case 0:
+        return 'Red';
+      case 1:
+        return 'Orange';
+      case 2:
+        return 'Amber';
+      case 3:
+        return 'Yellow';
+      case 4:
+        return 'Lime';
+      case 5:
+        return 'Green';
+      case 6:
+        return 'Teal';
+      case 7:
+        return 'Sky';
+      case 8:
+        return 'Blue';
+      case 9:
+        return 'Indigo';
+      case 10:
+        return 'Purple';
+      case 11:
+        return 'Pink';
+    }
   }
 }

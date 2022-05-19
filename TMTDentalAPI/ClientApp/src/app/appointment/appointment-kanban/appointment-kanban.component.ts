@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, NgZone, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
+import * as signalR from '@microsoft/signalr';
 import { NgbDropdownToggle, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
@@ -8,6 +9,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -19,7 +21,9 @@ import {
   AppointmentPaged
 } from '../appointment';
 import { AppointmentFilterExportExcelDialogComponent } from '../appointment-filter-export-excel-dialog/appointment-filter-export-excel-dialog.component';
+import { AppointmentSignalRService } from '../appointment-signalr.service';
 import { AppointmentService } from '../appointment.service';
+
 @Component({
   encapsulation: ViewEncapsulation.None, //<<<<< this one! 
   // To css active with innerHTML
@@ -113,6 +117,10 @@ export class AppointmentKanbanComponent implements OnInit {
   titleToolbar = "";
   clientFilter: boolean = false;
   dataAppointmentsForFilter: any[] = [];
+  connection: any;
+
+  connectionEstablished = false;
+
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
@@ -122,7 +130,11 @@ export class AppointmentKanbanComponent implements OnInit {
     private employeeService: EmployeeService,
     private checkPermissionService: CheckPermissionService,
     private receiveAppointmentService: ReceiveAppointmentService,
-    private printService: PrintService
+    private printService: PrintService,
+    private authService: AuthService,
+    @Inject('BASE_API') private baseApi: string,
+    private _ngZone: NgZone,
+    private appointmentSignalRService: AppointmentSignalRService
   ) { }
 
   ngOnInit() {
@@ -137,11 +149,40 @@ export class AppointmentKanbanComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged())
       .subscribe((value) => {
-         this.processSearch(value);
+        this.processSearch(value);
       });
 
     this.loadListEmployees();
-    // this.loadDoctorList();
+
+    this.appointmentSignalRService.connectionEstablished$.subscribe((res) => {
+      this._ngZone.run(() => {
+        this.connectionEstablished = res;
+      });
+    });
+
+    this.appointmentSignalRService.appointmentChanged$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointments.findIndex((x: any) => x.id === res.id);
+        if (idx != -1) {
+          this.appointments[idx] = res;
+        }
+        else {
+          this.appointments.push(res);
+        }
+
+        this.filterDataClient();
+      });
+    });
+
+    this.appointmentSignalRService.appointmentDeleted$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointments.findIndex((x: any) => x.id === res);
+        if (idx != -1) {
+          this.appointments.splice(idx, 1);
+          this.filterDataClient();
+        }
+      });
+    });
   }
 
   processSearch(value: string) {
@@ -164,7 +205,7 @@ export class AppointmentKanbanComponent implements OnInit {
       let daysInMonth = new Date(beginMonth.getFullYear(), beginMonth.getMonth() + 1, 0).getDate();;
       const endMonth = new Date(beginMonth.getFullYear(), beginMonth.getMonth(), daysInMonth);
 
-      this.dateFrom = new Date(beginMonth.getFullYear(), beginMonth.getMonth(), beginMonth.getDate() - (beginMonth.getDay() == 0 ? 6 : beginMonth.getDay() -1));
+      this.dateFrom = new Date(beginMonth.getFullYear(), beginMonth.getMonth(), beginMonth.getDate() - (beginMonth.getDay() == 0 ? 6 : beginMonth.getDay() - 1));
       this.dateTo = new Date(endMonth.getFullYear(), endMonth.getMonth(), endMonth.getDate() + (endMonth.getDay() == 0 ? 0 : 7 - endMonth.getDay()));
     }
   }
@@ -418,7 +459,6 @@ export class AppointmentKanbanComponent implements OnInit {
   //   paged.limit = 1;
   //   this.dotkhamService.getPaged(paged).subscribe((rs: any) => {
   //     if (rs.items.length) {
-  //       console.log(rs.items);
   //       let modalRef = this.modalService.open(SaleOrderCreateDotKhamDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
   //       modalRef.componentInstance.title = 'Tạo đợt khám';
   //       modalRef.componentInstance.saleOrderId = rs.items[0].saleOrderId;
@@ -729,6 +769,11 @@ export class AppointmentKanbanComponent implements OnInit {
       let cell = document.createElement('td');
       cell.classList.add('td-day');
       cell.id = moment(dateTmp).format('DD-MM-YYYY-HH');
+      cell.addEventListener('click', (e) => {
+        e.preventDefault();
+        const dateTime = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate(), i);
+        this.createUpdateAppointment(null, dateTime);
+      });
 
       let cell_dateEvent = document.createElement('div');
       cell_dateEvent.classList.add('list-data-event-day');
@@ -888,12 +933,14 @@ export class AppointmentKanbanComponent implements OnInit {
           const dateKey = new Date(parseInt(key));
           const idCell = moment(dateKey).format('DD-MM-YYYY');
           let cell_dateEventEl = document.querySelector(`[id='${idCell}'] .list-data-event-week`);
-          const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
-          cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
-          this.dataAppointmentsGrouped[key].forEach(appointment => {
-            cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
-          });
-          cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          if (cell_dateEventEl) {
+            const tdWeekOverwriteEl = cell_dateEventEl.lastChild; // td-week-overwrite
+            cell_dateEventEl.removeChild(tdWeekOverwriteEl); // td-week-overwrite
+            this.dataAppointmentsGrouped[key].forEach(appointment => {
+              cell_dateEventEl.appendChild(this.getEventDayNWeek(appointment));
+            });
+            cell_dateEventEl.appendChild(tdWeekOverwriteEl); // td-week-overwrite
+          }
         }
       }
     } else {
@@ -976,6 +1023,9 @@ export class AppointmentKanbanComponent implements OnInit {
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);
+    // dateEventV2El.classList.add(`appointment_border_color_${appointment.color}`);
+    let color = appointment.color || 0;
+    dateEventV2El.classList.add(`appointment_color_${color}`);
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {
@@ -1008,7 +1058,10 @@ export class AppointmentKanbanComponent implements OnInit {
     headerEl.appendChild(statusEl);
     headerEl.appendChild(actionEl);
     let customerNameEl = document.createElement('a');
-    customerNameEl.classList.add("customer-name", "text-primary");
+    customerNameEl.classList.add("customer-name");
+    // if (color != '')
+    //   dateEventV2El.classList.add("text-name-color");
+
     customerNameEl.title = "Xem hồ sơ khách hàng";
     customerNameEl.innerText = appointment.partnerName;
     customerNameEl.addEventListener("click", () => {
@@ -1080,12 +1133,15 @@ export class AppointmentKanbanComponent implements OnInit {
     return htmlString;
   }
 
-  createUpdateAppointment(id = null) {
+  createUpdateAppointment(id = null, dateTime = null) {
     const modalRef = this.modalService.open(AppointmentCreateUpdateComponent, { scrollable: true, size: 'lg', windowClass: 'o_technical_modal modal-appointment', keyboard: false, backdrop: 'static' });
     modalRef.componentInstance.appointId = id;
     modalRef.componentInstance.title = id ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn";
+    modalRef.componentInstance.dateTime = dateTime;
     modalRef.result.then(result => {
-      this.loadDataFromApi(); // Render Calendar
+      if (!this.connectionEstablished) {
+        this.loadDataFromApi();
+      }
     }, () => { });
   }
 
@@ -1099,7 +1155,6 @@ export class AppointmentKanbanComponent implements OnInit {
         modalRef.componentInstance.appointId = id;
         modalRef.componentInstance.receiveAppointmentDisplay = res;
         modalRef.result.then(result => {
-          this.loadDataFromApi(); // Render Calendar
           this.notificationService.show({
             content: 'Lưu thành công',
             hideAfter: 3000,
@@ -1107,6 +1162,10 @@ export class AppointmentKanbanComponent implements OnInit {
             animation: { type: 'fade', duration: 400 },
             type: { style: 'success', icon: true }
           });
+
+          if (!this.connectionEstablished) {
+            this.loadDataFromApi(); // Render Calendar
+          }
         }, () => { });
       })
     }
@@ -1127,5 +1186,8 @@ export class AppointmentKanbanComponent implements OnInit {
     const h = (timeExpected - m) / 60;
     const HHMM = h.toString() + 'g' + (m < 10 ? '0' : '') + m.toString() + 'p';
     return HHMM;
+  }
+
+  ngOnDestroy(): void {
   }
 }

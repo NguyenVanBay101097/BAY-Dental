@@ -2370,3 +2370,79 @@ kendo-pager-page-sizes select{
 .dropdown-menu {
     min-width: 15rem!important;
 }
+
+/* apointment style */
+
+.appointment_color_0 {
+    background-color: #e5f2ff !important;
+}
+.appointment_color_1 {
+    background-color: #FFF2E3 !important;
+}
+.appointment_color_2 {
+    background-color: #FFFAE0 !important;
+}
+.appointment_color_3 {
+    background-color: #FEFFE0 !important;
+}
+.appointment_color_4 {
+    background-color: #F8FFE0 !important;
+}
+.appointment_color_5 {
+    background-color: #DEF0DD !important;
+}
+.appointment_color_6 {
+    background-color: #DCF7F0 !important;
+}
+.appointment_color_7 {
+    background-color: #EBF8FF !important;
+}
+.appointment_color_8 {
+    background-color: #EBF4FF !important;
+}
+.appointment_color_9 {
+    background-color: #F0EBFF !important;
+}
+.appointment_color_10 {
+    background-color: #F8EBFF !important;
+}
+.appointment_color_11 {
+    background-color: #FFE3EF !important;
+}
+
+.appointment_border_color_0 {
+    border-left: 3px solid #EA2733 !important;
+}
+.appointment_border_color_1 {
+    border-left: 3px solid #FA6C1D !important;
+}
+.appointment_border_color_2 {
+    border-left: 3px solid #FAAD14 !important;
+}
+.appointment_border_color_3 {
+    border-left: 3px solid #FADB15 !important;
+}
+.appointment_border_color_4 {
+    border-left: 3px solid #84CC15 !important;
+}
+.appointment_border_color_5 {
+    border-left: 3px solid #2EB032 !important;
+}
+.appointment_border_color_6 {
+    border-left: 3px solid #15B8A6 !important;
+}
+.appointment_border_color_7 {
+    border-left: 3px solid #2A92FF !important;
+}
+.appointment_border_color_8 {
+    border-left: 3px solid#235CEA !important;
+}
+.appointment_border_color_9 {
+    border-left: 3px solid #4932D9 !important;
+}
+.appointment_border_color_10 {
+    border-left: 3px solid #7F2ED1 !important;
+}
+.appointment_border_color_11 {
+    border-left: 3px solid #EB2E94 !important;
+}

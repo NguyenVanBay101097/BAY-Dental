@@ -20,7 +20,7 @@ namespace Infrastructure.Services
         Task<AppointmentBasic> GetBasic(Guid id);
         Task<long> GetCount(AppointmentGetCountVM val);
         Task<Appointment> CreateAsync(AppointmentDisplay val);
-        Task UpdateAsync(Guid id,AppointmentDisplay val);
+        Task<AppointmentBasic> UpdateAsync(Guid id,AppointmentDisplay val);
         Task<IEnumerable<AppointmentBasic>> GetExcelData(AppointmentPaged val);
         void ComputeDataExcel(ExcelWorksheet worksheet, IEnumerable<AppointmentBasic> data, Dictionary<string, string> stateDict);
 

@@ -104,6 +104,8 @@ namespace ApplicationCore.Entities
                 return string.Join(", ", AppointmentServices.Select(x => x.Product.Name));
             }
         }
+        // background lịch hẹn
+        public string Color { get; set; }
 
     }
 }
