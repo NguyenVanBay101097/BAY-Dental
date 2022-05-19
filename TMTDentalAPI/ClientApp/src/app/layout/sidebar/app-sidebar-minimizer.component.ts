@@ -4,7 +4,7 @@ import { AppSidebarService } from './app-sidebar.service';
 
 @Component({
   selector: 'app-sidebar-minimizer, cui-sidebar-minimizer',
-  template: ``
+  template: `<ng-content></ng-content>`
 })
 export class AppSidebarMinimizerComponent {
 

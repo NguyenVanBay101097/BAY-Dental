@@ -449,4 +449,11 @@ export class AppHomeComponent implements OnInit {
       console.log(err);
     });
   }
+  
+  onClickHelpfullLink($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    // Mở form khảo sát
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLScDcM3Ruqj0N7OD1FeWSHwcypRnv-xLsdR4WrMDANM4e5P9AQ/viewform');
+  }
 }

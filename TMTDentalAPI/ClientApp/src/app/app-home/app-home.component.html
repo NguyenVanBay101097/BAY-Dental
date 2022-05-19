@@ -73,9 +73,15 @@
 </app-header>
 
 <div class="o_action_manager app-body">
-    <app-sidebar [fixed]="true" [display]="'lg'" #sidebar [minimized]="minimized" (minimizedChange)="toggleMinimize($event)">
+    <app-sidebar [fixed]="true" [display]="'lg'" #sidebar [minimized]="minimized"
+        (minimizedChange)="toggleMinimize($event)">
         <app-sidebar-nav [navItems]="menus"></app-sidebar-nav>
-        <app-sidebar-minimizer></app-sidebar-minimizer>
+        <app-sidebar-minimizer class="with_helpfull">
+            <div class="o_helpfull_link">
+                <img src="../../assets/icons/icon-helpfull.svg" alt="helpfull-link"
+                    (click)="onClickHelpfullLink($event)">
+            </div>
+        </app-sidebar-minimizer>
     </app-sidebar>
     <div class="o_action main">
         <router-outlet></router-outlet>

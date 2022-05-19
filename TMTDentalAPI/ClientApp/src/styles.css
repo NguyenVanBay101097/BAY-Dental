@@ -1853,6 +1853,15 @@ html:not([dir=rtl]) .sidebar {
 		height: 50px;
 		background-color: #24282c
 	}
+
+    .sidebar-minimized .sidebar .sidebar-minimizer.with_helpfull {
+        display: flex;
+        align-items: center;
+        position: relative;
+        height: auto;
+        flex-flow: column-reverse;
+    }
+
 	.sidebar-minimized .sidebar .sidebar-nav {
 		padding-bottom: 50px
 	}
@@ -1860,6 +1869,11 @@ html:not([dir=rtl]) .sidebar {
 		width: 100%;
 		transform: rotate(-180deg)
 	}
+
+    .sidebar-minimized .sidebar .sidebar-minimizer.with_helpfull:before {
+        position: relative;
+    }
+
 	.sidebar-minimized .sidebar .nav-item {
 		width: 50px;
 		overflow: hidden
