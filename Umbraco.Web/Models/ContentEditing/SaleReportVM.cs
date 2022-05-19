@@ -105,6 +105,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
         public string OrderPartnerId { get; set; }
         public string OrderPartnerName { get; set; }
+        public string OrderPartnerDisplayName { get; set; }
         public string Name { get; set; }
         public string EmployeeName { get; set; }
         public string ToothType { get; set; }

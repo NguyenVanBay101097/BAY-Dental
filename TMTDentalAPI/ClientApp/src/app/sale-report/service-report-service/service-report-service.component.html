@@ -9,7 +9,7 @@
         <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" [data]="employees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
-        <input class="form-control filter-search mb-2 mr-2" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
+        <input class="form-control filter-search mb-2 mr-2" placeholder="Tìm kiếm theo mã, họ tên khách hàng, dịch vụ" type="text"
             [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)">
         <div class="dropdown mb-2 mr-2">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
