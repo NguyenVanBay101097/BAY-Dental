@@ -2026,7 +2026,12 @@ namespace Infrastructure.Services
                         {
                             SaleLineId = x.Id,
                             ToothId = z.ToothId
-                        })
+                        }),
+                        ProductUOMQty = x.SaleOrderLineToothRels.Count(),
+                        ProductUom = new SaleOrderOrderLineUomPrintVM { Name = x.ProductUOM.Name},
+                        AmountDiscountTotal = x.AmountDiscountTotal,
+                        PriceUnit = x.PriceUnit,
+                        PriceSubTotal = x.PriceSubTotal
                     })
                     .ToListAsync();
 
