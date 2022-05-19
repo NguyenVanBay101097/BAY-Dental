@@ -1023,11 +1023,9 @@ export class AppointmentKanbanComponent implements OnInit {
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);
-    dateEventV2El.classList.add(`appointment_border_color_${appointment.color}`);
+    // dateEventV2El.classList.add(`appointment_border_color_${appointment.color}`);
     let color = appointment.color || 0;
-    if (color != '') {
-      dateEventV2El.classList.add(`appointment_color_${color}`);
-    }
+    dateEventV2El.classList.add(`appointment_color_${color}`);
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {
@@ -1061,8 +1059,8 @@ export class AppointmentKanbanComponent implements OnInit {
     headerEl.appendChild(actionEl);
     let customerNameEl = document.createElement('a');
     customerNameEl.classList.add("customer-name");
-    if (color != '')
-      dateEventV2El.classList.add("text-name-color");
+    // if (color != '')
+    //   dateEventV2El.classList.add("text-name-color");
 
     customerNameEl.title = "Xem hồ sơ khách hàng";
     customerNameEl.innerText = appointment.partnerName;
