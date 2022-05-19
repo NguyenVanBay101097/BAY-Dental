@@ -202,7 +202,22 @@ namespace Umbraco.Web.Models.ContentEditing
         {
             get
             {
-                return string.Join(", ", Teeth);
+                var toothTypeName = string.Join(", ", Teeth);
+                switch (ToothType)
+                {
+                    case "whole_jaw":
+                        toothTypeName = "Nguyên hàm";
+                        break;
+                    case "upper_jaw":
+                        toothTypeName = "Hàm trên";
+                        break;
+                    case "lower_jaw":
+                        toothTypeName = "Hàm dưới";
+                        break;
+                    default:
+                        break;
+                }
+                return toothTypeName;
             }
         }
         public SaleOrderOrderLineUomPrintVM ProductUom { get; set; }
@@ -214,7 +229,6 @@ namespace Umbraco.Web.Models.ContentEditing
         public decimal PriceUnit { get; set; }
         public double? AmountDiscountTotal { get; set; }
         public string ToothType { get; set; }
-
 
         [NotMapped]
         public decimal PriceWithDiscount

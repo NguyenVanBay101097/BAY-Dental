@@ -2027,7 +2027,7 @@ namespace Infrastructure.Services
                             SaleLineId = x.Id,
                             ToothId = z.ToothId
                         }),
-                        ProductUOMQty = x.SaleOrderLineToothRels.Count(),
+                        ProductUOMQty = x.ProductUOMQty,
                         ProductUom = new SaleOrderOrderLineUomPrintVM { Name = x.ProductUOM.Name},
                         AmountDiscountTotal = x.AmountDiscountTotal,
                         PriceUnit = x.PriceUnit,
@@ -2121,15 +2121,15 @@ namespace Infrastructure.Services
 
                 order.AdultUpRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).Reverse().ToList();
 
-                order.AdultDownRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).ToList();
+                order.AdultDownRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).Reverse().ToList();
 
-                order.AdultDownLeftTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).Reverse().ToList();
+                order.AdultDownLeftTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).ToList();
 
                 var childTeeth = teethPrint.Where(x => x.CategoryId.Equals(childTeethCategory.Id)).ToList();
-                order.ChildUpRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).ToList();
-                order.ChildUpLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("1_left")).Reverse().ToList();
-                order.ChildDownRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).ToList();
-                order.ChildDownLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).Reverse().ToList();
+                order.ChildUpRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).Reverse().ToList();
+                order.ChildUpLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("1_left")).ToList();
+                order.ChildDownRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).Reverse().ToList();
+                order.ChildDownLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).ToList();
             }
             return orders;
         }

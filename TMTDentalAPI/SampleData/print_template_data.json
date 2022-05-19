@@ -60,7 +60,9 @@
           "Diagnostic": "Chảy máu răng",
           "ToothType": "",
           "Teeth": [
-            "21","22","23"
+            "21",
+            "22",
+            "23"
           ]
         },
         {
@@ -203,27 +205,7 @@
       ],
       "AdultUpRightTeeth": [
         {
-          "Name": "11",
-          "IsSelected": true
-        },
-        {
-          "Name": "12",
-          "IsSelected": false
-        },
-        {
-          "Name": "13",
-          "IsSelected": false
-        },
-        {
-          "Name": "14",
-          "IsSelected": true
-        },
-        {
-          "Name": "15",
-          "IsSelected": true
-        },
-        {
-          "Name": "16",
+          "Name": "18",
           "IsSelected": true
         },
         {
@@ -231,7 +213,27 @@
           "IsSelected": false
         },
         {
-          "Name": "18",
+          "Name": "16",
+          "IsSelected": false
+        },
+        {
+          "Name": "15",
+          "IsSelected": true
+        },
+        {
+          "Name": "14",
+          "IsSelected": true
+        },
+        {
+          "Name": "13",
+          "IsSelected": true
+        },
+        {
+          "Name": "13",
+          "IsSelected": false
+        },
+        {
+          "Name": "11",
           "IsSelected": false
         }
       ],
@@ -271,27 +273,7 @@
       ],
       "AdultDownRightTeeth": [
         {
-          "Name": "41",
-          "IsSelected": true
-        },
-        {
-          "Name": "42",
-          "IsSelected": false
-        },
-        {
-          "Name": "43",
-          "IsSelected": false
-        },
-        {
-          "Name": "44",
-          "IsSelected": true
-        },
-        {
-          "Name": "45",
-          "IsSelected": true
-        },
-        {
-          "Name": "46",
+          "Name": "48",
           "IsSelected": true
         },
         {
@@ -299,7 +281,27 @@
           "IsSelected": false
         },
         {
-          "Name": "48",
+          "Name": "46",
+          "IsSelected": false
+        },
+        {
+          "Name": "45",
+          "IsSelected": true
+        },
+        {
+          "Name": "44",
+          "IsSelected": true
+        },
+        {
+          "Name": "43",
+          "IsSelected": true
+        },
+        {
+          "Name": "42",
+          "IsSelected": false
+        },
+        {
+          "Name": "41",
           "IsSelected": false
         }
       ],
