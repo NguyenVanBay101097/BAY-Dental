@@ -1979,34 +1979,158 @@ namespace Infrastructure.Services
             return invoices;
         }
 
-        public async Task<IEnumerable<SaleOrder>> GetPrintTemplate(IEnumerable<Guid> ids)
+        public async Task<IEnumerable<SaleOrderPrintViewModel>> GetPrintTemplate(IEnumerable<Guid> ids)
         {
             var saleOrderLineObj = GetService<ISaleOrderLineService>();
             var saleOrderPaymentObj = GetService<ISaleOrderPaymentService>();
-            var orders = await SearchQuery(x => ids.Contains(x.Id))
-                .Include(x => x.Company).ThenInclude(x => x.Partner)
-                .Include(x => x.Partner)
-                .Include(x => x.DotKhams).ThenInclude(s => s.Doctor)
-                .Include(x => x.DotKhams).ThenInclude(s => s.Lines).ThenInclude(x => x.ToothRels).ThenInclude(x => x.Tooth)
-                .Include(x => x.CreatedBy)
-                .Include(x => x.OrderLines).ThenInclude(x => x.ProductUOM)
+            var toothService = GetService<IToothService>();
+            var irModelDataService = GetService<IIRModelDataService>();
+            var partnerObj = GetService<IPartnerService>();
+            var companyObj = GetService<ICompanyService>();
+            var dotKhamObj = GetService<IDotKhamService>();
+            var dotKhamLineObj = GetService<IDotKhamLineService>();
+
+            var orders = await SearchQuery(x => ids.Contains(x.Id)).Include(x => x.User)
+                .Select(x => new SaleOrderPrintViewModel() { 
+                    Id = x.Id,
+                    DateOrder = x.DateOrder,
+                    Name = x.Name,
+                    User = new SaleOrderOrderUserPrintVM()
+                    {
+                        Name = x.User.Name
+                    },
+                    Residual = x.Residual,
+                    TotalPaid = x.TotalPaid,
+                    AmountTotal = x.AmountTotal,
+                    PartnerId = x.PartnerId,
+                    CompanyId = x.CompanyId
+                })
                 .ToListAsync();
+
             foreach (var order in orders)
             {
+                order.Company = _mapper.Map<CompanyPrintVM>(await companyObj.SearchQuery(x => x.Id == order.CompanyId).FirstOrDefaultAsync());
                 //Lược bỏ những dòng số lượng bằng 0
                 order.OrderLines = await saleOrderLineObj.SearchQuery(x => x.OrderId == order.Id)
                     .OrderBy(x => x.Sequence)
-                    .Where(x => x.ProductUOMQty != 0)
-                    .Include(x => x.Product)
-                    .Include(x => x.Employee)
+                    .Select(x => new SaleOrderOrderLinePrintVM
+                    {
+                        Product = new SaleOrderOrderLineProductPrintVM
+                        {
+                            Name = x.Product.Name,
+                        },
+                        Teeth = x.SaleOrderLineToothRels.Select(s => s.Tooth.Name),
+                        ToothType = x.ToothType,
+                        ToothCategoryId = x.ToothCategoryId,
+                        SaleOrderLineToothRels = x.SaleOrderLineToothRels.Select(z => new SaleOrderLineToothRelPrintVM()
+                        {
+                            SaleLineId = x.Id,
+                            ToothId = z.ToothId
+                        }),
+                        ProductUOMQty = x.ProductUOMQty,
+                        ProductUom = new SaleOrderOrderLineUomPrintVM { Name = x.ProductUOM.Name},
+                        AmountDiscountTotal = x.AmountDiscountTotal,
+                        PriceUnit = x.PriceUnit,
+                        PriceSubTotal = x.PriceSubTotal
+                    })
                     .ToListAsync();
 
                 order.SaleOrderPayments = await saleOrderPaymentObj.SearchQuery(x => x.OrderId == order.Id && x.State == "posted")
-                    .Include(x => x.Lines).ThenInclude(x => x.SaleOrderLine)
-                    .Include(x => x.PaymentRels).ThenInclude(x => x.Payment).ThenInclude(x => x.Journal)
+                    .Select(x => new SaleOrderOrderPaymentPrintVM { 
+                        Amount = x.Amount,
+                        LinesName = x.Lines.Select(s => s.SaleOrderLine.Name),
+                        PaymentRels = x.PaymentRels.Select(s => new SaleOrderOrderPaymentRelPrintVM { 
+                            Payment = new SaleOrderOrderPaymentRelPaymentPrintVM
+                            {
+                                Id = s.PaymentId,
+                                Name = s.Payment.Name,
+                                PaymentDate = s.Payment.PaymentDate,
+                                Journal = new SaleOrderOrderPaymentRelPaymentJournalPrintVM
+                                {
+                                    Name = s.Payment.Journal.Name
+                                },
+                                Amount = s.Payment.Amount
+                            }
+                        })
+                    })
                     .ToListAsync();
-            }
 
+                order.Partner = partnerObj.SearchQuery(x => x.Id == order.PartnerId)
+                    .Select(x => new SaleOrderPartnerPrintVM { 
+                        Name = x.Name,
+                        Gender = x.Gender,
+                        BirthDay = x.BirthDay,
+                        BirthMonth = x.BirthMonth,
+                        BirthYear = x.BirthYear,
+                        Street = x.Street,
+                        DistrictName = x.DistrictName,
+                        CityName = x.CityName,
+                        WardName = x.WardName,
+                        Histories = x.PartnerHistoryRels.Select(s => s.History.Name),
+                        Phone = x.Phone,
+                        MedicalHistory = x.MedicalHistory,
+                    })
+                    .FirstOrDefault();
+                order.DotKhams = await dotKhamObj.SearchQuery(x => x.SaleOrderId == order.Id).Select(x => new SaleOrderOrderPaymentPrintVMDotKhamPrintVM() { 
+                    Date = x.Date,
+                    Id = x.Id
+                }).ToListAsync();
+                if (order.DotKhams.Any())
+                {
+                    var dotKhamIds = order.DotKhams.Select(x => x.Id).ToList();
+                    var dotKhamLines = await dotKhamLineObj.SearchQuery(x => dotKhamIds.Contains(x.DotKhamId)).Include(x => x.Product)
+                        .Include(x => x.ToothRels)
+                        .Select(x => new SaleOrderOrderPaymentPrintVMDotKhamLinePrintVM()
+                        {
+                            DotKhamId = x.DotKhamId,
+                            Product = new SaleOrderOrderLineProductPrintVM() { Name = x.Product.Name},
+                            NameStep = x.NameStep,
+                            ToothRels = x.ToothRels,
+                            Note = x.Note
+                        })
+                        .ToListAsync();
+                    foreach (var dotKham in order.DotKhams)
+                    {
+                        var lines = dotKhamLines.Where(x => x.DotKhamId == dotKham.Id).ToList();
+                        dotKham.Lines = lines;
+                    }
+                }
+                var toothCategories = order.OrderLines.Where(x => x.ToothCategoryId.HasValue).Select(x => x.ToothCategoryId).Distinct().ToList();
+                var teethQuery = toothService.SearchQuery();
+                if (toothCategories.Any())
+                {
+                    teethQuery = teethQuery.Where(x => toothCategories.Contains(x.CategoryId));
+                }
+                var teeth = await teethQuery.OrderByDescending(x => x.DateCreated).ToListAsync();
+                var teethPrint = _mapper.Map<IEnumerable<ToothPrint>>(teeth);
+
+                var teethIdSelected = order.OrderLines.SelectMany(x => x.SaleOrderLineToothRels).Select(z => z.ToothId).Distinct().ToList();
+                foreach (var toothPrint in teethPrint)
+                {
+                    if (teethIdSelected.Contains(toothPrint.Id))
+                        toothPrint.IsSelected = true;
+                }
+                var adultTeethCategory = await irModelDataService.GetRef<ToothCategory>("base.tooth_category_adult");
+                order.HaveAdultTeeth = toothCategories.Contains(adultTeethCategory.Id) || !toothCategories.Any() ;
+                var childTeethCategory = await irModelDataService.GetRef<ToothCategory>("base.tooth_category_child");
+                order.HaveChildTeeth = toothCategories.Contains(childTeethCategory.Id) || !toothCategories.Any();
+
+                var adultTeeth = teethPrint.Where(x => x.CategoryId.Equals(adultTeethCategory.Id)).ToList();
+
+                order.AdultUpLeftTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("1_left")).ToList();
+
+                order.AdultUpRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).Reverse().ToList();
+
+                order.AdultDownRightTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).Reverse().ToList();
+
+                order.AdultDownLeftTeeth = adultTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).ToList();
+
+                var childTeeth = teethPrint.Where(x => x.CategoryId.Equals(childTeethCategory.Id)).ToList();
+                order.ChildUpRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("0_right")).Reverse().ToList();
+                order.ChildUpLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("0_up") && x.Position.Equals("1_left")).ToList();
+                order.ChildDownRightTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("0_right")).Reverse().ToList();
+                order.ChildDownLeftTeeth = childTeeth.Where(x => x.ViTriHam.Equals("1_down") && x.Position.Equals("1_left")).ToList();
+            }
             return orders;
         }
 

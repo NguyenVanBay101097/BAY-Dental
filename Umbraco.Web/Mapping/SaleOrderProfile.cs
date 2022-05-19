@@ -53,6 +53,9 @@ namespace Umbraco.Web.Mapping
 
             CreateMap<SaleOrder, SaleOrderPublic>();
 
+            CreateMap<SaleOrder, SaleOrderPrintViewModel>();
+
+
         }
     }
 }

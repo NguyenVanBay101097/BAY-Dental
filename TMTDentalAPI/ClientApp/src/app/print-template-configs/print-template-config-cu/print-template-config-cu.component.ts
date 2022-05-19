@@ -22,6 +22,7 @@ import { PrintTemplateService } from '../print-template.service';
 })
 export class PrintTemplateConfigCuComponent implements OnInit {
     // public editor = Editor;
+    currentType: string;
     types: { text: string, value: string }[] = [];
     // config = new PrintTemplateConfigDisplay();
     configEdit = new PrintTemplateConfigDisplay();
@@ -134,6 +135,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
 
     onChangeType(e?) {
         var type = this.formGroup.get('type').value;
+        this.currentType = type;
         if (type) {
             this.configService.getDisplay(type).subscribe((res: any) => {
                 // console.log(res);
@@ -203,6 +205,7 @@ export class PrintTemplateConfigCuComponent implements OnInit {
         const modalRef = this.modalService.open(KeywordListDialogComponent, { size: 'xl', scrollable: true, windowClass: 'o_technical_modal', keyboard: true, backdrop: 'static' });
         modalRef.componentInstance.boxKeyWordSource = constantData.keyWords[this.formGroup.get('type').value];
         modalRef.componentInstance.title = 'Danh sách từ khóa ' + this.types.find(x => x.value == this.formGroup.get('type').value).text.toLowerCase();
+        modalRef.componentInstance.type = this.currentType;
         modalRef.result.then((res) => {
             if (res) {
                 this.editor.instance.insertText(res.value);

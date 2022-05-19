@@ -329,7 +329,7 @@ namespace TMTDentalAPI.Controllers
             var attachments = await _irAttachmentService.SearchQuery(x => val.AttachmentIds.Contains(x.Id)).ToListAsync();
             foreach (var item in saleOrders)
             {
-                item.IrAttachments = attachments;
+                item.IrAttachments = _mapper.Map<IEnumerable<SaleOrderOrderIrAttachmentPrintVM>>(attachments);
             }
 
             var result = await _printTemplateService.GeneratePrintHtml(template, saleOrders);

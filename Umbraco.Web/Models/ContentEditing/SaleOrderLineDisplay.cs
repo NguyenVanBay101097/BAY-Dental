@@ -166,4 +166,5 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public decimal? AmountResidual { get; set; }
     }
+
 }

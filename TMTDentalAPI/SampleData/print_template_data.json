@@ -23,12 +23,20 @@
         "Gender": "male",
         "Email": "khachhanga@gmail.com",
         "Phone": "0369835014",
+        "BirthDay": 12,
+        "BirthMonth": 12,
         "BirthYear": 1995,
         "Age": "26",
         "Street": "246/16 Độc Lập",
         "WardName": "Phường Tân Thành",
         "DistrictName": "Quận Tân Phú",
-        "CityName": "Thành phố Hồ Chí Minh"
+        "CityName": "Thành phố Hồ Chí Minh",
+        "MedicalHistory": "Có tiền sử bệnh máu khó đông",
+        "Histories": [
+          "Bệnh tim",
+          "Bệnh phổi",
+          "Bệnh máu khó đông"
+        ]
       },
       "Name": "SO00006",
       "DateOrder": "2021-09-14T11:04:11",
@@ -48,7 +56,14 @@
           "Sequence": 10,
           "AmountDiscountTotal": 150000.00000000003,
           "PriceReduce": 1350000.00,
-          "TotalDiscountAmount": 150000.00
+          "TotalDiscountAmount": 150000.00,
+          "Diagnostic": "Chảy máu răng",
+          "ToothType": "",
+          "Teeth": [
+            "21",
+            "22",
+            "23"
+          ]
         },
         {
           "Product": {
@@ -65,7 +80,15 @@
           "Sequence": 10,
           "AmountDiscountTotal": 500000.0,
           "PriceWithDiscount": 1500000.00,
-          "TotalDiscountAmount": 1000000.00
+          "TotalDiscountAmount": 1000000.00,
+          "Diagnostic": "Thưa răng",
+          "ToothType": "",
+          "Teeth": [
+            "11",
+            "12",
+            "13"
+          ]
+
         }
       ],
       "SaleOrderPayments": [
@@ -169,7 +192,155 @@
         }
       ],
       "AmountSubTotal": 6500000.00,
-      "AmountDiscountTotal": 1150000.00
+      "AmountDiscountTotal": 1150000.00,
+      "Teeth": [
+        {
+          "Name": "11",
+          "IsSelected": true
+        },
+        {
+          "Name": "12",
+          "IsSelected": false
+        }
+      ],
+      "AdultUpRightTeeth": [
+        {
+          "Name": "18",
+          "IsSelected": true
+        },
+        {
+          "Name": "17",
+          "IsSelected": false
+        },
+        {
+          "Name": "16",
+          "IsSelected": false
+        },
+        {
+          "Name": "15",
+          "IsSelected": true
+        },
+        {
+          "Name": "14",
+          "IsSelected": true
+        },
+        {
+          "Name": "13",
+          "IsSelected": true
+        },
+        {
+          "Name": "13",
+          "IsSelected": false
+        },
+        {
+          "Name": "11",
+          "IsSelected": false
+        }
+      ],
+      "AdultUpLeftTeeth": [
+        {
+          "Name": "21",
+          "IsSelected": true
+        },
+        {
+          "Name": "22",
+          "IsSelected": true
+        },
+        {
+          "Name": "23",
+          "IsSelected": false
+        },
+        {
+          "Name": "24",
+          "IsSelected": false
+        },
+        {
+          "Name": "25",
+          "IsSelected": false
+        },
+        {
+          "Name": "26",
+          "IsSelected": false
+        },
+        {
+          "Name": "27",
+          "IsSelected": false
+        },
+        {
+          "Name": "28",
+          "IsSelected": false
+        }
+      ],
+      "AdultDownRightTeeth": [
+        {
+          "Name": "48",
+          "IsSelected": true
+        },
+        {
+          "Name": "47",
+          "IsSelected": false
+        },
+        {
+          "Name": "46",
+          "IsSelected": false
+        },
+        {
+          "Name": "45",
+          "IsSelected": true
+        },
+        {
+          "Name": "44",
+          "IsSelected": true
+        },
+        {
+          "Name": "43",
+          "IsSelected": true
+        },
+        {
+          "Name": "42",
+          "IsSelected": false
+        },
+        {
+          "Name": "41",
+          "IsSelected": false
+        }
+      ],
+      "AdultDownLeftTeeth": [
+        {
+          "Name": "31",
+          "IsSelected": true
+        },
+        {
+          "Name": "32",
+          "IsSelected": true
+        },
+        {
+          "Name": "33",
+          "IsSelected": false
+        },
+        {
+          "Name": "34",
+          "IsSelected": false
+        },
+        {
+          "Name": "35",
+          "IsSelected": false
+        },
+        {
+          "Name": "36",
+          "IsSelected": false
+        },
+        {
+          "Name": "37",
+          "IsSelected": false
+        },
+        {
+          "Name": "38",
+          "IsSelected": false
+        }
+      ],
+      "HaveChildTeeth": false,
+      "HaveAdultTeeth":  true
     }
   },
   {

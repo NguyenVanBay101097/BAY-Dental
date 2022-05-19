@@ -85,6 +85,9 @@
                         </div>
                     </div>
                 </div>
+                <div *ngIf="this.type == 'tmp_sale_order'">
+                    <button class="btn btn-primary" (click)="copyText()">Copy html sơ đồ răng</button>
+                </div>
             </div>
         </div>
     </div>

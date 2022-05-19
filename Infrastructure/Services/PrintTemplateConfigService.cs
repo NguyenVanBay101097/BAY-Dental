@@ -152,8 +152,8 @@ namespace Infrastructure.Services
                 {
                     case "tmp_sale_order":
                         {
-                            var res = JsonConvert.DeserializeObject<SaleOrder>(item.Data.ToString());
-                            res.Company = company;
+                            var res = JsonConvert.DeserializeObject<SaleOrderPrintViewModel>(item.Data.ToString());
+                            res.Company = _mapper.Map<CompanyPrintVM>(company);
                             return res;
                         }
                     case "tmp_toathuoc":
