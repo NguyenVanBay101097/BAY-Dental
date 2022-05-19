@@ -146,4 +146,51 @@ export class PartnerOverviewTreatmentHistoryComponent implements OnInit {
     }
   }
 
+  exportExcel() {
+    var val = this.getDataApiParam();
+    val.limit = 0;
+    this.saleOrderLineService.exportExcel(val).subscribe((rs) => {
+      var contentDisposition = rs.headers.get('content-disposition');
+      var filename = contentDisposition.split(';')[1].split('=')[1].replace(/\"/g, '');
+      let newBlob = new Blob([rs.body], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
+  onExportPDF() {
+    var val = this.getDataApiParam();
+    val.limit = 0;
+    this.saleOrderLineService.exportPdf(val).subscribe(res => {
+      var contentDisposition = res.headers.get('content-disposition');
+      var filename = contentDisposition.split(';')[1].split('=')[1].replace(/\"/g, '');
+
+      let newBlob = new Blob([res.body], {
+        type:
+          "application/pdf",
+      });
+
+      let data = window.URL.createObjectURL(newBlob);
+      let link = document.createElement("a");
+      link.href = data;
+      link.download = filename;
+      link.click();
+      setTimeout(() => {
+
+        window.URL.revokeObjectURL(data);
+      }, 100);
+    });
+  }
+
 }

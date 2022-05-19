@@ -1751,5 +1751,28 @@ namespace Infrastructure.Services
             var soPayment = await soPaymentObj.CreateSaleOrderPayment(soPaymentSave);
             await soPaymentObj.ActionPayment(new List<Guid>() { soPayment.Id });
         }
+
+        public async Task<SaleOrderLineHistoryPrint> ExportPdfData(SaleOrderLinesPaged val)
+        {
+            var items = (await GetPagedResultAsync(val)).Items;
+            var res = new SaleOrderLineHistoryPrint()
+            {
+                data = items,
+                User = _mapper.Map<ApplicationUserSimple>(await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId))
+            };
+            if (val.CompanyId.HasValue)
+            {
+                var companyObj = GetService<ICompanyService>();
+                var company = await companyObj.SearchQuery(x => x.Id == val.CompanyId).Include(x => x.Partner).FirstOrDefaultAsync();
+                res.Company = _mapper.Map<CompanyPrintVM>(company);
+            }
+            if (val.PartnerId.HasValue)
+            {
+                var partnerObj = GetService<IPartnerService>();
+                var partner = await partnerObj.GetByIdAsync(val.PartnerId);
+                res.Partner = _mapper.Map<PartnerPrintVM>(partner);
+            }
+            return res;
+        }
     }
 }

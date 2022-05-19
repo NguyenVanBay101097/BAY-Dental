@@ -33,10 +33,12 @@ namespace TMTDentalAPI.Controllers
         private readonly IExportExcelService _exportExcelService;
         private readonly IViewRenderService _viewRenderService;
         private readonly ISaleOrderService _saleOrderService;
+        private readonly IPartnerService _partnerService;
 
         private IConverter _converter;
         public SaleOrderLinesController(ISaleOrderLineService saleLineService, IMapper mapper, IExportExcelService exportExcelService,
-        IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService, IConverter converter, ISaleOrderService saleOrderService)
+        IUnitOfWorkAsync unitOfWork, IViewRenderService viewRenderService, IConverter converter, ISaleOrderService saleOrderService,
+        IPartnerService partnerService)
         {
             _saleLineService = saleLineService;
             _mapper = mapper;
@@ -45,6 +47,7 @@ namespace TMTDentalAPI.Controllers
             _viewRenderService = viewRenderService;
             _converter = converter;
             _saleOrderService = saleOrderService;
+            _partnerService = partnerService;
         }
 
         [HttpPost]
@@ -461,6 +464,76 @@ namespace TMTDentalAPI.Controllers
             _unitOfWork.Commit();
 
             return NoContent();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportExcel([FromQuery] SaleOrderLinesPaged val)
+        {
+            var initData = (await _saleLineService.GetPagedResultAsync(val)).Items;
+            var data = _mapper.Map<IEnumerable<SaleOrderLineExcel>>(initData);
+            var exportbytes = await _exportExcelService.createExcel(data,"Lịch sử điều trị");
+            var partner = await _partnerService.SearchQuery(x=> x.Id == val.PartnerId).Select(x=> new {x.Id, x.DisplayName, x.Ref}).FirstOrDefaultAsync();
+            
+            ExcelPackage package;
+
+            using (MemoryStream memStream = new MemoryStream(exportbytes as byte[]))
+            {
+                package = new ExcelPackage(memStream);
+                package.Load(memStream);
+
+                var worksheet = package.Workbook.Worksheets[0];
+                worksheet.Cells[1, 1, 1, 9].Style.Font.Bold = true;
+
+                //insert title
+                worksheet.InsertRow(1, 3);
+                worksheet.Cells[1, 1, 1, worksheet.Dimension.Columns].Merge = true;
+                worksheet.Cells[1, 1].Value = "LỊCH SỬ ĐIỀU TRỊ";
+                worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells[1, 1].Style.Font.Bold = true;
+                worksheet.Cells[1, 1].Style.Font.Color.SetColor(Color.Blue);
+                if(partner != null)
+                {
+                    worksheet.Cells[2, 1, 2, worksheet.Dimension.Columns].Merge = true;
+                    worksheet.Cells[2, 1].Value = $"Khách hàng: {partner.DisplayName}";
+                    worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[2, 1].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+            }
+            return File(package.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"lich_su_dieu_tri_[{partner.Ref}]");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ExportPdf([FromQuery] SaleOrderLinesPaged val)
+        {
+            var data = await _saleLineService.ExportPdfData(val);
+
+            var html = _viewRenderService.Render("SaleOrderLine/TreatmentHistoryPdf", data);
+
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Lịch sử điều trị", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", $"lich_su_dieu_tri_[{data.Partner.Ref}]");
         }
     }
 }

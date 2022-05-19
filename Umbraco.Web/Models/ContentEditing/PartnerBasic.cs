@@ -242,7 +242,22 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DisplayName { get; set; }
         public string Name { get; set; }
         public string Gender { get; set; }
-        public string DateOfBirth { get; set; }
+        public int? BirthMonth { get; set; }
+        public int? BirthDay { get; set; }
+        public string DateOfBirth
+        {
+            get
+            {
+                if (!BirthDay.HasValue && !BirthMonth.HasValue && !BirthYear.HasValue) return "";
+                return $"{(BirthDay.HasValue ? BirthDay.Value.ToString() : "--")}/" +
+                    $"{(BirthMonth.HasValue ? BirthMonth.Value.ToString() : "--")}/" +
+                    $"{(BirthYear.HasValue ? BirthYear.Value.ToString() : "----")}";
+            }
+            set
+            {
+
+            }
+        }
         public string Phone { get; set; }
         public int? BirthYear { get; set; }
 
@@ -302,6 +317,9 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DistrictName { get; set; }
 
         public string CityName { get; set; }
+        public string Email { get; set; }
+        public string Ref { get; set; }
+
     }
 
     public class PartnerViewModel

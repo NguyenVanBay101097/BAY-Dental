@@ -26,7 +26,7 @@ namespace Infrastructure.Services
         /// <param name="titleSheet">title cho sheet</param>
         /// <param name="listHeader">list tiêu đề cột, nếu là null thì lấy theo epplusdisplay attribute, nếu null nữa thì lấy theo tên biến</param>
         /// <returns></returns>
-        public async Task<object> createExcel<T>(IEnumerable<T> list, string titleSheet, List<string> listHeader = null)
+        public async Task<byte[]> createExcel<T>(IEnumerable<T> list, string titleSheet, List<string> listHeader = null)
         {
             listHeader = listHeader ?? new List<string>();
             using (ExcelPackage package = new ExcelPackage())
@@ -45,7 +45,7 @@ namespace Infrastructure.Services
                 //put the data in the sheet, starting from column A, row 1
                 MemberInfo[] membersToInclude = typeof(T)
            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-           .Where(p => !Attribute.IsDefined(p, typeof(EpplusIgnore)))
+           .Where(p => Attribute.IsDefined(p, typeof(EpplusDisplay))).OrderBy(g => g.GetCustomAttributes(false).OfType<EpplusDisplay>().First().Sequence)
            .ToArray();
 
                 ws.Cells["A1"].LoadFromCollection(list, true, OfficeOpenXml.Table.TableStyles.None,
@@ -88,7 +88,7 @@ namespace Infrastructure.Services
                 //loop the properties in list<t> to apply some data formatting based on data type and check for nested lists
                 var listObject = list.First();
                 var columns_to_delete = new List<int>();
-                var listProperties = listObject.GetType().GetProperties().Where(p => !Attribute.IsDefined(p, typeof(EpplusIgnore))).ToList();
+                var listProperties = listObject.GetType().GetProperties().Where(p => Attribute.IsDefined(p, typeof(EpplusDisplay))).OrderBy(g => g.GetCustomAttributes(false).OfType<EpplusDisplay>().First().Sequence).ToList();
                 for (int i = 0; i < listProperties.Count(); i++)
                 {
                     var prop = listProperties[i];
