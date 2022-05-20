@@ -89,7 +89,7 @@ namespace Infrastructure.Services
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
                 dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
                 dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer, doctorIsNull: val.DoctorIsNull);
-
+             query = query.Where(x => x.CompanyId == val.CompanyId.Value);
             var totalItems = await query.CountAsync();
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
 
@@ -259,11 +259,12 @@ namespace Infrastructure.Services
 
         public override ISpecification<Appointment> RuleDomainGet(IRRule rule)
         {
-            var companyId = CompanyId;
+            var userObj = GetService<IUserService>();
+            var companyIds = userObj.GetListCompanyIdsAllowCurrentUser();
             switch (rule.Code)
             {
                 case "sale.appointment_comp_rule":
-                    return new InitialSpecification<Appointment>(x => x.CompanyId == companyId);
+                    return new InitialSpecification<Appointment>(x => companyIds.Contains(x.CompanyId));
                 default:
                     return null;
             }

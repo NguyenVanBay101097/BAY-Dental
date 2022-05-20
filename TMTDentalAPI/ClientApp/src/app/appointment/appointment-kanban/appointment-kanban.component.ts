@@ -327,6 +327,7 @@ export class AppointmentKanbanComponent implements OnInit {
     var val = new AppointmentPaged();
     val.limit = this.limit;
     val.offset = this.offset;
+    val.companyId = this.authService.userInfo.companyId;
     // val.state = this.state || '';
     // if (this.isLateFilter) {
     //   val.isLate = this.isLateFilter;
