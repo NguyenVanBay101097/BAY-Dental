@@ -21,28 +21,32 @@
 
             <tr>
                 <td width="120"><strong>Ngày tạo</strong></td>
-                <td width="150"><strong>Dịch vụ</strong></td>
-                <td width="150"><strong>Phiếu điều trị</strong></td>
                 <td width="150"><strong>Khách hàng</strong></td>
-                <td width="120" class="text-right"><strong>Số lượng</strong></td>
+                <td width="150"><strong>Dịch vụ</strong></td>
                 <td width="120"><strong>Bác sĩ</strong></td>
+                <td width="120"><strong>Đơn vị tính</strong></td>
+                 <td width="120" class="text-right"><strong>Số lượng</strong></td>
                 <td width="120" class="text-right"><strong>Thành tiền</strong></td>
                 <td width="120" class="text-right"><strong>Thanh toán</strong></td>
                 <td width="120" class="text-right"><strong>Còn lại</strong></td>
+                <td width="100"><strong>Răng</strong></td>
+                <td width="150"><strong>Phiếu điều trị</strong></td>
                 <td width="120"><strong>Trạng thái</strong></td>
             </tr>
             @foreach (var item in Model.data)
             {
                 <tr>
                     <td width="120">@(!item.Date.HasValue ? "" : item.Date.Value.ToString("dd/MM/yyyy"))</td>
+                    <td width="150">@item.OrderPartnerDisplayName</td>
                     <td width="150">@item.Name</td>
-                    <td width="150">@item.OrderName</td>
-                    <td width="150">@item.OrderPartnerName</td>
-                    <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.ProductUOMQty)</td>
                     <td width="120">@item.EmployeeName</td>
+                    <td width="120">@item.ProductUOMName</td>
+                    <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.ProductUOMQty)</td>
                     <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.PriceSubTotal)</td>
                     <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.AmountInvoiced)</td>
                     <td width="120" class="text-right">@string.Format(culture, "{0:n0}", item.AmountResidual)</td>
+                    <td width="100">@string.Join(", ",item.Teeth2)</td>
+                    <td width="150">@item.OrderName</td>
                     <td width="120">@item.StateDisplay</td>
 
                 </tr>

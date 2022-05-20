@@ -14,6 +14,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string State { get; set; }
         public string Search { get; set; }
         public bool? Active { get; set; }
+        public IEnumerable<Guid> ServiceIds { get; set; } = new List<Guid>();
 
     }
     public class ServiceReportRes
@@ -97,6 +98,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public int Limit { get; set; }
         public int Offset { get; set; }
         public bool? Active { get; set; }
+        public IEnumerable<Guid> ServiceIds { get; set; } = new List<Guid>();
 
     }
 
@@ -105,6 +107,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public DateTime? Date { get; set; }
         public string OrderPartnerId { get; set; }
         public string OrderPartnerName { get; set; }
+        public string OrderPartnerDisplayName { get; set; }
         public string Name { get; set; }
         public string EmployeeName { get; set; }
         public string ToothType { get; set; }

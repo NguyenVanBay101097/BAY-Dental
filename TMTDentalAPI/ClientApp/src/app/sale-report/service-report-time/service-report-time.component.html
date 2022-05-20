@@ -9,8 +9,6 @@
         <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" [data]="employees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
-        <input class="mb-2 mr-2 form-control filter-search" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text"
-            [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
         <div class="dropdown mb-2 mr-2">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
@@ -21,7 +19,17 @@
             </div>
         </div>
         <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
+        <input class="mb-2 ml-auto form-control filter-search" placeholder="Tìm kiếm theo mã, họ tên khách hàng" type="text"
+        [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
+    <div class="mb-2 mr-2 d-flex">
+        <div>
+          <kendo-multiselect class="service-filter" [data]="filteredServices" [valueField]="'id'" [textField]="'name'"
+          [(ngModel)]="filter.serviceIds" [valuePrimitive]="true" #serviceMultiSelect
+          [placeholder]="'Tất cả dịch vụ'" [filterable]="true" (valueChange)="onChangeServiceSelected($event)">
+      </kendo-multiselect>
+        </div>
+      </div>
     <div class="d-flex mb-2 order-state">
         <!-- <input [(ngModel)]="filterState" (ngModelChange)="onChangeFilterState()" value="" type="radio"
             class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">

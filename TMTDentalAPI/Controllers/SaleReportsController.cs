@@ -356,63 +356,67 @@ namespace TMTDentalAPI.Controllers
             {
                 var worksheet = package.Workbook.Worksheets.Add("BaoCaoDichVu_TongQuan");
 
-                worksheet.Cells["A1:J1"].Value = "BÁO CÁO TỔNG QUAN DỊCH VỤ";
+                worksheet.Cells["A1:L1"].Value = "BÁO CÁO TỔNG QUAN DỊCH VỤ";
                 //worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(Color.Blue);
-                worksheet.Cells["A1:J1"].Style.Font.Size = 14;
-                worksheet.Cells["A1:J1"].Merge = true;
-                worksheet.Cells["A1:J1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
-                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells["A2:J2"].Value = dateToDate;
-                worksheet.Cells["A2:J2"].Merge = true;
-                worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:L1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:L1"].Merge = true;
+                worksheet.Cells["A1:L1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:L1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:L1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A2:L2"].Value = dateToDate;
+                worksheet.Cells["A2:L2"].Merge = true;
+                worksheet.Cells["A2:L2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
 
                 worksheet.Cells[4, 1].Value = "Ngày tạo";
-                worksheet.Cells[4, 2].Value = "Dịch vụ";
-                worksheet.Cells[4, 3].Value = "Phiếu điều trị";
-                worksheet.Cells[4, 4].Value = "Khách hàng";
-                worksheet.Cells[4, 5].Value = "Số lượng";
-                worksheet.Cells[4, 6].Value = "Bác sĩ";
+                worksheet.Cells[4, 2].Value = "Khách hàng";
+                worksheet.Cells[4, 3].Value = "Dịch vụ";
+                worksheet.Cells[4, 4].Value = "Bác sĩ";
+                worksheet.Cells[4, 5].Value = "Đơn vị tính";
+                worksheet.Cells[4, 6].Value = "Số lượng";
                 worksheet.Cells[4, 7].Value = "Thành tiền";
                 worksheet.Cells[4, 8].Value = "Thanh toán";
                 worksheet.Cells[4, 9].Value = "Còn lại";
-                worksheet.Cells[4, 10].Value = "Trạng thái";
+                worksheet.Cells[4, 10].Value = "Răng";
+                worksheet.Cells[4, 11].Value = "Phiếu điều trị";
+                worksheet.Cells[4, 12].Value = "Trạng thái";
 
 
-                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:J4"].Style.Font.Size = 11;
-                worksheet.Cells["A4:J4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A4:J4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A4:J4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A4:J4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells["A4:J4"].Style.Border.Bottom.Color.SetColor(Color.White);
-                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
-                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["A4:L4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:L4"].Style.Font.Size = 11;
+                worksheet.Cells["A4:L4"].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:L4"].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:L4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:L4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells["A4:L4"].Style.Border.Bottom.Color.SetColor(Color.White);
+                worksheet.Cells["A4:L4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:L4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#0667d1"));
+                worksheet.Cells["A4:L4"].Style.Font.Color.SetColor(Color.White);
 
                 var row = 5;
                 foreach (var item in data.Items)
                 {
                     worksheet.Cells[row, 1].Value = item.Date;
                     worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
-                    worksheet.Cells[row, 2].Value = item.Name;
-                    worksheet.Cells[row, 3].Value = item.OrderName;
-                    worksheet.Cells[row, 4].Value = item.OrderPartnerName;
-                    worksheet.Cells[row, 5].Value = item.ProductUOMQty;
-                    worksheet.Cells[row, 6].Value = item.EmployeeName;
+                    worksheet.Cells[row, 2].Value = item.OrderPartnerDisplayName;
+                    worksheet.Cells[row, 3].Value = item.Name;
+                    worksheet.Cells[row, 4].Value = item.EmployeeName;
+                    worksheet.Cells[row, 5].Value = item.ProductUOMName;
+                    worksheet.Cells[row, 6].Value = item.ProductUOMQty;
                     worksheet.Cells[row, 7].Value = item.PriceSubTotal;
                     worksheet.Cells[row, 7].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 8].Value = item.AmountInvoiced;
                     worksheet.Cells[row, 8].Style.Numberformat.Format = "#,##0";
                     worksheet.Cells[row, 9].Value = item.AmountResidual;
                     worksheet.Cells[row, 9].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 10].Value = item.StateDisplay;
+                    worksheet.Cells[row, 10].Value = string.Join(", ", item.Teeth2);
+                    worksheet.Cells[row, 11].Value = item.OrderName;
+                    worksheet.Cells[row, 12].Value = item.StateDisplay;
 
-                    worksheet.Cells[row, 1, row, 10].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, 1, row, 10].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                    worksheet.Cells[row, 1, row, 10].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 12].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 12].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 12].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    worksheet.Cells[row, 1, row, 12].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
 
                     row++;
                 }
@@ -424,11 +428,11 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells[row, 8].Value = aggregates.AmountInvoiced.sum;
                 worksheet.Cells[row, 9].Value = (aggregates.PriceSubTotal.sum - aggregates.AmountInvoiced.sum);
                 worksheet.Cells[row, 10].Value = "";
-                worksheet.Cells[row, 1, row, 10].Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, 1, row, 10].Style.Border.Left.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, 1, row, 10].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, 1, row, 10].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                worksheet.Cells[row, 1, row, 10].Style.Font.Bold = true;
+                worksheet.Cells[row, 1, row, 12].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 12].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 12].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 12].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                worksheet.Cells[row, 1, row, 12].Style.Font.Bold = true;
                 worksheet.Cells[row, 7, row, 9].Style.Numberformat.Format = "#,##0";
 
                 worksheet.Cells.AutoFitColumns();

@@ -51,6 +51,8 @@ namespace Umbraco.Web.Models.ContentEditing
 
         public IEnumerable<Aggregator> Aggregate { get; set; }
         public Guid? PartnerId { get; set; }
+        public IEnumerable<Guid> ServiceIds { get; set; } = new List<Guid>();
+        public string PartnerName { get; set; }
     }
 
     public class SaleOrderLinesLaboPaged

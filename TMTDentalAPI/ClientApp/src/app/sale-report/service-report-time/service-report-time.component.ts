@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult } from '@progress/kendo-angular-grid';
 import * as moment from 'moment';
 import { of, Subject } from 'rxjs';
@@ -7,6 +7,8 @@ import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/op
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
@@ -32,7 +34,7 @@ export class ServiceReportTimeComponent implements OnInit {
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
-
+  @ViewChild('serviceMultiSelect', { static: true }) serviceMultiSelect: MultiSelectComponent
   filterState: any[] = [
     { value: 'sale,done,cancel', text: 'Tất cả' },
     { value: 'sale', text: 'Đang điều trị' },
@@ -41,12 +43,13 @@ export class ServiceReportTimeComponent implements OnInit {
   ];
 
   isDisabledDoctors = true;
-
+  filteredServices: ProductSimple[] = [];
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private printService: PrintService,
+    private productService: ProductService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -56,6 +59,8 @@ export class ServiceReportTimeComponent implements OnInit {
     this.loadEmployees();
     this.FilterCombobox();
     this.loadAllData();
+    this.filterChangeMultiselect();
+    this.loadService();
   }
 
   
@@ -297,5 +302,41 @@ export class ServiceReportTimeComponent implements OnInit {
         this.loading = false;
         this.printService.printHtml(result);
       });
+  }
+  filterChangeMultiselect() {
+    this.serviceMultiSelect.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.serviceMultiSelect.loading = true)),
+        switchMap((value) => this.searchService(value))
+      )
+      .subscribe((result) => {
+        this.filteredServices = result;
+        this.serviceMultiSelect.loading = false;
+      });
+  }
+  
+  searchService(q?: string) {
+    var val = new ProductPaged();
+    val.limit = 20;
+    val.offset = 0
+    val.search = q || '';
+    val.type = "service";
+    val.type2 = "service";
+    return this.productService.autocomplete2(val);
+  }
+
+  loadService() {
+    this.searchService().subscribe(
+      result => {
+        this.filteredServices = result;
+      }
+    )
+  }
+
+  onChangeServiceSelected(val){
+    this.skip = 0;
+    this.loadAllData();
   }
 }

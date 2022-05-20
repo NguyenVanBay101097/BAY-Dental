@@ -1,14 +1,17 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { aggregateBy } from '@progress/kendo-data-query';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { CompanyPaged, CompanyService, CompanySimple } from 'src/app/companies/company.service';
 import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
 import { SaleReportService, ServiceReportReq } from '../sale-report.service';
@@ -44,7 +47,8 @@ export class SaleReportOverviewComponent implements OnInit {
   ];
 
   isDisabledDoctors = true;
-
+  filteredServices: ProductSimple[] = [];
+  @ViewChild('serviceMultiSelect', { static: true }) serviceMultiSelect: MultiSelectComponent
   constructor(
     private saleReportService: SaleReportService,
     private companyService: CompanyService,
@@ -52,6 +56,7 @@ export class SaleReportOverviewComponent implements OnInit {
     private printService: PrintService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
     private saleOrderLineService: SaleOrderLineService,
+    private productService: ProductService,
   ) { this.pagerSettings = config.pagerSettings }
 
   ngOnInit() {
@@ -68,7 +73,8 @@ export class SaleReportOverviewComponent implements OnInit {
 
     this.loadCompanies();
     this.loadEmployees();
-
+    this.filterChangeMultiselect();
+    this.loadService();
   }
 
   initFilterData() {
@@ -216,6 +222,43 @@ export class SaleReportOverviewComponent implements OnInit {
     this.saleReportService.printServiceOverviewReport(val).subscribe((result: any) => {
       this.printService.printHtml(result);
     });
+  }
+
+  filterChangeMultiselect() {
+    this.serviceMultiSelect.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.serviceMultiSelect.loading = true)),
+        switchMap((value) => this.searchService(value))
+      )
+      .subscribe((result) => {
+        this.filteredServices = result;
+        this.serviceMultiSelect.loading = false;
+      });
+  }
+  
+  searchService(q?: string) {
+    var val = new ProductPaged();
+    val.limit = 20;
+    val.offset = 0
+    val.search = q || '';
+    val.type = "service";
+    val.type2 = "service";
+    return this.productService.autocomplete2(val);
+  }
+
+  loadService() {
+    this.searchService().subscribe(
+      result => {
+        this.filteredServices = result;
+      }
+    )
+  }
+
+  onChangeServiceSelected(val){
+    this.skip = 0;
+    this.loadDataFromApi();
   }
 }
 

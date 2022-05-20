@@ -768,9 +768,11 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.IsActive == val.Active);
 
             if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
-                                         || x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
+                query = query.Where(x => x.OrderPartner.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search));
+            //|| x.Product.Name.Contains(val.Search) || x.Product.NameNoSign.Contains(val.Search));
 
+            if (val.ServiceIds.Any())
+                query = query.Where(x => val.ServiceIds.Contains(x.ProductId.Value));
             return query;
         }
 
@@ -809,6 +811,7 @@ namespace Infrastructure.Services
                 EmployeeId = val.EmployeeId,
                 Search = val.Search,
                 State = val.State,
+                ServiceIds = val.ServiceIds
             });
 
             if (val.ProductId.HasValue)
@@ -1084,7 +1087,7 @@ namespace Infrastructure.Services
                 worksheet.Cells[row, 1].Value = "";
                 worksheet.Cells[row, 2].Value = line.Date;
                 worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
-                worksheet.Cells[row, 3].Value = line.OrderPartnerName;
+                worksheet.Cells[row, 3].Value = line.OrderPartnerDisplayName;
                 worksheet.Cells[row, 4].Value = line.Name;
                 worksheet.Cells[row, 5].Value = line.EmployeeName;
                 worksheet.Cells[row, 6].Value = line.ProductUOM != null ? line.ProductUOM.Name : "";

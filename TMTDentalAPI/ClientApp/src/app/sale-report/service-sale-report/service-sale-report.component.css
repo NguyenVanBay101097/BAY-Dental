@@ -10,3 +10,9 @@
     /* max-width: 335px; */
     width: 220px;
 }
+.service-filter .k-multiselect-wrap.k-floatwrap{
+    display: flex;
+}
+.service-filter{
+    min-width: 395px;
+}

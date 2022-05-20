@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import { ComboBoxComponent, MultiSelectComponent } from '@progress/kendo-angular-dropdowns';
 import { GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import * as moment from 'moment';
@@ -10,6 +10,8 @@ import { SaleOrderLineService } from 'src/app/core/services/sale-order-line.serv
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { SaleOrderLinePaged } from 'src/app/partners/partner.service';
+import { ProductSimple } from 'src/app/products/product-simple';
+import { ProductPaged, ProductService } from 'src/app/products/product.service';
 import { DateRangePickerFilterComponent } from 'src/app/shared/date-range-picker-filter/date-range-picker-filter.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
 import { PrintService } from 'src/app/shared/services/print.service';
@@ -50,18 +52,19 @@ export class ServiceSaleReportComponent implements OnInit {
   }
 
   isDisabledDoctors = true;
-  
+  filteredServices: ProductSimple[] = [];
   @ViewChild("companyCbx", { static: true }) companyVC: ComboBoxComponent;
   @ViewChild("empCbx", { static: true }) empVC: ComboBoxComponent;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
   @ViewChild(DateRangePickerFilterComponent, {static: true}) dateRangeComp: DateRangePickerFilterComponent;
-
+  @ViewChild('serviceMultiSelect', { static: true }) serviceMultiSelect: MultiSelectComponent
   constructor(
     private saleOrderLineService: SaleOrderLineService,
     private companyService: CompanyService,
     private employeeService: EmployeeService,
     private intlService: IntlService,
     private printService:PrintService,
+    private productService: ProductService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig
   ) { this.pagerSettings = config.pagerSettings }
 
@@ -72,6 +75,8 @@ export class ServiceSaleReportComponent implements OnInit {
     this.loadEmployees();
     this.FilterCombobox();
     this.loadAllData();
+    this.filterChangeMultiselect();
+    this.loadService();
   }
 
   initFilter() {
@@ -103,11 +108,13 @@ export class ServiceSaleReportComponent implements OnInit {
     val.limit = this.filter.limit;
     val.offset = this.filter.offset;
     val.search = this.filter.search || '';
+    val.partnerName = this.filter.partnerName || '';
     val.companyId = this.companyId || '';
     val.employeeId = this.employeeId || '';
     val.dateOrderFrom = this.intlService.formatDate(this.dateFrom, 'yyyy-MM-dd');
     val.dateOrderTo = this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd');
     val.state = 'sale';
+    val.serviceIds = this.filter.serviceIds || [];
     return val;
   }
 
@@ -278,6 +285,43 @@ export class ServiceSaleReportComponent implements OnInit {
         this.loading = false;
         this.printService.printHtml(result);
       });
+  }
+
+  filterChangeMultiselect() {
+    this.serviceMultiSelect.filterChange
+      .asObservable()
+      .pipe(
+        debounceTime(300),
+        tap(() => (this.serviceMultiSelect.loading = true)),
+        switchMap((value) => this.searchService(value))
+      )
+      .subscribe((result) => {
+        this.filteredServices = result;
+        this.serviceMultiSelect.loading = false;
+      });
+  }
+  
+  searchService(q?: string) {
+    var val = new ProductPaged();
+    val.limit = 20;
+    val.offset = 0
+    val.search = q || '';
+    val.type = "service";
+    val.type2 = "service";
+    return this.productService.autocomplete2(val);
+  }
+
+  loadService() {
+    this.searchService().subscribe(
+      result => {
+        this.filteredServices = result;
+      }
+    )
+  }
+
+  onChangeServiceSelected(val){
+    this.skip = 0;
+    this.loadAllData();
   }
 
 }
