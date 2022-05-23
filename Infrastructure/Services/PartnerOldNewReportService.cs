@@ -116,6 +116,19 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
+        public IQueryable<PartnerLastTreatmentRes> PartnerLastTreatmentQuery(PartnerLastTreatmentReq val)
+        {
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var query = orderLineObj.SearchQuery(x => x.State != "draft");
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
+            var res = query.GroupBy(x => x.OrderPartnerId).Select(x => new PartnerLastTreatmentRes { PartnerId = x.Key.Value, LastTreatmentDate = x.Max(z => z.Date.Value) });
+            if (val.OverInterval == "month")
+                res = res.Where(x => x.LastTreatmentDate.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now);
+            return res;
+        }
         public IQueryable<SaleOrder> SumReportQuery(PartnerOldNewReportReq val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
@@ -132,7 +145,6 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
                 orderCompanyQr = orderCompanyQr.Where(x => x.CompanyId == val.CompanyId);
-
             }
             //filter partner
             if (val.PartnerId.HasValue)
@@ -188,6 +200,13 @@ namespace Infrastructure.Services
                 query = query.Join(querySub, o => o.Id, s => s.Id, (o, s) => o);
             }
 
+            if (!string.IsNullOrEmpty(val.OverInterval) && val.OverIntervalNbr.HasValue)
+            {
+                var querySub = PartnerLastTreatmentQuery(new PartnerLastTreatmentReq()
+                { CompanyId = val.CompanyId, OverInterval = val.OverInterval, OverIntervalNbr = val.OverIntervalNbr });
+
+                query = query.Where(x => querySub.Select(z => z.PartnerId).Contains(x.PartnerId));
+            }
             //var resQr = query.GroupBy(x => x.PartnerId);
             //if (val.TypeReport == "old")
             //    resQr = resQr.Where(x => orderBaseQr.Where(h => h.PartnerId == x.Key).Count() > 1);
@@ -198,29 +217,14 @@ namespace Infrastructure.Services
 
         public async Task<decimal> SumReVenue(PartnerOldNewReportReq val)
         {
-            var query = SumReportQuery(val);
-            var res = query.GroupBy(x => x.PartnerId).Select(x => new { Key = x.Key, TotalPaid = x.Sum(z => z.TotalPaid), LastDateOfTreatment = x.Max(z => z.DateOrder) });
-            //.SumAsync(x => x.TotalPaid ?? 0);
-            if (!string.IsNullOrEmpty(val.OverInterval) && val.OverIntervalNbr.HasValue)
-            {
-                if (val.OverInterval == "month")
-                    res = res.Where(x => x.LastDateOfTreatment.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now);
-            }
-
-            return await res.SumAsync(x => x.TotalPaid ?? 0);
+            var res = await SumReportQuery(val).SumAsync(x => x.TotalPaid ?? 0);
+            return res;
         }
 
         public async Task<int> SumReport(PartnerOldNewReportReq val)
         {
             var query = SumReportQuery(val);
-            var res = query.GroupBy(x => x.PartnerId).Select(x => new { Key = x.Key, LastDateOfTreatment = x.Max(z => z.DateOrder) });
-
-            if (!string.IsNullOrEmpty(val.OverInterval) && val.OverIntervalNbr.HasValue)
-            {
-                if (val.OverInterval == "month")
-                    res = res.Where(x => x.LastDateOfTreatment.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now);
-            }
-            return await res.CountAsync();
+            return await query.GroupBy(x => x.PartnerId).Select(x => x.Key).CountAsync();
         }
 
         public async Task<IEnumerable<PartnerOldNewReportByWard>> ReportByWard(PartnerOldNewReportByWardReq val)
@@ -324,11 +328,15 @@ namespace Infrastructure.Services
             var irProperyObj = GetService<IIRPropertyService>();
             var partnerObj = GetService<IPartnerService>();
             var accInvreportObj = GetService<IAccountInvoiceReportService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+
             var companyId = CompanyId;
 
-
             var pnOderQr = SumReportQuery(val).GroupBy(x => x.PartnerId)
-                .Select(x => new { PartnerId = x.Key, Sum = x.Sum(z => z.TotalPaid ?? 0), LastDateOfTreatment = x.Max(z => z.DateOrder) });
+                .Select(x => new { PartnerId = x.Key, Sum = x.Sum(z => z.TotalPaid ?? 0) });
+
+            var partnerLastTreatmentQr = PartnerLastTreatmentQuery(new PartnerLastTreatmentReq()
+            { CompanyId = val.CompanyId, OverInterval = val.OverInterval, OverIntervalNbr = val.OverIntervalNbr });
 
             var pnQr = partnerObj.SearchQuery(x => x.Customer);
 
@@ -343,6 +351,7 @@ namespace Infrastructure.Services
 
             var resQr = from pnOrder in pnOderQr
                         join pn in pnQr on pnOrder.PartnerId equals pn.Id
+                        join pnLastTreatment in partnerLastTreatmentQr on pnOrder.PartnerId equals pnLastTreatment.PartnerId
                         from pos in partnerOrderStateQr.Where(x => x.PartnerId == pnOrder.PartnerId).DefaultIfEmpty()
                         select new PartnerInfoTemplate
                         {
@@ -361,7 +370,7 @@ namespace Infrastructure.Services
                             OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                             Revenue = pnOrder.Sum,
                             SourceName = pn.Source.Name,
-                            LastDateOfTreatment = pnOrder.LastDateOfTreatment
+                            LastDateOfTreatment = pnLastTreatment.LastTreatmentDate
                         };
 
             return resQr;
@@ -374,11 +383,7 @@ namespace Infrastructure.Services
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var ResponseQr = GetReportQuery(val);
-            if (!string.IsNullOrEmpty(val.OverInterval) && val.OverIntervalNbr.HasValue)
-            {
-                if (val.OverInterval == "month")
-                    ResponseQr = ResponseQr.Where(x => x.LastDateOfTreatment.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now);
-            }
+
             var count = await ResponseQr.CountAsync();
             if (val.Limit > 0)
                 ResponseQr = ResponseQr.Skip(val.Offset).Take(val.Limit);

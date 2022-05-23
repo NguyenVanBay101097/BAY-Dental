@@ -10,13 +10,12 @@
             <div class="card-body">
                 <form [formGroup]="formGroup">
                     <div class="filter-label">
-                        Loại khách hàng
+                        Ngày điều trị gần nhất
                     </div>
                     <div class="filter-content">
-                        <kendo-combobox class="w-100" formControlName="typeReport"
-                            [data]="partnerTypes" [valueField]="'value'" [textField]="'text'"
-                            [popupSettings]="popupSettings" [filterable]="true">
-                        </kendo-combobox>
+                        <kendo-combobox style="width: 210px;" [data]="rangeDays" [valueField]="'intervalNbr'"  class="w-100" formControlName="overIntervalData"
+                        [textField]="'text'" [placeholder]="'Ngày điều trị gần nhất'" [filterable]="true"  [popupSettings]="popupSettings">
+                    </kendo-combobox>
                     </div>
 
                     <div class="filter-label">

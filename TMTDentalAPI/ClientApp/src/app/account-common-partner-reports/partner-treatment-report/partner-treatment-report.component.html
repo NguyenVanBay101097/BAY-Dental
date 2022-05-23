@@ -1,8 +1,8 @@
 <div class="card">
     <div class="card-body">
         <!-- <h5 class="">Thống kê khách hàng điều trị</h5> -->
-        <div class="filter d-flex justify-content-between">
-            <div class="filter-left flex-1-1-100">
+        <div class="filter d-flex justify-content-between flex-wrap">
+            <div class="filter-left">
                 <div class="row-1 d-flex mr-3">
                     <app-date-range-picker-filter [showClearButton]="false" [title]="'Ngày tạo phiếu điều trị'"
                         [opens]="'right'" class="mr-2 flex-shrink-0" [startDate]="filter.dateFrom"
@@ -12,21 +12,10 @@
                         class="mr-2 flex-shrink-0" [valueField]="'id'" [textField]="'name'" [filterable]="true"
                         [data]="companies" (selectionChange)="onSelectCompany($event)" #companyCbx>
                     </kendo-combobox>
-                    <kendo-combobox style="width: fit-content;" [data]="rangeDays" [valueField]="'intervalNbr'"
-                        [textField]="'text'" [placeholder]="'Ngày điều trị gần nhất'" [filterable]="true"
-                        (valueChange)="handleFilterDate($event)">
-                    </kendo-combobox>
-                </div>
-                <div class="row-2 d-flex flex-wrap mr-3 filter-2">
-                    <div class="filter-address cursor-pointer d-flex mr-2 align-items-center border flex-shrink-0"
-                        (click)="openAddressDialog()">
-                        <div class="px-2">
-                            {{ getAddressFilterDisplay() }}
-                        </div>
-                        <div class="px-2 h-100 icon-filter d-flex align-items-center">
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </div>
+                    <kendo-combobox class="mr-2 flex-shrink-0"
+                    [data]="partnerTypes" [valueField]="'value'" [textField]="'text'" [placeholder]="'Loại khách'" (selectionChange)="onSelectTypeReport($event)"
+                    [popupSettings]="{appendTo: 'component'}" [filterable]="true">
+                </kendo-combobox>
                     <div class="dropdown mr-2 flex-shrink-0">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -39,16 +28,29 @@
                     </div>
                     <button class="btn btn-primary flex-shrink-0" (click)="onPrint()">In báo cáo</button>
                 </div>
+                <div class="row-2 d-flex flex-wrap mr-3 filter-2">
+                    <div class="filter-address cursor-pointer d-flex mr-2 align-items-center border flex-shrink-0"
+                        (click)="openAddressDialog()">
+                        <div class="px-2 form-control border-0">
+                            {{ getAddressFilterDisplay() }}
+                        </div>
+                        <div class="px-2 h-100 icon-filter d-flex align-items-center">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="filter-right flex-0-0-auto">
-                <div class="o_searchview">
-                    <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
-                        type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
-                    <span class="o_searchview_icon fas fa-search"></span>
+                <div class="d-flex">
+                    <div class="o_searchview mr-2">
+                        <input class="o_searchview_input" placeholder="Tìm kiếm theo mã, tên, số điện thoại khách hàng"
+                            type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+                        <span class="o_searchview_icon fas fa-search"></span>
+                    </div>
+                    <app-partner-treatment-report-filter-popup [placement]="'bottom-right'" [filter]="advancedFiltering"
+                        (valueChange)="onChange($event)">
+                    </app-partner-treatment-report-filter-popup>
                 </div>
-                <app-partner-treatment-report-filter-popup [placement]="'bottom-right'" [filter]="advancedFiltering"
-                    (valueChange)="onChange($event)">
-                </app-partner-treatment-report-filter-popup>
             </div>
         </div>
 

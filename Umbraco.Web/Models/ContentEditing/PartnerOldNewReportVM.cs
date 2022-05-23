@@ -233,4 +233,16 @@ namespace Umbraco.Web.Models.ContentEditing
             }
         }
     }
+
+    public class PartnerLastTreatmentReq
+    {
+        public Guid? CompanyId { get; set; }
+        public int? OverIntervalNbr { get; set; }
+        public string OverInterval { get; set; }
+    }
+    public class PartnerLastTreatmentRes
+    {
+        public Guid PartnerId { get; set; }
+        public DateTime LastTreatmentDate { get; set; }
+    }
 }

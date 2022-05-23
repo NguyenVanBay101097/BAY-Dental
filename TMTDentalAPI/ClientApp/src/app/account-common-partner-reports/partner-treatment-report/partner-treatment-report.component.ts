@@ -322,6 +322,8 @@ export class PartnerTreatmentReportComponent implements OnInit {
     this.filter.categIds = $event.categs?.map(x => x.id) || [];
     this.filter.sourceIds = $event.partnerSources?.map(x => x.id) || [];
     this.filter.gender = $event?.gender?.value || '';
+    this.filter.overInterval =  $event.overIntervalData?.interval || ''; 
+    this.filter.overIntervalNbr =  $event.overIntervalData?.intervalNbr || 0; 
     this.onFilterChange();
     this.showFilterInfo($event);
   }
@@ -386,6 +388,11 @@ export class PartnerTreatmentReportComponent implements OnInit {
     }
     this.advancedFiltering[key] = null;
     delete this.dataFilterObj[key];
+    this.onFilterChange();
+  }
+
+  onSelectTypeReport(e){
+    this.filter.typeReport = e ? e.value : '';
     this.onFilterChange();
   }
 }

@@ -40,6 +40,12 @@ export class PartnerTreatmentReportFilterPopupComponent implements OnInit {
     { text: 'Khách quay lại', value: 'old' }
   ];
 
+  rangeDays: any = [
+    { text: '> 1 tháng', intervalNbr: 1, interval: 'month' },
+    { text: '> 3 tháng', intervalNbr: 3, interval: 'month' },
+    { text: '> 6 tháng', intervalNbr: 6, interval: 'month' },
+    { text: '> 12 tháng', intervalNbr: 12, interval: 'month' },
+  ];
   constructor(
     private fb: FormBuilder,
     private partnerCategoryService: PartnerCategoryService,
@@ -58,6 +64,7 @@ export class PartnerTreatmentReportFilterPopupComponent implements OnInit {
       partnerSources: this.filter?.partnerSources || [null],
       typeReport: this.filter?.typeReport || null,
       gender: this.filter?.gender || null,
+      overIntervalData: null
     });
 
     setTimeout(() => {

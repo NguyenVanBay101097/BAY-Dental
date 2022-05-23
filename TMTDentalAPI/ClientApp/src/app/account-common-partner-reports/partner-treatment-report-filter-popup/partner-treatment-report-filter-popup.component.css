@@ -19,3 +19,9 @@
 .filter-content {
     display: flex;
 }
+
+.btn-filter
+{
+    border-color: hsl(210deg 11% 15% / 15%);
+    font-weight: bold;
+}

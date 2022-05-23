@@ -204,5 +204,10 @@ namespace ApplicationCore.Entities
                 return total;
             }
         }
+        /// <summary>
+        /// Ngày điều trị gần nhất lấy từ saleOrderLine
+        /// </summary>
+        [NotMapped]
+        public DateTime LastDateOfTreatment { get; set; }
     }
 }
