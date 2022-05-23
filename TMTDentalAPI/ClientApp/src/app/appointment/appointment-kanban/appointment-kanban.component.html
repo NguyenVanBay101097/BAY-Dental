@@ -155,7 +155,7 @@
                     <div class="filter h-100 overflow-hidden">
                         <div class="filter-title">Lựa chọn lọc</div>
                         <div class="filter-group">
-                            <div class="filter-label">Bác sĩ</div>
+                            <div class="filter-label">BÁC SĨ</div>
                             <div *ngIf="listEmployees.length">
                                 <div class="d-flex-between">
                                     <div class="box-calendar">
@@ -202,43 +202,58 @@
                                 <app-date-range-picker-filter opens="left" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onChangeDate($event)">
                                 </app-date-range-picker-filter>
                             </div> -->
-                            <div class="filter-label">Trạng thái</div>
+                            <div class="filter-label">TRẠNG THÁI</div>
                             <div class="w-100">
-                                <ul class="list-group">
+                                <div class="d-flex flex-wrap">
                                     <ng-container *ngFor="let state of states; index as i">
-                                        <li class="list-group-item" [class.active]="stateSelected === state.value"
+                                        <button class="btn mr-1 mb-1 py-0"
+                                            [ngClass]="[stateSelected === state.value ? 'btn-primary' : 'btn-outline-primary']"
                                             (click)="onChangeState(state.value)">
-                                            <div class="d-flex-between">
-                                                <span class="badge-status bg-confirmed"
-                                                    *ngIf="state.value === 'confirmed'"></span>
-                                                <span class="badge-status bg-arrived"
-                                                    *ngIf="state.value === 'done'"></span>
-                                                <span class="badge-status bg-cancel"
-                                                    *ngIf="state.value === 'cancel'"></span>
-                                                <span class="badge-status bg-overdue"
-                                                    *ngIf="state.value === 'overdue'"></span>
-                                                <span>{{state.text}}</span>
-                                            </div>
-                                            <span>
-                                                {{onCountState(state.value)}}
-                                            </span>
-                                        </li>
+                                            {{state.text}} {{onCountState(state.value)}}
+                                        </button>
                                     </ng-container>
-                                </ul>
+                                </div>
                             </div>
-                            <div class="filter-label">Loại khám</div>
+                            <div class="filter-label">LOẠI KHÁM</div>
                             <div class="w-100">
-                                <ul class="list-group">
+                                <div class="d-flex flex-wrap">
                                     <ng-container *ngFor="let type of types; index as i">
-                                        <li class="list-group-item" [class.active]="typeSelected === type.value"
+                                        <button class="btn mr-1 mb-1 py-0"
+                                            [ngClass]="[typeSelected === type.value ? 'btn-primary' : 'btn-outline-primary']"
                                             (click)="onChangeType(type.value)">
-                                            {{type.text}}
-                                            <span>
-                                                {{onCountType(type.value)}}
-                                            </span>
-                                        </li>
+                                            {{type.text}} {{onCountType(type.value)}}
+                                        </button>
                                     </ng-container>
-                                </ul>
+                                </div>
+                            </div>
+                            <div class="filter-label">NHÃN MÀU</div>
+                            <div class="w-100">
+                                <div class="d-flex">
+                                    <ng-container *ngFor="let item of [].constructor(4); index as i">
+                                        <div class="d-flex flex-column mr-3">
+                                            <button (click)="clickColor(i)" class="btn btn-item-color border"
+                                            [ngClass]="'appointment_color_'+i">
+                                            <i *ngIf="isContainColor(i)" class="fas fa-check text-light"></i>
+                                            </button>
+                                            <div class="text-center">
+                                                {{onCountColor(i)}}
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="d-flex">
+                                    <ng-container *ngFor="let item of [].constructor(4); index as i">
+                                        <div class="d-flex flex-column mr-3">
+                                            <button (click)="clickColor(i+4)" class="btn btn-item-color border"
+                                            [ngClass]="'appointment_color_'+(i+4)">
+                                            <i *ngIf="isContainColor(i + 4)" class="fas fa-check text-light"></i>
+                                            </button>
+                                            <div class="text-center">
+                                                {{onCountColor(i + 4)}}
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
                             </div>
                         </div>
                     </div>
