@@ -2095,7 +2095,9 @@ namespace Infrastructure.Services
                         dotKham.Lines = lines;
                     }
                 }
-                var toothCategories = order.OrderLines.Where(x => x.ToothCategoryId.HasValue).Select(x => x.ToothCategoryId).Distinct().ToList();
+                var toothCategories = order.OrderLines.Where(x => x.ToothCategoryId.HasValue && !string.IsNullOrEmpty(x.ToothType))
+                    .Select(x => x.ToothCategoryId).Distinct().ToList();
+                var hasTwoToothCategory = order.OrderLines.Where(x => !x.ToothCategoryId.HasValue && x.ToothType == "manual").Any();
                 var teethQuery = toothService.SearchQuery();
                 if (toothCategories.Any())
                 {
@@ -2111,9 +2113,9 @@ namespace Infrastructure.Services
                         toothPrint.IsSelected = true;
                 }
                 var adultTeethCategory = await irModelDataService.GetRef<ToothCategory>("base.tooth_category_adult");
-                order.HaveAdultTeeth = toothCategories.Contains(adultTeethCategory.Id) || !toothCategories.Any() ;
+                order.HaveAdultTeeth = toothCategories.Contains(adultTeethCategory.Id) || hasTwoToothCategory;
                 var childTeethCategory = await irModelDataService.GetRef<ToothCategory>("base.tooth_category_child");
-                order.HaveChildTeeth = toothCategories.Contains(childTeethCategory.Id) || !toothCategories.Any();
+                order.HaveChildTeeth = toothCategories.Contains(childTeethCategory.Id) || hasTwoToothCategory;
 
                 var adultTeeth = teethPrint.Where(x => x.CategoryId.Equals(adultTeethCategory.Id)).ToList();
 

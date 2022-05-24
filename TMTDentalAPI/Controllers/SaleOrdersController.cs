@@ -723,7 +723,7 @@ namespace TMTDentalAPI.Controllers
                 foreach (var item in data)
                 {
                     worksheet.Cells[row, 1].Value = item.Name;
-                    worksheet.Cells[row, 2].Value = item.PartnerName;
+                    worksheet.Cells[row, 2].Value = item.PartnerDisplayName;
                     worksheet.Cells[row, 3].Value = item.AmountTotal;
                     worksheet.Cells[row, 3].Style.Numberformat.Format = "#,###,###";
                     worksheet.Cells[row, 4].Value = item.TotalPaid;
