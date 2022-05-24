@@ -524,7 +524,6 @@ export class SaleOrderCreateUpdateComponent implements OnInit {
       var loadDebt$ = this.customerDebtReportService.getAmountDebtTotal(val);
       var loadSaleOrder$ = this.saleOrderService.getSaleOrderPaymentBySaleOrderId(this.saleOrderId);
       forkJoin({ partnerDebt: loadDebt$, payment: loadSaleOrder$ }).subscribe(rs => {
-        console.log(this.saleOrder);
         let modalRef = this.modalService.open(SaleOrderPaymentDialogComponent, { size: 'xl', windowClass: 'o_technical_modal', keyboard: false, backdrop: 'static' });
         modalRef.componentInstance.title = 'Thanh toán';
         modalRef.componentInstance.defaultVal = rs.payment;

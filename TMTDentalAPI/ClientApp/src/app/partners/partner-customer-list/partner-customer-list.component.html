@@ -23,7 +23,7 @@
         <div class="w-100">
             <div class="d-flex align-items-center justify-content-between w-100">
                 <div class="mr-1 w-100" *ngIf="canFilterPartnerCategory">
-                    <kendo-multiselect [data]="filteredCategs" [valueField]="'id'" [textField]="'name'"
+                    <kendo-multiselect  [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" 
                         [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)"
                         #categMst>
                     </kendo-multiselect>
@@ -125,7 +125,7 @@
                             {{dataItem.name}}
                         </a>
                         <div *ngIf="dataItem.ref">
-                            <small>{{dataItem.ref}}</small>
+                            <span>{{dataItem.ref}}</span>
                         </div>
                     </div>
                 </div>

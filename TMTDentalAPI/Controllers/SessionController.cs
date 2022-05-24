@@ -18,7 +18,7 @@ namespace TMTDentalAPI.Controllers
 {
     [Route("Web/Session")]
     [ApiController]
-    public class SessionController : ControllerBase
+    public class SessionController : BaseApiController
     {
         private readonly AppTenant _tenant;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -26,13 +26,15 @@ namespace TMTDentalAPI.Controllers
         private readonly IApplicationRoleFunctionService _roleFunctionService;
         private readonly IUserService _userService;
         private readonly IIRModelDataService _modelDataService;
+        private readonly ICompanyService _companyService;
 
         public SessionController(ITenant<AppTenant> tenant,
             UserManager<ApplicationUser> userManager,
             IMapper mapper,
             IApplicationRoleFunctionService roleFunctionService,
             IUserService userService,
-            IIRModelDataService modelDataService)
+            IIRModelDataService modelDataService,
+            ICompanyService companyService)
         {
             _tenant = tenant?.Value;
             _userManager = userManager;
@@ -40,6 +42,7 @@ namespace TMTDentalAPI.Controllers
             _roleFunctionService = roleFunctionService;
             _userService = userService;
             _modelDataService = modelDataService;
+            _companyService = companyService;
         }
 
         [HttpGet("[action]")]
@@ -57,6 +60,7 @@ namespace TMTDentalAPI.Controllers
 
             var dateExpired = _tenant?.DateExpired ?? DateTime.Now;
             var expiredTimespan = dateExpired - DateTime.Now;
+            Company company = await _companyService.GetByIdAsync(CompanyId);
             var sessionInfo = new SessionUserInfo
             {
                 Name = User.Identity.Name,
@@ -67,7 +71,7 @@ namespace TMTDentalAPI.Controllers
                 Groups = groups,
                 UserCompanies = new SessionUserCompany
                 {
-                    CurrentCompany = _mapper.Map<CompanySimple>(user.Company),
+                    CurrentCompany = _mapper.Map<CompanySimple>(company),
                     AllowedCompanies = user.ResCompanyUsersRels.Where(x => x.Company.Active).Select(x => _mapper.Map<CompanySimple>(x.Company))
                 },
                 Settings = new SessionTenantSettings

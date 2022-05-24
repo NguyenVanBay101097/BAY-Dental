@@ -13,7 +13,7 @@
                 </button>
             </div>
             <div class="filter-right">
-                <app-partner-report-filter-popup [filter]="filter" (onApplyEmit)="onApplyEmit($event)">
+                <app-partner-report-filter-popup [placement]="'bottom-right'" [filter]="filter" (valueChange)="onValueChange($event)">
                 </app-partner-report-filter-popup>
             </div>
         </div>

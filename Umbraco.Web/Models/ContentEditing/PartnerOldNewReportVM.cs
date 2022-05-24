@@ -77,7 +77,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string DistrictCode { get; set; }
         public string WardCode { get; set; }
         // nguồn khách hàng
-        public Guid? SourceId { get; set; }
+        public IEnumerable<Guid> SourceIds { get; set; } = new List<Guid>();
         // option has null  nguồn khách hàng
         public bool IsHasNullSourceId { get; set; }
         //nhãn
@@ -88,6 +88,15 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid? PartnerId { get; set; }
         public int Limit { get; set; }
         public int Offset { get; set; }
+        /// <summary>
+        /// Interval Nbr
+        /// </summary>
+        public int? OverIntervalNbr { get; set; }
+
+        /// <summary>
+        /// Over interval: 'month'
+        /// </summary>
+        public string OverInterval { get; set; }
     }
 
     public class PartnerOldNewReportRes
@@ -119,6 +128,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public string Gender { get; set; }
         public string Address { get; set; }
         public string SourceName { get; set; }
+        public DateTime LastDateOfTreatment { get; set; }
     }
 
     public class PartnerOldNewReportPrint
@@ -222,5 +232,17 @@ namespace Umbraco.Web.Models.ContentEditing
                 return "Khách quay lại";
             }
         }
+    }
+
+    public class PartnerLastTreatmentReq
+    {
+        public Guid? CompanyId { get; set; }
+        public int? OverIntervalNbr { get; set; }
+        public string OverInterval { get; set; }
+    }
+    public class PartnerLastTreatmentRes
+    {
+        public Guid PartnerId { get; set; }
+        public DateTime LastTreatmentDate { get; set; }
     }
 }

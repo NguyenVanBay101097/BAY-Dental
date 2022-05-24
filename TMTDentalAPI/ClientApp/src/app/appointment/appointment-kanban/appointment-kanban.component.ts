@@ -120,7 +120,7 @@ export class AppointmentKanbanComponent implements OnInit {
   connection: any;
 
   connectionEstablished = false;
-
+  codeColorSelecteds: number[] = [];
   constructor(
     private appointmentService: AppointmentService,
     private intlService: IntlService,
@@ -301,6 +301,12 @@ export class AppointmentKanbanComponent implements OnInit {
       });
     }
 
+    if (this.codeColorSelecteds.length > 0) {
+      sourceAppoinments = sourceAppoinments.filter(x => {
+        return this.codeColorSelecteds.includes(+x.color)
+      })
+    }
+    
     this.filterAppointments = sourceAppoinments;
     this.renderCalendar();
   }
@@ -323,10 +329,15 @@ export class AppointmentKanbanComponent implements OnInit {
     }).length : this.appointments.length;
   }
 
+  onCountColor(color) {
+    return this.appointments.filter(x => x.color == color).length;
+  }
+
   loadDataFromApi() {
     var val = new AppointmentPaged();
     val.limit = this.limit;
     val.offset = this.offset;
+    val.companyId = this.authService.userInfo.companyId;
     // val.state = this.state || '';
     // if (this.isLateFilter) {
     //   val.isLate = this.isLateFilter;
@@ -350,6 +361,7 @@ export class AppointmentKanbanComponent implements OnInit {
       this.gridData = result;
       this.loading = false;
       this.appointments = result.data;
+
       this.filterDataClient();
     }, (error: any) => {
       console.log(error);
@@ -1023,9 +1035,9 @@ export class AppointmentKanbanComponent implements OnInit {
     let dateEventV2El = document.createElement('div');
     dateEventV2El.classList.add("date-event-v2");
     dateEventV2El.classList.add(`${classEvent}`);
-    // dateEventV2El.classList.add(`appointment_border_color_${appointment.color}`);
-    let color = appointment.color || 0;
-    dateEventV2El.classList.add(`appointment_color_${color}`);
+    dateEventV2El.classList.add(`appointment_background_color_${appointment.color}`);
+    // let color = appointment.color || 0;
+    // dateEventV2El.classList.add(`appointment_color_${color}`);
     dateEventV2El.id = `appointment-${appointment.id}`;
 
     dateEventV2El.addEventListener('click', el => {
@@ -1189,5 +1201,20 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+  }
+
+  clickColor(color) {
+    let index = this.codeColorSelecteds.findIndex(x => x == color);
+    if (index != -1) {
+      this.codeColorSelecteds.splice(index, 1);
+    }
+    else {
+      this.codeColorSelecteds.push(color);
+    }
+    this.filterDataClient();
+  }
+
+  isContainColor(color) {
+    return this.codeColorSelecteds.findIndex(x => x == color) != -1;
   }
 }

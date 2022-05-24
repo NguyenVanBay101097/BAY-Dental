@@ -145,6 +145,7 @@ export class ReceptionDashboardComponent implements OnInit {
     val.dateTimeFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.companyId = this.authService.userInfo.companyId;
+    
     this.appointmentService.loadAppointmentList(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,

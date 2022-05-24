@@ -1,4 +1,3 @@
-
 .filter-label {
     font-weight: 500;
     padding: 0.5rem 0;
@@ -19,4 +18,10 @@
 
 .filter-content {
     display: flex;
+}
+
+.btn-filter
+{
+    border-color: hsl(210deg 11% 15% / 15%);
+    font-weight: bold;
 }

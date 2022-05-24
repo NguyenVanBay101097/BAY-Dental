@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Web.Models.ContentEditing;
@@ -20,6 +21,7 @@ namespace Infrastructure.Services
         Task<PagedResult2<SaleOrderBasic>> GetSaleOrderPaged(GetSaleOrderPagedReq val);
         Task<PartnerOldNewReportExcel> GetReportExcel(PartnerOldNewReportReq val);
         Task<IEnumerable<PartnerOldNewReportByIsNewItem>> ReportByIsNew(PartnerOldNewReportByIsNewReq val);
+        IQueryable<PartnerLastTreatmentRes> PartnerLastTreatmentQuery(PartnerLastTreatmentReq val);
     }
 
 

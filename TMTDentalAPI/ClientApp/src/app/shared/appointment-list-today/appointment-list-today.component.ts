@@ -173,8 +173,8 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
     }
   }
 
-  getBackgroundColor(color) {
-    return 'appointment_color_'+color + ' ' + 'appointment_border_color_'+color;
+  getBackgroundColor(item) {
+    return this.getTextColorState(item.state) + ' ' + 'appointment_background_color_'+item.color;
   }
 
   getTextColorState(state) {

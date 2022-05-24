@@ -32,7 +32,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
   cashBankJournals: any[] = [];
 
   paymentMethods: any[] = [
-    { type: 'cash', name: 'Tiền mặt' },
+    // { type: 'cash', name: 'Tiền mặt' },
     { type: 'bank', name: 'Ngân hàng' },
     { type: 'debt', name: 'Ghi công nợ' },
     { type: 'advance', name: 'Tạm ứng' }
@@ -236,8 +236,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     //nếu số tiền còn thiếu > 0 thì ko cho thanh toán
     if (this.step == 2 && this.amountTotalJournalPayment < this.amount) {
-      this.notifyService.notify('error', 'Vui lòng chọn phương thức cho số tiền còn thiếu');
-      return false;
+      this.updateCashLine();
     }
 
     var val = this.getValueFormSave();
@@ -309,7 +308,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     this.linesFC.controls.forEach(function (v) {
       sumAmountPrepaid += Number(v.get('amount').value);
     });
-   
+
     this.paymentForm.get("amount").setValue(sumAmountPrepaid);
   }
 
@@ -375,11 +374,21 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     setTimeout(() => {
       this.userAmountPayment = this.amount;
-    }, 200);
+    });
 
     // this.debtJournalSelected = {type:'cash',name: 'Tiền mặt', journals: [], journal:null};
 
     this.selectedJournals = [];
+
+    //gán 1 dòng tiền mặt
+    this.journalLines.clear();
+    var journals = this.filteredJournals.filter(x => x.type == 'cash');
+    this.journalLines.push(this.fb.group({
+      type: 'cash',
+      journals: this.fb.array(journals),
+      amount: this.amount,
+      journal: [journals[0], Validators.required]
+    }));
 
     //Nếu chưa có dòng phương thức tiền mặt thì add, có thì update tiền mặt mặc định
     // var paymentAmount = this.getValueForm("amount");
@@ -653,16 +662,18 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     var journals = this.filteredJournals.filter(x => x.type == journalFilter.type);
 
-    this.journalLines.push(this.fb.group({
+    this.journalLines.insert(0, this.fb.group({
       type: journalFilter.type,
       journals: this.fb.array(journals),
       amount: amount,
       journal: [journals[0], Validators.required]
     }));
 
-    let computeAmount = this.amount - this.amountTotalJournalPayment;
-    this.userAmountPayment =  computeAmount;
-   
+    let computeAmount = this.amount - this.amountTotalJournalPaymentWithoutCash;
+    this.userAmountPayment = computeAmount;
+
+    this.updateCashLine();
+
     setTimeout(() => {
       this.userAmountPaymentMax = computeAmount;
     }, 200);
@@ -676,7 +687,31 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
 
     setTimeout(() => {
       this.userAmountPayment = this.userAmountPayment + journalLine.get('amount').value;
+      //update cash line
+      this.updateCashLine();
     }, 200);
+  }
+
+  updateCashLine() {
+    var cashLine = this.journalLines.controls.find(x => x.get('type').value == 'cash');
+    if (this.userAmountPayment > 0) {
+      if (cashLine) {
+        cashLine.get('amount').setValue(this.userAmountPayment);
+      } else {
+        var journals = this.filteredJournals.filter(x => x.type == 'cash');
+        this.journalLines.push(this.fb.group({
+          type: 'cash',
+          journals: this.fb.array(journals),
+          amount: this.userAmountPayment,
+          journal: [journals[0], Validators.required]
+        }));
+      }
+    } else {
+      var cashIndex = this.journalLines.controls.findIndex(x => x.get('type').value == 'cash');
+      if (cashIndex != -1) {
+        this.journalLines.removeAt(cashIndex);
+      }
+    }
   }
 
   getPaymentMethod(type: string) {
@@ -704,6 +739,16 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
     }, 0);
   }
 
+  get amountTotalJournalPaymentWithoutCash() {
+    return this.journalLines.controls.reduce((x, v) => {
+      if (v.get('type').value == 'cash') {
+        return x;
+      }
+
+      return v.get('amount').value + x;
+    }, 0);
+  }
+
   get CombineAllJournalSelected() {
     var list = [];
     this.journalLines.controls.forEach(JN => {
@@ -713,7 +758,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
         if (item) {
           item.amount += JN.get('amount').value;
         } else {
-          list.push({type: journal.type, amount: JN.get('amount').value});
+          list.push({ type: journal.type, amount: JN.get('amount').value });
         }
       }
     });
@@ -724,7 +769,7 @@ export class SaleOrderPaymentDialogComponent implements OnInit {
       if (existJN) {
         existJN.amount += this.debtAmount;
       } else {
-        list.push({type: debtJournal.type, amount: this.debtAmount});
+        list.push({ type: debtJournal.type, amount: this.debtAmount });
       }
     }
 

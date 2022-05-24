@@ -158,24 +158,27 @@
                             </td>
                             <td colspan="1" style="width:100%">
                                 <div class="d-flex">
-                                    <ng-container *ngFor="let item of [].constructor(6); index as i">
+                                    <ng-container *ngFor="let item of [].constructor(4); index as i">
                                         <div>
                                             <button (click) = "clickColor(i)" 
                                             class="btn btn-item-color border" [ngClass]="'appointment_color_' + i">
-                                                <i *ngIf="i == codeColorSelected" class="fas fa-check text-primary"></i>
+                                                <i *ngIf="i == codeColorSelected" class="fas fa-check text-light"></i>
                                             </button>
                                         </div>
                                     </ng-container>
                                 </div>
                                 <div class="d-flex mt-2">
-                                    <ng-container *ngFor="let item of [].constructor(6); index as i">
+                                    <ng-container *ngFor="let item of [].constructor(4); index as i">
                                         <div>
-                                            <button (click) = "clickColor(i + 6)" 
-                                            class="btn btn-item-color border" [ngClass]="'appointment_color_'+(i+6)">
-                                                <i *ngIf="i + 6 == codeColorSelected" class="fas fa-check text-primary"></i>
+                                            <button (click) = "clickColor(i + 4)" 
+                                            class="btn btn-item-color border" [ngClass]="'appointment_color_'+(i+4)">
+                                                <i *ngIf="i + 4 == codeColorSelected" class="fas fa-check text-light"></i>
                                             </button>
                                         </div>
                                     </ng-container>
+                                </div>
+                                <div *ngIf="submitted && codeColorSelected == undefined" class="text-danger">
+                                    Chọn nhãn màu
                                 </div>
                             </td>
                         </tr>

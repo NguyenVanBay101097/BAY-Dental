@@ -153,13 +153,13 @@ namespace Umbraco.Web.Models.ContentEditing
         /// <summary>
         /// list name Diagnosis string join
         /// </summary>
-        public string Diagnosis { get; set; }
+        public IEnumerable<ToothDiagnosisBasic> Diagnosis { get; set; } = new List<ToothDiagnosisBasic>();
 
         /// <summary>
         /// list name services
         /// </summary>
-        public string Services { get; set; }
-        
+        public IEnumerable<ProductSimple> Services { get; set; } = new List<ProductSimple>();
+
         /// <summary>
         /// ghi chú
         /// </summary>
