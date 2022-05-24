@@ -44,7 +44,7 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
   ]
 
   iterableDiffer: IterableDiffer<any>;
-
+  colorsSelected: number[] = [];
   constructor(
     private appointmentService: AppointmentService,
     private modalService: NgbModal,
@@ -70,6 +70,10 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
 
   loadData() {
     let res = this.appointments.sort();
+    res.forEach(x => {
+      if (x.color == null)
+        x.color = "0";
+    });
     if (this.stateFilter) {
       res = res.filter(x => x.state.includes(this.stateFilter));
     }
@@ -78,6 +82,11 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
       res = res.filter(x => x.partnerName && this.RemoveVietnamese(x.partnerName).includes(this.RemoveVietnamese(this.search)) || x.partnerPhone && x.partnerPhone.includes(this.search) || x.doctorName && this.RemoveVietnamese(x.doctorName).includes(this.RemoveVietnamese(this.search)));
     }
 
+    if (this.colorsSelected.length > 0) {
+      res = res.filter(x => {
+        return this.colorsSelected.includes(+x.color);
+      })
+    }
     this.listAppointment = res;
   }
 
@@ -220,6 +229,20 @@ export class AppointmentListTodayComponent implements OnInit, DoCheck {
     text = text.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
     text = text.replace(/\s/g, "");;
     return text;
+  }
+
+  clickColor(color) {
+    let index = this.colorsSelected.findIndex(x => x == color);
+    if (index != -1)
+      this.colorsSelected.splice(index,1);
+    else 
+      this.colorsSelected.push(color);
+
+    this.loadData();
+  }
+
+  isContainColor(color) {
+    return this.colorsSelected.findIndex(x => x == color) != -1;
   }
 
 }

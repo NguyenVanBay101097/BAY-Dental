@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { AppointmentBasic, AppointmentPaged } from 'src/app/appointment/appointment';
 import { AppointmentVMService } from 'src/app/appointment/appointment-vm.service';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { AppointmentCreateUpdateComponent } from 'src/app/shared/appointment-create-update/appointment-create-update.component';
 import { ConfirmDialogComponent } from 'src/app/shared/confirm-dialog/confirm-dialog.component';
 import { PageGridConfig, PAGER_GRID_CONFIG } from 'src/app/shared/pager-grid-kendo.config';
@@ -31,6 +32,7 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     private modalService: NgbModal,
     private notificationService: NotificationService,
     private activeRoute: ActivatedRoute,
+    private authService: AuthService,
     @Inject(PAGER_GRID_CONFIG) config: PageGridConfig,
     private printService: PrintService
   ) { this.pagerSettings = config.pagerSettings }
@@ -46,6 +48,7 @@ export class PartnerCustomerAppointmentComponent implements OnInit {
     val.limit = this.limit;
     val.offset = this.skip;
     val.partnerId = this.id;
+    val.companyId = this.authService.userInfo.companyId;
 
     this.appointmentService.getPaged(val).pipe(
       map((response: any) => (<GridDataResult>{

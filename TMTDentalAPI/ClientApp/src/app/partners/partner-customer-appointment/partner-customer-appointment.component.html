@@ -30,6 +30,11 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="reason" title="Lý do" width="150">
                 </kendo-grid-column>
+                <kendo-grid-column title="Nhãn màu" width="100" class="text-center">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <div class="btn btn-item-color border" [ngClass]="'appointment_color_'+ (dataItem.color || 0)"></div>
+                    </ng-template>
+                </kendo-grid-column>
                 <kendo-grid-column field="id" width="150">
                     <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
                         Thao tác

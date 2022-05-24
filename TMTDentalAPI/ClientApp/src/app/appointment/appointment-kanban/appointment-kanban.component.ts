@@ -282,6 +282,10 @@ export class AppointmentKanbanComponent implements OnInit {
   }
 
   filterDataClient() {
+    this.appointments.forEach(x => {
+      if (x.color == null)
+        x.color = "0";
+    })
     let sourceAppoinments = this.appointments.slice();
     if (this.state) {
       sourceAppoinments = sourceAppoinments.filter(x => x.state == this.state);

@@ -112,6 +112,11 @@
                                         <span class="service">{{computeNameSerivc(dataItem.services)}}</span>
                                     </ng-template>
                                 </kendo-grid-column>
+                                <kendo-grid-column title="Nhãn màu" width="100" class="text-center">
+                                    <ng-template kendoGridCellTemplate let-dataItem>
+                                        <div class="btn btn-item-color border" [ngClass]="'appointment_color_'+dataItem.color"></div>
+                                    </ng-template>
+                                </kendo-grid-column>
                                 <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
                                 </kendo-grid-column>
                                 <kendo-grid-column field="note" title="Nội dung" width="150">
