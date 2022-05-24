@@ -89,7 +89,7 @@ namespace Infrastructure.Services
                 partnerId: val.PartnerId, doctorId: val.DoctorId, dateFrom: val.DateTimeFrom,
                 dateTo: val.DateTimeTo, userId: val.UserId, companyId: val.CompanyId,
                 dotKhamId: val.DotKhamId, isRepeatCustomer: val.IsRepeatCustomer, doctorIsNull: val.DoctorIsNull);
-             query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+             //query = query.Where(x => x.CompanyId == val.CompanyId.Value); //đã filter company id ở trên
             var totalItems = await query.CountAsync();
             var limit = val.Limit > 0 ? val.Limit : int.MaxValue;
 
