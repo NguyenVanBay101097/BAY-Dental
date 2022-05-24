@@ -132,6 +132,11 @@
   margin: 0;
 }
 
+.box-content {
+  background: #E5F2FF;
+  border-radius: 4px;
+}
+
 .appointment-today-box .box-content {
   width: 100%;
   padding: 0 10px 0 10px;
@@ -172,14 +177,26 @@
   /* background: #2395ff; */
 }
 
-.event-confirmed {
+.event-confirmed .box-header .appointment-state .status {
   background-color: #2395FF;
 }
 
-.event-done {
+.event-done .box-header .appointment-state .status{
   background-color: #28A745;
 }
 
-.event-cancel {
+.event-cancel .box-header .appointment-state .status{
   background-color: #EB3B5B;
+}
+
+.box-content.event-confirmed {
+  border-left: 3px solid #2395FF;
+}
+
+.box-content.event-done {
+  border-left: 3px solid #28A745;
+}
+
+.box-content.event-cancel {
+  border-left: 3px solid #EB3B5B;
 }

@@ -80,7 +80,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
   { name: '', code: '#00875A' },
   { name: '', code: '#EB2E94' }
   ];
-  codeColorSelected: number;
+  codeColorSelected: number = 0;
   constructor(
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
@@ -240,7 +240,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     var appTime = this.intlService.formatDate(appoint.timeObj, 'HH:mm');;
     appoint.date = `${apptDate}T${appTime}`;
     appoint.timeExpected = appoint.timeExpected || 0;
-    appoint.color = this.codeColorSelected != undefined ? this.codeColorSelected : null;
+    appoint.color = this.codeColorSelected;
     if (this.state != 'cancel') {
       appoint.reason = null;
     }
@@ -253,6 +253,8 @@ export class AppointmentCreateUpdateComponent implements OnInit {
     if (!this.formGroup.valid) {
       return false;
     }
+    if (this.codeColorSelected == undefined)
+      return;
     var appoint = this.dataSave();
 
     if (this.appointId) {
@@ -626,34 +628,5 @@ export class AppointmentCreateUpdateComponent implements OnInit {
       this.codeColorSelected = undefined;
     else
       this.codeColorSelected = color;
-  }
-
-  getColorName(index) {
-    switch (index) {
-      case 0:
-        return 'Red';
-      case 1:
-        return 'Orange';
-      case 2:
-        return 'Amber';
-      case 3:
-        return 'Yellow';
-      case 4:
-        return 'Lime';
-      case 5:
-        return 'Green';
-      case 6:
-        return 'Teal';
-      case 7:
-        return 'Sky';
-      case 8:
-        return 'Blue';
-      case 9:
-        return 'Indigo';
-      case 10:
-        return 'Purple';
-      case 11:
-        return 'Pink';
-    }
   }
 }

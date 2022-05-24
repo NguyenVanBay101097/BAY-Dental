@@ -40,6 +40,9 @@ export class AppointmentService {
     if (appointmentPaged.state != null) {
       param = param.set('state', appointmentPaged.state);
     };
+    if (appointmentPaged.companyId != null) {
+      param = param.set('companyId', appointmentPaged.companyId);
+    };
     return this.http.get<PagedResult2<AppointmentBasic>>(this.baseApi + "api/Appointments?" + param);
   }
 
