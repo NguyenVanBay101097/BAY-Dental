@@ -3291,6 +3291,7 @@ namespace Infrastructure.Services
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
             var cardCardObj = GetService<ICardCardService>();
             var amlObj = GetService<IAccountMoveLineService>();
+            var partnerReportObj = GetService<IPartnerOldNewReportService>();
 
             var query = GetQueryablePartnerFilter(val);
 
@@ -3313,8 +3314,10 @@ namespace Infrastructure.Services
                 CountSale = s.Sum(x => x.State == "sale" ? 1 : 0),
                 CountDone = s.Sum(x => x.State == "done" ? 1 : 0),
                 AmountRevenueExpect = s.Sum(x => x.Residual),
-                Date = s.Max(x => x.DateOrder)
+                //Date = s.Max(x => x.DateOrder)
             }).ToDictionary(g => g.PartnerId, x => x);
+
+            var partnerLastTreatmentDict = await partnerReportObj.PartnerLastTreatmentQuery(new PartnerLastTreatmentReq() { CompanyId = val.CompanyId}).ToDictionaryAsync(x=> x.PartnerId, x=> x.LastTreatmentDate);
 
             var partnerDebitDict = amlObj._QueryGet(state: "posted", companyIds: allowedCompanyIds)
                 .Where(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH")
@@ -3347,7 +3350,7 @@ namespace Infrastructure.Services
                 item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
                 item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
                 item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
-                item.SaleOrderDate = partnerOrderStateDict.ContainsKey(item.Id) ? (DateTime?)partnerOrderStateDict[item.Id].Date : null;
+                item.SaleOrderDate = partnerLastTreatmentDict.ContainsKey(item.Id) ? (DateTime?)partnerLastTreatmentDict[item.Id] : null;
                 item.AppointmentDate = partnerAppointmentDict.ContainsKey(item.Id) ? (DateTime?)partnerAppointmentDict[item.Id].AppointmentDate : null;
             }
 

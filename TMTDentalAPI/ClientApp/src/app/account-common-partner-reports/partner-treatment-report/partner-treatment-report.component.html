@@ -157,7 +157,7 @@
                 </kendo-grid-column>
                 <kendo-grid-column field="address" title="Địa chỉ" width="150">
                 </kendo-grid-column>
-                <kendo-grid-column title="Ngày điều trị gần nhất" width="180">
+                <kendo-grid-column title="Ngày điều trị gần nhất" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem>
                         {{dataItem.lastDateOfTreatment | date: 'shortDate'}}
                     </ng-template>
@@ -180,7 +180,7 @@
                         </div>
                     </ng-template>
                 </kendo-grid-column>
-                <kendo-grid-column field="orderState" title="Tình trạng điều trị" width="150">
+                <kendo-grid-column field="orderState" title="Tình trạng điều trị" width="100">
                     <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
                         {{ orderStateDisplay[dataItem.orderState] || "Chưa phát sinh" }}
                     </ng-template>

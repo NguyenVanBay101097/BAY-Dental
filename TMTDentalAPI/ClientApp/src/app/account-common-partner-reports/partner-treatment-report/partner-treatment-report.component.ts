@@ -331,8 +331,8 @@ export class PartnerTreatmentReportComponent implements OnInit {
   showFilterInfo(dataFilter) {
     this.dataFilterObj = {};
     if (dataFilter) {
-      if (dataFilter.typeReport) {
-        this.dataFilterObj['typeReport'] = dataFilter.typeReport.text;
+      if (dataFilter.overIntervalData) {
+        this.dataFilterObj['overIntervalData'] = dataFilter.overIntervalData.text;
       }
 
       if (dataFilter.categs && dataFilter.categs.length > 0) {
@@ -363,6 +363,8 @@ export class PartnerTreatmentReportComponent implements OnInit {
         return 'Nguồn khách hàng';
       case 'gender':
         return 'Giới tính';
+        case 'overIntervalData':
+          return 'Ngày điều trị gần nhất';
       default:
         return '';
     }
@@ -382,6 +384,10 @@ export class PartnerTreatmentReportComponent implements OnInit {
       case 'gender':
         this.filter.gender = '';
         break;
+        case 'overIntervalData':
+          this.filter.overInterval = '';
+          this.filter.overIntervalNbr = 0;
+          break;
       default:
         this.filter[key] = null;
         break;
