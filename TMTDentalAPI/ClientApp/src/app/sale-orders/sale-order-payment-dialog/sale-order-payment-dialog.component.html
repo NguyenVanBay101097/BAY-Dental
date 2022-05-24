@@ -294,7 +294,7 @@
                                                 <ng-container *ngFor="let item of journalLines.controls; let i = index">
                                                     <tr [formGroupName]="i">
                                                         <td style="vertical-align: unset;" class="w-25">
-                                                            <strong>{{getPaymentMethod(item.get('type').value).name}}</strong>
+                                                            <strong>{{getPaymentMethod(item.get('type').value)?.name || 'Tiền mặt'}}</strong>
                                                         </td>
                                                         <td class="w-50" style="vertical-align: unset;">
                                                             <div [class.d-none]="item.get('journals').value.length <= 1">
@@ -321,7 +321,7 @@
                                                                 <div class="text-right" style="min-width: 100px;">
                                                                     {{item.get('amount').value | number}}
                                                                 </div>
-                                                                <a class="ml-3 text-danger" (click)="removeJounalSelected(i)">
+                                                                <a class="ml-3 text-danger" *ngIf="item.get('type').value != 'cash'" (click)="removeJounalSelected(i)">
                                                                     <i class="far fa-trash-alt"></i>
                                                                 </a>
                                                             </div>
@@ -391,7 +391,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr *ngFor="let item of CombineAllJournalSelected">
-                                                    <td>{{getPaymentMethod(item.type).name}}</td>
+                                                    <td>{{getPaymentMethod(item.type)?.name || 'Tiền mặt'}}</td>
                                                     <td class="text-right">{{item.amount | number}}</td>
                                                 </tr>
                                                 <tr>

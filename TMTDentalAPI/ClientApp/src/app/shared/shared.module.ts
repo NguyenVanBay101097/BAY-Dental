@@ -117,6 +117,7 @@ import { AgePopoverComponent } from './age-popover/age-popover.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { CommentCuDialogComponent } from '../mail-messages/comment-cu-dialog/comment-cu-dialog.component';
 import { Daterangepicker } from 'ng2-daterangepicker';
+import { UpperCaseDirective } from './directives/upper-case.directive';
 
 const config: LocaleConfig = {};
 @NgModule({
@@ -223,7 +224,8 @@ const config: LocaleConfig = {};
         ResInsuranceCuDialogComponent,
         NumberDirective,
         AgePopoverComponent,
-        CommentCuDialogComponent
+        CommentCuDialogComponent,
+        UpperCaseDirective
     ],
     exports: [
         ConfirmDialogComponent,
@@ -322,7 +324,8 @@ const config: LocaleConfig = {};
         TmtAutonumericModule,
         AgePopoverComponent,
         NgxEchartsModule,
-        CommentCuDialogComponent
+        CommentCuDialogComponent,
+        UpperCaseDirective
 
     ],
     imports: [

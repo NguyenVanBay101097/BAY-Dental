@@ -82,40 +82,39 @@
             <tbody>
                 @foreach (var item in Model.Advisories)
                 {
-                <tr>
-                    <td>@item.Date.ToString("dd/MM/yyyy")</td>
-                    @if (item.Employee != null)
-                    {
-                        @if (!string.IsNullOrEmpty(item.Employee.Name))
-                        {
-                            <td>@item.Employee.Name</td>
-                        }
-                    }
-                    @if (item.ToothType != "manual")
-                    {
-                        <td>@((item.ToothType == "whole_jaw" ? "Nguyên hàm" : (item.ToothType == "upper_jaw" ? "Hàm trên" : "Hàm dưới")))</td>
-                    }
-                    else
-                    {
-                        <td>@(item.Tooths)</td>
-                    }
+                    <tr>
+                        <td>@item.Date.ToString("dd/MM/yyyy")</td>
+                        <td>@(item.Employee != null && string.IsNullOrEmpty(item.Employee.Name) ? item.Employee.Name : "")</td>
 
-                    <td>@item.Diagnosis</td>
-                    <td>
-                        @item.Services<br />
-                        @if (!string.IsNullOrEmpty(item.Note))
+                        @if (item.ToothType != "manual")
                         {
-                            <span><i>Ghi chú: @item.Note</i></span>
+                            <td>@((item.ToothType == "whole_jaw" ? "Nguyên hàm" : (item.ToothType == "upper_jaw" ? "Hàm trên" : "Hàm dưới")))</td>
                         }
-                    </td>
-                </tr>
+                        else
+                        {
+                            <td>@(item.Tooths)</td>
+                        }
+
+                        <td>
+                            @foreach (var diagnosis in item.Diagnosis.Select((value, i) => new { i, value }))
+                            {
+                                @("- " + diagnosis.value.Name)  @Html.Raw(diagnosis.i + 1 != item.Diagnosis.Count()?"<br/>":"")
+                            }
+
+                        </td>
+                        <td>
+                            @foreach (var service in item.Services.Select((value, i) => new { i, value }))
+                            {
+                                @("- " + service.value.Name)  @Html.Raw(service.i + 1 != item.Diagnosis.Count()?"<br/>":"")
+                            }
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
     <div class="d-flex">
         <div class="col ">
-
         </div>
         <div class="col ">
             <div class="text-center">

@@ -335,8 +335,8 @@ namespace Infrastructure.Services
                 } : null,
                 ToothType = x.ToothType,
                 Tooths = String.Join(", ", x.AdvisoryToothRels.Select(x => x.Tooth.Name)),
-                Diagnosis = x.AdvisoryToothDiagnosisRels.Any() ? String.Join(", ", x.AdvisoryToothDiagnosisRels.Select(x => x.ToothDiagnosis.Name)) : null,
-                Services = x.AdvisoryProductRels.Any() ? String.Join(", ", x.AdvisoryProductRels.Select(x => x.Product.Name)) : null,
+                Diagnosis = x.AdvisoryToothDiagnosisRels.Select(z=> new ToothDiagnosisBasic() { Id = z.ToothDiagnosisId, Name = z.ToothDiagnosis.Name}),
+                Services = x.AdvisoryProductRels.Select(z=> new ProductSimple() { Id = z.ProductId, Name = z.Product.Name}),
                 Note = x.Note
             }).ToListAsync();
 

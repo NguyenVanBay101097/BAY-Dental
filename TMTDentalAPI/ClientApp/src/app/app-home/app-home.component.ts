@@ -138,6 +138,37 @@ export class AppHomeComponent implements OnInit {
       permissions: ['Comission.Employee', 'Comission.Agent']
     },
     {
+      name: 'Báo cáo',
+      icon: 'far fa-chart-bar',
+      id: 'reportMenu',
+      children: [
+        { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports', permissions: ['Report.Overview'] },
+        { name: 'Báo cáo ngày', url: '/day-dashboard-report', permissions: ['Report.DayOverview'] },
+        { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
+        { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
+        { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
+        { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
+        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports', permissions: ['Report.CustomerReceiptReports'] },
+        { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
+        { name: 'Báo cáo công nợ bảo hiểm', url: '/res-insurance-reports', permissions: ['Report.ResInsuranceReports'] },
+        { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
+        { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
+      ],
+      permissions: [
+        'Report.Overview',
+        'Report.DayOverview',
+        'Report.Financial',
+        'Report.Revenue',
+        'Report.Sale',
+        'Report.PartnerOldNew',
+        'Report.CustomerReceiptReports',
+        'Report.ResInsuranceReports',
+        'Report.AccountPartner',
+        'Report.Stock',
+        'Report.PartnerSource'
+      ]
+    },
+    {
       name: 'Danh mục',
       icon: 'fas fa-list',
       children: [
@@ -193,37 +224,7 @@ export class AppHomeComponent implements OnInit {
       ],
       permissions: ['System.Company.Read', 'System.Config', 'System.ApplicationRole.Read']
     },
-    {
-      name: 'Báo cáo',
-      icon: 'far fa-chart-bar',
-      id: 'reportMenu',
-      children: [
-        { name: 'Báo cáo tổng quan', url: '/sale-dashboard-reports', permissions: ['Report.Overview'] },
-        { name: 'Báo cáo ngày', url: '/day-dashboard-report', permissions: ['Report.DayOverview'] },
-        { name: 'Kết quả kinh doanh', url: '/financial-report', permissions: ['Report.Financial'] },
-        { name: 'Báo cáo doanh thu', url: '/account-invoice-reports/revenue-time', permissions: ['Report.Revenue'] },
-        { name: 'Báo cáo dịch vụ', url: '/sale-report/service-report', permissions: ['Report.Sale'] },
-        { name: 'Báo cáo khách hàng', url: '/report-account-common/partner-report-overview', permissions: ['Report.PartnerOldNew'] },
-        { name: 'Báo cáo tiếp nhận', url: '/customer-receipt-reports', permissions: ['Report.CustomerReceiptReports'] },
-        { name: 'Công nợ nhà cung cấp', url: '/report-account-common/partner', linkProps: { queryParams: { result_selection: 'supplier' } }, permissions: ['Report.AccountPartner'] },
-        { name: 'Báo cáo công nợ bảo hiểm', url: '/res-insurance-reports', permissions: ['Report.ResInsuranceReports'] },
-        { name: 'Thống kê nguồn khách hàng', url: '/report-partner-sources', permissions: ['Report.PartnerSource'] },
-        { name: 'Quản lý điều trị', url: '/sale-orders/management', permissions: ['Basic.SaleOrder.Read'] },
-      ],
-      permissions: [
-        'Report.Overview',
-        'Report.DayOverview',
-        'Report.Financial',
-        'Report.Revenue',
-        'Report.Sale',
-        'Report.PartnerOldNew',
-        'Report.CustomerReceiptReports',
-        'Report.ResInsuranceReports',
-        'Report.AccountPartner',
-        'Report.Stock',
-        'Report.PartnerSource'
-      ]
-    },
+   
   ];
 
   menus: any[] = [];

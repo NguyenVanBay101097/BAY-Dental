@@ -37,3 +37,15 @@
     color: #ccc;
     border-color: #ccc;
 }
+
+.bg-light-secondary {
+    background: #F8F9FB;
+}
+
+.border-radius{
+    border-radius: 5px;
+}
+
+.fa-times{
+    color:#858F9B;
+}
