@@ -191,7 +191,7 @@ export class PartnerReportOverviewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onApplyEmit(data) {
+  onValueChange(data) {
     this.resetFilterCode();
     this.filter = Object.assign(this.filter, data);
     const categIds = (data && data.categs != null) ? data.categs.map(val => val.id) : [];

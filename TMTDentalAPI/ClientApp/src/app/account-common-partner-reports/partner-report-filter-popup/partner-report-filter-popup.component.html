@@ -1,4 +1,4 @@
-<div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right" class="filter-dropdown" (openChange)="onToggleDropdown($event)">
+<div ngbDropdown #myDrop="ngbDropdown" [placement]="placement" class="filter-dropdown" (openChange)="onToggleDropdown($event)">
     <button type="button" id="filteredAdvance" ngbDropdownToggle class="btn btn-outline-secondary">
         <i class="fas fa-filter mr-2"></i>
         <span>Bộ lọc</span>
@@ -51,7 +51,7 @@
                     <div class="filter-label">
                         Độ tuổi
                     </div>
-                    <div class="filter-content d-flex">
+                    <div class="filter-content">
                         <input class="form-control" formControlName="ageFrom" placeholder="Từ" tmtautonumeric
                             [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                         <span>&nbsp;-&nbsp;</span>
@@ -62,7 +62,7 @@
                     <div class="filter-label">
                         Doanh thu
                     </div>
-                    <div class="filter-content d-flex">
+                    <div class="filter-content">
                         <input class="form-control" formControlName="revenueFrom" placeholder="Từ" tmtautonumeric
                             [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                         <span>&nbsp;-&nbsp;</span>
@@ -73,7 +73,7 @@
                     <div class="filter-label">
                         Tổng tiền điều trị
                     </div>
-                    <div class="filter-content d-flex">
+                    <div class="filter-content">
                         <input class="form-control" formControlName="amountTotalFrom" placeholder="Từ" tmtautonumeric
                             [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
                         <span>&nbsp;-&nbsp;</span>

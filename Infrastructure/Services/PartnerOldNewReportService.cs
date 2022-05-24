@@ -116,6 +116,19 @@ namespace Infrastructure.Services
         {
             return (T)_httpContextAccessor.HttpContext.RequestServices.GetService(typeof(T));
         }
+        public IQueryable<PartnerLastTreatmentRes> PartnerLastTreatmentQuery(PartnerLastTreatmentReq val)
+        {
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var query = orderLineObj.SearchQuery(x => x.State != "draft");
+            if (val.CompanyId.HasValue)
+            {
+                query = query.Where(x => x.CompanyId == val.CompanyId.Value);
+            }
+            var res = query.GroupBy(x => x.OrderPartnerId).Select(x => new PartnerLastTreatmentRes { PartnerId = x.Key.Value, LastTreatmentDate = x.Max(z => z.Date.Value) });
+            if (val.OverInterval == "month")
+                res = res.Where(x => x.LastTreatmentDate.AddMonths(val.OverIntervalNbr.Value) < DateTime.Now);
+            return res;
+        }
         public IQueryable<SaleOrder> SumReportQuery(PartnerOldNewReportReq val)
         {
             var saleOrderObj = GetService<ISaleOrderService>();
@@ -132,40 +145,42 @@ namespace Infrastructure.Services
             {
                 query = query.Where(x => x.CompanyId == val.CompanyId);
                 orderCompanyQr = orderCompanyQr.Where(x => x.CompanyId == val.CompanyId);
-
             }
             //filter partner
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.PartnerId == val.PartnerId);
             else
             {
-            if (!string.IsNullOrEmpty(val.CityCode))
-                query = query.Where(x => x.Partner.CityCode == val.CityCode);
-            if (!string.IsNullOrEmpty(val.DistrictCode))
-                query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
-            if (!string.IsNullOrEmpty(val.WardCode)) 
-                query = query.Where(x => x.Partner.WardCode == val.WardCode);
-            if (val.SourceId.HasValue)
-                query = query.Where(x => x.Partner.SourceId == val.SourceId);
-            if (val.IsHasNullSourceId)
-                query = query.Where(x => !x.Partner.SourceId.HasValue);
-            if (!string.IsNullOrEmpty(val.Gender))
-                query = query.Where(x => x.Partner.Gender == val.Gender);
-           
-            if (!string.IsNullOrEmpty(val.Search))
-                query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search)
-                                       || x.Partner.Ref.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));
-            if (val.CategIds.Any())
-            {
-                var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
-                var filterPartnerQr =
-                       from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
-                       select new
-                       {
-                           PartnerId = pcr.PartnerId
-                       };
-                query = query.Join(filterPartnerQr, o => o.PartnerId, pc => pc.PartnerId, (o, pc) => o);
-            }
+                if (!string.IsNullOrEmpty(val.CityCode))
+                    query = query.Where(x => x.Partner.CityCode == val.CityCode);
+                if (!string.IsNullOrEmpty(val.DistrictCode))
+                    query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
+                if (!string.IsNullOrEmpty(val.WardCode))
+                    query = query.Where(x => x.Partner.WardCode == val.WardCode);
+                //if (val.SourceId.HasValue)
+                //    query = query.Where(x => x.Partner.SourceId == val.SourceId);
+                if (val.SourceIds.Any())
+                    query = query.Where(x => x.Partner.SourceId.HasValue && val.SourceIds.Contains(x.Partner.SourceId.Value));
+
+                if (val.IsHasNullSourceId)
+                    query = query.Where(x => !x.Partner.SourceId.HasValue);
+                if (!string.IsNullOrEmpty(val.Gender))
+                    query = query.Where(x => x.Partner.Gender == val.Gender);
+
+                if (!string.IsNullOrEmpty(val.Search))
+                    query = query.Where(x => x.Partner.Name.Contains(val.Search) || x.Partner.NameNoSign.Contains(val.Search)
+                                           || x.Partner.Ref.Contains(val.Search) || x.Partner.Phone.Contains(val.Search));
+                if (val.CategIds.Any())
+                {
+                    var partnerCategoryRelService = GetService<IPartnerPartnerCategoryRelService>();
+                    var filterPartnerQr =
+                           from pcr in partnerCategoryRelService.SearchQuery(x => val.CategIds.Contains(x.CategoryId))
+                           select new
+                           {
+                               PartnerId = pcr.PartnerId
+                           };
+                    query = query.Join(filterPartnerQr, o => o.PartnerId, pc => pc.PartnerId, (o, pc) => o);
+                }
 
             }
 
@@ -185,6 +200,13 @@ namespace Infrastructure.Services
                 query = query.Join(querySub, o => o.Id, s => s.Id, (o, s) => o);
             }
 
+            if (!string.IsNullOrEmpty(val.OverInterval) && val.OverIntervalNbr.HasValue)
+            {
+                var querySub = PartnerLastTreatmentQuery(new PartnerLastTreatmentReq()
+                { CompanyId = val.CompanyId, OverInterval = val.OverInterval, OverIntervalNbr = val.OverIntervalNbr });
+
+                query = query.Where(x => querySub.Select(z => z.PartnerId).Contains(x.PartnerId));
+            }
             //var resQr = query.GroupBy(x => x.PartnerId);
             //if (val.TypeReport == "old")
             //    resQr = resQr.Where(x => orderBaseQr.Where(h => h.PartnerId == x.Key).Count() > 1);
@@ -223,7 +245,7 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Partner.DistrictCode == val.DistrictCode);
             else
                 query = query.Where(x => string.IsNullOrEmpty(x.Partner.DistrictCode));
-          
+
             if (val.DateFrom.HasValue)
                 query = query.Where(x => x.DateOrder >= val.DateFrom.Value.AbsoluteBeginOfDate());
 
@@ -306,10 +328,15 @@ namespace Infrastructure.Services
             var irProperyObj = GetService<IIRPropertyService>();
             var partnerObj = GetService<IPartnerService>();
             var accInvreportObj = GetService<IAccountInvoiceReportService>();
+            var orderLineObj = GetService<ISaleOrderLineService>();
+
             var companyId = CompanyId;
 
+            var pnOderQr = SumReportQuery(val).GroupBy(x => x.PartnerId)
+                .Select(x => new { PartnerId = x.Key, Sum = x.Sum(z => z.TotalPaid ?? 0) });
 
-            var pnOderQr = SumReportQuery(val).GroupBy(x => x.PartnerId).Select(x => new { PartnerId = x.Key, Sum = x.Sum(z => z.TotalPaid ?? 0) });
+            var partnerLastTreatmentQr = PartnerLastTreatmentQuery(new PartnerLastTreatmentReq()
+            { CompanyId = val.CompanyId, OverInterval = val.OverInterval, OverIntervalNbr = val.OverIntervalNbr });
 
             var pnQr = partnerObj.SearchQuery(x => x.Customer);
 
@@ -324,6 +351,7 @@ namespace Infrastructure.Services
 
             var resQr = from pnOrder in pnOderQr
                         join pn in pnQr on pnOrder.PartnerId equals pn.Id
+                        join pnLastTreatment in partnerLastTreatmentQr on pnOrder.PartnerId equals pnLastTreatment.PartnerId
                         from pos in partnerOrderStateQr.Where(x => x.PartnerId == pnOrder.PartnerId).DefaultIfEmpty()
                         select new PartnerInfoTemplate
                         {
@@ -341,7 +369,8 @@ namespace Infrastructure.Services
                             Gender = pn.Gender,
                             OrderState = pos.CountSale > 0 ? "sale" : (pos.CountDone > 0 ? "done" : "draft"),
                             Revenue = pnOrder.Sum,
-                            SourceName = pn.Source.Name
+                            SourceName = pn.Source.Name,
+                            LastDateOfTreatment = pnLastTreatment.LastTreatmentDate
                         };
 
             return resQr;
@@ -354,6 +383,7 @@ namespace Infrastructure.Services
             var partnerCategoryRelObj = GetService<IPartnerPartnerCategoryRelService>();
 
             var ResponseQr = GetReportQuery(val);
+
             var count = await ResponseQr.CountAsync();
             if (val.Limit > 0)
                 ResponseQr = ResponseQr.Skip(val.Offset).Take(val.Limit);
