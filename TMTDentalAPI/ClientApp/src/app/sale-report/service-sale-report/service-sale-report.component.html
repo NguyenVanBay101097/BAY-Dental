@@ -7,7 +7,6 @@
         <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
             [filterable]="true" [data]="employees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
         </kendo-combobox>
-        <input class="form-control filter-search mr-2 mb-2" placeholder="Tìm kiếm khách hàng, dịch vụ" type="text" [(ngModel)]="filter.search" (ngModelChange)="this.searchUpdate.next($event)">
         <div class="dropdown mr-2 mb-2">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="fas fa-download"></i> Xuất File</button>
@@ -17,7 +16,16 @@
             </div>
         </div>
         <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
+        <input class="form-control filter-search ml-auto mb-2" placeholder="Tìm kiếm theo mã, họ tên khách hàng" type="text" [(ngModel)]="filter.partnerName" (ngModelChange)="this.searchUpdate.next($event)">
     </div>
+    <div class="mb-2 mr-2 d-flex">
+        <div>
+          <kendo-multiselect class="service-filter" [data]="filteredServices" [valueField]="'id'" [textField]="'name'"
+          [(ngModel)]="filter.serviceIds" [valuePrimitive]="true" #serviceMultiSelect
+          [placeholder]="'Tất cả dịch vụ'" [filterable]="true" (valueChange)="onChangeServiceSelected($event)">
+      </kendo-multiselect>
+        </div>
+      </div>
     <div>
         <kendo-grid [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
             <kendo-grid-column field="date" title="Ngày tạo" width="110">

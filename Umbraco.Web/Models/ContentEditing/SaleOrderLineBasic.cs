@@ -111,7 +111,7 @@ namespace Umbraco.Web.Models.ContentEditing
         [EpplusDisplay("Ngày tạo")]
         public DateTime Date { get; set; }
         [EpplusDisplay("Khách hàng")]
-        public string OrderPartnerName { get; set; }
+        public string OrderPartnerDisplayName { get; set; }
         [EpplusDisplay("Dịch vụ")]
         public string Name { get; set; }
         [EpplusDisplay("Bác sĩ")]

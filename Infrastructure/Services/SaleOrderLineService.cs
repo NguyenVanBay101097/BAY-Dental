@@ -421,6 +421,8 @@ namespace Infrastructure.Services
                 query = query.Where(x => x.Name.Contains(val.Search) || x.OrderPartner.Name.Contains(val.Search)
                                         || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search)
                                         || x.Order.Name.Contains(val.Search));
+            if (!string.IsNullOrEmpty(val.PartnerName))
+                query = query.Where(x => x.OrderPartner.NameNoSign.Contains(val.PartnerName) || x.OrderPartner.Name.Contains(val.PartnerName));
             if (val.OrderPartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
             if (val.ProductId.HasValue)
@@ -463,6 +465,9 @@ namespace Infrastructure.Services
 
             if (val.PartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.PartnerId);
+
+            if (val.ServiceIds.Any())
+                query = query.Where(x => val.ServiceIds.Contains(x.ProductId.Value));
 
             var totalItems = await query.CountAsync();
 

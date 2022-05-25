@@ -61,7 +61,7 @@
                 {
             <tr>
                 <td width="120">@(!line.Date.HasValue ? "" : line.Date.Value.ToString("dd/MM/yyyy"))</td>
-                <td width="150">@line.OrderPartnerName</td>
+                <td width="150">@line.OrderPartnerDisplayName</td>
                 <td width="150">@line.Name</td>
                 <td width="150">@(line.EmployeeName)</td>
                 <td width="120">@(line.ProductUOM != null ? line.ProductUOM.Name : "")</td>

@@ -111,6 +111,8 @@ export class ServiceReportReq {
     state: string;
     search: string;
     active?: boolean;
+    serviceIds: string[];
+    partnerName: string;
 }
 
 export class ServiceReportRes {
