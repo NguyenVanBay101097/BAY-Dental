@@ -200,3 +200,10 @@
 .box-content.event-cancel {
   border-left: 3px solid #EB3B5B;
 }
+
+.btn-item-color {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 0;
+}

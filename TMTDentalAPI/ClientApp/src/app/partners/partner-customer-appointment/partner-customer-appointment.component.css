@@ -43,3 +43,11 @@
 .grid-data{
     max-height: 400px;
 }
+
+.btn-item-color {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 0;
+}
+
