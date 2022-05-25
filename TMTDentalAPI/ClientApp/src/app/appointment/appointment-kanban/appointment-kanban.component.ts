@@ -301,7 +301,7 @@ export class AppointmentKanbanComponent implements OnInit {
 
     if (this.search) {
       sourceAppoinments = sourceAppoinments.filter(x => {
-        return _.includes(x.partnerName.toLowerCase(), this.search.toLowerCase()) || _.includes(x.partnerPhone.toLowerCase(), this.search.toLowerCase());
+        return _.includes(x.partnerName ? x.partnerName.toLowerCase() : '', this.search.toLowerCase()) || _.includes(x.partnerPhone ? x.partnerPhone.toLowerCase() : '', this.search.toLowerCase());
       });
     }
 
@@ -310,9 +310,12 @@ export class AppointmentKanbanComponent implements OnInit {
         return this.codeColorSelecteds.includes(+x.color)
       })
     }
-    
     this.filterAppointments = sourceAppoinments;
     this.renderCalendar();
+    this.gridData = {
+      data: sourceAppoinments,
+      total: sourceAppoinments.length
+    }
   }
 
   onCountState(state: string): number {
@@ -355,18 +358,12 @@ export class AppointmentKanbanComponent implements OnInit {
     //   val.isRepeatCustomer = this.isRepeatCustomer;
     // }
 
-    this.appointmentService.getPaged(val).pipe(
-      map((response: any) =>
-      (<GridDataResult>{
-        data: response.items,
-        total: response.totalItems
-      }))
-    ).subscribe((result: any) => {
-      this.gridData = result;
+    this.appointmentService.getPaged(val)
+    .subscribe((result: any) => {
       this.loading = false;
-      this.appointments = result.data;
-
+      this.appointments = result.items;
       this.filterDataClient();
+      
     }, (error: any) => {
       console.log(error);
       this.loading = false;
