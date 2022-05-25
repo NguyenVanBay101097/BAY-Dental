@@ -113,12 +113,12 @@ namespace Infrastructure.Services
                 ///add SaleOrderPaymentHistoryLine
                 foreach (var line in insurancePayment.Lines)
                 {
-                    var amount = line.PayType == "percent" ? (line.SaleOrderLine.AmountResidual ?? 0) * ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
+                    var amountResidual = line.SaleOrderLine.PriceTotal - line.SaleOrderLine.AmountInvoiced ?? 0;
+                    var amount = line.PayType == "percent" ? amountResidual * ((line.Percent ?? 0) / 100) : (line.FixedAmount ?? 0);
                     saleOrderPayment.Lines.Add(new SaleOrderPaymentHistoryLine
                     {
                         SaleOrderLineId = line.SaleOrderLineId,
                         Amount = amount,
-                        
                     });
                 }
 
