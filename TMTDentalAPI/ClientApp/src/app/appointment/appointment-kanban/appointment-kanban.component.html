@@ -12,7 +12,7 @@
                     <div class="o_form_buttons_view">
                         <button *ngIf="canAppointmentCreate" class="btn btn-primary"
                             (click)="createUpdateAppointment()">
-                            <i class="fas fa-calendar-plus"></i>&nbsp;Thêm</button>
+                            <i class="fas fa-calendar-plus"></i>&nbsp;Tạo lịch hẹn</button>
                         <!-- <button class="btn btn-primary" (click)="refreshData()">
                             <i class="fas fa-sync"></i>&nbsp;Làm mới</button> -->
                         <button type="button" class="btn btn-primary" (click)="exportExcelFile()">
@@ -20,18 +20,7 @@
                     </div>
                 </div>
                 <div class="o_cp_sidebar">
-                    <div class="btn-check-calendar">
-                        <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off"
-                            [value]="'calendar'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
-                        <label class="btn btn-white" for="calendar">
-                            <i class="fas fa-th-large"></i>
-                        </label>
-                        <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" [value]="'list'"
-                            [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
-                        <label class="btn btn-white" for="list">
-                            <i class="fas fa-list-ul"></i>
-                        </label>
-                    </div>
+                    
                 </div>
             </div>
             <div class="o_cp_right">
@@ -41,6 +30,19 @@
                         (ngModelChange)="this.searchUpdate.next($event)" />
                     <span class="o_searchview_icon fas fa-search"></span>
                 </div>
+                <div class="btn-check-calendar ml-1 d-flex">
+                    <input type="radio" class="btn-check" name="view" id="calendar" autocomplete="off"
+                        [value]="'calendar'" [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                    <label class="btn btn-white" for="calendar">
+                        <i class="fas fa-th-large"></i>
+                    </label>
+                    <input type="radio" class="btn-check" name="view" id="list" autocomplete="off" [value]="'list'"
+                        [(ngModel)]="viewKanban" (ngModelChange)="changeViewKanban($event)">
+                    <label class="btn btn-white" for="list">
+                        <i class="fas fa-list-ul"></i>
+                    </label>
+                </div>
+                
             </div>
         </div>
     </div>
