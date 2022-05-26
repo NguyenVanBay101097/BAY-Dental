@@ -7,6 +7,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ReceiveAppointmentService } from 'src/app/customer-receipt/receive-appointment.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -44,6 +45,7 @@ export class ReceiveAppointmentDialogComponent implements OnInit {
     private employeeService: EmployeeService,
     private notificationService: NotificationService,
     private receiveAppointmentService: ReceiveAppointmentService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -108,6 +110,7 @@ export class ReceiveAppointmentDialogComponent implements OnInit {
     var val = new EmployeePaged();
     val.search = filter || '';
     val.isDoctor = true;
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 

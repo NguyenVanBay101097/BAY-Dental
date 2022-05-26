@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { mergeMap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { CustomerReceiptService } from 'src/app/customer-receipt/customer-receipt.service';
 import { EmployeePaged, EmployeeSimple } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -48,7 +49,8 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
   constructor(private intlService: IntlService, private customerReceiptService: CustomerReceiptService,
     private employeeService: EmployeeService,
     private notifyService: NotifyService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    private authService: AuthService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.loadData();
@@ -129,6 +131,7 @@ export class DashboardCustomerReceiptListTodayComponent implements OnInit {
     var paged = new EmployeePaged();
     paged.search = search || '';
     paged.isDoctor = true;
+    paged.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(paged);
   }
 

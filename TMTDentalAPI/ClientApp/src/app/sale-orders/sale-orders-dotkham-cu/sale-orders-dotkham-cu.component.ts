@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { WebService } from 'src/app/core/services/web.service';
 import { DotKhamService } from 'src/app/dot-khams/dot-kham.service';
 import { EmployeePaged } from 'src/app/employees/employee';
@@ -55,7 +56,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     private differs: KeyValueDiffers,
     private iterableDiffers: IterableDiffers,
     private modalService: NgbModal,
-    private dotKhamService: DotKhamService
+    private dotKhamService: DotKhamService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -156,7 +158,8 @@ export class SaleOrdersDotkhamCuComponent implements OnInit {
     return this.empService.getEmployeePaged(<EmployeePaged>{
       search: val || '',
       isDoctor: true,
-      active: true
+      active: true,
+      companyId: this.authService.userInfo.companyId
     });
   }
 

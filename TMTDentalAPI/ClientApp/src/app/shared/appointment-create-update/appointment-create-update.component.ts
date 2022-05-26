@@ -488,7 +488,7 @@ export class AppointmentCreateUpdateComponent implements OnInit {
           let date = new Date(rs.date);
           this.formGroup.get('dateObj').patchValue(date);
           this.formGroup.get('timeObj').patchValue(date);
-          this.codeColorSelected = rs.color;
+          this.codeColorSelected = rs.color || 0;
           // this.formGroup.get('apptHour').patchValue(date.getHours());
           // this.formGroup.get('apptMinute').patchValue(date.getMinutes());
 

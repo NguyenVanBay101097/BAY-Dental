@@ -53,7 +53,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     private employeeService: EmployeeService,
     private intlService: IntlService,
     private printService: PrintService,
-    private checkPermissionService: CheckPermissionService
+    private checkPermissionService: CheckPermissionService,
   ) { }
 
   ngOnInit() {
@@ -163,6 +163,7 @@ export class SalaryPaymentFormComponent implements OnInit {
     var val = new EmployeePaged();
     val.active = true;
     val.search = filter || "";
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 
