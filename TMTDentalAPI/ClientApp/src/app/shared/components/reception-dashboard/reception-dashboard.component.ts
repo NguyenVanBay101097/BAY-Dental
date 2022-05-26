@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { GridDataResult } from '@progress/kendo-angular-grid';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { map } from 'rxjs/operators';
 import { AppointmentPaged } from 'src/app/appointment/appointment';
+import { AppointmentSignalRService } from 'src/app/appointment/appointment-signalr.service';
 import { AppointmentService } from 'src/app/appointment/appointment.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CashBookService, CashBookSummarySearch } from 'src/app/cash-book/cash-book.service';
@@ -49,10 +50,13 @@ export class ReceptionDashboardComponent implements OnInit {
     private intlService: IntlService,
     private authService: AuthService,
     private saleOrderService: SaleOrderService,
-    private appointmentService : AppointmentService,
+    private appointmentService: AppointmentService,
     private employeeService: EmployeeService,
     private customerReceiptService: CustomerReceiptService,
-    private cashBookService: CashBookService) {
+    private cashBookService: CashBookService,
+    private _ngZone: NgZone,
+    private appointmentSignalRService: AppointmentSignalRService
+  ) {
 
   }
 
@@ -63,6 +67,31 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadDataAppointmentApi();
     this.loadDataRevenueApi();
     this.loadEmployees();
+
+    this.listenAppointmentSignalR();
+  }
+
+  listenAppointmentSignalR() {
+    this.appointmentSignalRService.appointmentChanged$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointmenttList.findIndex((x: any) => x.id === res.id);
+        if (idx != -1) {
+          this.appointmenttList[idx] = res;
+        }
+        else {
+          this.appointmenttList.push(res);
+        }
+      });
+    });
+
+    this.appointmentSignalRService.appointmentDeleted$.subscribe((res: any) => {
+      this._ngZone.run(() => {
+        const idx = this.appointmenttList.findIndex((x: any) => x.id === res);
+        if (idx != -1) {
+          this.appointmenttList.splice(idx, 1);
+        }
+      });
+    });
   }
 
   loadTotalCash() {
@@ -145,7 +174,7 @@ export class ReceptionDashboardComponent implements OnInit {
     val.dateTimeFrom = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.dateTimeTo = this.intlService.formatDate(this.today, 'yyyy-MM-dd');
     val.companyId = this.authService.userInfo.companyId;
-    
+
     this.appointmentService.loadAppointmentList(val).pipe(
       map((response) => <GridDataResult>{
         data: response.items,
@@ -187,7 +216,7 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadDataCustomerRecieptApi();
   }
 
-  onUpdateCR(event) {    
+  onUpdateCR(event) {
     this.loadDataCustomerRecieptApi();
   }
 
@@ -195,11 +224,11 @@ export class ReceptionDashboardComponent implements OnInit {
     this.loadDataAppointmentApi();
   }
 
-  onUpdateAP(event) {    
+  onUpdateAP(event) {
     this.loadDataAppointmentApi();
   }
 
-  onDeleteAP(event) {    
+  onDeleteAP(event) {
     this.loadDataAppointmentApi();
   }
 
