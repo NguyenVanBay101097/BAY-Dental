@@ -6,6 +6,7 @@ import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import * as _ from 'lodash';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ToaThuocLineService } from 'src/app/core/services/toa-thuoc-line.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
@@ -48,7 +49,8 @@ export class ToaThuocCuDialogComponent implements OnInit {
     private samplePrescriptionsService: SamplePrescriptionsService,
     private modalService: NgbModal,
     private notificationService: NotificationService,
-    private toaThuocLineService: ToaThuocLineService) { }
+    private toaThuocLineService: ToaThuocLineService,
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.toaThuocForm = this.fb.group({
@@ -129,6 +131,7 @@ export class ToaThuocCuDialogComponent implements OnInit {
     var val = new EmployeePaged();
     val.isDoctor = true;
     val.search = search || "";
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 

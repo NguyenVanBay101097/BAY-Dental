@@ -8,6 +8,7 @@ import { NotificationService } from '@progress/kendo-angular-notification';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { AdvisoryDefaultGet, AdvisoryService } from 'src/app/advisories/advisory.service';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { ProductPaged, ProductService } from 'src/app/products/product.service';
@@ -61,7 +62,8 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     private toothDiagnosisService: ToothDiagnosisService,
     private employeeService: EmployeeService,
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -227,6 +229,7 @@ export class PartnerCustomerAdvisoryCuDialogComponent implements OnInit {
     val.limit = 10;
     val.offset = 0;
     val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 

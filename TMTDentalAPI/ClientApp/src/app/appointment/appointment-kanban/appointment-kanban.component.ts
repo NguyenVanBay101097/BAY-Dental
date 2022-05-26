@@ -223,6 +223,7 @@ export class AppointmentKanbanComponent implements OnInit {
   loadListEmployees() {
     var paged = new EmployeePaged();
     paged.isDoctor = true;
+    paged.companyId = this.authService.userInfo.companyId;
     this.employeeService.getEmployeePaged(paged).subscribe((res) => {
       this.listEmployees = res.items;
     });

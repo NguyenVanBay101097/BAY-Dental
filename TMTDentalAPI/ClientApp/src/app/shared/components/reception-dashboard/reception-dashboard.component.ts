@@ -132,6 +132,7 @@ export class ReceptionDashboardComponent implements OnInit {
     val.offset = 0;
     val.active = true;
     val.isDoctor = true;
+    val.companyId = this.authService.userInfo.companyId;
 
     this.employeeService
       .getEmployeePaged(val)

@@ -7,6 +7,7 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { catchError, debounceTime, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EmployeeBasic, EmployeePaged } from 'src/app/employees/employee';
 import { EmployeeService } from 'src/app/employees/employee.service';
 import { NotifyService } from 'src/app/shared/services/notify.service';
@@ -64,7 +65,8 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     private modalService: NgbModal,
     private notifyService: NotifyService,
     private quotationPromotionService: QuotationPromotionService,
-    private quotationLineService: QuotationLineService
+    private quotationLineService: QuotationLineService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -119,6 +121,7 @@ export class QuotationCreateUpdateFormComponent implements OnInit {
     val.limit = 10;
     val.offset = 0;
     val.search = q || '';
+    val.companyId = this.authService.userInfo.companyId;
     return this.employeeService.getEmployeePaged(val);
   }
 
