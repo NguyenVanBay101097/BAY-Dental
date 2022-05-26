@@ -58,9 +58,9 @@
             </div>
             <div class="overflow-auto">
                 <kendo-grid #grid (excelExport)="onExcelExport($event)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
-                    <kendo-grid-column field="partnerName" title="Khách hàng" width="200">
+                    <kendo-grid-column field="partnerDisplayName" title="Khách hàng" width="200">
                         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                            <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerName}}</a>
+                            <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerDisplayName}}</a>
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column field="partnerRef" title="Mã KH" width="120">

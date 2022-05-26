@@ -762,6 +762,7 @@ namespace Infrastructure.Services
                 var partner = partnerDict[item.PartnerId];
 
                 item.PartnerName = partner.Name;
+                item.PartnerDisplayName = partner.DisplayName;
                 item.PartnerPhone = partner.Phone;
                 item.PartnerRef = partner.Ref;
                 item.End = item.Begin + item.Debit - item.Credit;
@@ -856,12 +857,14 @@ namespace Infrastructure.Services
                     PartnerId = x.Partner.Id,
                     PartnerName = x.Partner.Name,
                     PartnerPhone = x.Partner.Phone,
+                    PartnerDisplayName = x.Partner.DisplayName
                 })
                 .Select(x => new
                 {
                     PartnerId = x.Key.PartnerId,
                     PartnerName = x.Key.PartnerName,
                     PartnerPhone = x.Key.PartnerPhone,
+                    PartnerDisplayName = x.Key.PartnerDisplayName,
                     Balance = x.Sum(s => s.Debit - s.Credit),
                 }).ToListAsync();
 
@@ -874,6 +877,7 @@ namespace Infrastructure.Services
                             PartnerId = item.PartnerId,
                             PartnerName = item.PartnerName,
                             PartnerPhone = item.PartnerPhone,
+                            PartnerDisplayName = item.PartnerDisplayName,
                             Begin = -item.Balance
                         });
                     }
@@ -894,6 +898,7 @@ namespace Infrastructure.Services
                 {
                     PartnerId = x.Partner.Id,
                     PartnerName = x.Partner.Name,
+                    PartnerDisplayName = x.Partner.DisplayName,
                     PartnerPhone = x.Partner.Phone,
                     Debit = x.Debit,
                     Credit = x.Credit,
@@ -904,10 +909,12 @@ namespace Infrastructure.Services
                        PartnerId = x.PartnerId,
                        PartnerName = x.PartnerName,
                        PartnerPhone = x.PartnerPhone,
+                       PartnerDisplayName = x.PartnerDisplayName,
                    }, (k, g) => new
                    {
                        PartnerId = k.PartnerId,
                        PartnerName = k.PartnerName,
+                       PartnerDisplayName = k.PartnerDisplayName,
                        PartnerPhone = k.PartnerPhone,
                        Debit = g.Sum(s => s.AccountCode == "KHTU" ? s.Debit : 0),
                        Credit = g.Sum(s => s.AccountCode == "KHTU" ? s.Credit : 0),
@@ -923,6 +930,7 @@ namespace Infrastructure.Services
                     {
                         PartnerId = item.PartnerId,
                         PartnerName = item.PartnerName,
+                        PartnerDisplayName = item.PartnerDisplayName,
                         PartnerPhone = item.PartnerPhone,
                         Debit = item.Credit,
                         Credit = item.Debit,
@@ -957,6 +965,7 @@ namespace Infrastructure.Services
                     Refund = retrn,
                     End = end,
                     PartnerName = value.PartnerName,
+                    PartnerDisplayName = value.PartnerDisplayName,
                     PartnerPhone = value.PartnerPhone,
                     PartnerId = item.Key,
                     DateFrom = val.DateFrom,

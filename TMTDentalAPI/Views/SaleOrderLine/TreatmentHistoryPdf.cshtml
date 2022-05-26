@@ -65,7 +65,7 @@
                                     <div class="o_field_widget">@Model.Partner.DisplayGender</div>
                                 </td>
                             </tr>
-                            @if (!string.IsNullOrEmpty(Model.Partner.DateOfBirth) || string.IsNullOrEmpty(Model.Partner.Age))
+                            @if (!string.IsNullOrEmpty(Model.Partner.DateOfBirth) || !string.IsNullOrEmpty(Model.Partner.Age))
                             {
                                 <tr>
                                     <td colspan="1" class="o_td_label">

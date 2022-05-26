@@ -422,7 +422,7 @@ namespace Infrastructure.Services
                                         || x.Product.NameNoSign.Contains(val.Search) || x.OrderPartner.NameNoSign.Contains(val.Search)
                                         || x.Order.Name.Contains(val.Search));
             if (!string.IsNullOrEmpty(val.PartnerName))
-                query = query.Where(x => x.OrderPartner.NameNoSign.Contains(val.PartnerName) || x.OrderPartner.Name.Contains(val.PartnerName));
+                query = query.Where(x => x.OrderPartner.NameNoSign.Contains(val.PartnerName) || x.OrderPartner.Name.Contains(val.PartnerName) || x.OrderPartner.Ref.Contains(val.PartnerName));
             if (val.OrderPartnerId.HasValue)
                 query = query.Where(x => x.OrderPartnerId == val.OrderPartnerId);
             if (val.ProductId.HasValue)

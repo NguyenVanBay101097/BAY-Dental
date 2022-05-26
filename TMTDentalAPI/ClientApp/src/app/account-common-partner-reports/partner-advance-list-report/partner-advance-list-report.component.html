@@ -59,7 +59,7 @@
                     [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
                     <kendo-grid-column title="Khách hàng" width="200">
                         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
-                            <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerName}}</a>
+                            <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerDisplayName}}</a>
                         </ng-template>
                     </kendo-grid-column>
                     <kendo-grid-column title="Số điện thoại" width="120">

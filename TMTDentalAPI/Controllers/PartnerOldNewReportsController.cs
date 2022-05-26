@@ -128,31 +128,32 @@ namespace TMTDentalAPI.Controllers
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add("ThongKeKhachHangDieuTri");
-                worksheet.Cells["A1:H1"].Value = "THỐNG KÊ KHÁCH HÀNG ĐIỀU TRỊ";
-                worksheet.Cells["A1:H1"].Style.Font.Size = 14;
-                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
-                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A1:H1"].Merge = true;
-                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
-                worksheet.Cells["A2:H2"].Value = dateToDate;
-                worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                worksheet.Cells["A2:H2"].Merge = true;
-                worksheet.Cells["A3:H3"].Value = "";
+                worksheet.Cells["A1:I1"].Value = "THỐNG KÊ KHÁCH HÀNG ĐIỀU TRỊ";
+                worksheet.Cells["A1:I1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:I1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+                worksheet.Cells["A1:I1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:I1"].Merge = true;
+                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+                worksheet.Cells["A2:I2"].Value = dateToDate;
+                worksheet.Cells["A2:I2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A2:I2"].Merge = true;
+                worksheet.Cells["A3:I3"].Value = "";
                 
                 worksheet.Cells["A4"].Value = "Khách hàng";
                 worksheet.Cells["B4"].Value = "Tuổi";
                 worksheet.Cells["B4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                 worksheet.Cells["C4"].Value = "Giới tính";
                 worksheet.Cells["D4"].Value = "Địa chỉ";
-                worksheet.Cells["E4"].Value = "Doanh thu";
-                worksheet.Cells["E4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                worksheet.Cells["F4"].Value = "Nguồn";
-                worksheet.Cells["G4"].Value = "Nhãn";
-                worksheet.Cells["H4"].Value = "Tình trạng điều trị";
-                worksheet.Cells["A4:H4"].Style.Font.Bold = true;
-                worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
-                worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
+                worksheet.Cells["E4"].Value = "Ngày điều trị gần nhất";
+                worksheet.Cells["F4"].Value = "Doanh thu";
+                worksheet.Cells["F4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                worksheet.Cells["G4"].Value = "Nguồn";
+                worksheet.Cells["H4"].Value = "Nhãn";
+                worksheet.Cells["I4"].Value = "Tình trạng điều trị";
+                worksheet.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
 
                 var row = 5;
                 foreach (var item in data.Data)
@@ -163,11 +164,14 @@ namespace TMTDentalAPI.Controllers
                     worksheet.Cells[row, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     worksheet.Cells[row, 3].Value = item.Gender == "male"? "Nam" : (item.Gender == "female" ? "Nữ" : "Khác");
                     worksheet.Cells[row, 4].Value = item.Address;
-                    worksheet.Cells[row, 5].Value = item.Revenue;
-                    worksheet.Cells[row, 5].Style.Numberformat.Format = "#,##0";
-                    worksheet.Cells[row, 6].Value = item.SourceName;
-                    worksheet.Cells[row, 7].Value = string.Join("; ",item.Categories.Select(x=> x.Name));
-                    worksheet.Cells[row, 8].Value = item.OrderState == "sale" ? "Đang điều trị" : (item.OrderState == "done" ? "Hoàn thành" : "Chưa phát sinh") ;
+                    worksheet.Cells[row, 5].Value = item.LastDateOfTreatment;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "dd/mm/yyyy";
+
+                    worksheet.Cells[row, 6].Value = item.Revenue;
+                    worksheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
+                    worksheet.Cells[row, 7].Value = item.SourceName;
+                    worksheet.Cells[row, 8].Value = string.Join("; ",item.Categories.Select(x=> x.Name));
+                    worksheet.Cells[row, 9].Value = item.OrderState == "sale" ? "Đang điều trị" : (item.OrderState == "done" ? "Hoàn thành" : "Chưa phát sinh") ;
 
                     row++;
                     //add child header

@@ -502,7 +502,7 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells.AutoFitColumns();
 
             }
-            return File(package.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"lich_su_dieu_tri_[{partner.Ref}]");
+            return File(package.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Lich_su_dieu_tri_[{partner.Ref}]");
         }
 
         [HttpGet("[action]")]
@@ -533,7 +533,7 @@ namespace TMTDentalAPI.Controllers
                 Objects = { objectSettings }
             };
             var file = _converter.Convert(pdf);
-            return File(file, "application/pdf", $"lich_su_dieu_tri_[{data.Partner.Ref}]");
+            return File(file, "application/pdf", $"Lich_su_dieu_tri_[{data.Partner.Ref}]");
         }
     }
 }

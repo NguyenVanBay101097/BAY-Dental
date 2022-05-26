@@ -329,6 +329,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
 
         public string PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
 
         public string PartnerRef { get; set; }
 
@@ -451,6 +452,7 @@ namespace Umbraco.Web.Models.ContentEditing
         public Guid PartnerId { get; set; }
 
         public string PartnerName { get; set; }
+        public string PartnerDisplayName { get; set; }
 
         public string PartnerPhone { get; set; }
 
