@@ -2568,6 +2568,9 @@ namespace Infrastructure.Services
             if (!string.IsNullOrEmpty(val.CityCode))
                 mainQuery = mainQuery.Where(x => x.CityCode == val.CityCode);
 
+            if (val.CompanyId.HasValue)
+                mainQuery = mainQuery.Where(x => x.CompanyId == val.CompanyId.Value);
+
             if (val.CityCodeIsNull.HasValue)
             {
                 if (val.CityCodeIsNull.Value)
@@ -3317,7 +3320,17 @@ namespace Infrastructure.Services
                 //Date = s.Max(x => x.DateOrder)
             }).ToDictionary(g => g.PartnerId, x => x);
 
-            var partnerLastTreatmentDict = await partnerReportObj.PartnerLastTreatmentQuery(new PartnerLastTreatmentReq() { CompanyId = val.CompanyId}).ToDictionaryAsync(x=> x.PartnerId, x=> x.LastTreatmentDate);
+            var orderLineObj = GetService<ISaleOrderLineService>();
+            var partnerLastTreatmentList = await orderLineObj.SearchQuery(x => x.State != "draft" && allowedCompanyIds.Contains(x.Company.Id) &&
+                res.Select(i => i.Id).Contains(x.OrderPartner.Id))
+                .GroupBy(x => x.OrderPartner.Id)
+                .Select(x => new
+                {
+                    PartnerId = x.Key,
+                    LastTreatmentDate = x.Max(s => s.Date)
+                }).ToListAsync();
+
+            var partnerLastTreatmentDict = partnerLastTreatmentList.ToDictionary(x => x.PartnerId, x => x.LastTreatmentDate);
 
             var partnerDebitDict = amlObj._QueryGet(state: "posted", companyIds: allowedCompanyIds)
                 .Where(x => res.Select(i => i.Id).Contains(x.PartnerId.Value) && x.Account.Code == "CNKH")
@@ -3350,7 +3363,7 @@ namespace Infrastructure.Services
                 item.OrderResidual = partnerOrderStateDict.ContainsKey(item.Id) ? partnerOrderStateDict[item.Id].AmountRevenueExpect : 0;
                 item.TotalDebit = partnerDebitDict.ContainsKey(item.Id) ? partnerDebitDict[item.Id].AmountTotalDebit : 0;
                 item.CardTypeName = partnerCardTypeDict.ContainsKey(item.Id) ? partnerCardTypeDict[item.Id].CardTypeName : null;
-                item.SaleOrderDate = partnerLastTreatmentDict.ContainsKey(item.Id) ? (DateTime?)partnerLastTreatmentDict[item.Id] : null;
+                item.SaleOrderDate = partnerLastTreatmentDict.ContainsKey(item.Id) ? partnerLastTreatmentDict[item.Id] : null;
                 item.AppointmentDate = partnerAppointmentDict.ContainsKey(item.Id) ? (DateTime?)partnerAppointmentDict[item.Id].AppointmentDate : null;
             }
 
