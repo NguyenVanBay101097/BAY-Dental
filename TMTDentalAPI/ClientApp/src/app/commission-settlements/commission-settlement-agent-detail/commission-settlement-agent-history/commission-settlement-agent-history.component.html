@@ -45,8 +45,8 @@
             {{dataItem.journalName}}
         </ng-template>
     </kendo-grid-command-column>
-    <kendo-grid-command-column field="reason" title="Nội dung" width="150">
-    </kendo-grid-command-column>
+    <kendo-grid-column field="reason" title="Nội dung" width="150">
+    </kendo-grid-column>
     <kendo-grid-command-column title="Trạng thái" width="120">
         <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
             {{ getState(dataItem.state)}}

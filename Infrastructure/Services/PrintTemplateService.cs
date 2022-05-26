@@ -141,7 +141,7 @@ namespace Infrastructure.Services
                     {
                         var laboOrderObj = GetService<ILaboOrderService>();
                         var res = await laboOrderObj.SearchQuery(x => resIds.Contains(x.Id))
-                          .Include(x => x.Company).Include(x => x.Partner)
+                          .Include(x => x.Company).ThenInclude(x => x.Partner)
                           .Include(x => x.Customer)
                           .Include(x => x.LaboBiteJoint).Include(x => x.LaboBridge)
                           .Include(x => x.LaboFinishLine).Include(x => x.SaleOrderLine)
@@ -159,7 +159,7 @@ namespace Infrastructure.Services
                     {
                         var purchaseOrderObj = GetService<IPurchaseOrderService>();
                         var res = await purchaseOrderObj.SearchQuery(x => resIds.Contains(x.Id))
-                          .Include(x => x.Company).Include(x => x.Partner)
+                          .Include(x => x.Company).ThenInclude(x => x.Partner)
                           .Include(x => x.Journal).Include(x => x.CreatedBy)
                           .Include(x => x.Picking)
                           .Include(x => x.OrderLines).ThenInclude(x => x.Product)
