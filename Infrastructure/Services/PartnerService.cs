@@ -3312,7 +3312,7 @@ namespace Infrastructure.Services
                 PartnerId = s.Key,
                 CountSale = s.Sum(x => x.State == "sale" ? 1 : 0),
                 CountDone = s.Sum(x => x.State == "done" ? 1 : 0),
-                AmountRevenueExpect = s.Sum(x => x.Residual),
+                AmountRevenueExpect = s.Sum(x => x.State == "draft" ? 0 : x.Residual),
                 Date = s.Max(x => x.DateOrder)
             }).ToDictionary(g => g.PartnerId, x => x);
 
