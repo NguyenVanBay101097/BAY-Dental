@@ -385,7 +385,7 @@ namespace TMTDentalAPI.Controllers
                 var row = 5;
                 foreach (var item in data)
                 {
-                    worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerName) ? item.PartnerName : "Không xác định";
+                    worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerDisplayName) ? item.PartnerDisplayName : "Không xác định";
                     worksheet.Cells[row, 2, row, 3].Value = item.PartnerRef;
                     worksheet.Cells[row, 2, row, 3].Merge = true;
                     worksheet.Cells[row, 2, row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
@@ -508,7 +508,7 @@ namespace TMTDentalAPI.Controllers
                 var row = 5;
                 foreach (var item in data)
                 {
-                    worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerName) ? item.PartnerName : "Không xác định";
+                    worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerDisplayName) ? item.PartnerDisplayName : "Không xác định";
                     worksheet.Cells[row, 1, row, 3].Merge = true;
                     worksheet.Cells[row, 1, row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     worksheet.Cells[row, 4].Value = item.PartnerPhone;

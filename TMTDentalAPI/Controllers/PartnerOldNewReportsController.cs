@@ -159,7 +159,7 @@ namespace TMTDentalAPI.Controllers
                 foreach (var item in data.Data)
                 {
                     //add parent data
-                    worksheet.Cells[row, 1].Value = item.Name;
+                    worksheet.Cells[row, 1].Value = item.DisplayName;
                     worksheet.Cells[row, 2].Value = item.Age;
                     worksheet.Cells[row, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     worksheet.Cells[row, 3].Value = item.Gender == "male"? "Nam" : (item.Gender == "female" ? "Nữ" : "Khác");
