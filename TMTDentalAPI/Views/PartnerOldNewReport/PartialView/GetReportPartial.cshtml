@@ -46,7 +46,7 @@
                     @foreach (var item in Model.Data)
                     {
                         <tr>
-                            <td class="" style="width:100px">@item.Name</td>
+                            <td class="" style="width:100px">@item.DisplayName</td>
                             <td class="" style="width:40px">@item.Age</td>
                             <td class="" style="width:50px">@(!string.IsNullOrEmpty(item.Gender) && gender_dict.ContainsKey(item.Gender) ? gender_dict[item.Gender] : "Nam")</td>
                             <td style="width:150px">@item.Address</td>
