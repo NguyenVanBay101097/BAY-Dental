@@ -35,9 +35,9 @@
         <div class="d-flex align-items-start w-100 flex-wrap">
             <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
                 (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
-            <kendo-combobox class="ml-1 w-auto" [placeholder]="'Loại thu'" (valueChange)="onChangePaymentType($event)"
+            <kendo-combobox class="ml-1 w-auto" [placeholder]="'Loại phiếu'" (valueChange)="onChangePaymentType($event)"
                 [data]="filteredPaymentTypes" [valueField]="'value'" [textField]="'text'" [valuePrimitive]="true"></kendo-combobox>
-            <kendo-multiselect [placeholder]="'Loại thu chi'" class="ml-1" style="width: 250px;" [filterable]="true"
+            <kendo-multiselect [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [placeholder]="'Loại thu chi'" class="ml-1" style="width: 250px;"
                 [data]="filteredAccountCode" [textField]="'name'" [valueField]="'id'" [valuePrimitive]="true"
                 [(ngModel)]="accountIds" (valueChange)="onAccountValueChange($event)"></kendo-multiselect>
             <button type="button" class="btn btn-primary ml-1" (click)="exportExcelFile()">
@@ -49,7 +49,7 @@
         </div>
         <div class="t-search t-search-left">
             <div class="o_searchview">
-                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu" [(ngModel)]="search"
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, đối tác" [(ngModel)]="search"
                     (ngModelChange)="this.searchUpdate.next($event)" />
                 <span class="o_searchview_icon fas fa-search"></span>
             </div>

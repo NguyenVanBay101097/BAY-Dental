@@ -296,7 +296,7 @@
     <record model="account.account" id="data_account_HHNGT">
       <field name="name">Hoa hồng người giới thiệu</field>
       <field name="code">HHNGT</field>
-      <field name="user_type_id" ref="account.data_account_type_expenses" />
+      <field name="user_type_id" ref="account.data_account_type_current_liabilities" />
     </record>
 
     <record model="account.account" id="data_account_CNBH">

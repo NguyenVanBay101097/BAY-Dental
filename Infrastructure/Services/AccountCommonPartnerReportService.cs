@@ -1063,7 +1063,7 @@ namespace Infrastructure.Services
                 FromDate = val.FromDate,
                 ToDate = val.ToDate,
                 CompanyId = val.CompanyId,
-                PartnerId = val.PartnerId
+                PartnerId = val.PartnerId,
             };
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == UserId);
             result.User = _mapper.Map<ApplicationUserSimple>(user);

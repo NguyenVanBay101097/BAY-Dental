@@ -221,7 +221,8 @@ namespace Infrastructure.Services
             query = query.Where(x => types.Contains(x.Journal.Type) && x.AccountInternalType != "liquidity");
 
             if (!string.IsNullOrEmpty(search))
-                query = query.Where(x => x.Move.InvoiceOrigin.Contains(search));
+                query = query.Where(x => x.Move.InvoiceOrigin.Contains(search) || x.Partner.Name.Contains(search) || x.Partner.NameNoSign.Contains(search) ||
+                    x.Partner.Ref.Contains(search));
 
             if (journalId.HasValue)
                 query = query.Where(x => x.JournalId == journalId);

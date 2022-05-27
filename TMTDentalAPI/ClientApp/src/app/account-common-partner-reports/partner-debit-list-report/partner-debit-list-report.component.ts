@@ -198,6 +198,7 @@ export class PartnerDebitListReportComponent implements OnInit {
     val.toDate = this.dateTo ? this.intlService.formatDate(this.dateTo, 'yyyy-MM-dd') : null;
     val.search = this.search ? this.search : '';
     val.companyId = this.companyId || '';
+    val.type = this.type || '';
     this.reportService.printReportPartnerDebit(val).subscribe(result => this.printService.printHtml(result));
   }
 
