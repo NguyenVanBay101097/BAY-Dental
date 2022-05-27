@@ -107,6 +107,10 @@
                             {
                                 @("- " + service.value.Name)  @Html.Raw(service.i + 1 != item.Diagnosis.Count()?"<br/>":"")
                             }
+                        @if (!string.IsNullOrEmpty(item.Note))
+                        {
+                            <span><i>Ghi chú: @item.Note</i></span>
+                        }
                         </td>
                     </tr>
                 }

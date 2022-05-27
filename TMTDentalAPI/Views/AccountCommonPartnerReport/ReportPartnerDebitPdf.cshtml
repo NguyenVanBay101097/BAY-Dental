@@ -46,7 +46,6 @@
                 <thead>
                     <tr class="bg-info font-semibold">
                         <th scope="col" class="" style="width:100px">Khách hàng</th>
-                        <th scope="col" class="" style="width:100px">Mã KH</th>
                         <th scope="col" class="" style="width:100px">Số điện thoại</th>
                         <th scope="col" class="text-right" style="width:100px">Nợ đầu kỳ</th>
                         <th scope="col" class="text-right" style="width:100px">Phát sinh</th>
@@ -57,7 +56,6 @@
                 </thead>
                 <tr>
                     <td class="" style="width:100px">@(item.PartnerDisplayName)</td>
-                    <td class="" style="width:100px">@(item.PartnerRef)</td>
                     <td class="" style="width:100px">@(item.PartnerPhone)</td>
                     <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Begin))</td>
                     <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Debit))</td>

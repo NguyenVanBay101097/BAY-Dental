@@ -369,10 +369,9 @@ namespace TMTDentalAPI.Controllers
                 worksheet.Cells["A2:H2"].Merge = true;
                 worksheet.Cells["A3:H3"].Value = "";
                 worksheet.Cells["A4"].Value = "Khách hàng";
-                worksheet.Cells["B4:C4"].Merge = true;
-                worksheet.Cells["B4:C4"].Value = "Mã khách hàng";
-                worksheet.Cells["B4:C4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                worksheet.Cells["D4"].Value = "Số điện thoại";
+                worksheet.Cells["B4:D4"].Merge = true;
+                worksheet.Cells["B4:D4"].Value = "Số điện thoại";
+                worksheet.Cells["B4:D4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                 worksheet.Cells["E4"].Value = "Nợ đầu kỳ";
                 worksheet.Cells["F4"].Value = "Phát sinh";
                 worksheet.Cells["G4"].Value = "Thanh toán";
@@ -386,10 +385,9 @@ namespace TMTDentalAPI.Controllers
                 foreach (var item in data)
                 {
                     worksheet.Cells[row, 1].Value = !string.IsNullOrEmpty(item.PartnerDisplayName) ? item.PartnerDisplayName : "Không xác định";
-                    worksheet.Cells[row, 2, row, 3].Value = item.PartnerRef;
-                    worksheet.Cells[row, 2, row, 3].Merge = true;
-                    worksheet.Cells[row, 2, row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    worksheet.Cells[row, 4].Value = item.PartnerPhone;
+                    worksheet.Cells[row, 2, row, 4].Value = item.PartnerPhone;
+                    worksheet.Cells[row, 2, row, 4].Merge = true;
+                    worksheet.Cells[row, 2, row, 4].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     worksheet.Cells[row, 4].Style.Numberformat.Format = "@";
 
                     worksheet.Cells[row, 5].Value = item.Begin;

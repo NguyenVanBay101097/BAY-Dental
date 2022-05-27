@@ -63,8 +63,6 @@
                             <a class="text-primary" [routerLink]="['/partners/customer/' + dataItem.partnerId]">{{dataItem.partnerDisplayName}}</a>
                         </ng-template>
                     </kendo-grid-column>
-                    <kendo-grid-column field="partnerRef" title="Mã KH" width="120">
-                    </kendo-grid-column>
                     <kendo-grid-column field="partnerPhone" title="Số điện thoại" width="120">
                     </kendo-grid-column>
                     <kendo-grid-column field="begin" format="{0:n0}" [headerClass]="'text-right'" class="text-right" title="Nợ đầu kỳ" width="150">
@@ -77,9 +75,7 @@
                     </kendo-grid-column>
 
                     <kendo-grid-excel fileName="BaoCaoCongNoKH.xlsx">
-                        <kendo-excelexport-column field="partnerName" title="Khách hàng" width="200">
-                        </kendo-excelexport-column>
-                        <kendo-excelexport-column field="partnerRef" title="Mã KH" width="120">
+                        <kendo-excelexport-column field="partnerDisplayName" title="Khách hàng" width="200">
                         </kendo-excelexport-column>
                         <kendo-excelexport-column field="partnerPhone" title="Số điện thoại" width="120">
                         </kendo-excelexport-column>
