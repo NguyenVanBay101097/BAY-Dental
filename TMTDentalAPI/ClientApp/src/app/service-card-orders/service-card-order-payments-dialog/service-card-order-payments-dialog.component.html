@@ -1,0 +1,96 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group" >
+                    <div class="row">
+                        <div class="o_group o_inner_group col-5" style="border-right: 1px solid #f0eeee;">
+                            <div class="hbox-left" class="mt-1">
+                                <div>
+                                    <div>
+                                        <div class="list-group">
+                                            <div *ngFor="let item of filteredJournals">
+                                                <a class="list-group-item rounded-2 mb-1" (click)="addPayment(item)">
+                                                    {{item.name}}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_group o_inner_group col-7">
+                            <div>
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-right">Nợ</th>
+                                            <th class="text-right">Trả</th>
+                                            <th class="text-right">Dư</th>
+                                            <th class="text-right">Phương thức</th>
+                                            <th class="text-right">
+                                                #
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="cusPayments">
+                                        <ng-container *ngFor="let payment of cusPayments.controls; let i=index; let even=even">
+                                            <tr [formGroupName]="i" [style.background-color]="rowClicked == i ? '#ced4da' : '#fff'"
+                                            (click)="changeTableRowColor(i)">
+                                                <td class="text-right">
+                                                        {{payment.get('amountResidual').value | number}}
+                                                </td>
+                                                <td class="text-right" [class.border-secondary]="rowClicked == i">
+                                                    <div class="from-contr">
+                                                        {{payment.get('amount').value | number}} 
+                                                    </div>
+                                                   
+                                                    <!-- <kendo-numerictextbox [format]="'n0'" style="max-width: 200px;"
+                                                        formControlName="amount" (valueChange)="onChangePayment(payment)">
+                                                    </kendo-numerictextbox> -->
+                                                </td>
+                                                <td class="text-right">
+                                                    <div>
+                                                        {{payment.get('amountRefund').value | number}}
+                                                    </div>
+                                                </td>
+                                                <td class="text-right">{{payment.get('journal').value.name }}</td>
+                                                <td class="text-right">
+                                                    <div>
+                                                        <button type="button" class="btn btn-icon btn-sm btn-light"
+                                                            (click)="deletePay(i)">
+                                                            <span class="k-icon k-i-delete"></span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                
+                                            </tr>
+                                           
+                                        </ng-container>
+                                        <tr *ngIf="totalResidual > 0">
+                                            <td class="text-right">{{totalResidual | number}}</td>                                                                                            
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+    </div>
+   
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="setPayments()">Xác nhận [Enter]</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng [Esc]</button>
+</footer>

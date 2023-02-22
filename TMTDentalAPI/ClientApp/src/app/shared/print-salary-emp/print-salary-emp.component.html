@@ -1,0 +1,133 @@
+<div class="px-3 py-3 overflow-auto page-break">
+    <div class="px-3">
+        <div class="row border border-secondary">
+            <div class="col-4">
+                <div class="border-right" style="text-align: center; padding: 15px;">
+                    <div class="logo">
+                        <img class="logo-image" src="./assets/images/user.png" alt="">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-8">
+                <div class="title" style="text-align: center; padding: 15px;">
+                    <h3>PHIẾU THANH TOÁN LƯƠNG NHÂN VIÊN</h3>
+                    <p>Tháng 10/2020</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="h-90 w-100 pt-3">
+        <div class="h-30 w-100 body-content d-flex">
+            <div class="h-100 w-50 pr-2">
+                <h4>Bảng thông tin nhân viên</h4>
+                <table class="table table-bordered  table-sm">
+                    <tbody>
+                        <tr>
+                            <td>Nhân viên</td>
+                            <td>Nguyễn Văn Thắng</td>
+                        </tr>
+                        <tr>
+                            <td>Mã nhân viên</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Lương/tháng</td>
+                            <td>15000000</td>
+                        </tr>
+                        <tr>
+                            <td>Số ngày nghỉ/tháng</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Số giờ làm/ngày</td>
+                            <td>8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="h-100 w-50 pl-2">
+                <h4>Chấm công</h4>
+                <table class="table table-bordered table-sm">
+                    <tbody>
+                        <tr>
+                            <th>Nội dung</th>
+                            <th>Sô ngày</th>
+                        </tr>
+
+                        <tr>
+                            <td>Số ngày công</td>
+                            <td>23</td>
+                        </tr>
+                        <tr>
+                            <td>Số ngày nghỉ</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Ngày nghỉ không lương</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>Ngày làm thêm</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>Số giờ tăng ca</td>
+                            <td>8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="h-60 w-100 pt-3">
+            <div class="d-flex">
+                <div class="w-50">
+                    <h4>Chi tiết lương</h4>
+                </div>
+                <div class="w-50">
+                    <h4 class="float-right">ĐVT: VNĐ</h4>
+                </div>
+            </div>
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Nội dung</th>
+                        <th scope="col">Số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr [ngClass]="{'active':item && !item.no}" *ngFor="let item of salaryDetails">
+                        <td>{{item.no}}</td>
+                        <td>{{item.lable}}</td>
+                        <td class="text-right">{{item.content | number}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="h-10 w-100 pt-2">
+            <table class="table border-none">
+                <tr>
+                    <th class="text-center">Người lập phiếu</th>
+                    <th class="text-center">Thứ..., Ngày...tháng...năm...
+                        <p>Người lao động</p>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th class="text-center">
+                        Đặng Thế Tài
+                    </th>
+                    <th class="text-center">Nguyễn Văn Thắng</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

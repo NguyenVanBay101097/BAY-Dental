@@ -1,0 +1,49 @@
+<div class="container py-3">
+    <div class="flex-0-0-auto mb-2">
+        <div class="filter d-flex flex-wrap mb-2">
+            <app-date-range-picker-filter [showClearButton]="false" [opens]="'right'" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo"
+                (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+            <kendo-combobox width="auto" [placeholder]="'Tất cả chi nhánh'" class="mr-1" [valueField]="'id'"
+                [textField]="'name'" [filterable]="true" [data]="listCompany"
+                (selectionChange)="onSelectCompany($event)" #companyCbx>
+            </kendo-combobox>
+            <div class="dropdown mr-1">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-download"></i> Xuất File
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" (click)="onExcelExport()">Xuất Excel</a>
+                    <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <div style="position: relative; height: 300px;">
+                <canvas baseChart
+                    [type]="'bar'"
+                    [labels]="barChartLabels"
+                    [datasets]="barChartData"
+                    [options]="barChartOptions">
+                </canvas>
+            </div>
+        </div>
+    </div>
+    <kendo-grid #grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
+        (pageChange)="pageChange($event)">
+        <kendo-grid-column title="Giờ tiếp nhận">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.timeRange}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Số lượng">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.timeRangeCount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-customer-receipt-report-for-time-detail [itemTime]="dataItem" [dateFrom]="dateFrom" [dateTo]="dateTo"
+                [companyId]="companyId"></app-customer-receipt-report-for-time-detail>
+        </div>
+    </kendo-grid>
+</div>

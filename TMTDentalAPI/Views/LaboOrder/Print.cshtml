@@ -1,0 +1,254 @@
+﻿@model ApplicationCore.Entities.LaboOrder
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var now = DateTime.Now;
+}
+
+<div>
+    @if (!configPrint.IsInfoCompany)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.Company.Logo))
+            {
+                <img class="img-fluid me-3 w-20" src="@Model.Company.Logo" alt="@Model.Company.Name">
+            }
+            <div>
+                <div class="text-xl font-semibold">@Model.Company.Name</div>
+                @if (!string.IsNullOrEmpty(Model.Company.Partner.GetAddress()))
+                {
+                    <div>Địa chỉ: @Model.Company.Partner.GetAddress()</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Phone))
+                {
+                    <div>ĐT: @Model.Company.Phone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Company.Email))
+                {
+                    <div>Email: @Model.Company.Email</div>
+                }
+            </div>
+        </div>
+    }
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">PHIẾU LABO</div>
+        <div>Ngày @now.Day tháng @now.Month năm @now.Year </div>
+        <div class="font-semibold">Số: @Model.Name</div>
+    </div>
+    <div class="o_form_view  mb-2">
+        <div class="text-lg font-semibold mb-1">THÔNG TIN CHUNG</div>
+        <div class="d-flex">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Customer.Name)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Bác sĩ chỉ định
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name : "")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                NCC Labo
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.Partner.Name)</td>
+                    </tr>
+                    
+
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Số phiếu điều trị
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Order.Name)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày gửi
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@(Model.DateOrder.ToString("dd/MM/yyyy"))</td>
+                    </tr>
+                    @if (!Model.DateReceipt.HasValue)
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày nhận dự kiến
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.DatePlanned.HasValue ? Model.DatePlanned.Value.ToString("dd/MM/yyyy") : "")</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày nhận thực tế
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.DateReceipt.HasValue ? Model.DateReceipt.Value.ToString("dd/MM/yyyy") : "")</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="o_form_view  mb-2">
+        <div class="d-flex">
+            <div class="col-6">
+                <div class="text-lg font-semibold mb-1">CHI TIẾT PHIẾU</div>
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Loại phục hình
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Name)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Hãng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.SaleOrderLine.Product.Firm)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Răng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Join(",", Model.LaboOrderToothRel.Select(x => x.Tooth.Name)))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Màu sắc chi tiết
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Color)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Số lượng
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Quantity.ToString("n0"))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Chỉ định
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Indicated)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ghi chú
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Note)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6">
+                <div class="text-lg font-semibold mb-1">THÔNG SỐ LABO</div>
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Vật liệu
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Product != null ? Model.Product.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Đường hoàn tất
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.LaboFinishLine != null ? Model.LaboFinishLine.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Khớp cắn
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.LaboBiteJoint != null ? Model.LaboBiteJoint.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Kiểu nhịp
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.LaboBridge != null ? Model.LaboBridge.Name : "")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Gửi kèm
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Join(", ", Model.LaboOrderProductRel.Select(x => x.Product.Name)))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ghi chú kĩ thuật
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.TechnicalNote)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="col ">
+        </div>
+        <div class="col ">
+            <div class="text-center">
+                <span class="font-semibold">Người đặt hàng</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.SaleOrderLine.Employee != null ? Model.SaleOrderLine.Employee.Name.ToUpper() : "")</span>
+            </div>
+        </div>
+    </div>
+</div>

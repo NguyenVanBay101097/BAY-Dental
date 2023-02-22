@@ -1,0 +1,39 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+      <ol class="breadcrumb">
+        <li class="active">Sale Order Process Update</li>
+      </ol>
+      <div class="o_cp_searchview">
+        <div class="o_cp_searchview_group">
+          <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm..." type="text" [(ngModel)]="search"
+              (ngModelChange)="this.searchUpdate.next($event)">
+          </div>
+        </div>
+      </div>
+      <div class="o_cp_left">
+        <div class="o_cp_buttons">
+          <button type="button" (click)="loadAll()" class="btn btn-primary btn-sm mr-2">
+            Load all
+          </button>
+          <button type="button" (click)="processAll()" class="btn btn-primary btn-sm mr-2">
+            Process all
+          </button>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+      </div>
+      <div class="o_cp_right">
+      </div>
+    </div>
+  </div>
+  
+  <div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+      (pageChange)="pageChange($event)">
+      <kendo-grid-column field="tenantHostName" title="Tên miền" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column field="state" title="Trạng thái" width="120">
+      </kendo-grid-column>
+    </kendo-grid>
+  </div>

@@ -1,0 +1,12 @@
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownAppointmentState"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-filter"></i>
+        {{getResult()}}
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownAppointmentState">
+        <button class="dropdown-item" *ngFor="let item of items" type="button" (click)="onSelect(item.value)">
+            <span>{{item.text}}</span>
+        </button>
+    </div>
+</div>

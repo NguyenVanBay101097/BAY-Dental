@@ -1,0 +1,23 @@
+.link-details {
+    text-align: end;
+    color: #0d6efd;
+}
+
+.title-header {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 28px;
+    text-transform: uppercase;
+    color: #1A6DE3;
+}
+
+.title-detail {
+    font-size: 14px;
+    line-height: 12px;
+    font-weight: 500;
+}
+
+.chart {
+    display: block;
+    height: 380px;
+}

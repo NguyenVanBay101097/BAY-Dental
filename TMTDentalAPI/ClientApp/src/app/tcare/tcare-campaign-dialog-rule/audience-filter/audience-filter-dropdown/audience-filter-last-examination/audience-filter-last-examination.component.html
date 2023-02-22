@@ -1,0 +1,18 @@
+<div class="card" style="width: 18rem;">
+    <div class="card-body p-3">
+        <h5 class="card-title">{{name}}</h5>
+        <form [formGroup]="formGroup" [formGroup]="formGroup">
+            <div class="form-group row mb-2">
+                <label class="col-sm-4 col-form-label">Sau</label>
+                <div class="col-sm-8">
+                    <div class="d-flex align-items-center">
+                        <kendo-numerictextbox formControlName="day" #dayNumeric [format]="'n0'" [min]="0">
+                        </kendo-numerictextbox>
+                        <span>Ngày</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu</button>
+        </form>
+    </div>
+</div>

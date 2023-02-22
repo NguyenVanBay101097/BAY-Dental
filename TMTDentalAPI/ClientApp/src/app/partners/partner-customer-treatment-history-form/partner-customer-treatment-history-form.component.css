@@ -1,0 +1,27 @@
+.form-right {
+    height: 100%;
+    overflow: hidden;
+}
+
+.empty-form-right {
+    height: 2%;
+}
+
+.action-form-right {
+    padding: 19px;
+    background-color: white;
+}
+
+.list-service-form-right {
+    height: 100%;
+    margin-left: 15px;
+    overflow: hidden;
+    background-color: white;
+}
+
+.form-payment-form-right {
+    height: 100%;
+    overflow: hidden;
+    margin-right: 15px;
+    background-color: white;
+}

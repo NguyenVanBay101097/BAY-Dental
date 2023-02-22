@@ -1,0 +1,548 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/programs/promotion-programs']">
+                    Chương trình khuyến mãi
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="id">{{program?.name}}</span>
+                <span *ngIf="!id">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_buttons">
+                    <button type="button" *ngIf="!program.active" type="button" class="btn btn-primary" accesskey="s"
+                        (click)="onSave()">
+                        Lưu
+                    </button>
+                    <button type="button" *ngIf="!program.active" type="button" class="btn btn-primary" (click)="onSaveActive()">
+                        Lưu và kích hoạt
+                    </button>
+                    <button type="button" *ngIf="!program.isPaused && program.active && program.statusDisplay == 'Đang chạy'"
+                        type="button" class="btn btn-primary" accesskey="s" (click)="onPause()">
+                        Tạm ngừng
+                    </button>
+                    <button type="button" *ngIf="program.isPaused && program.active && program.statusDisplay != 'Hết hạn'"
+                        type="button" class="btn btn-primary" accesskey="s" (click)="onActive()">
+                        Kích hoạt
+                    </button>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <ng-container *ngFor="let state of statusList; i as index">
+                        <button [disabled]="program?.statusDisplay !== state"
+                            class="btn o_arrow_button o_arrow_button_bg_primary disabled"
+                            [ngClass]="{'btn-primary': program?.statusDisplay === state, 'btn-secondary': program?.statusDisplay !== state}"
+                            type="button">
+                            {{state}}
+                        </button>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="container-xxl py-3">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="o_form_sheet m-0">
+                            <div class="o_not_full oe_button_box">
+                                <button type="button" class="btn oe_stat_button" (click)="showHistoryApplyPromotion()" title="Giá trị khuyến mãi">
+                                    <i class="fas fa-dollar-sign o_button_icon"></i>
+                                    <div class="o_field_widget o_stat_info o_readonly_modifier">
+                                        <span class="o_stat_text">
+                                            Giá trị khuyến mãi
+                                        </span>
+                                        <span class="o_stat_value">
+                                            {{program.amountTotal | number}}
+                                        </span>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="oe_title">
+                                <label class="o_form_label oe_edit_only"> Tên chương trình </label>
+                                <h1>
+                                    <input type="text" class="form-control" required formControlName="name" />
+                                </h1>
+                                <div *ngIf="f.name.errors && submitted"
+                                    class="text-danger mb-1">
+                                    <div *ngIf="f.name.errors.required"> Nhập tên chương trình khuyến mãi </div>
+                                </div>
+                            </div>
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_12">
+                                    <tbody>
+                                        <tr>
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hình thức khuyến mãi
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="btn-group" role="group"
+                                                    aria-label="Basic radio toggle button group">
+                                                    <input type="radio" class="btn-check"
+                                                        formControlName="promoCodeUsage" id="radio686_no_code_needed"
+                                                        value="no_code_needed" autocomplete="off"
+                                                        (change)="ChangPromoCodeUsage('no_code_needed')">
+                                                    <label class="btn btn-outline-primary button-radio rounded-left"
+                                                        [class.disabled]="program.active" for="radio686_no_code_needed">
+                                                        Tự động
+                                                    </label>
+
+                                                    <input type="radio" class="btn-check"
+                                                        formControlName="promoCodeUsage" id="radio686_code_needed"
+                                                        value="code_needed" autocomplete="off"
+                                                        (change)="ChangPromoCodeUsage('code_needed')">
+                                                    <label class="btn btn-outline-primary button-radio"
+                                                        [class.disabled]="program.active" for="radio686_code_needed">
+                                                        Mã khuyến mãi
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="promoCodeUsage != 'code_needed'">
+                                            <td class="o_td_label"></td>
+                                            <td>
+                                                <table class="o_group o_inner_group o_group_col_12 m-0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="o_td_label">
+                                                                <label>
+                                                                    Mã khuyến mãi
+                                                                </label>
+                                                            </td>
+                                                            <td colspan="1"><input type="text"
+                                                                    placeholder="Để trống tự động phát sinh"
+                                                                    class="form-control" formControlName="promoCode">
+                                                                <div *ngIf="f.promoCode.errors && (f.promoCode.touched || f.promoCode.dirty || submitted)"
+                                                                    class="text-danger mb-1">
+                                                                    <div *ngIf="f.promoCode.errors.exist">
+                                                                        Mã khuyến mãi đã tồn tại
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <td class="o_td_label">
+                                                            <label>
+                                                                <span>
+                                                                    Số lần áp dụng
+                                                                </span>
+                                                                <span class="text-primary" placement="top"
+                                                                    ngbTooltip="Số lượng phiếu điều trị được áp dụng mã khuyến mãi. 0 thì áp dụng không giới hạn">
+                                                                    <i class="fas fa-exclamation-circle"></i>
+                                                                </span>
+                                                            </label>
+                                                        </td>
+                                                        <td colspan="1" class="w-70">
+                                                            <input class="form-control" formControlName="maximumUseNumber" tmtautonumeric
+                                                                [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                            <div *ngIf="f.maximumUseNumber.errors && submitted"
+                                                                class="text-danger">
+                                                                <div *ngIf="f.maximumUseNumber.errors.required">
+                                                                    Nhập số lần áp dụng
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr colspan="1" style="width: 100%;">
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Loại khuyến mãi
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group"
+                                                    aria-label="Basic radio toggle button group">
+                                                    <input type="radio" class="btn-check" formControlName="discountType"
+                                                        id="radioDiscountPercent" value="percentage" autocomplete="off"
+                                                        (change)="ChangeDiscountType('percentage')">
+                                                    <label class="btn btn-outline-primary button-radio rounded-left"
+                                                        [class.disabled]="program.active" for="radioDiscountPercent">
+                                                        Phần trăm
+                                                    </label>
+                                                    <input type="radio" class="btn-check" formControlName="discountType"
+                                                        id="radioDiscountFixed" value="fixed_amount" autocomplete="off"
+                                                        (change)="ChangeDiscountType('fixed_amount')">
+                                                    <label class="btn btn-outline-primary button-radio"
+                                                        [class.disabled]="program.active" for="radioDiscountFixed">
+                                                        Số tiền
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
+                                            <td class="o_td_label"></td>
+                                            <td>
+                                                <table class="o_group o_inner_group o_group_col_12">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="o_td_label"> Phần trăm giảm giá </td>
+                                                            <td style="width: 100%">
+                                                                <div class="d-flex">
+                                                                    <div class="flex-fill">
+                                                                        <input class="form-control" style="width: 100%" formControlName="discountPercentage" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, maximumValue: 100, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.discountPercentage.errors && submitted"
+                                                                            class="text-danger mb-1">
+                                                                            <div *ngIf="f.discountPercentage.errors.required">
+                                                                                Nhập phần trăm giảm giá
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="ml-2">%</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="rewardType != 'discount' || discountType != 'percentage'">
+                                            <td class="o_td_label"></td>
+                                            <td>
+                                                <table class="o_group o_inner_group o_group_col_12">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="o_td_label">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" class="form-check-input"
+                                                                        (change)="checkApplyMaxDiscount($event.target.checked)"
+                                                                        formControlName="isApplyMaxDiscount"
+                                                                        id="isApplyMaxDiscount">
+                                                                    <label class="form-check-label"
+                                                                        for="isApplyMaxDiscount"> Mức giảm tối đa
+                                                                    </label>
+                                                                    <span class="text-primary ml-2" placement="top"
+                                                                        ngbTooltip="Số tiền tối đa có thể giảm">
+                                                                        <i class="fas fa-exclamation-circle"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td style="width: 100%" [class.d-none]="!isApplyMaxDiscount">
+                                                                <div class="d-flex">
+                                                                    <div class="flex-fill">
+                                                                        <input class="form-control" formControlName="discountMaxAmount" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.discountMaxAmount.errors && submitted"
+                                                                            class="text-danger">
+                                                                            <div *ngIf="f.discountMaxAmount.errors.required">
+                                                                                Nhập mức giảm tối đa
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="ml-2"> VNĐ </span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="rewardType != 'discount' || discountType != 'fixed_amount'">
+                                            <td class="o_td_label"></td>
+                                            <td>
+                                                <table class="o_group o_inner_group o_group_col_12">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="o_td_label"> Số tiền giảm giá </td>
+                                                            <td style="width: 100%">
+                                                                <div class="d-flex">
+                                                                    <div class="flex-fill">
+                                                                        <input class="form-control" formControlName="discountFixedAmount" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.discountFixedAmount.errors && submitted"
+                                                                            class="text-danger mb-1">
+                                                                            <div *ngIf="f.discountFixedAmount.errors.required">
+                                                                                Nhập số tiền giảm giá
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="ml-2">VNĐ</span>
+                                                                </div>
+                                                             
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="['product', 'free_shipping'].indexOf(rewardType) !== -1">
+                                            <td class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Khuyến mãi theo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="o_field_radio o_vertical o_field_widget">
+                                                    <div class="custom-control custom-radio o_radio_item">
+                                                        <input type="radio" formControlName="discountApplyOn"
+                                                            class="custom-control-input o_radio_input"
+                                                            id="radio151_on_order" value="on_order"
+                                                            (change)="onChangeOption($event.target.value)">
+                                                        <label class="custom-control-label"
+                                                            for="radio151_on_order">
+                                                            Phiếu điều trị
+                                                        </label>
+                                                        <span class="text-primary ml-2" placement="top"
+                                                            ngbTooltip="KM giảm trên thành tiền phiếu điều trị">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div [class.d-none]="discountApplyOn != 'on_order'">
+                                                        <div class="d-flex">
+                                                            <div class="form-check d-flex mr-2">
+                                                                <input type="checkbox"
+                                                                    (change)="checkMinAmoutSaleOrder($event.target.checked)"
+                                                                    class="form-check-input"
+                                                                    formControlName="isApplyMinimumDiscount"
+                                                                    id="isApplyMinimumDiscount">
+                                                                <label class="form-check-label"
+                                                                    for="isApplyMinimumDiscount">
+                                                                    Giá trị phiếu điều trị tối thiểu
+                                                                </label>
+                                                                <span class="text-primary ml-2" placement="top"
+                                                                    ngbTooltip="Tổng tiền của phiếu điều trị phải đạt giá trị tối thiểu mới được áp dụng khuyến mãi">
+                                                                    <i class="fas fa-exclamation-circle"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div [class.hide]="!isApplyMinimumDiscount">
+                                                                <div class="d-flex">
+                                                                    <div class="flex-fill">
+                                                                        <input class="form-control" formControlName="ruleMinimumAmount" tmtautonumeric
+                                                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                                                        <div *ngIf="f.ruleMinimumAmount.errors && submitted"
+                                                                            class="text-danger mb-1">
+                                                                            <div
+                                                                                *ngIf="f.ruleMinimumAmount.errors.required">
+                                                                                Nhập giá trị PĐT tối thiểu
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <span class="ml-2">VNĐ</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="custom-control custom-radio o_radio_item">
+                                                        <input type="radio" formControlName="discountApplyOn"
+                                                            class="custom-control-input o_radio_input"
+                                                            value="specific_product_categories"
+                                                            id="radio151_specific_product_categories"
+                                                            (change)="onChangeOption($event.target.value)">
+                                                        <label class="custom-control-label"
+                                                            for="radio151_specific_product_categories">
+                                                            Nhóm dịch vụ
+                                                        </label>
+                                                        <span class="text-primary ml-2" placement="top"
+                                                            ngbTooltip="KM giảm trên đơn giá nhóm dịch vụ">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div [class.d-none]="discountApplyOn != 'specific_product_categories'">
+                                                        <kendo-multiselect class="cus-kendo-multiselect"
+                                                            [data]="listProductCategories"
+                                                            [filterable]="true"
+                                                            #productCategoriesMultiSelect
+                                                            [textField]="'name'" [valueField]="'id'"
+                                                            formControlName="discountSpecificProductCategories">
+                                                        </kendo-multiselect>
+                                                        <div *ngIf="f.discountSpecificProductCategories.errors && submitted"
+                                                            class="text-danger mb-1">
+                                                            <div
+                                                                *ngIf="f.discountSpecificProductCategories.errors.required">
+                                                                Chọn nhóm dịch vụ
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="custom-control custom-radio o_radio_item">
+                                                        <input type="radio" formControlName="discountApplyOn"
+                                                            class="custom-control-input o_radio_input"
+                                                            value="specific_products" id="radio151_specific_products"
+                                                            (change)="onChangeOption($event.target.value)">
+                                                        <label class="custom-control-label"
+                                                            for="radio151_specific_products">
+                                                            Dịch vụ
+                                                        </label>
+                                                        <span class="text-primary ml-2" placement="top"
+                                                            ngbTooltip="KM giảm trên đơn giá dịch vụ">
+                                                            <i class="fas fa-exclamation-circle"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div [class.d-none]="discountApplyOn != 'specific_products' || ['product', 'free_shipping'].indexOf(rewardType) !== -1">
+                                                        <kendo-multiselect class="cus-kendo-multiselect"
+                                                            [data]="listProducts" [filterable]="true"
+                                                            #productMultiSelect [textField]="'name'"
+                                                            [valueField]="'id'"
+                                                            formControlName="discountSpecificProducts">
+                                                        </kendo-multiselect>
+                                                        <div *ngIf="f.discountSpecificProducts.errors && submitted"
+                                                            class="text-danger mb-1">
+                                                            <div
+                                                                *ngIf="f.discountSpecificProducts.errors.required">
+                                                                Chọn dịch vụ
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <h5 class="card-header bg-primary text-white">
+                                Thiết lập
+                            </h5>
+                            <div class="card-body">
+                                <div>
+                                    <div class="header pb-2">
+                                        <label class="o_form_label">
+                                            Cấu hình
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input"
+                                                (change)="changeCheckbox($event.target.checked)"
+                                                formControlName="notIncremental" id="notIncremental">
+                                            <label class="form-check-label" for="notIncremental">
+                                                Không áp dụng dùng chung với khuyến mãi khác
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="header py-2">
+                                        <label class="o_form_label">
+                                            Thời gian
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <div class="form-group">
+                                            <label for="startDate">
+                                                Ngày bắt đầu
+                                            </label>
+                                            <kendo-datepicker style="width: 100%" id="startDate"
+                                                formControlName="ruleDateFromObj">
+                                            </kendo-datepicker>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="endDate">
+                                                Ngày kết thúc
+                                            </label>
+                                            <kendo-datepicker style="width: 100%" id="endDate"
+                                                formControlName="ruleDateToObj">
+                                            </kendo-datepicker>
+                                            <div *ngIf="f.ruleDateToObj.errors" class="text-danger mb-1">
+                                                <div *ngIf="f.ruleDateToObj.errors.dateInvalid">
+                                                    Chọn lại ngày kết thúc
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-check">
+                                            <input formControlName="isApplyDayOfWeek" type="checkbox"
+                                                (change)="ChangeApplyDay($event)" class="form-check-input"
+                                                id="daysSelected" [checked]="isSelectDay">
+                                            <label class="form-check-label" for="daysSelected">
+                                                Chọn các thứ trong tuần
+                                            </label>
+                                        </div>
+                                        <div [class.d-none]="!isSelectDay">
+                                            <kendo-multiselect [data]="listDay" [filterable]="true"
+                                                [valuePrimitive]="true" textField="name" valueField="id"
+                                                formControlName="daysSelected">
+                                            </kendo-multiselect>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="header py-2">
+                                        <label class="o_form_label">
+                                            Đối tượng
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="allPartner" class="custom-control-input" value="all"
+                                                (change)="onChangePartnerApplyOn($event.target.value)"
+                                                formControlName="applyPartnerOn">
+                                            <label class="custom-control-label" for="allPartner">
+                                                Tất cả khách hàng
+                                            </label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="specific_partner" class="custom-control-input"
+                                                (change)="onChangePartnerApplyOn($event.target.value)"
+                                                value="specific_partners" formControlName="applyPartnerOn">
+                                            <label class="custom-control-label" for="specific_partner">
+                                                Khách hàng
+                                            </label>
+                                        </div>
+                                        <div [class.d-none]="applyPartnerOn != 'specific_partners'">
+                                            <kendo-multiselect class="cus-kendo-multiselect" [data]="listPartner"
+                                                [filterable]="true" #partnerMultiSelect [textField]="'name'"
+                                                [valueField]="'id'" formControlName="discountSpecificPartners">
+                                            </kendo-multiselect>
+                                            <div *ngIf="f.discountSpecificPartners.errors && submitted"
+                                                class="text-danger mb-1">
+                                                <div *ngIf="f.discountSpecificPartners.errors.required">
+                                                    Chọn khách hàng
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="card_type" class="custom-control-input"
+                                                (change)="onChangePartnerApplyOn($event.target.value)"
+                                                value="card_types" formControlName="applyPartnerOn">
+                                            <label class="custom-control-label" for="card_type">
+                                                Loại thẻ thành viên
+                                            </label>
+                                            <span class="text-primary ml-2" placement="top"
+                                                ngbTooltip="Áp dụng CTKM cho KH theo loại thẻ thành viên">
+                                                <i class="fas fa-exclamation-circle"></i>
+                                            </span>
+                                        </div>
+                                        <div [class.d-none]="applyPartnerOn != 'card_types'">
+                                            <kendo-multiselect class="cus-kendo-multiselect" [data]="listCardType"
+                                                [filterable]="true" #cardTypeCbx [textField]="'name'"
+                                                [valueField]="'id'" formControlName="discountCardTypes">
+                                            </kendo-multiselect>
+                                            <div *ngIf="f.discountCardTypes.errors && submitted"
+                                                class="text-danger mb-1">
+                                                <div *ngIf="f.discountCardTypes.errors.required">
+                                                    Loại thẻ thành viên
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

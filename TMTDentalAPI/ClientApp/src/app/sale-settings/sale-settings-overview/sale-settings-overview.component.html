@@ -1,0 +1,47 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Cấu hình bán hàng</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <button type="button" class="btn btn-sm btn-primary" (click)="onSave()">
+                <span>Áp dụng</span>
+            </button>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_form_view oe_form_configuration o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <table class="o_group o_inner_group">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="width: 100%;">
+                                <div class="o_horizontal_separator">
+                                    Tích điểm
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Số tiền trên 1 điểm
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="pointExchangeRate">
+                                </kendo-numerictextbox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

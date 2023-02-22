@@ -1,0 +1,79 @@
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h5 class="text-primary card-title">LỊCH HẸN HÔM NAY</h5>
+            <div class="mb-2">
+                <button class="btn btn-primary btn-header" (click)=" createItem()"><i
+                        class="fas fa-plus-circle mr-1"></i>Thêm lịch
+                    hẹn</button>
+            </div>
+        </div>
+        <div class="has-search">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input #searchInput class="form-control header-search size-text-12"
+                placeholder="Tìm kiếm theo bác sĩ, họ tên, sđt " type="text" [(ngModel)]="search"
+                (keyup)="onChangeSearch($event.target.value);">
+
+        </div>
+        <div class="d-flex flex-wrap p-2">
+            <ng-container *ngFor="let item of [].constructor(8); index as i">
+                <button (click) = "clickColor(i)" 
+                class="btn btn-item-color mr-3 border" [ngClass]="'appointment_color_'+i">
+                    <i *ngIf="isContainColor(i)" class="fas fa-check text-light"></i>
+                </button>
+            </ng-container>
+        </div>
+        <div class="appointments-today-filter-state mb-2">
+            <div role="group" aria-label="Basic outlined example">
+                <button type="button" *ngFor="let state of states" class="btn active"
+                    (click)="setStateFilter(state.value)" [class.btn-primary]="stateFilter == state.value"
+                    [class.appointments-today-filter-state]="stateFilter != state.value">
+                    {{state.text}} <span class="ml-1" [class.text-white]="stateFilter == state.value">{{getStateCount(state.value) ||
+                        0}}</span>
+                </button>
+            </div>
+        </div>
+        <div class="appointment-today-items">
+            <ng-container *ngFor="let item of listAppointment">
+                <div class="appointment-today-box">
+                    <div class="box-content" [ngClass]="getBackgroundColor(item)">
+                        <div class="box-header">
+                            <div class="appointment-state">
+                                <span class="status">{{stateGet(item.state)}}</span>
+                            </div>
+                            <div class="appointment-manipulation text-center show-on-hover">
+                                <i class="fas fa-pen text-primary icon-more" (click)="editItem(item)"></i>
+                                <i class="fas fa-sign-in-alt text-primary icon-more fa-lg"
+                                    (click)="createCustomerReceipt(item)"></i>
+                            </div>
+                        </div>
+                        <ul class="info_nav">
+                            <li>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <i class="fas fa-user"></i>
+                                        <a class="text-primary" title="Xem hồ sơ khách hàng"
+                                            [routerLink]="['/partners/customer/' + item.partnerId]">
+                                            <span> {{item.partnerName}}</span>
+                                        </a>
+                                    </div>
+                                    <div class="timer">
+                                        <span>{{item.date | date: 'HH:mm'}}</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <span>{{item.partnerPhone}}</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-user"></i>
+                                <span>{{item.doctorName}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

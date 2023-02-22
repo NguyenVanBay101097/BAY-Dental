@@ -1,0 +1,130 @@
+<div class="card">
+    <!-- <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="text-primary m-0">THÔNG TIN CHI TIẾT</h5>
+        <span class="cursor-pointer">
+            <i id="chevron-up" class="fas fa-chevron-up multi-collapse1 collapse show none-animate"
+                data-toggle="collapse" data-target=".multi-collapse1"></i>
+            <i id="chevron-down" class="fas fa-chevron-down multi-collapse1 collapse none-animate"
+                data-toggle="collapse" data-target=".multi-collapse1"></i>
+        </span>
+    </div> -->
+    <div id="info-body" class="collapse show card-body multi-collapse1">
+        <div class="o_form_view">
+            <div class="d-flex align-items-start">
+                <div class="avatar flex-0-0-auto mr-3">
+                    <app-image-file-upload [supportWebcam]="true" class="oe_avatar o_field_image float-left"
+                        (uploaded)="onAvatarUploaded($event)" [imageId]="partner.avatar" [width]="100" [height]="100">
+                    </app-image-file-upload>
+                    <div class="point text-center">
+                        <label class="font-weight-600">Điểm tích lũy</label>
+                    <h4 class="text-primary">{{partner.point}}</h4>
+                    </div>
+                </div>
+                <div class="info flex-1-1-100">
+                    <div class="info-name d-flex justify-content-between">
+                        <h4 class="mb-0">
+                            <span>{{partner ? partner.name: ''}}</span>
+                        </h4>
+                        <button type="button" class="btn btn-success" (click)="editCustomer()">
+                            <span class="fas fa-edit"></span>
+                            Sửa
+                        </button>
+                    </div>
+                    <div class="info-detail o_group">
+                        <table class="o_group mt-0 o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Giới tính:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner ? partner.genderConvertcom : ''}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Ngày sinh:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{ partner.dateOfBirth }}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="showInfo">
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Điện thoại:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner ?partner.phone:''}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="showInfo">
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Email:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget o_text_overflow">{{partner ?partner.email:''}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="showInfo">
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Địa chỉ:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner ? partner.address: ''}}</span>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Điểm tích lũy</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner.point}}</span>
+                                    </td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                        <table class="o_group mt-0 o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Nghề nghiệp:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner ?partner.jobTitle:''}}</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Tiểu sử bệnh:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner ?partner.historiesString:''}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Tiểu sử bệnh khác:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <span class="o_field_widget">{{partner ? partner.medicalHistory : ''}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="o_td_label">
+                                        <label class="o_form_label">Nhãn:</label>
+                                    </td>
+                                    <td style="width: 100%">
+                                        <app-partner-category-popover [popOverPlace]="'left'" [tags]="categories"
+                                            (onSave)="categories=$event" [rowPartnerId]="partner.id">
+                                        </app-partner-category-popover>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

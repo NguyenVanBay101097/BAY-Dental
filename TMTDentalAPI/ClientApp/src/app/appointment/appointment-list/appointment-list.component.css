@@ -1,0 +1,35 @@
+.btnView{
+    width: 160px;
+    text-align: left;
+}
+
+.k-scheduler.k-slotfill{
+    cursor: pointer;
+}
+
+.k-scheduler .k-event, .k-event {
+    cursor: pointer;
+}
+
+/* Kendo UI example application styles */
+.activeButton{
+    background-color: #c4cbd4;
+}
+
+.checkbox label{
+    cursor: pointer;
+}
+
+.k-scheduler-dayview .k-scheduler-table td,
+.k-scheduler-weekview .k-scheduler-table td,
+.k-scheduler-table td{
+    height: 5em !important;
+}
+
+.k-event{
+    height: auto !important;
+}
+
+.k-scheduler-weekview .k-event{
+    height: 100px !important;
+}

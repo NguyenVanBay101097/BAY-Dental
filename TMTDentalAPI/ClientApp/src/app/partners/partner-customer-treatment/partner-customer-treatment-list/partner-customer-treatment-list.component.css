@@ -1,0 +1,9 @@
+
+.o_control_panel {
+    display: block;
+}
+
+.border_left_product {
+    padding-left: 4px;
+    border-left: 4px solid transparent;
+}

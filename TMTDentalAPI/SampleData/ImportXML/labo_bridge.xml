@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.labo_bridge_1</Id>
+    <Name>Nhịp hình trứng</Name>
+  </Record>
+  <Record>
+    <Id>sample.labo_bridge_2</Id>
+    <Name>Nhịp cầu chữ T</Name>
+  </Record>
+  <Record>
+    <Id>sample.labo_bridge_3</Id>
+    <Name>Nhịp cầu yên ngựa</Name>
+  </Record>
+</Data>

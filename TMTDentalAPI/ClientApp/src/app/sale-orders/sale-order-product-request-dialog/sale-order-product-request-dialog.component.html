@@ -1,0 +1,137 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close" (click)="onClose()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                </td>
+                                <td colspan="1" style="width: 100%;">                                   
+                                </td>
+                            </tr>                          
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{formGroup.get('user').value?.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Bác sĩ chỉ định</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [filterable]="true"
+                                        [data]="filteredEmployees" [textField]="'name'" #employeeCbx
+                                        formControlName="employee" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mb-1">
+                    <button type="button" (click)="updateSaleProduction()" class="btn btn-primary">
+                        Cập nhật định mức
+                     </button>
+                </div>           
+                <div class="section">
+                    <div class="section-left">                    
+                        <table class="table table-sm table-hover border-bottom">
+                            <thead>
+                                <tr>
+                                    <th>Dịch vụ/Vật tư</th>
+                                    <th>
+                                        Định mức
+                                        <span class="text-primary" placement="top"
+                                            ngbTooltip="0 là không giới hạn vật tư">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </span>
+                                    </th>
+                                    <th>Đã yêu cầu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let item of listSaleProduction; index as i">
+                                    <tr>
+                                        <td colspan="3" class="font-weight-bold bg-primary text-white">
+                                            <div class="d-flex justify-content-between">
+                                                <span>{{item.product.name}}</span>
+                                                <a class="text-white" (click)="deleteSaleProduction(i)">
+                                                    <span class="fa fa-trash"></span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let item_child of item.lines; index as j" class="pointer"
+                                        (click)="addLine(item_child)">
+                                        <td>{{item_child.product.name}}</td>
+                                        <td>{{item_child.quantity | number}} {{item_child.productUOM.name}}</td>
+                                        <td>{{item_child.quantityRequested | number}}</td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="section-full">
+                        <table class="table table-sm table-hover table-tbody-ver-align-middle border-bottom">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Vật tư</th>
+                                    <th>ĐVT</th>
+                                    <th>Số lượng</th>
+                                    <th>#</th>
+                                </tr>
+                            </thead>
+                            <tbody formArrayName="lines">
+                                <ng-container *ngFor="let line of lines.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td>{{i + 1}}</td>
+                                        <td>{{line.get('saleProductionLine').value.product.name}}</td>
+                                        <td>{{line.get('saleProductionLine').value.productUOM.name}}</td>
+                                        <td>
+                                            <input class="form-control" style="width: 100px" formControlName="productQty" tmtautonumeric
+                                            [options]="{minimumValue: 0, maximumValue: getMax(line)}"/>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-icon btn-sm btn-light" title="Xóa"
+                                                (click)="deleteLine(i)">
+                                                <span class="k-icon k-i-delete"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="onConfirmed()">Yêu cầu</button>
+    <button type="button" class="btn btn-light mr-2" (click)="onClose()">Đóng</button>
+</div>

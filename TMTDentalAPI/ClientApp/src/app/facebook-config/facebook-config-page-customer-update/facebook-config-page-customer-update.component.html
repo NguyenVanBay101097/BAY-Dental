@@ -1,0 +1,12 @@
+<div class="card" *ngIf="profileDisplay">
+    <div class="card-body">
+        <div class="avatar">
+            <img [src]="conversation.user.facebookProfilePicture" alt="avatar"
+                [title]="conversation.user.facebookUserName">
+        </div>
+        <div>
+            <h5 class="card-title">{{profileDisplay.name}}</h5>
+            <input type="text" [(ngModel)]="profileDisplay.phone" (change)="onPhoneChange($event)">
+        </div>
+    </div>
+</div>

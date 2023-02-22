@@ -1,0 +1,20 @@
+:host {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.o_helpfull_link {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.o_helpfull_link img {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}

@@ -1,0 +1,7 @@
+.o_web_client {
+    background-color: white !important;
+}
+
+.k-grid-footer-wrap table tfoot tr td {
+    border: none;
+}

@@ -1,0 +1,54 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/roles']">Nhóm quyền</a>
+            </li>
+            <li class="active">
+                <span *ngIf="role">{{role.name}}</span>
+                <span *ngIf="!role">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button type="button" class="btn btn-primary" accesskey="c" (click)="onSave()">Lưu</button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <form class="o_form_view h-100" [formGroup]="roleForm" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet mt-0 border-top-0 d-flex flex-column p-3 h-100">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet m-2 mx-auto">
+                    <div class="oe_title">
+                        <label class="o_form_label oe_edit_only">Tên nhóm quyền</label>
+                        <h1>
+                            <input type="text" class="form-control" formControlName="name">
+                        </h1>
+                        <div *ngIf="f.name.errors && submitted" class="text-danger mb-1">
+                            <div *ngIf="f.name.errors.required">Nhập tên nhóm quyền</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="o_horizontal_separator text-dark">Người dùng</h4>
+                        <div>
+                            <button type="button" [class.btn-light]="!isUserSelected(user)" title="Cho vào nhóm" class="btn mr-2" [class.btn-success]="isUserSelected(user)" *ngFor="let user of userList" (click)="selectUser(user)">{{user.name}}</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="o_horizontal_separator text-dark">Phân quyền</h4>
+                        <app-role-form-v2 [listFeature]="featureGroups"></app-role-form-v2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

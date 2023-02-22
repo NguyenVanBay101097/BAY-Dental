@@ -1,0 +1,85 @@
+﻿@model Umbraco.Web.Models.ContentEditing.GetPrintManagementRes
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+
+}
+<style>
+    table.border-top-0 thead th {
+        border-top: none;
+    }
+
+    table.border-top-0 thead th {
+        border-top: none;
+    }
+</style>
+<div class="text-center mb-3">
+    <div class="text-3xl font-semibold">BÁO CÁO QUẢN LÝ ĐIỀU TRỊ CHƯA HOÀN THÀNH</div>
+</div>
+<div class="o_form_view mb-2">
+    <div class="h-60 w-100 pt-3">
+        @foreach (var item in Model.Data)
+        {
+            <table class="table table-sm table-bordered">
+                <tbody>
+                    <tr>
+                        <td style="width: 100px"><strong>Ngày lập phiếu</strong></td>
+                        <td class="" style="width: 80px"><strong>Số phiếu</strong> </td>
+                        <td class="" style="width: 150px"><strong>Khách hàng</strong></td>
+                        <td class="" style="width: 150px"><strong>Bác sĩ đại diện</strong></td>
+                        <td class="text-right" style="width: 100px"><strong>Tiền điều trị</strong></td>
+                        <td class="text-right" style="width: 100px"><strong>Thanh toán</strong></td>
+                        <td class="text-right" style="width: 100px"><strong>Còn lại</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 100px">@(item.DateOrder.ToString("dd/MM/yyyy"))</td>
+                        <td class="" style="width: 80px">@item.Name</td>
+                        <td class="" style="width: 150px">@item.PartnerName</td>
+                        <td class="" style="width: 150px">@(item.DoctorName)</td>
+                        <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.AmountTotal)</td>
+                        <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.TotalPaid)</td>
+                        <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", item.Residual)</td>
+                    </tr>
+                    @if (item.Lines.Count() > 0)
+                    {
+                        <tr class="border-top-0">
+                            <td colspan="2" style="width: 180px"><strong>Dịch vụ</strong></td>
+                            <td style="width:80px"><strong>Số lượng</strong></td>
+                            <td colspan="1" style="width: 100px"><strong>Đơn vị tính</strong></td>
+                            <td class="text-right" style="width: 100px"><strong>Thành tiền</strong></td>
+                            <td class="text-right" style="width: 100px"><strong>Thanh toán</strong></td>
+                            <td class="text-right" style="width: 100px"><strong>Còn lại</strong></td>
+                        </tr>
+                        @foreach (var line in item.Lines)
+                        {
+                            <tr>
+                                <td colspan="2" style="width: 180px">@(line.Name)</td>
+                                <td style="width: 80px">@string.Format(culture, "{0:N0}", @line.ProductUOMQty)</td>
+                                <td colspan="1" style="width: 100px">@(line.ProductUOMName)</td>
+                                <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.PriceSubTotal)</td>
+                                <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountInvoiced)</td>
+                                <td class="text-right" style="width: 100px">@string.Format(culture, "{0:N0}", line.AmountResidual)</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="d-flex">
+        <div class="col-6">
+
+        </div>
+        <div class="col-6">
+            <div class="text-center">
+                <span>Ngày @DateTime.Now.Day, tháng @DateTime.Now.Month, năm @DateTime.Now.Year </span> <br />
+                <span class="font-semibold">Người lập báo cáo</span> <br />
+                <i>(Ký và ghi rõ họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

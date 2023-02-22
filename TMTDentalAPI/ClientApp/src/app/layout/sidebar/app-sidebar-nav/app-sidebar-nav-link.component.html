@@ -1,0 +1,28 @@
+<ng-container [ngSwitch]="linkType">
+  <a *ngSwitchCase="'disabled'"
+     [ngClass]="item | appSidebarNavLink"
+     [appHtmlAttr]="item.attributes"
+  >
+    <app-sidebar-nav-link-content [item]="item"></app-sidebar-nav-link-content>
+  </a>
+  <a *ngSwitchCase="'external'"
+     [ngClass]="item | appSidebarNavLink"
+     [href]="href"
+     [appHtmlAttr]="item.attributes"
+     (click)="linkClicked()"
+  >
+    <app-sidebar-nav-link-content [item]="item"></app-sidebar-nav-link-content>
+  </a>
+  <a *ngSwitchDefault
+     [ngClass]="item | appSidebarNavLink"
+     [appHtmlAttr]="item.attributes"
+     [target]="item.attributes?.target"
+     [queryParams]="item.linkProps?.queryParams"
+     [routerLink]="item.url"
+     [routerLinkActive]="item.linkProps?.routerLinkActive || 'active'"
+     [class.active]="linkActive && !item.linkProps?.routerLinkActiveOptions"
+     (click)="linkClicked()"
+  >
+    <app-sidebar-nav-link-content [item]="item"></app-sidebar-nav-link-content>
+  </a>
+</ng-container>

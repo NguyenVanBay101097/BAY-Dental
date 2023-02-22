@@ -1,0 +1,31 @@
+.my-list-group {
+    max-height: 200px;
+    overflow: auto;
+}
+
+/* .my-list-group::-webkit-scrollbar {
+    width: 10px;
+}
+
+.my-list-group::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+
+.my-list-group::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+.my-list-group::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+} */
+
+.my-list-group-item .content {
+    white-space: nowrap;
+    padding-right: calc(20px + 0.5rem);
+    cursor: default;
+    /* max-width: ; */
+}
+
+._dropdownContainer {
+    min-width: 300px;
+}

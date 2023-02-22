@@ -1,0 +1,211 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="toaThuocForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="d-flex">
+                    <div class="mr-5">
+                        <label class="font-weight-600 mr-4">Họ tên</label>
+                        <span>{{ getFBValueItem('partner') ? getFBValueItem('partner').name : null }}</span>
+                    </div>
+                    <div class="mr-5">
+                        <label class="font-weight-600 mr-4">Giới tính</label>
+                        <span>{{ getFBValueItem('partner') && getFBValueItem('partner').gender ? getGender() : null }}</span>
+                    </div>
+                    <div class="mr-5">
+                        <label class="font-weight-600 mr-4">Tuổi</label>
+                        <span>{{ getFBValueItem('partner') ? getFBValueItem('partner').age : null }}</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-weight-600 mr-4">Địa chỉ</label>
+                    <span>{{ getFBValueItem('partner') ? getFBValueItem('partner').address : null }}</span>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6 my-0">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Bác sĩ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="employee" [filterable]="true" [data]="employeeList"
+                                        #employeeCbx [valueField]="'id'" [textField]="'name'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Đơn thuốc mẫu 
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox formControlName="samplePrescription" [filterable]="true" [data]="samplePrescriptionList"
+                                        #samplePrescriptionCbx [valueField]="'id'" [textField]="'name'" (valueChange)="selectionChangeSamplePrescription($event)">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="overflow-auto">
+                    <div class="d-flex">
+                        <button type="button" accesskey="a" class="btn btn-primary mr-2"
+                            (click)="createMedicine()">Thêm thuốc mới</button>
+                    </div>
+                    <table class="table table-sm mt-2 table-tbody-ver-align-middle border-bottom">
+                        <thead>
+                            <tr>
+                                <th>Tên thuốc</th>
+                                <th>Ngày uống</th>
+                                <th>Mỗi lần</th>
+                                <th>Số ngày</th>
+                                <th>Số lượng</th>
+                                <th>Sử dụng</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="lines" *ngIf="lines">
+                            <ng-container *ngFor="let item of lines.controls; let i = index;">
+                                <tr [formGroupName]="i">
+                                    <td>
+                                        <kendo-combobox [data]="productList" [textField]="'name'" (valueChange)="onChangeProduct($event, item)"
+                                            formControlName="product" [kendoDropDownFilter]="filterSettings"
+                                            [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-control" style="width: 100px" formControlName="numberOfTimes" tmtautonumeric
+                                            [options]="{minimumValue: 0, decimalPlaces: 0}" (input)="updateQuantity(item)"/>
+                                            <span class="ml-2">Lần</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-control" style="width: 100px" formControlName="amountOfTimes" tmtautonumeric
+                                            [options]="{minimumValue: 0, decimalPlaces: 2}" (input)="updateQuantity(item)"/>
+                                            <span class="ml-2">{{item.get('productUoM').value?.name}}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" style="width: 100px" formControlName="numberOfDays" tmtautonumeric
+                                        [options]="{minimumValue: 0, decimalPlaces: 0}" (input)="updateQuantity(item)"/>
+                                        
+                                    </td>
+                                    <td>
+                                        <input class="form-control" style="width: 100px" formControlName="quantity" tmtautonumeric
+                                        [options]="{minimumValue: 0, decimalPlaces: 2}"/>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <div>
+                                                <app-toa-thuoc-line-useat-popover [item]="item" [index]="i"
+                                                (useAtFormGroup)="onChangeUseAt(i,$event)">
+                                                </app-toa-thuoc-line-useat-popover>
+                                            </div>
+                                            
+                                            <div class="ml-1">
+                                                <span>
+                                                    {{item.get('useAt').value != 'other' ? getUsedAt(item.get('useAt').value) : item.get('note').value}}
+                                                </span>
+                                            </div>                                         
+                                        </div>
+                                        <!-- <select class="form-control" formControlName="useAt">
+                                            <option value="after_meal">Sau khi ăn</option>
+                                            <option value="before_meal">Trước khi ăn</option>
+                                            <option value="in_meal">Trong khi ăn</option>
+                                            <option value="after_wakeup">Sau khi thức dậy</option>
+                                            <option value="before_sleep">Trước khi đi ngủ</option>
+                                        </select> -->
+                                    </td>
+                                    <td>
+                                        <button type="button" title="Hủy" class="btn btn-danger"
+                                            (click)="deleteLine(i)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <button type="button" title="Thêm thuốc" class="btn btn-primary"
+                                        (click)="onCreate()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <span class="text-primary cursor-pointer px-2" (click)="onCreate()">
+                                        Thêm thuốc
+                                    </span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Lời dặn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" formControlName="note"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tái khám
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="reExaminationDateObj">
+                                    </kendo-datepicker>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>                 
+                    <div class="o_group o_inner_group o_group_col_6">
+                        <div class="d-flex">
+                            <div class="o_td_label">
+                                <label class="o_form_label">
+                                    Chẩn đoán bệnh
+                                </label>
+                            </div>
+                            <textarea class="form-control" formControlName="diagnostic"></textarea>
+                        </div>      
+                        <div>
+                            <div class="form-check pt-2">
+                                <input class="form-check-input" type="checkbox" formControlName="saveSamplePrescription" id="saveSamplePrescription" (change)="onCheckSaveSamplePrescription($event)">
+                                <label class="form-check-label" for="saveSamplePrescription">
+                                    Lưu làm đơn thuốc mẫu
+                                </label>
+                            </div>
+                            <input *ngIf="getFBValueItem('saveSamplePrescription')" type="text" class="form-control w-75" 
+                                formControlName="nameSamplePrescription" placeholder="Nhập tên đơn thuốc mẫu ..." />
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave(true)">Lưu và in</button>
+    <button type="button" class="btn btn-primary" (click)="onSave(false)" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

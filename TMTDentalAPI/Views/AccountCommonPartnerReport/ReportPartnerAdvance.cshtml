@@ -1,0 +1,101 @@
+﻿@model Umbraco.Web.Models.ContentEditing.ReportPartnerAdvancePrintVM
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+@if (Model.Company != null)
+{
+    <div class="d-flex mb-2">
+        @if (!string.IsNullOrEmpty(Model.Company.Logo))
+        {
+            <img class="img-fluid me-3" style="width: 150px;" src="@Model.Company.Logo" alt="@Model.Company.Name">
+        }
+        <div>
+            <div class="text-xl font-semibold">@Model.Company.Name</div>
+            @if (!string.IsNullOrEmpty(Model.Company.Address))
+            {
+                <div>Địa chỉ: @Model.Company.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Phone))
+            {
+                <div>ĐT: @Model.Company.Phone</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Company.Email))
+            {
+                <div>Email: @Model.Company.Email</div>
+            }
+        </div>
+    </div>
+}
+<div class="text-center mb-2">
+    <div class="text-3xl font-semibold">BÁO CÁO TẠM ỨNG</div>
+    <div>
+        @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
+                (Model.DateFrom.HasValue ? " đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
+    </div>
+</div>
+
+<div class="o_form_view mb-2">
+    <div class="h-60 w-100 pt-3">
+
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr class="bg-info font-semibold">
+                    <th scope="col" class="" style="width:100px">Khách hàng</th>
+                    <th scope="col" class="" style="width:100px">Số điện thoại</th>
+                    <th scope="col" class="text-right" style="width:100px">Dư đầu kỳ</th>
+                    <th scope="col" class="text-right" style="width:100px">Đã đóng</th>
+                    <th scope="col" class="text-right" style="width:100px">Đã dùng</th>
+                    <th scope="col" class="text-right" style="width:100px">Đã hoàn</th>
+                    <th scope="col" class="text-right" style="width:100px">Dư cuối kỳ</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model.ReportPartnerAdvances)
+                {
+                    <tr>
+                        <td class="" style="width:100px">@(item.PartnerDisplayName)</td>
+                        <td class="" style="width:100px">@(item.PartnerPhone)</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Begin))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Debit))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Credit))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.Refund))</td>
+                        <td class="text-right" style="width:100px">@(string.Format(culture,"{0:n0}",item.End))</td>
+                    </tr>
+
+                }
+
+                <tr>
+                    <td colspan="2" class="text-center font-semibold" style="width:100px">Tổng</td>
+                    <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x=>x.Begin)))</td>
+                    <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.Debit)))</td>
+                    <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.Credit)))</td>
+                    <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.Refund)))</td>
+                    <td class="text-right font-semibold" style="width:100px">@(string.Format(culture,"{0:n0}", Model.ReportPartnerAdvances.Sum(x => x.End)))</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="d-flex">
+        <div class="col-6">
+
+        </div>
+        <div class="col-6">
+            <div class="text-center">
+                <span>Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year </span> <br />
+                <span class="font-semibold">Người lập báo cáo</span> <br />
+                <i>(Ký và ghi rõ họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">@(Model.User == null ? "" : Model.User.Name.ToUpper())</span>
+            </div>
+        </div>
+    </div>
+</div>

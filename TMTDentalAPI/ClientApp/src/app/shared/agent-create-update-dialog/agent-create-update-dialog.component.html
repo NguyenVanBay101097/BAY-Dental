@@ -1,0 +1,261 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group m-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="o_horizontal_separator">Thông tin chung</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Phân loại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="classify" type="radio"
+                                            formControlName="classify" id="partner_radio"
+                                            value="partner" [checked]="true"
+                                            (change)="onChangeType($event)">
+                                        <label class="form-check-label" for="partner_radio">Đối
+                                            tác</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="classify" type="radio"
+                                            formControlName="classify" id="customer_radio"
+                                            value="customer" (change)="onChangeType($event)">
+                                        <label class="form-check-label" for="customer_radio">Khách
+                                            hàng</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" name="classify" type="radio"
+                                            formControlName="classify" id="employee_radio"
+                                            value="employee" (change)="onChangeType($event)">
+                                        <label class="form-check-label" for="employee_radio">Nhân
+                                            viên</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người giới thiệu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%; vertical-align: initial;">
+                                    <div [class.d-none]="classify !== 'partner'">
+                                        <input class="form-control" formControlName="name" name="name">
+                                        <div *ngIf="f.name.errors && submitted"
+                                            class="text-danger mb-1">
+                                            <div *ngIf="f.name.errors.required">Nhập tên người giới
+                                                thiệu
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div [class.d-none]="classify !== 'customer'">
+                                        <kendo-combobox formControlName="customer" [filterable]="true"
+                                            [data]="customerSimpleFilter" #customerCbx
+                                            [valueField]="'id'" [textField]="'displayName'" placeholder="Họ tên, sđt, mã"
+                                            (valueChange)="onChangeCustomer($event)">
+                                        </kendo-combobox>
+                                        <div *ngIf="f.customer.errors && submitted"
+                                            class="text-danger mb-1">
+                                            <div *ngIf="f.customer.errors.required">Nhập tên người giới
+                                                thiệu
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div [class.d-none]="classify !== 'employee'">
+                                        <kendo-combobox formControlName="employee" [filterable]="true"
+                                            [data]="employeeSimpleFilter" #employeeCbx
+                                            [valueField]="'id'" [textField]="'name'" placeholder="Họ tên, sđt, mã"
+                                            (valueChange)="onChangeEmployee($event)">
+                                        </kendo-combobox>
+                                        <div *ngIf="f.employee.errors && submitted"
+                                            class="text-danger mb-1">
+                                            <div *ngIf="f.employee.errors.required">Nhập tên người giới
+                                                thiệu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Giới tính</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio"
+                                            formControlName="gender" id="male_radio" value="male">
+                                        <label class="form-check-label" for="male_radio">Nam</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio"
+                                            formControlName="gender" id="female_radio" value="female">
+                                        <label class="form-check-label" for="female_radio">Nữ</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio"
+                                            formControlName="gender" id="other_radio" value="other">
+                                        <label class="form-check-label" for="other_radio">Khác</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày sinh</label>
+                                </td>
+                                <td colspan="1" style="width:100%">
+                                    <div class="d-flex">
+                                        <select class="form-control mr-2" formControlName="birthDayStr">
+                                            <option value="">Ngày</option>
+                                            <option *ngFor="let i of dayList">
+                                                {{i}}</option>
+                                        </select>
+                                        <select class="form-control mr-2" formControlName="birthMonthStr">
+                                            <option value="">Tháng</option>
+                                            <option *ngFor="let i of monthList">
+                                                {{i}}</option>
+                                        </select>
+                                        <select class="form-control" formControlName="birthYearStr">
+                                            <option value="">Năm</option>
+                                            <option [value]="i" *ngFor="let i of yearList">
+                                                {{i}}</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Nghề nghiệp</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="jobTitle" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="o_horizontal_separator">Tài khoản ngân hàng</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Tên ngân hàng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                    <kendo-combobox [filterable]="true" [data]="listBank"
+                                        formControlName="bank" [textField]="'name'"
+                                        [valueField]="'id'" #listBankCbx>
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Chi nhánh</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                    <input class="form-control" formControlName="bankBranch" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số tài khoản</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                    <input class="form-control" formControlName="accountNumber" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Chủ tài khoản</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                    <input class="form-control" formControlName="accountHolder" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="o_group m-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="o_horizontal_separator">Thông tin liên lạc</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số điện thoại</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="phone" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Email</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="email" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Địa chỉ</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="address" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="o_horizontal_separator">Hoa hồng giới thiệu</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Bảng hoa hồng</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;vertical-align: initial;">
+                                    <kendo-combobox [filterable]="true" [data]="listAgentCommissions"
+                                        [textField]="'name'" [valueField]="'id'" #agentCommissionCbx
+                                        formControlName="commission">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.commission.errors && submitted"
+                                        class="text-danger mb-1">
+                                        <div *ngIf="f.commission.errors.required">Chọn bảng hoa hồng
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-primary mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+        <button type="button" class="btn btn-secondary mr-2" (click)="onCancel()" accesskey="q">Đóng</button>
+    </div>
+</div>

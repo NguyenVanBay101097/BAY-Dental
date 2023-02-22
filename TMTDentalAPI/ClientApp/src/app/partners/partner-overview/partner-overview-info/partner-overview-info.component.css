@@ -1,0 +1,27 @@
+.o_partner_info_custom_form_sheet {
+  margin: 0!important;
+  background: none!important;
+  border: none!important;
+}
+
+.card-header .collapsing   {
+  -webkit-transition: none !important;
+  transition: none !important;
+  display: none !important;
+}
+
+.o_text_overflow {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+
+/* @media (max-width: 1600px) {
+  .info-detail .o_group_col_6{
+    width: 100% !important;
+  }
+} */

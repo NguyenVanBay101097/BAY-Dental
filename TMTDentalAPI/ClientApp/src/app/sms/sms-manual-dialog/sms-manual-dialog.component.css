@@ -1,0 +1,41 @@
+.o_form_view .o_group .o_group_col_12 .o_td_label .o_form_label {
+    font-weight: 600;
+    margin-right: 0px;
+    width: 180px;
+}
+.color-custom{
+    color: #9a9a9a;
+    font-size: 12px;
+}
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    border: none !important;
+    /* padding: 0 0 0 16px !important; */
+}
+
+.color-custom{
+    color: #9a9a9a;
+    font-size: 12px;
+}
+
+.container{
+    padding: 0!important;
+}
+
+.o_form_view .o_group{
+    margin: 0;
+}
+
+.form-control{
+    height: 36px !important;
+}
+
+.form-control.textarea{
+    overflow: hidden !important;
+    overflow-wrap: break-word!important;
+    resize: none!important;
+    height: 134px!important;
+}
+
+.textarea-required.ng-touched.ng-dirty.ng-invalid, .textarea-required.ng-touched.ng-invalid {
+    border: 1px solid red;
+}

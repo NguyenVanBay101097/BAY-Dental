@@ -1,0 +1,272 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [class.ng-submitted]="submitted" [formGroup]="productForm" #form="ngForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên dịch vụ</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="f.name.errors && submitted"
+                        class="text-danger mb-1">
+                        <div *ngIf="f.name.errors.required">Nhập tên dịch vụ</div>
+                    </div>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" formControlName="isLabo" id="isLabo">
+                            <label class="form-check-label" for="isLabo">
+                                Có thể đặt labo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="o_notebook">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#info" role="tab"
+                                aria-controls="home" aria-selected="true">Thông tin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#step" role="tab"
+                                aria-controls="profile" aria-selected="false">Công đoạn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="bom-tab" data-toggle="tab" href="#productBom" role="tab"
+                                aria-controls="profile" aria-selected="false">Định mức vật tư</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Nhóm dịch vụ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filterdCategories"
+                                                        [textField]="'name'" [filterable]="true" #categCbx
+                                                        formControlName="categ" [valueField]="'id'"
+                                                        [loading]="categCbxLoading">
+                                                    </kendo-combobox>
+                                                    <a class="btn btn-light" (click)="quickCreateCateg()">
+                                                        <span class="k-icon k-i-plus"></span>
+                                                    </a>
+                                                </div>
+                                                <div *ngIf="f.categ.errors && submitted"
+                                                    class="text-danger">
+                                                    <div *ngIf="f.categ.errors.required">Chọn nhóm dịch vụ</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã dịch vụ
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" placeholder="Để trống sẽ phát sinh tự động"
+                                                    class="form-control" formControlName="defaultCode" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đơn vị tính
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <kendo-combobox [data]="filterdUoMs" [valueField]="'id'" [textField]="'name'"
+                                                    formControlName="uom" [filterable]="true" #uomCbx>
+                                                </kendo-combobox>
+
+                                                <div *ngIf="f.uom.errors && submitted" class="text-danger">
+                                                    <div *ngIf="f.uom.errors.required">Chọn đơn vị tính</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá bán
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="listPrice" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="showStandardPrice">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá vốn
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="standardPrice"
+                                                    tmtautonumeric [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hãng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="firm">
+                                            </td>
+                                        </tr>
+                                        <tr [class.d-none]="isLabo == false">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Giá đặt labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input class="form-control" formControlName="laboPrice" tmtautonumeric
+                                                    [options]="{ minimumValue: 0, decimalPlaces: 0 }" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="step" role="tabpanel" aria-labelledby="step-tab">
+                            <div class="d-flex">
+                                <div class="input-group mb-3" style="max-width: 400px;">
+                                    <input type="text" class="form-control" #stepInput
+                                        placeholder="Nhập tên công đoạn sau đó nhấn enter"
+                                        (keydown.enter)="createTempProductStepList(stepInput.value);stepInput.value=''" />
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-primary"
+                                            (click)="createTempProductStepList(stepInput.value);stepInput.value=''">Thêm</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên công đoạn</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="steps">
+                                    <ng-container *ngFor="let item of stepsFA.controls; let i=index">
+                                        <tr [formGroupName]="i">
+                                            <td>
+                                                {{i + 1}}
+                                            </td>
+                                            <td>
+                                                <input type="text" formControlName="name" class="form-control" />
+                                            </td>
+                                            <td colspan="1">
+                                                <button type="button" class="btn btn-light"
+                                                    (click)="removeStepListItem(i)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tab-pane" id="productBom" role="tabpanel" aria-labelledby="bom-tab">
+                            <div>
+                                <div class="mb-2">
+                                    <button type="button" (click)="createMaterialProduct()" class="btn btn-primary">Thêm
+                                        vật tư mới</button>
+                                </div>
+
+                                <table class="table table-sm b-table-border table-tbody-ver-align-middle border-bottom">
+                                    <thead>
+                                        <tr>
+                                            <th width="50">STT</th>
+                                            <th width="250">Vật tư</th>
+                                            <th width="100">ĐVT</th>
+                                            <th width="150">
+                                                Số lượng tối đa
+                                                <span class="text-primary" placement="top"
+                                                    ngbTooltip="0 là không giới hạn vật tư">
+                                                    <i class="fas fa-exclamation-circle"></i>
+                                                </span>
+                                            </th>
+                                            <th width="50">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody formArrayName="boms">
+                                        <ng-container *ngFor="let item of boms.controls; let i=index">
+                                            <tr [formGroupName]="i">
+                                                <td>{{i+1}}</td>
+                                                <td>
+                                                    <kendo-combobox [data]="filteredProducts" [valueField]="'id'"
+                                                        [textField]="'name'" style="width:70%;"
+                                                        (valueChange)="onValueChange($event, i)"
+                                                        formControlName="materialProduct">
+                                                    </kendo-combobox>
+                                                    <div *ngIf="item.get('materialProduct').errors && submitted"
+                                                        class="text-danger">
+                                                        <div *ngIf="item.get('materialProduct').errors.required">Chọn vật tư</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span>{{item.get('productUOM') && item.get('productUOM').value ?
+                                                        item.get('productUOM').value.name : ''}}</span>
+                                                </td>
+                                                <td>
+                                                    <input class="form-control" formControlName="quantity"
+                                                        tmtautonumeric [options]="{ minimumValue: 0 }" />
+                                                    <div *ngIf="item.get('quantity').errors && submitted"
+                                                        class="text-danger">
+                                                        <div *ngIf="item.get('quantity').errors.required">Nhập số lượng
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <button type="button" (click)="deleteMaterialProduct(i)"
+                                                        class="btn btn-icon btn-light text-right">
+                                                        <span class="k-icon k-i-delete"></span>
+                                                    </button>
+                                                </td>
+
+                                            </tr>
+                                        </ng-container>
+                                    </tbody>
+                                </table>
+                                <button type="button" (click)="addMaterialProduct()" class="btn btn-primary"><i
+                                        class="fas fa-plus"></i> Thêm vật tư</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="saveOrUpdate()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onCancel()"
+        accesskey="q">Đóng</button>
+</footer>

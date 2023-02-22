@@ -1,0 +1,12 @@
+.filter-search {
+    width: 255px;
+}
+.container{
+    max-width: 1580px;
+}
+.service-filter{
+    min-width: 395px;
+}
+.service-filter .k-multiselect-wrap.k-floatwrap{
+    display: flex;
+}

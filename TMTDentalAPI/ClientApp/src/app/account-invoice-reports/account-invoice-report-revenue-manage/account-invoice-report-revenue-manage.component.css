@@ -1,0 +1,25 @@
+.type a:hover,
+.type .active {
+    color: white;
+    border-radius: 1rem;
+    background: hsl(199deg 89% 74%);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.type a {
+    padding: .5rem;
+    color: black;
+}
+
+.bg-gray {
+    background-color: hsl(0deg 0% 95%);
+}
+
+.o_web_client {
+    background-color: white !important;
+}
+
+.k-grid-footer-wrap table tfoot tr td {
+    border: none;
+}

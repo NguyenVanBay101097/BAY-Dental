@@ -1,0 +1,20 @@
+<ul class="list-group">
+    <li *ngFor="let conversation of conversations" class="list-group-item d-flex align-items-center"
+        (click)="selectConversation(conversation)" [class.active]="conversationSelected == conversation">
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="customCheck1">
+            <label class="custom-control-label" for="customCheck1"></label>
+        </div>
+        <div class="avatar">
+            <img [src]="conversation.user.facebookProfilePicture" alt="avatar"
+                [title]="conversation.user.facebookUserName">
+        </div>
+        <div class="content mr-auto">
+            <h5 class="mb-0">{{conversation.user.facebookUserName}}</h5>
+            <span class="snippet">{{conversation.snippet}}</span>
+        </div>
+        <div class="meta">
+            <span class="time_latest_message">11:55</span>
+        </div>
+    </li>
+</ul>

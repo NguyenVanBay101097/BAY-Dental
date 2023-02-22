@@ -1,0 +1,134 @@
+<div class="o_form_view o_form_container" *ngIf="partner">
+    <div class="o_group">
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Tên
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.name}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Tuổi
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.birthYear ? getAge(partner.birthYear) : ''}}
+
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Giới tính
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getGender(partner.gender)}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Địa chỉ
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getAddress(partner)}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Tiểu sử bệnh
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getHistories(partner)}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Tiểu sử khác
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.medicalHistory}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="o_group o_inner_group o_group_col_6">
+            <tbody>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label o_form_label_help">
+                            Mã
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.ref}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Điện thoại
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.phone}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Email
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.email}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Nhóm
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{getCategories()}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Nghề nghiệp
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.jobTitle}}</span>
+                    </td>
+                </tr>
+                <tr *ngIf="partner.zaloId">
+                    <td class="o_td_label">
+                        <label class="o_form_label">
+                            Zalo Id
+                        </label>
+                    </td>
+                    <td style="width: 100%;" class="pb-0">
+                        <span class="o_field_char o_field_widget">{{partner.zaloId}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

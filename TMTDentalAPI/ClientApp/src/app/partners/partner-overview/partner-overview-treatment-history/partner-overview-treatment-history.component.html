@@ -1,0 +1,69 @@
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="mb-0 text-primary">
+        Lịch sử điều trị
+      </h5>
+      <div class="d-flex align-items-center">
+        <button type="button" (click)="createNewSaleOrder()" class="btn btn-primary mr-2">
+          <span class="fas fa-plus-circle"></span>
+          <span> Tạo điều trị</span>
+        </button>
+        <div class="dropdown mr-2">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-download"></i> Xuất File</button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" (click)="exportExcel()">Xuất Excel</a>
+              <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+          </div>
+      </div>
+        <button type="button" (click)="printTreatmentHistories()" class="btn btn-primary d-flex">
+          <span>In hồ sơ điều trị</span>
+        </button>
+      </div>
+    </div>
+    <kendo-grid class="grid-data" [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
+      <kendo-grid-column field="date" title="Ngày" width="110">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.date | date: 'dd/MM/yyyy'}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="name" title="Dịch vụ" width="200">
+      </kendo-grid-column>
+      <kendo-grid-column field="date" title="Phiếu điều trị" width="110">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <a class="text-primary" [routerLink]="[ '/sale-orders', dataItem.orderId ]">{{dataItem.orderName}}</a>
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Số lượng" field="productUOMQty" width="100" class="text-right">
+      </kendo-grid-column>
+      <kendo-grid-column title="Đơn vị tính" field="productUOMName" width="100">
+      </kendo-grid-column>
+      <kendo-grid-column title="Thành tiền" class="text-right" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.priceSubTotal | number}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Thanh toán" class="text-right" width="150">
+          <ng-template kendoGridCellTemplate let-dataItem>
+              {{dataItem.amountInvoiced | number}}
+          </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Còn lại" class="text-right" width="150">
+          <ng-template kendoGridCellTemplate let-dataItem>
+              {{dataItem.amountResidual | number}}
+          </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column title="Răng" field="teethDisplay" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column title="Bác sĩ" field="employeeName" width="150">
+      </kendo-grid-column>
+      <kendo-grid-column title="Chẩn đoán" field="diagnostic" width="150">
+      </kendo-grid-column>
+     
+      <kendo-grid-column field="stateDisplay" title="Trạng thái" width="120">
+      </kendo-grid-column>
+    </kendo-grid>
+  </div>
+</div>

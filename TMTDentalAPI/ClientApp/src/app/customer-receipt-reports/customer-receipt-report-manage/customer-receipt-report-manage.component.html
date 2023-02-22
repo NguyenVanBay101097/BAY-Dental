@@ -1,0 +1,41 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Báo cáo tiếp nhận</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'customer-receipt-overview' ]">
+                            Tổng quan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'customer-receipt-for-time' ]">
+                            Giờ tiếp nhận
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'customer-receipt-timeservice' ]">
+                            Thời gian phục vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'customer-receipt-notreatment' ]">
+                            Tiếp nhận không điều trị
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

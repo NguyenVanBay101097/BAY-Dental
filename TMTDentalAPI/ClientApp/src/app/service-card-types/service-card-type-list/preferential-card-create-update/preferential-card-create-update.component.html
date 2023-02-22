@@ -1,0 +1,138 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb w-100">
+            <li>
+                <a [routerLink]="['/card-types/preferential-cards']">
+                    Danh sách loại thẻ
+                </a>
+            </li>
+            <li class="active">
+                <span *ngIf="cardTypeId">{{cardTypeName}}</span>
+                <span *ngIf="!cardTypeId">Tạo mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <button class="btn btn-primary" (click)="onSave()">Lưu</button>
+        </div>
+    </div>
+</div>
+
+<div class="py-3 o_content">
+    <form class="o_form_view" [formGroup]="cardForm" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên hạng thẻ</label>
+                    <h1>
+                        <input class="form-control" formControlName="name">
+                    </h1>
+                    <div *ngIf="f.name.errors && submitted" class="text-danger">
+                        <div *ngIf="f.name.errors?.required" class="text-danger">
+                            Nhập tên hạng thẻ
+                        </div>
+                    </div>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label o_form_label_help">
+                                        Hạn mức thẻ
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%">
+                                    <div class="d-flex align-items-center w-100">
+                                        <div class="mr-2">
+                                            <input class="form-control" formControlName="nbrPeriod" tmtautonumeric
+                                            [options]="{minimumValue: 0, decimalPlaces: 0}"/>
+                                        </div>
+                                        <div>
+                                            <select class="form-control select-control" formControlName="period">
+                                                <option value="year">Năm</option>
+                                                <option value="month">Tháng</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="f.nbrPeriod.errors && submitted"
+                                        class="text-danger">
+                                        <div *ngIf="f.nbrPeriod.errors?.required" class="text-danger">
+                                            Nhập hạn mức thẻ
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="o_td_label mb-2">
+                    Cấu hình ưu đãi
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <app-service-list-search-dropdown (onSelectService)="addLine($event)"
+                        [placeHolder]="'Tìm kiếm theo mã hoặc tên dịch vụ...'"></app-service-list-search-dropdown>
+                        <div>
+                            <button type="button" class="btn btn-primary mr-2" (click)="onApplyCateg()">
+                                Áp dụng cho cả nhóm
+                            </button>
+                            <button type="button" class="btn btn-primary" (click) ="onApplyAll()">
+                                Áp dụng cho toàn bộ
+                            </button>
+                        </div>
+                </div>
+                <div>
+                    <table class="table">
+                        <tr>
+                            <th>Tên dịch vụ</th>
+                            <th>Giá bán</th>
+                            <th>Ưu đãi theo thẻ</th>
+                            <th></th>
+                        </tr>
+                        <ng-container>
+                            <tbody formArrayName="productPricelistItems">
+                                <ng-container
+                                    *ngFor="let categ of this.productPricelistItems.controls; let categIndex = index"
+                                    [formGroupName]="categIndex">
+                                    <tr>
+                                        <td colspan="2" class="o_td_label">
+                                            {{categ.get('name').value}}
+                                        </td>
+                                        <td class="text-right">
+                                        </td>
+                                        <td></td>
+                                    </tr>
+
+                                    <ng-container formArrayName="products">
+                                        <tr *ngFor="let gr of categ.get('products')['controls']; let proIndex = index"
+                                            [formGroupName]="proIndex">
+                                            <td class="w-50">
+                                                <div>{{gr.get('product').value.name}}</div>
+                                                <div>{{gr.get('product').value.defaultCode}}</div>
+
+                                            </td>
+                                            <td class="w-20">{{gr.get('product').value.listPrice | number}}</td>
+                                            <td class="w-30">
+                                                <app-compute-price-input-popover (onApply) = "apply($event,categIndex, proIndex)" 
+                                                [priceObj] = "getPriceObj(gr)">
+                                                </app-compute-price-input-popover>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger mr-2" title="Xóa"
+                                                    (click)="deleteItem(categIndex, proIndex)">
+                                                    <span class="far fa-trash-alt"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+
+                                </ng-container>
+
+                            </tbody>
+                        </ng-container>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

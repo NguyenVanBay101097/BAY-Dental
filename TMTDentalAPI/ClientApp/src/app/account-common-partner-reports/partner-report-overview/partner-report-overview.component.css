@@ -1,0 +1,51 @@
+.data-filter {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.filter-left {
+    width: 70%;
+    display: flex;
+    align-items: center;
+}
+
+.filter-right {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-info {
+    width: fit-content;
+    margin: 0 10px 10px 0;
+    padding: 2.5px 5px;
+    background-color: #E7F7FE;
+    border-radius: 6px;
+    /* position: relative; */
+}
+
+@media only screen and (max-width: 940px) {
+    .revenue-cmp {
+        margin-top: 7px;
+    }
+}
+
+@media only screen and (max-width: 1354px) {
+    .filter-dropdown {
+        margin-top: 7px;
+    }
+}
+
+.card-header-title {
+    text-transform: uppercase;
+    text-align: center;
+    color: #007BFF;
+}

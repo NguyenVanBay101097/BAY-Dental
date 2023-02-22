@@ -1,0 +1,34 @@
+<kendo-grid [data]="gridData" [loading]="loading" [pageSize]="limit" [skip]="skip" [pageable]="true"
+    [scrollable]="'none'" (pageChange)="pageChange($event)" [navigable]="true" kendoGridFocusable>
+    <kendo-grid-column field="date" title="Ngày">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date: 'shortDate'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Diễn giải">
+    </kendo-grid-column>
+    <kendo-grid-column field="debit" class="text-right" title="Nợ" footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.debit | number}}
+        </ng-template>
+        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['debit']">
+            {{total["debit"].sum | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="credit" class="text-right" title="Trả" footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.credit | number}}
+        </ng-template>
+        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['credit']">
+            {{total["credit"].sum | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="balance" class="text-right" title="Cân đối" footerClass="text-right font-weight-bold">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.balance | number}}
+        </ng-template>
+        <ng-template kendoGridFooterTemplate let-column="column" *ngIf="total && total['balance']">
+            {{total["balance"].sum | number}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

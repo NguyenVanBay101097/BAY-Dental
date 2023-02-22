@@ -1,0 +1,70 @@
+<button #popover="ngbPopover" type="button" class="btn btn-info btn-sm" title="Liên kết khách hàng"
+    [ngbPopover]="popContent" popoverClass="popover-xl" [autoClose]="'outside'" [popoverTitle]="popTitle"
+    placement="right" data-container="body" triggers="manual" (click)="togglePopover()">
+    <span class="fas fa-pen"></span>
+</button>
+
+<ng-template #popTitle>
+    <div class="d-flex align-items-center">
+        <span>Kết nối khách hàng</span>
+        <button type="button" class="close ml-auto" (click)="popover.close()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <div class="d-flex align-items-center mb-2">
+        <b>SĐT</b>
+        <input type="text" class="form-control form-control-sm mx-1" [class.border-danger]="phoneSearch_invalid"
+            placeholder="Nhập số điện thoại..." [(ngModel)]="document.Phone" (ngModelChange)="checkPhoneSearch($event)">
+    </div>
+    <div class="spinner-border" role="status" *ngIf="loading">
+        <span class="sr-only">Loading...</span>
+      </div>
+    <div *ngIf="searchResults.length" class="mb-2">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let item of searchResults">
+                {{item.DisplayName}}
+                <button type="button" class="btn btn-sm btn-primary" (click)="selectPartner(item)">Chọn</button>
+            </li>
+        </ul>
+    </div>
+    <div class="mb-2" *ngIf="!searchResults.length && document.Phone && document.Phone.length >= 10">
+        Chưa có khách hàng với SĐT '{{document.Phone}}'
+        <button type="button" class="btn btn-sm btn-secondary" (click)="createPartner()">Tạo</button>
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary btn-sm" (click)="onSave()" accesskey="s">
+            Lưu
+        </button>
+    </div>
+    <!-- <div class="my-1">
+        <button type="button" class="btn btn-light btn-sm mt-1 mr-1" *ngFor="let phone of phones_List"
+            (click)="phoneSearch = phone; loadDataFromApi()">
+            {{phone}}
+        </button>
+    </div>
+    <div *ngIf="show_partners_List">
+        <b>Danh sách Khách hàng</b>
+        <ul class="list-group list-group-flush border my-1" *ngIf="partners_List.length">
+            <li class="list-group-item list-group-item-action py-1 px-2 d-flex align-items-center"
+                *ngFor="let partner of partners_List">
+                <span>{{partner.displayName}}</span>
+                <button type="button" class="btn btn-primary btn-sm ml-auto" title="Liên kết khách hàng"
+                    (click)="connectPartner(partner.id)">
+                    Chọn
+                </button>
+            </li>
+        </ul>
+        <div class="d-flex flex-column align-items-center border py-2" *ngIf="!partners_List.length">
+            <span class="text-secondary">KHÔNG CÓ KHÁCH HÀNG</span>
+            <button type="button" class="btn btn-primary btn-sm mt-1" title="Thêm mới khách hàng"
+                (click)="createPartner()">
+                Thêm khách hàng
+            </button>
+        </div>
+    </div>
+    <div *ngIf="partnerName">
+        <b>Khách hàng liên kết : </b>
+        <span>{{partnerName}}</span>
+    </div> -->
+</ng-template>

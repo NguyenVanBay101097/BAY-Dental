@@ -1,0 +1,45 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Báo cáo doanh thu</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'revenue-time' ]">
+                            Theo thời gian
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'revenue-service' ]">
+                            Dịch vụ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'revenue-employee' ]">
+                            Nhân viên
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'revenue-partner' ]">
+                            Khách hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 py-1" routerLinkActive="active" [routerLink]="[ 'revenue-expecting' ]">
+                            Dự kiến doanh thu
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

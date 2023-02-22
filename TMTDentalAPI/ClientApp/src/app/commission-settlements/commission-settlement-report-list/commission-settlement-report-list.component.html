@@ -1,0 +1,38 @@
+<div class="">
+    <div class="o_form_view o_form_nosheet o_form_editable">
+        <div class="my-3 d-flex justify-content-between">
+            <div class="d-flex justify-content-between">
+                <app-date-range-picker-filter title="Thời gian" class="mr-1" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)">
+                </app-date-range-picker-filter>
+                <kendo-combobox [placeholder]="'Tất cả nhân viên'" (valueChange)="valueEmployeeChange($event)" class="mr-1" [filterable]="true" [data]="filteredEmployees" #employeeCbx [valueField]="'id'" [textField]="'name'" [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
+                <kendo-combobox [placeholder]="'Loại hoa hồng'" (valueChange)="valueCommissionTypeChange($event)" class="mr-1" [data]="filteredCommissionType" [valueField]="'value'" [textField]="'name'">
+                </kendo-combobox>
+                <button type="button" class="btn btn-primary mr-1" (click)="exportCommissionExcelFile()"><i
+                        class="fas fa-download"></i>&nbsp;Xuất excel</button>
+            </div>
+        </div>
+        <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+            <kendo-grid-column field="employeeName" title="Nhân viên">
+                <ng-template kendoGridFooterTemplate>
+                    <span class="text_sum">Tổng</span>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Loại hoa hồng">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <span *ngIf="dataItem.commissionType=='doctor'">Bác sĩ</span>
+                    <span *ngIf="dataItem.commissionType=='assistant'">Phụ tá</span>
+                    <span *ngIf="dataItem.commissionType=='counselor'">Tư vấn</span>
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Tiền hoa hồng" class="text-right">
+                <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                    <span> {{dataItem.amount | number}} </span>
+                </ng-template>
+                <ng-template kendoGridFooterTemplate style="border-left-style: none;">
+                    <span style="float: right;" class="text_sum"> {{amountTotal| number}} </span>
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

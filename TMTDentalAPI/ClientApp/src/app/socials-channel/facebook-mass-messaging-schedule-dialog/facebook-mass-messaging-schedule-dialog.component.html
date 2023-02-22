@@ -1,0 +1,31 @@
+<header class="modal-header">
+    <h5 class="modal-title">Khi nào bạn muốn gửi tin nhắn?<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">Gửi lúc</label>
+                        </td>
+                        <td style="width: 100%;">
+                            <kendo-datepicker [format]="'dd/MM/yyyy HH:mm'" formControlName="scheduleDateObj">
+                            </kendo-datepicker>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lên lịch</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

@@ -1,0 +1,23 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb w-100">
+            <li class="active">Danh sách loại thẻ</li>
+        </ol>
+        <div class="o_cp_left justify-content-start">
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills nav-fill">
+                    <li class="nav-item">
+                        <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'member-cards' ]">Thẻ thành viên</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-left" routerLinkActive="active" [routerLink]="[ 'preferential-cards' ]">Thẻ ưu đãi dịch vụ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

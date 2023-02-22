@@ -1,0 +1,3 @@
+@media print{
+    #printSaleOrderDiv{display:none !important;}
+  }

@@ -1,0 +1,11 @@
+:host {
+    position: absolute;
+    width: 400px;
+    top: .5rem;
+    left: 0;
+}
+
+.menu-template-type a.active {
+    border-bottom: 2px solid #3893e2;
+    color: #3893e2;
+}

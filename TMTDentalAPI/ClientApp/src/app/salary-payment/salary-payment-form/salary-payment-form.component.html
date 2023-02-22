@@ -1,0 +1,122 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg overflow-hidden">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr *ngIf="salaryPayment.name">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã phiếu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                  <span style="font-weight: 600;">{{salaryPayment.name}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ngày
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker [min]="minDateTime" [navigation]="false" [max]="maxDateTime"
+                                        formControlName="dateObj" [rangeValidation]="true" [disableControl]="!editable">
+                                    </kendo-datepicker>
+                                    <div *ngIf="f.dateObj.errors" class="text-danger">
+                                        <div>Chọn ngày trong khoảng {{minDateTime | date:'dd/MM/yyyy'}} - {{monthEnd |
+                                            date:'dd/MM/yyyy'}}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Phương thức
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredJournals" [textField]="'name'"
+                                        [filterable]="true" [disableControl]="!editable" #journalCbx formControlName="journal"
+                                        [valueField]="'id'">
+                                        <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                            <div>
+                                                <div *ngIf="dataItem.type !== 'cash'">{{dataItem.displayType}}</div>
+                                                <div>
+                                                    <strong>{{dataItem.name}}</strong>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        </kendo-combobox>
+                                    <div *ngIf="f.journal.errors && (f.journal.touched || f.journal.dirty || submitted)"
+                                        class="text-danger">
+                                        <div *ngIf="f.journal.errors.required">Chọn phương thức</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Người nhận
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="filteredEmployees" [textField]="'name'" [filterable]="true"
+                                        [disableControl]="!editable" #employeeCbx formControlName="employee"
+                                        [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <div *ngIf="f.employee.errors && submitted"
+                                        class="text-danger">
+                                        <div *ngIf="f.employee.errors.required">Chọn người nhận</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Số tiền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" [disableControl]="!editable" formControlName="amount"
+                                        [options]="{ minimumValue: 0, decimalPlaces: 0 }" tmtautonumeric />
+                                    <div *ngIf="f.amount.errors && submitted"
+                                        class="text-danger">
+                                        <div *ngIf="f.amount.errors.required">Nhập số tiền ứng</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nội dung
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" [disableControl]="!editable"
+                                        formControlName="reason"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" *ngIf="editable" class="btn btn-primary" (click)="onSavePrint()" accesskey="s">Lưu và In</button>
+    <button type="button" *ngIf="editable" class="btn btn-primary ml-1" (click)="actionConfirm()">Xác nhận</button>
+    <button type="button" *ngIf="salaryPayment.state == 'done'" class="btn btn-primary" (click)="printItem(id)">In phiếu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

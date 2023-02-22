@@ -1,0 +1,23 @@
+<header class="modal-header">
+    <h5 class="modal-title">Chụp hình webcam<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onClose()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="d-flex m-2 justify-content-center" id="_wrapper">
+                <div id="my_camera" class="left border">
+                </div>
+                <button class="btn btn-sm btn-primary mx-2 align-self-center" (click)="onSnap()">Chụp</button>
+                <div id="results" style="height: 240px;width: 240px;  max-width: 40%;" class="right border ">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer ">
+    <button type="button " [disabled]="!image64" (click)="onSave() " class="btn btn-primary btn-sm " accesskey="s ">Lưu hình</button>
+    <button type="button " (click)="onClose()" class="btn btn-light btn-sm " accesskey="q ">Đóng</button>
+</div>

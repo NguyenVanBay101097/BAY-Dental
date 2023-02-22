@@ -1,0 +1,141 @@
+<div class="card">
+    <div class="card-body">
+        <div class="filter">
+            <div class="filter-left">
+                <app-date-range-picker-filter class="mr-2" [title]="'Ngày tạo khách hàng'" [opens]="'right'"
+                    [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchChange($event)">
+                </app-date-range-picker-filter>
+                <kendo-combobox class="mr-2" [data]="companies" [placeholder]="'Tất cả chi nhánh'" [valueField]="'id'"
+                    [textField]="'name'" [filterable]="true" #companyCbx (selectionChange)="onSelectCompany($event)">
+                </kendo-combobox>
+                <button class="btn btn-primary" type="button" (click)="exportExcelFile()">
+                    <i class="fas fa-download"></i> Xuất File
+                </button>
+            </div>
+            <div class="filter-right">
+                <app-partner-report-filter-popup [placement]="'bottom-right'" [filter]="filter" (valueChange)="onValueChange($event)">
+                </app-partner-report-filter-popup>
+            </div>
+        </div>
+
+        <div class="data-filter">
+            <ng-container *ngFor="let item of dataFilterObj | keyvalue: reverseKey">
+                <div class="filter-info">
+                    <span class="mr-2">
+                        {{getTitleDisplay(item.key)}}:&nbsp;{{item.value}}
+                    </span>
+                    <i class="fas fa-times cursor-pointer" (click)="onRemoveFilter(item.key)"></i>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="mb-3">
+            <app-partner-report-area #reportAreaComp [filter]="filter" (filterEmit)="filterEmit($event)">
+            </app-partner-report-area>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-6">
+                <div class="card">
+                    <h5 class="card-header card-header-title bg-white">
+                        Số lượng khách hàng theo nguồn
+                    </h5>
+                    <div class="card-body">
+                        <app-partner-report-source [dataReportSource]="dataReportSource"></app-partner-report-source>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <h5 class="card-header card-header-title bg-white">Số lượng khách hàng theo độ tuổi - giới tính</h5>
+                    <div class="card-body">
+                        <app-partner-report-age-gender [dataReportAgeGender]="dataReportAgeGender">
+                        </app-partner-report-age-gender>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="mt-3">
+            <div class="o_aggregate_col">
+                <div class="o_aggregate">
+                    <h6>Số khách hàng</h6>
+                    <h4 class="text-primary">
+                        {{reportSumary?.totalPartner || 0 | number }}
+                    </h4>
+                </div>
+            </div>
+            <div class="o_aggregate_col">
+                <div class="o_aggregate">
+                    <h6>Số dịch vụ</h6>
+                    <h4 class="o_value text-primary">
+                        {{reportSumary?.totalService || 0 | number }}
+                    </h4>
+                </div>
+            </div>
+            <div class="o_aggregate_col">
+                <div class="o_aggregate">
+                    <h6>Doanh thu</h6>
+                    <h4 class="text-success">
+                        {{reportSumary?.totalRevenue || 0 | number}}
+                    </h4>
+                </div>
+            </div>
+            <div class="o_aggregate_col">
+                <div class="o_aggregate">
+                    <h6>Dự kiến thu</h6>
+                    <h4 class="text-primary">
+                        {{reportSumary?.totalRevenueExpect || 0 | number}}
+                    </h4>
+                </div>
+            </div>
+            <div class="o_aggregate_col">
+                <div class="o_aggregate">
+                    <h6>Công nợ</h6>
+                    <h4 class="text-danger">
+                        {{reportSumary?.totalDebt || 0 | number}}
+                    </h4>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="card">
+            <h5 class="card-header bg-white">
+                Số lượng khách hàng: {{gridData?.total}}
+            </h5>
+            <kendo-grid [data]="gridData" [pageable]="pagerSettings" [skip]="filter.offset" [pageSize]="filter.limit"
+                (pageChange)="onPageChange($event)">
+                <kendo-grid-column field="name" title="Họ tên" width="200">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a class="text-primary" title="Xem hồ sơ khách hàng"
+                            [routerLink]="['/partners/customer/' + dataItem.id]">
+                            {{dataItem.name}}
+                        </a>
+                        <div *ngIf="dataItem.ref">
+                            <small>{{dataItem.ref}}</small>
+                        </div>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="phone" title="Điện thoại" width="130"></kendo-grid-column>
+                <kendo-grid-column field="age" title="Tuổi" width="60">
+                </kendo-grid-column>
+                <kendo-grid-column field="jobTitle" title="Nghề nghiệp" width="160">
+                </kendo-grid-column>
+                <kendo-grid-column field="address" title="Địa chỉ" width="250">
+                </kendo-grid-column>
+                <kendo-grid-column field="categories" title="Nhãn khách hàng" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <span *ngFor="let tag of dataItem.categories" class="badge badge-secondary mr-1"
+                            [ngClass]="'o_tag_color_' + tag.color">
+                            {{tag.name}}
+                        </span>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="cardTypeName" title="Thẻ thành viên" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="sourceName" title="Nguồn" width="120">
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+
+    </div>
+</div>

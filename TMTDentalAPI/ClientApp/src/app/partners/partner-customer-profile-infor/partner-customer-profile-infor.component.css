@@ -1,0 +1,21 @@
+.GAL03TOCEX {
+    box-sizing: border-box;
+    border-radius: 2px;
+    background-color: #fafafa;
+    padding: 6px 6px;
+    width: 100%;
+    font-weight: bold;
+    min-height: 16px;
+    white-space: normal;
+}
+
+.GAL03TOCEX>* {
+    min-height: 16px;
+    display: block;
+}
+
+.table-spacing {
+    white-space: nowrap;
+    border-collapse: separate;
+    border-spacing: 20px;
+}

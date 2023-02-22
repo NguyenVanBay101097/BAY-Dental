@@ -1,0 +1,105 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Đơn hàng Labo</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <!-- <app-tmt-option-select-dropdown title="Trạng thái" [options]="stateFilterOptions"
+                    (selectChange)="onStateSelectChange($event)">
+                </app-tmt-option-select-dropdown> -->
+                    <kendo-combobox (selectionChange)="onChangeLaboState($event)" placeholder="Trạng thái" [data]="filterLaboStatus" [textField]="'name'" [valueField]="'value'">
+                    </kendo-combobox>
+                </div>
+
+            </div>
+            <div class="o_cp_sidebar">
+                <!-- <div class="btn-group">
+                    <div class="btn-group o_dropdown" *ngIf="selectedIds.length">
+                        <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" type="button" id="dropdownMenuButton">
+                            Thao tác
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button class="dropdown-item" (click)="unlink()">Xóa</button>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="o_searchview">
+                <input class="o_searchview_input" placeholder="Tìm theo nhà cung cấp, phiếu điều trị, phiếu Labo" type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [class]="'pointer'" (cellClick)="cellClick($event.dataItem)" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="partner" title="NCC Labo" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.partner.displayName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column *ngIf="canUpdateSaleOrder" title="Phiếu điều trị" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" *ngIf="dataItem.saleOrderLine" [routerLink]="['/sale-orders', dataItem.saleOrderLine.orderId]">{{dataItem.saleOrderLine.orderName}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Phiếu Labo" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a class="text-primary" (click)="editLabo(dataItem)">{{dataItem.name}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Loại phục hình" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrderLine?.name}}
+            </ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column field="teeth" title="Răng" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{GetTeeth(dataItem)}}
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="quantity" title="Số lượng" width="120" class="text-right">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.quantity | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotal" title="Thành tiền" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountTotal | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="dateOrder" title="Ngày gửi" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.dateOrder | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="datePlanned" title="Ngày nhận dự kiến" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.datePlanned | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span [ngClass]="getTextColor(dataItem)">{{getState(dataItem)}}</span>
+            </ng-template>
+        </kendo-grid-column>
+
+        <kendo-grid-column field="id" width="100" *ngIf="canUpdate">
+            <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                Nhận labo
+            </ng-template>
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <button class="btn btn-success" title="Sửa" (click)="$event.stopPropagation(); editItem(dataItem)">
+                    <span class="far fa-edit"></span></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

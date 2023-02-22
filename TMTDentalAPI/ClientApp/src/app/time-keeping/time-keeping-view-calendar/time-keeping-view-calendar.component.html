@@ -1,0 +1,108 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">{{title}}</li>
+        </ol>
+        <div class="o_cp_searchview">
+
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <!-- <button (click)="importFileExcell()" class="btn btn-primary mr-2">
+                        <i class="fas fa-file-import"></i> Import
+                    </button> -->
+                    <!-- <button (click)="timeKeepingForAll()" class="btn btn-primary mr-2">
+                        Chấm công nguyên ngày
+                    </button> -->
+                    <button (click)="createFullMonthTimeKeeping()" class="btn btn-primary mr-2">
+                        Chấm công tháng
+                    </button>
+                </div>
+            </div>
+            <div class="o_cp_sidebar">
+                <div class="float-left">
+                    <div class="filterDatetime">
+                        <app-time-keeping-date-filter (searchChange)="onDateSearchChange($event)">
+                        </app-time-keeping-date-filter>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <kendo-combobox *ngIf="canEmployeeRead" [placeholder]="'Lọc theo nhân viên'" class="w-50" [data]="listEmployeies" [textField]="'name'" [filterable]="true" 
+                #empCbx (selectionChange)="empChange($event)" [valueField]="'id'" [filterable]="true" (filterChange)="handleEmpChange($event)"
+             >
+            </kendo-combobox>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <!-- <div ngbDropdown class="d-inline-flex mr-2 float-right pb-2">
+        <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle><i
+                class="fas fa-cog"></i></button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button (click)="setupTimeKeeping()" ngbDropdownItem>Cầu hình chấm công</button>
+            <button (click)="setupWordEntryType()" ngbDropdownItem>Loại đầu vào công việc</button>
+        </div>
+    </div> -->
+    <!-- <div class="float-right pb-2">
+        <div class="d-inline-flex">
+            <button (click)="importFileExcell()" class="btn btn-outline-primary mr-3">
+                Import<i class="fas fa-file-import ml-1"></i>
+            </button>
+        </div>
+    </div> -->
+    <!-- <div class="float-right pb-2">
+        <div class="d-inline-flex">
+            <button (click)="exportFileTimeKeeping()" class="btn btn-outline-primary mr-3">Xuất file <i
+                    class="fas fa-file-export"></i></button>
+        </div>
+    </div> -->
+    <!-- <div class="float-right pb-2 mr-3">
+
+    </div> -->
+    <table class="table table-sm table-bordered table-content">
+        <thead>
+            <tr>
+                <th class="align-self-center" scope="col">Tên nhân viên</th>
+                <th class="text-left" scope="col">Chức vụ</th>
+                <th scope="col" *ngFor="let date of dateList">
+                    <div class="o_kanban_header">
+                        <div class="o_kanban_header_title" *ngIf="date.toDateString() != today.toDateString()">
+                            <p class="o_column_title_thread">{{date | date: 'E'}}</p>
+                            <p class="o_column_title_thread"> {{date | date: 'dd'}}</p>
+                        </div>
+                        <div class="o_kanban_header_title text-success" *ngIf="date.toDateString() == today.toDateString()">
+                            <p class="o_column_title_thread">{{date | date: 'E'}}</p>
+                            <p class="o_column_title_thread"> {{date | date: 'dd'}}</p>
+                        </div>
+                    </div>
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let empl of listEmployeies">
+                <tr>
+                    <th class="oe_kanban_label_Emp">{{empl.name}}</th>
+                    <td class="" style="min-width: 150px;">{{empl.hrJobName}}</td>
+                    <!-- <th scope="row" style="min-width: 200px;"></th> -->
+                    <td *ngFor="let date of this.listTimeSheetByEmpId[empl.id]">
+                        <div class="oe_kanban_content">
+                            <app-time-keeping-popover [line]="date" (formDate)="createOrUpdateTimeKeeping($event,date.date,empl)" (removeTime)="deleteTimeKeeping($event,date.date,empl)">
+                            </app-time-keeping-popover>
+                        </div>
+                        <div class="oe_kanban_content_timeOver" *ngIf="checkOverTime(date.chamCongs[0])">
+                            <span>{{getOverTime(date.chamCongs[0])}}</span>
+                        </div>
+                    </td>
+                </tr>
+
+            </ng-container>
+
+        </tbody>
+    </table>
+
+</div>

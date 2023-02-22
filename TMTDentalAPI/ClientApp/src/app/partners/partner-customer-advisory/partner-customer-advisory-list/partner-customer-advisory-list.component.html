@@ -1,0 +1,102 @@
+<div class="px-3 py-3 bg-white">
+    <h5>DANH SÁCH TIỂU SỬ RĂNG</h5>
+    <div class="mb-2">
+        <div class="mb-2">
+            <div class="mb-2 d-flex">
+                <span *ngFor="let item of filteredToothCategories">
+                    <button type="button" class="btn mr-2" 
+                        [ngClass]="cateId == item.id ? 'btn-primary' : 'btn-outline-primary'"
+                        (click)="onChangeToothCategory(item)" accesskey="s">{{item.name}}</button>
+                </span>
+                <button type="button" class="btn btn-primary mr-2 ml-auto" (click)="reSelected()">Chọn lại</button>
+            </div>
+            <div class="mb-2">
+                <div class="teeth-map mb-2">
+                    <table class="table table-sm">
+                        <tr *ngFor="let ham of hamList | keyvalue">
+                            <td [ngClass]="{'text-right': vitri.key === '0_right'}" *ngFor="let vitri of ham.value | keyvalue">
+                                <div class="tooth-wrapper">
+                                    <div (click)="onSelected(rang)" class="tooth-item" [ngClass]="[isSelected(rang) ? 'teethSelected' : '', isConsulted(rang) ? 'consulted' : '']" *ngFor="let rang of vitri.value">
+                                        {{rang.name}}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-2">
+        <div class="my-3 d-flex justify-content-between">
+            <app-date-range-picker-filter class="mr-2" [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+            <div class="o_cp_t_right">
+                <div class="o_searchview">
+                    <input type="text" class="o_searchview_input" placeholder="Tìm kiếm người tạo, dịch vụ" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                    <span class="o_searchview_icon fas fa-search"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mb-2">
+        <button type="button" class="btn btn-primary mr-2" (click)="createAdvisory()" accesskey="c">
+            Thêm tiểu sử
+        </button>
+        <button type="button" class="btn btn-primary mr-2" (click)="createQuotations()" accesskey="c">
+            Tạo báo giá
+        </button>
+        <button type="button" class="btn btn-primary mr-2" (click)="createSaleOrder()" accesskey="c">
+            Tạo phiếu điều trị
+        </button>
+        <button type="button" class="btn btn-primary mr-2" (click)="onPrint()" accesskey="c">
+            In phiếu
+        </button>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)" [selectable]="true" [selectedKeys]="mySelection" [kendoGridSelectBy]="'id'">
+                <kendo-grid-checkbox-column showSelectAll="true" width="50"></kendo-grid-checkbox-column>
+                <kendo-grid-column title="Ngày tạo" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.date | date : 'shortDate'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Người tạo" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.employee?.name}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="teeth" title="Răng" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.toothType == 'manual' ? getTeeth(dataItem.teeth) : getToothType(dataItem.toothType)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Chẩn đoán" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{getToothDiagnosis(dataItem.toothDiagnosis)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Dịch vụ" width="300">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{getProducts(dataItem.product)}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column width="120">
+                    <ng-template kendoGridHeaderTemplate>
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
+                            <span class="far fa-edit"></span></button>
+                        <button class="btn btn-danger" title="Xóa" (click)="deleteItem(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                    </ng-template>
+                </kendo-grid-column>
+                <div *kendoGridDetailTemplate="let dataItem">
+                    <app-partner-customer-sale-order-quotations-lines [advisoryId]="dataItem.id">
+                    </app-partner-customer-sale-order-quotations-lines>
+                </div>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

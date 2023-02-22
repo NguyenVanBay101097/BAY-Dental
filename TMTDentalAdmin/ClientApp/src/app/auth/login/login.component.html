@@ -1,0 +1,23 @@
+<div class="login-register bg-light">
+    <div class="login-register-box">
+        <form [formGroup]="loginForm" (submit)="login()">
+            <div class="text-center">
+                <img alt="homepage" src="assets/images/logo-icon.png" />
+                <h4 class="m-t-0">Login to App</h4>
+            </div>
+            <div class="form-group">
+                <input class="form-control" placeholder="Username" required formControlName="username" />
+            </div>
+            <div class="form-group">
+                <input class="form-control" placeholder="Password" type="password" required
+                    formControlName="password" />
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit" [disabled]="!loginForm.valid">
+                Đăng nhập
+            </button>
+            <div class="text-center">
+                <a routerLink="/forgot-password">Quên mật khẩu</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,289 @@
+<mxGraphModel>
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="&lt;img src=&quot;./assets/editors/images/start.png&quot; width=&quot;50px&quot; height=&quot;50px&quot;&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="180" y="350" width="50" height="50" as="geometry">
+        <mxRectangle x="180" y="350" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="3" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="2">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="4" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="2">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="5" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="2">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="6" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="2">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="7" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="440" y="80" width="220" height="130" as="geometry">
+        <mxRectangle x="440" y="80" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="8" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="7">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="9" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="7">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="10" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="7">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="11" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="7">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="12" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="810" y="550" width="220" height="130" as="geometry">
+        <mxRectangle x="810" y="550" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="13" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="12">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="14" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="12">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="15" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="12">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="16" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="12">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="17" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="440" y="310" width="220" height="130" as="geometry">
+        <mxRectangle x="440" y="310" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="18" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="17">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="19" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="17">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="20" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="17">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="21" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="17">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="22" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="810" y="310" width="220" height="130" as="geometry">
+        <mxRectangle x="810" y="310" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="23" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="22">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="24" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="22">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="25" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="22">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="26" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="22">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="27" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="810" y="80" width="220" height="130" as="geometry">
+        <mxRectangle x="810" y="80" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="28" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="27">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="29" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="27">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="30" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="27">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="31" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="27">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="32" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="440" y="550" width="220" height="130" as="geometry">
+        <mxRectangle x="440" y="550" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="33" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="32">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="34" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="32">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="35" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="32">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="36" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="32">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="37" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="1170" y="550" width="220" height="130" as="geometry">
+        <mxRectangle x="1170" y="550" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="38" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="37">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="39" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="37">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="40" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="37">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="41" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="37">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="42" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="1170" y="310" width="220" height="130" as="geometry">
+        <mxRectangle x="1170" y="310" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="43" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="42">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="44" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="42">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="45" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="42">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="46" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="42">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="47" value="&lt;h3&gt;Tên task&lt;/h3&gt;&lt;h3&gt;assign: Người được assign&lt;/h3&gt;&lt;h3&gt;Hạn kết thúc: 20/2/2020&lt;/h3&gt;&lt;h3&gt;Ngày bắt đầu: 20/2/2020&lt;/h3&gt;" vertex="1" connectable="0" parent="1">
+      <mxGeometry x="1170" y="80" width="220" height="130" as="geometry">
+        <mxRectangle x="1170" y="80" width="120" height="40" as="alternateBounds" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="48" value="Trigger" style="port;image=./assets/editors/images/overlays/flash.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="47">
+      <mxGeometry y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="49" value="Input" style="port;image=./assets/editors/images/overlays/check.png;align=right;imageAlign=right;spacingRight=18" vertex="1" parent="47">
+      <mxGeometry y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-6" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="50" value="Error" style="port;image=./assets/editors/images/overlays/error.png;spacingLeft=18" vertex="1" parent="47">
+      <mxGeometry x="1" y="0.25" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-8" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="51" value="Result" style="port;image=./assets/editors/images/overlays/information.png;spacingLeft=18" vertex="1" parent="47">
+      <mxGeometry x="1" y="0.75" width="16" height="16" relative="1" as="geometry">
+        <mxPoint x="-8" y="-4" as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="52" value="" edge="1" parent="1" source="6" target="19">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="53" value="" edge="1" parent="1" source="5" target="9">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="54" value="" edge="1" parent="1" source="5" target="8">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="55" value="" edge="1" parent="1" source="6" target="34">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="56" value="" edge="1" parent="1" source="11" target="29">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="57" value="" edge="1" parent="1" source="21" target="24">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="58" value="" edge="1" parent="1" source="36" target="14">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="61" value="" edge="1" parent="1" source="25" target="48">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="62" value="" edge="1" parent="1" source="31" target="44">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="64" value="" edge="1" parent="1" source="26" target="39">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="65" value="" edge="1" parent="1" source="15" target="43">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

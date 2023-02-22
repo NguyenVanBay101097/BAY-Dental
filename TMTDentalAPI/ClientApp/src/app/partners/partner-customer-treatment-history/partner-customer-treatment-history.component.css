@@ -1,0 +1,14 @@
+.h-5 {
+    height: 5% !important;
+    overflow: hidden;
+}
+
+.h-25 {
+    height: 25% !important;
+    overflow: hidden;
+}
+
+.h-70 {
+    height: 70% !important;
+    overflow: hidden;
+}

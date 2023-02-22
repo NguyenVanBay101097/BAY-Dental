@@ -1,0 +1,53 @@
+<div class="card border_card">
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between">
+            <h5 class="card-title t_title">
+                Lịch hẹn tiếp theo/gần đây
+            </h5>
+            <div class="d-inline-flex">
+                <a (click)="addAppointment()" title="Thêm" class="px-2">
+                    <i class="fas fa-plus text-primary"></i>
+                </a>
+                <a *ngIf="customerAppointment" (click)="editAppointment()" title="Sửa" class="px-2">
+                    <i class="fas fa-pencil-alt text-primary"></i>
+                </a>
+                <!-- <a *ngIf="customerAppointment" (click)="removeAppointment()" title="Xóa" class="px-2">
+                    <i class="far fa-trash-alt text-danger"></i>
+                </a> -->
+            </div>
+        </div>
+        <div *ngIf="customerAppointment" class="pl-3">
+            <div class="row">
+                <h5 class="mb-0"><span class="badge bg-primary">{{getState(customerAppointment.state)}}</span></h5>
+            </div>
+            <div class="row">
+                <!-- <label class="col-sm-4 t_col_form_lable">Mã lịch hẹn</label> -->
+                <div class="t_col_form_lable mt-1">
+                    {{customerAppointment.name}}
+                </div>
+            </div>
+            <div class="row opacity-8">
+                <label>Bác sĩ:&nbsp;</label>
+                <div>
+                    {{customerAppointment.doctorName}}
+                </div>
+            </div>
+            <div class="row opacity-8">
+                <label>Nội dung:&nbsp;</label>
+                <div>
+                    {{customerAppointment.note}}
+                </div>
+            </div>
+            <div class="row opacity-8">
+                <label>Ngày hẹn:&nbsp;</label>
+                <div>
+                    {{customerAppointment.date | date:'HH:mm EEEE, dd/MM/yyyy'}}
+                </div>
+            </div>
+            
+        </div>
+        <div *ngIf="!customerAppointment" class="text-center opacity-8">
+            <span>Chưa có lịch hẹn nào.</span>
+        </div>
+    </div>
+</div>

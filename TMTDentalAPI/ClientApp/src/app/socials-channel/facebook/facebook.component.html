@@ -1,0 +1,211 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Kết nối Facebook Page</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <button *ngIf="!logged_in" type="button" class="btn btn-primary btn-sm" accesskey="c"
+                        (click)="login()">
+                        Đăng nhập Facebook
+                    </button>
+                    <!-- <button *ngIf="logged_in" type="button" class="btn btn-primary btn-sm" accesskey="c"
+                        (click)="logout()">
+                        Đăng xuất Facebook
+                    </button>
+                    <button *ngIf="logged_in && !selectedPage" type="button" class="btn btn-primary btn-sm"
+                        accesskey="c" (click)="showModalAddConnect()">
+                        Thêm kết nối
+                    </button>
+                    <button *ngIf="selectedPage" type="button" class="btn btn-light btn-sm" accesskey="c"
+                        (click)="selectPage(null)">
+                        Quay lại Danh sách Trang kết nối
+                    </button> -->
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div fxfill fxLayout="row" *ngIf="connect" class="container wrapper">
+    <div fxFlex="none" class="user_section">
+        <img class="rounded-circle" src="//graph.facebook.com/{{connect.fbUserId}}/picture?width=100&amp;height=100"
+            [alt]="connect.fbUserName">
+        <div class="user_name">{{connect.fbUserName}}</div>
+    </div>
+    <div fxFlex class="list_page_section">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" *ngFor="let item of connect.pages; let i = index" (click)="selectPage(item)">
+                <div fxFlex="none">
+                    <img class="page_avatar" src="https://graph.facebook.com/{{item.pageId}}/picture?type=large" [alt]="item.pageName">
+                </div>
+                <div fxFlex>
+                    <div class="page_name">{{item.pageName}}</div>
+                    <div class="page_status text-success" *ngIf="item.connected == true">
+                        <i class="fas fa-check"></i> Đã kết nối
+                    </div>
+                </div>
+                <div fxFlex="nogrow">
+                    <button type="button" *ngIf="item.connected == false" class="btn btn-primary btn-sm"
+                        (click)="addConnect(item)">Kết nối</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- <div class="pages conversations" *ngIf="selectedPage">
+    <table>
+        <tr>
+            <td>
+                <div class="card list_Customers">
+                    <div class="mid tag" *ngFor="let item of DataCustomers; let i = index"
+                        [class.selected]="item === selectedCustomer" (click)="selectCustomer(item)">
+                        <table>
+                            <tr>
+                                <td>
+                                    <img class="avatar" src="{{item.picture}}" alt="">
+                                </td>
+                                <td>
+                                    <b>{{item.name}}</b><br>
+                                    <span [class.font-weight-bold]="item.unread_count" style="font-size: 0.9rem;">
+                                        <span *ngIf="item.message_from_page">Bạn:</span>
+                                        {{item.snippet}}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style="font-size: 0.9rem;">{{item.updated_time}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td *ngIf="!selectedCustomer">
+                <div class="card">
+                    <h2 class="mid" style="margin-top: 20%;">Chào mừng bạn đến với<b> Kênh Facebook</b></h2>
+                    <p class="mid">Chọn hội thoại từ danh sách để bắt đầu</p>
+                    <div class="mid card">
+                        <table>
+                            <tr>
+                                <td width=1%>
+                                    <img class="avatar" src="{{selectedPage.picture}}" alt="">
+                                </td>
+                                <td style="text-align: left;">
+                                    <b style="margin-left: 10px; margin-right: 10px;">{{selectedPage.name}}</b>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td *ngIf="selectedCustomer && loading">
+                <div class="card">
+                    <h2 class="mid" style="margin-top: 20%;">Loading..</h2>
+                </div>
+            </td>
+            <td *ngIf="selectedCustomer && !loading">
+                <div class="card message">
+                    <div class="message_box" id="message_box">
+                        <div *ngFor="let DataGroupMessagesCustomer of DataMessagesCustomer" class="message_group">
+                            <div class="message_date">{{DataGroupMessagesCustomer[0].created_time}}</div>
+                            <div *ngFor="let item of DataGroupMessagesCustomer" class="message_con"
+                                [class.my_message]="item.message_from_page">
+                                <img *ngIf="!item.message_from_page && item.last_message" class="avatar_message"
+                                    src="{{selectedCustomer.picture}}" alt="">
+                                <span class="message_content"
+                                    [class.margin-left_message_content]="!item.message_from_page && !item.last_message"
+                                    [class.first_message]="item.first_message" [class.last_message]="item.last_message">
+                                    {{item.message}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message_input">
+                        <table style="width: 100%; height: 100%;">
+                            <tr>
+                                <td style="width: 1%; white-space: nowrap;">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <i class="fas fa-images"></i>
+                                    <i class="fas fa-file"></i>
+                                </td>
+                                <td>
+                                    <input type="text" name="" id="" placeholder="Nhập tin nhắn...">
+                                </td>
+                                <td width=1%>
+                                    <i class="fas fa-heart"></i>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td *ngIf="selectedCustomer && !loading">
+                <div class="card detail_Customer">
+                    <img class="mid avatar" src="{{selectedCustomer.picture}}" alt="">
+                    <table class="mid">
+                        <tr>
+                            <td>
+                                <b *ngIf="!selectCustomer.editing_name">{{selectedCustomer.name}}</b>
+                                <input *ngIf="selectCustomer.editing_name" type="text" name="" id=""
+                                    [(ngModel)]="selectedCustomer.name">
+                            </td>
+                            <td>
+                                <button *ngIf="!selectCustomer.editing_name" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_name = true"><i
+                                        class="fas fa-pencil-alt"></i></button>
+                                <button *ngIf="selectCustomer.editing_name" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_name = false"><i
+                                        class="fas fa-times"></i></button>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="mid">
+                        <tr>
+                            <td>
+                                <span
+                                    *ngIf="!selectCustomer.editing_phone">{{selectedCustomer.phone ? selectedCustomer.phone : 'Chưa có số điện thoại'}}</span>
+                                <input *ngIf="selectCustomer.editing_phone" type="number" name="" id=""
+                                    placeholder="Chưa có số điện thoại" [(ngModel)]="selectedCustomer.phone">
+                            </td>
+                            <td>
+                                <button *ngIf="!selectCustomer.editing_phone" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_phone = true"><i
+                                        class="fas fa-pencil-alt"></i></button>
+                                <button *ngIf="selectCustomer.editing_phone" type="button"
+                                    class="btn btn-light myBtnEdit" (click)="selectCustomer.editing_phone = false"><i
+                                        class="fas fa-times"></i></button>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="row mid" style="width: 100%;">
+                        <kendo-combobox [data]="listPartners" [textField]="'name'" [valueField]="'phone'"
+                            [placeholder]="'Tên hoặc sđt'" [(ngModel)]="selectPartner"
+                            style="padding: 0; width: calc(100% - 40px - 5px); margin-right: 5px;">
+                            <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                <table>
+                                    <tr>
+                                        <td><b>{{ dataItem.partnerName }}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ dataItem.partnerPhone }}</td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                        </kendo-combobox>
+                        <button type="button" class="btn btn-light border" accesskey="c"
+                            (click)="showModalCreatePartner()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-light border" accesskey="c">Liên kết</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div> -->

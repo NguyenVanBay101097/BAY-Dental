@@ -1,0 +1,65 @@
+<h4 class="ml-3 my-2 title-header">Tiền điều trị - Doanh thu - Thực thu</h4>
+<div style="position: relative; height:320px;">
+    <canvas baseChart *ngIf="this.saleRevenueCashBookData.length"
+      [labels]="barChartLabels"
+      [datasets]="barChartData"
+      [options]="barChartOptions"
+      [type]="'bar'">
+    </canvas>
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;" *ngIf="!this.saleRevenueCashBookData.length">
+        <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+    </div>
+  </div>
+
+<div class="container-fluid pb-4">
+    <div class="row">
+        <div class="col">
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <h4>Doanh thu kinh doanh</h4>
+                <span class="total-amount fs-4">{{(revenueActualReportData?.revenuePaymentTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thanh toán dịch vụ và thuốc bằng TM/CK</span>
+                <span class="fw-bold">{{(revenueActualReportData?.cashBankPaymentTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thanh toán dịch vụ bằng tạm ứng</span>
+                <span class="fw-bold">{{(revenueActualReportData?.advancePaymentTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thanh toán dịch vụ bằng ghi công nợ</span>
+                <span class="fw-bold"> {{(revenueActualReportData?.debtPaymentTotal || 0) | number}}</span>
+            </div>
+            <div hasGroups [groups]="'insurance.group_insurance'" class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thanh toán dịch vụ bằng bảo hiểm</span>
+                <span class="fw-bold"> {{(revenueActualReportData?.debtInsuranceTotal || 0) | number}}</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <h4>Thực thu kinh doanh</h4>
+                <span class="total-amount fs-4">{{(revenueActualReportData?.cashBankDebitTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thanh toán dịch vụ và thuốc bằng TM/CK</span>
+                <span class="fw-bold">{{(revenueActualReportData?.cashBankPaymentTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Khách hàng đóng tạm ứng</span>
+                <span class="fw-bold">{{(revenueActualReportData?.advanceIncomeTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thu công nợ khách hàng</span>
+                <span class="fw-bold">{{(revenueActualReportData?.debtIncomeTotal || 0) | number}}</span>
+            </div>
+            <div hasGroups [groups]="'insurance.group_insurance'" class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thu công nợ bảo hiểm</span>
+                <span class="fw-bold">{{(revenueActualReportData?.insuranceIncomeTotal || 0) | number}}</span>
+            </div>
+            <div class="my-2 d-flex align-items-center justify-content-between">
+                <span class="title-detail">Thu ngoài</span>
+                <span class="fw-bold">{{(revenueActualReportData?.otherIncomeTotal || 0) | number}}</span>
+            </div>
+        </div>
+    </div>
+</div>

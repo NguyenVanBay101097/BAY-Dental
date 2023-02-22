@@ -1,0 +1,274 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Cấu hình chung</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+            <button type="button" class="btn btn-primary" (click)="onSave()">
+                <span>Áp dụng</span>
+            </button>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="o_form_view oe_form_configuration o_base_settings o_form_nosheet o_form_editable"
+        [formGroup]="formGroup">
+        <div class="o_setting_container">
+            <div class="settings">
+                <div class="app_settings_block">
+                    <div class="row mt16 o_settings_container">
+                        <!-- <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="group_discount_per_so_line">
+                                    <input type="checkbox" id="o_field_input_27"
+                                        formControlName="groupDiscountPerSOLine" class="custom-control-input">
+                                    <label for="o_field_input_27" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_27">Chiết khấu</label>
+                                <div class="text-muted">
+                                    Hiển thị chiết khấu trên chi tiết bán hàng
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="module_sale_coupon">
+                                    <input type="checkbox" id="checkbox-975" formControlName="groupSaleCouponPromotion"
+                                        class="custom-control-input">
+                                    <label for="checkbox-975" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_705">
+                                    Marketing
+                                </label>
+                                <div class="text-muted" id="sale_coupon">
+                                    Quản lý chương trình khuyến mãi, thẻ ưu đãi
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                    name="group_discount_per_so_line">
+                                    <input type="checkbox" id="o_field_input_28" formControlName="groupLoyaltyCard"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_28" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_28">Thẻ thành viên</label>
+                                <div class="text-muted">
+                                    Quản lý thẻ thành viên, áp dụng bảng giá thẻ thành viên
+                                </div>
+                                <div *ngIf="groupLoyaltyCard == true">
+                                    <label>Số tiền trên 1 điểm</label>
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'"
+                                        formControlName="loyaltyPointExchangeRate">
+                                    </kendo-numerictextbox>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_service_card"
+                                        formControlName="groupServiceCard" class="custom-control-input">
+                                    <label for="o_field_input_service_card" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_service_card">Thẻ dịch vụ</label>
+                                <div class="text-muted">
+                                    Quản lý thẻ dịch vụ
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_dom" formControlName="groupUoM"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_dom" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_dom">Đơn vị tính</label>
+                                <div class="text-muted">
+                                    Hàng hóa có thể nhập xuất nhiều đơn vị tính
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_tcare" formControlName="groupTCare"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_tcare" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_tcare">Chăm sóc tự động</label>
+                                <div class="text-muted">
+                                    Tạo kịch bản chăm sóc khách hàng
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_medicine" formControlName="groupMedicine"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_medicine" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_medicine">Bán thuốc</label>
+                                <div class="text-muted">
+                                    Quản lý đơn thuốc và hóa đơn thuốc
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_sms" formControlName="groupSms"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_sms" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_sms">SMS Brandname CSKH</label>
+                                <div class="text-muted">
+                                    Quản lý SMS Brandname CSKH
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_survey" formControlName="groupSurvey"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_survey" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_survey">Khảo sát đánh giá</label>
+                                <div class="text-muted">
+                                    Quản lý và cấu hình khảo sát đánh giá
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <div class="o_field_boolean o_field_widget custom-control custom-checkbox">
+                                    <input type="checkbox" id="o_field_input_insurance" formControlName="groupInsurance"
+                                        class="custom-control-input">
+                                    <label for="o_field_input_insurance" class="custom-control-label">​</label>
+                                </div>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label class="o_form_label" for="o_field_input_insurance">Bảo hiểm</label>
+                                <div class="text-muted">
+                                    Quản lý và đối soát công nợ bảo hiểm
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>Đa chi nhánh</h2>
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-12 col-lg-6 o_setting_box">
+                                <div class="o_setting_left_pane">
+                                    <div class="o_field_boolean o_field_widget custom-control custom-checkbox"
+                                        name="group_multi_company">
+                                        <input type="checkbox" id="o_field_input_867"
+                                            formControlName="groupMultiCompany" class="custom-control-input">
+                                        <label for="o_field_input_867" class="custom-control-label">​</label>
+                                    </div>
+                                </div>
+                                <div class="o_setting_right_pane">
+                                    <label class="o_form_label" for="o_field_input_867">Đa chi nhánh</label>
+                                    <div class="text-muted">
+                                        Quản lý đa chi nhánh
+                                    </div>
+                                    <div class="content-group" [class.d-none]="groupMultiCompany == false">
+                                        <div id="company_share_partner">
+                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline"
+                                                name="company_share_partner">
+                                                <input type="checkbox" id="o_field_input_869"
+                                                    formControlName="companySharePartner" class="custom-control-input">
+                                                <label for="o_field_input_869" class="custom-control-label">​</label>
+                                            </div>
+                                            <label class="o_form_label o_light_label" for="o_field_input_869">Dùng chung
+                                                danh sách đối tác</label>
+                                        </div>
+                                        <div>
+                                            <div class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline"
+                                                name="company_share_product">
+                                                <input type="checkbox" id="o_field_input_871"
+                                                    class="custom-control-input" formControlName="companyShareProduct"
+                                                    (change)="onChangeCompanyShareProduct()">
+                                                <label for="o_field_input_871" class="custom-control-label">​</label>
+                                            </div>
+                                            <label class="o_form_label o_light_label" for="o_field_input_871">Dùng chung
+                                                danh sách sản phẩm</label>
+                                            <!-- <div *ngIf="companyShareProductValue" class="pl-4">
+                                                <div
+                                                    class="o_field_boolean o_field_widget custom-control custom-checkbox oe_inline">
+                                                    <input type="checkbox" id="o_field_input_872"
+                                                        class="custom-control-input"
+                                                        formControlName="productListpriceRestrictCompany">
+                                                    <label for="o_field_input_872"
+                                                        class="custom-control-label">​</label>
+                                                </div>
+                                                <label class="o_form_label o_light_label" for="o_field_input_872">Giá
+                                                    bán
+                                                    sản
+                                                    phẩm riêng cho từng chi nhánh</label>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div>
+                        <h2>Tích điểm</h2>
+                        <div class="row mt16 o_settings_container">
+                            <div class="col-12 col-lg-12 o_setting_box">
+                                
+                                <div class="o_setting_right_pane">
+                                    <div class="text-muted">
+                                        Quản lý thứ hạng thành viên của khách hàng theo điểm tích lũy
+                                    </div>
+                                    <div class="d-flex">
+                                        <label class="o_form_label mr-3 pt-1">Tỉ lệ quy đổi điểm</label>
+                                        <div>
+                                            <kendo-numerictextbox  [min]="0" [autoCorrect]="true" [format]="'n0'" [spinners]="false" formControlName="loyaltyPointExchangeRate">
+                                            </kendo-numerictextbox>
+                                            <div *ngIf="f.loyaltyPointExchangeRate.errors && (f.loyaltyPointExchangeRate.touched || f.loyaltyPointExchangeRate.dirty || submitted)" class="text-danger">
+                                                <div *ngIf="f.loyaltyPointExchangeRate.errors.required">Nhập số tiền quy đổi</div>
+                                            </div> 
+                                        </div>
+                                        <span class="ml-2 pt-1"> = 1 điểm</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

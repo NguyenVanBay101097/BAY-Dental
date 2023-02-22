@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.product_medicine_1</Id>
+    <Name>Posicaine (Articaine)</Name>
+    <CategId>sample.product_category_17</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>100000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_2</Id>
+    <Name>Octocaine (Lidocaine)</Name>
+    <CategId>sample.product_category_17</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>120000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_3</Id>
+    <Name>Isocaine (Mepivacaine)</Name>
+    <CategId>sample.product_category_17</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>130000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_4</Id>
+    <Name>Metrogyl Denta</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>40000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_15</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_5</Id>
+    <Name>PerioKin</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>120000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_15</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_6</Id>
+    <Name>Dentosmin P</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>200000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_15</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_7</Id>
+    <Name>Emofluor Gel</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>230000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_15</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_8</Id>
+    <Name>Paracetamol</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>35000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_9</Id>
+    <Name>Dorogyne</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>22000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_10</Id>
+    <Name>Rodogyl</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>148000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_11</Id>
+    <Name>Alaxan</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>100000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_12</Id>
+    <Name>Franrogyl</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>55000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_13</Id>
+    <Name>Cefixim</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>60000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_14</Id>
+    <Name>Metronidazol Stada</Name>
+    <CategId>sample.product_category_18</CategId>
+    <MinInventory xsi:nil="true" />
+    <ListPrice>11000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_15</Id>
+    <Name>Alphachoay</Name>
+    <CategId>sample.product_category_19</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>64000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_16</Id>
+    <Name>Frednisolon</Name>
+    <CategId>sample.product_category_19</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>60000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_17</Id>
+    <Name>Rovamycine</Name>
+    <CategId>sample.product_category_21</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>80000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_18</Id>
+    <Name>Vitamin C</Name>
+    <CategId>sample.product_category_22</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>22000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_14</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_19</Id>
+    <Name>Elfferalgan</Name>
+    <CategId>sample.product_category_20</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>42000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_20</Id>
+    <Name>Panadol</Name>
+    <CategId>sample.product_category_20</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>55000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+  <Record>
+    <Id>sample.product_medicine_21</Id>
+    <Name>Paracetamol</Name>
+    <CategId>sample.product_category_20</CategId>
+    <MinInventory>0.00</MinInventory>
+    <ListPrice>46000.00</ListPrice>
+    <StandardPrice>0</StandardPrice>
+    <UOMId>sample.uom_5</UOMId>
+  </Record>
+</Data>

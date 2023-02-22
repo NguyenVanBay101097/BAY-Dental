@@ -1,0 +1,45 @@
+<div class="overflow-auto h-100">
+    <table class="table table-sm t-sticky-thead">
+        <thead>
+            <tr>
+                <th width="150">Mã thanh toán</th>
+                <th width="150">Ngày thanh toán</th>
+                <th width="120">Số tiền</th>
+                <th width="250">Dịch vụ</th>
+                <th width="120">Phương thức</th>
+                <th width="120">Thanh toán</th>
+                <th width="200">Nội dung</th>
+                <th width="120">Trạng thái</th>
+                <th width="100">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let payment of paymentHistories">
+                <tr *ngFor="let item of payment.payments; let i = index">
+                    <td>{{item.name}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length">{{payment.date | date : 'shortDate'}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-right">{{payment.amount | number}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="services-name">
+                        <span [title]="showServicesName(payment.saleOrderLines)">
+                            {{showServicesName(payment.saleOrderLines)}}
+                        </span>
+                    </td>
+                    <td>{{item.journal?.name}}</td>
+                    <td class="text-right">{{item.amount | number}}</td>
+                    <td>{{item.communication}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">{{getPaymentState(payment.state)}}</td>
+                    <td *ngIf="i == 0" [attr.rowspan]="payment.payments.length" class="text-center">
+                        <div class="d-flex">
+                            <button class="btn mr-1 btn-primary"  [disabled]="item.journalType === 'insurance'" (click)="printPayment(payment)">
+                                <span class="fas fa-print"></span>
+                            </button>
+                            <button class="btn btn-danger" (click)="deletePayment(payment)">
+                                <span class="fas fa-times"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>

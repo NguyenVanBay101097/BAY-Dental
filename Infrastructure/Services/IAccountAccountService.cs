@@ -1,0 +1,29 @@
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace Infrastructure.Services
+{
+    public interface IAccountAccountService: IBaseService<AccountAccount>
+    {
+        Task<AccountAccount> GetAccountReceivableCurrentCompany();
+        Task<AccountAccount> GetAccountPayableCurrentCompany();
+        Task<AccountAccount> GetAccountIncomeCurrentCompany();
+        Task<AccountAccount> GetAccount334CurrentCompany();
+        Task<AccountAccount> GetAccount3335CurrentCompany();
+        Task<AccountAccount> GetAccount3383CurrentCompany();
+        Task<AccountAccount> GetAccountAdvanceCurrentCompany();
+
+        Task<AccountAccount> GetAccountCommissionAgentCompany();
+        Task<AccountAccount> GetAccountCustomerDebtCompany();
+
+        Task<AccountAccount> GetAccountInsuranceDebtCompany();
+
+        Task<string> SearchNewAccountCode(Guid companyId, int digits, string prefix);
+        Task<IEnumerable<AccountAccount>> GetListCanPayOrReceive(AccountAccountGetListCanPayOrReceiveRequest val);
+    }
+}

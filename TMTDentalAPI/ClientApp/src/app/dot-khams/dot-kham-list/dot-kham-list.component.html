@@ -1,0 +1,54 @@
+<div kendoWindowContainer></div>
+<div kendoDialogContainer></div>
+
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Đợt khám</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input class="o_searchview_input" placeholder="Tìm kiếm theo mã hoặc khách hàng..." type="text"
+                [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <!-- <button type="button" class="btn btn-primary" (click)="openWindow(null)">
+                    <i class="fas fa-plus"></i>&nbsp;Thêm mới</button> -->
+                <!-- <a class="btn btn-primary " [routerLink]="['/dot-khams/create']"><i title="Mở đợt khám"
+                        class="fas fa-plus"></i>&nbsp;Tạo đợt khám</a> -->
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading"
+    (pageChange)="pageChange($event)">
+    <kendo-grid-column field="name" title="Mã đợt khám">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <a class="text-primary" [routerLink]="['/dot-khams/edit/', dataItem.id]">{{dataItem.name}}</a>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="partner" title="Khách hàng">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.partner ? dataItem.partner.name : ''}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="date" title="Ngày khám">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.date | date : 'short'}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="user" title="Bác sĩ">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.user ? dataItem.user.name : ''}}
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>
+
+<!-- <div class="k-overlay" *ngIf="windowOpened"></div> -->

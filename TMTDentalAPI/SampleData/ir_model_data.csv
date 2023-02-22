@@ -1,0 +1,104 @@
+﻿id,model,name,transient
+account.model_account_account,AccountAccount,Account,1
+account.model_account_account_type,AccountType,Account Account Type,1
+account.model_account_full_reconcile,AccountFullReconcile,Account Full Reconcile,1
+account.model_account_invoice,AccountInvoice,Account Invoice,1
+account.model_account_invoice_line,AccountInvoiceLine,Account Invoice Line,1
+account.model_account_invoice_report,AccountInvoiceReport,Account Invoice Report,1
+account.model_account_journal,AccountJournal,Account Journal,1
+account.model_account_move,AccountMove,Account Move,1
+account.model_account_move_line,AccountMoveLine,Account Move Line,1
+account.model_account_partial_reconcile,AccountPartialReconcile,Account Partial Reconcile,1
+account.model_account_payment,AccountPayment,Thanh toán,0
+base.model_res_user,ResUser,Người dùng,0
+base.model_res_company,Company,Chi nhánh,0
+base.model_history,History,Tiểu sử bệnh,0
+base.model_res_group,ResGroup,Nhóm quyền,0
+base.model_ir_attachment,IRAttachment,IR Attachment,1
+base.model_ir_model,IRModel,IR Model,1
+base.model_ir_model_access,IRModelAccess,IR Model Access,1
+base.model_ir_model_data,IRModelData,IR Model Data,1
+base.model_ir_rule,IRRule,IR Rule,1
+base.model_ir_sequence,IRSequence,IR Sequence,1
+base.model_res_partner,Partner,Đối tác,0
+base.model_res_partner_title,PartnerTitle,Danh xưng,0
+base.model_res_partner_category,PartnerCategory,Nhóm đối tác,0
+base.model_res_partner_source,PartnerSource,Nguồn khách hàng,0
+base.model_res_partner_image,PartnerImage,Hình ảnh khách hàng,0
+product.model_product_product,Product,Sản phẩm,0
+product.model_product_category,ProductCategory,Nhóm sản phẩm,0
+product.model_product_pricelist,ProductPricelist,Bảng giá,0
+product.model_product_pricelist_item,ProductPricelistItem,Product Pricelist Item,1
+stock.model_stock_location,StockLocation,Stock Location,1
+stock.model_stock_move,StockMove,Stock Move,1
+stock.model_stock_picking,StockPicking,Phiếu nhập xuất,0
+stock.model_stock_picking_type,StockPickingType,Stock Picking Type,1
+stock.model_stock_quant,StockQuant,Stock Quant,1
+stock.model_stock_warehouse,StockWarehouse,Stock Warehouse,1
+sale.model_appointment,Appointment,Lịch hẹn,0
+sale.model_dot_kham,DotKham,Đợt khám,0
+sale.model_toa_thuoc,ToaThuoc,Toa thuốc,0
+sale.model_sale_order,SaleOrder,Phiếu điều trị,0
+sale.model_sale_order_line,SaleOrderLine,Sale Order Line,1
+labo.model_labo_order,LaboOrder,Phiếu Labo,0
+labo.model_labo_order_line,LaboOrderLine,Labo Order Line,1,
+labo.model_labo_warranty,LaboWarranty,Phiếu bảo hành Labo,0
+purchase.model_purchase_order,PurchaseOrder,Mua hàng,0
+purchase.model_purchase_order_line,PurchaseOrderLine,Purchase Order Line,1
+mail.model_mail_message,MailMessage,Mail Message,1
+member_card.model_card_card,CardCard,Thẻ thành viên,0
+member_card.model_card_type,CardType,Loại thẻ thành viên,0
+sale_coupon.model_sale_coupon_program,SaleCouponProgram,Chương trình khuyến mãi/coupon,0
+sale_coupon.model_sale_coupon,SaleCoupon,Coupon,0
+base.model_res_config_settings,ResConfigSettings,Cấu hình chung,0
+service_card.model_service_card_type,ServiceCardType,Loại thẻ tiền mặt,0
+service_card.model_service_card_card,ServiceCardCard,Thẻ tiền mặt,0
+service_card.model_service_card_order,ServiceCardOrder,Đơn bán thẻ tiền mặt,0
+service_card.model_service_card_order_line,ServiceCardOrderLine,Service Card Order Line,1
+service_card.model_service_card_sale_order_service_card_card_rel,SaleOrderServiceCardCardRel,Sale Order Card Rel,1
+base.model_sample_prescription,SamplePrescription,Đơn thuốc mẫu,0
+account.model_phieu_thu_chi,PhieuThuChi,Phiếu thu chi,0
+account.model_loai_thu_chi,LoaiThuChi,Loại thu chi,0
+sale.model_commission,Commission,Bảng hoa hồng,0
+sale.model_commission_settlement,CommissionSettlement,Commission Settlement,1
+hr.model_employee,Employee,Nhân viên,0
+hr.model_payslip_run,HrPayslipRun,Đợt lương,0
+hr.model_payslip,HrPayslip,Phiếu lương,0
+hr.model_cham_cong,ChamCong,Chấm công,0
+hr.model_payroll_structure_type,HrPayrollStructureType,Loại mẫu lương,0
+hr.model_payroll_structure,HrPayrollStructure,Mẫu lương,0
+hr.model_work_entry_type,WorkEntryType,Loại chấm công,0
+base.model_resource_calendar,ResourceCalendar,Lịch làm việc,0
+base.model_medicine_order,MedicineOrder,Medicine Order,0
+stock.model_product_request,ProductRequest,Product Request,0
+stock.model_stock_inventory,StockInventory,Stock Inventory,0
+stock.model_stock_inventory_line,StockInventoryLine,Stock Inventory Line,0,
+survey.model_survey_assignment,SurveyAssignment,Survey Assignment,0
+partner.model_partner_advance,PartnerAdvance,Partner Advance,0
+sale.model_sale_order_payment,SaleOrderPayment,SaleOrder Payment,0
+base.model_tooth_diagnosis,ToothDiagnosis,Tooth Diagnosis,0
+sale.model_advisory,Advisory,Advisory,0
+sale.model_quotation,Quotation,Quotation,0
+base.model_print_paper_size,PrintPaperSize,Print Paper Size,0
+config.model_config_print,ConfigPrint,Config Print,0
+sms.model_sms_account,SmsAccount,Sms Account,0
+sms.model_sms_campaign,SmsCampaign,Sms Campaign,0
+sms.model_sms_config,SmsConfig,Sms Config,0
+sms.model_sms_template,SmsTemplate,Sms Template,0
+sms.model_sms_message,SmsMessage,Sms Message,0
+sms.model_sms_message_detail,SmsMessageDetail,Sms Message Detail,0
+base.model_agent,Agent,Agent,0
+base.model_customer_receipt,CustomerReceipt,Customer Receipt,0
+base.model_print_template_config,PrintTemplateConfig,Print Template Config,0
+hr.model_hr_job,HrJob,Chức vụ,0
+base.model_res_insurance,ResInsurance,ResInsurance,0
+base.model_res_insurance_payment,ResInsurancePayment,ResInsurance Payment,0
+sale.model_sale_production,SaleProduction,Sale Production,0
+mail.model_mail_message_subtype,MailMessageSubtype,MailMessageSubtype,0
+
+
+
+
+
+
+

@@ -1,0 +1,25 @@
+.product-toa-thuoc {
+    margin-top: 1px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    padding: 15px;
+    justify-content: space-between;
+    background-color: white;
+}
+
+.product-toc-thuoc-create {
+    width: 100%;
+    background-color: #fafafa;
+    margin: 0 10px 8px 10px;
+    min-height: 50px;
+}
+
+.btn-edit {
+    margin: 15px;
+}
+
+.o_view_controller {
+    position: initial !important;
+}

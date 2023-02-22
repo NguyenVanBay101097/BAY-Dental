@@ -1,0 +1,666 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar o_form_statusbar_new">
+                <div class="o_statusbar_buttons">
+                    <h3>{{laboOrder?.name}}</h3>
+                </div>
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="true"
+                        class="btn o_arrow_button o_arrow_button_new o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': state === 'confirmed', 'btn-secondary': state !== 'confirmed'}"
+                        type="button">
+                        Đơn hàng
+                    </button>
+                    <button [disabled]="true"
+                        class="btn o_arrow_button o_arrow_button_new o_arrow_button_bg_primary disabled"
+                        [ngClass]="{'btn-primary': state === 'draft', 'btn-secondary': state !== 'draft'}"
+                        type="button">
+                        Nháp
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <div class="o_group my-0">
+                    <div class="o_group o_inner_group o_group_col_12 m-0">
+                        <div class="o_group o_inner_group o_group_col_6 m-0">
+                            <div class="card border-light mb-3 border-0 mr-2">
+                                <h5 class="card-header border-0">Thông tin chung</h5>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Khách hàng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{laboOrder.customer?.displayName}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Số phiếu điều trị
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <a class="text-primary" (click)="actionRedirect(saleOrderLine)">
+                                                    {{saleOrderLine?.order?.name}}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Bác sĩ chỉ định
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{saleOrderLine?.employee?.name}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    NCC Labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div [class.d-none]="state == 'confirmed'">
+                                                    <div class="d-flex">
+                                                        <kendo-combobox #partnerCbx [data]="partners"
+                                                            [textField]="'name'" [filterable]="true" #NCCLaboCbx
+                                                            formControlName="partner" [valueField]="'id'">
+                                                        </kendo-combobox>
+                                                        <!-- <a [class.d-none]="state != 'draft'" title="Cập nhật labo" class="ml-1 btn btn-sm btn-light" type="button" *ngIf="partnerFC.value" (click)="onQuickUpdatePartner()">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                    </a> -->
+                                                        <a class="ml-1 btn btn-primary"
+                                                            (click)="onQuickCreatePartner()">
+                                                            <i class="fas fa-plus text-white"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <span *ngIf="state == 'confirmed'">{{partnerFC.value.name}}</span>
+                                                <div *ngIf="partnerFC.errors && submitted" class="text-danger">
+                                                    <div *ngIf="partnerFC.errors.required">Chọn nhà cung cấp Labo</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ngày gửi
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="state == 'draft'; else dateOrder">
+                                                    <kendo-datepicker formControlName="dateOrderObj">
+                                                    </kendo-datepicker>
+                                                    <label *ngIf="dateOrderObjFC.errors?.required" class="text-danger"
+                                                        for="">Chọn ngày gửi</label>
+                                                </ng-container>
+                                                <ng-template #dateOrder>
+                                                    {{dateOrderObjFC.value | date:'dd/MM/yyyy'}}
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="!laboOrder?.dateReceipt">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ngày nhận dự kiến
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="datePlannedObj">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="laboOrder?.dateReceipt">
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ngày nhận thực tế
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                {{laboOrder?.dateReceipt | date:'dd/MM/yyyy'}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card border-light mb-3 border-0 mr-2">
+                                <h5 class="card-header border-0">Chi tiết phiếu</h5>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Loại phục hình
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{saleOrderLine?.name}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hãng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{saleOrderLine?.product?.firm}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label" style="vertical-align: top;">
+                                                <label class="o_form_label">
+                                                    Răng
+                                                </label>
+                                            </td>
+
+                                            <td *ngIf="state == 'draft'; else other_content">
+                                                <ng-container *ngIf="saleOrderLine?.toothType == 'manual'" colspan="1"
+                                                    style="width: 100%;">
+                                                    <button [disabled]="state == 'confirmed'"
+                                                        *ngFor="let tooth of saleOrderLine?.teeth"
+                                                        (click)="onToothSelected(tooth)"
+                                                        [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                        type="button"
+                                                        class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                </ng-container>
+                                                <ng-container *ngIf="saleOrderLine?.toothType != 'manual'" colspan="1"
+                                                    style="width: 100%;">
+                                                    <div *ngIf="listType['up_right'].length != 0">
+                                                        <button [disabled]="state == 'confirmed'"
+                                                            *ngFor="let tooth of listType['up_right']"
+                                                            (click)="onToothSelected(tooth)"
+                                                            [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                            type="button"
+                                                            class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                    </div>
+                                                    <div *ngIf="listType['up_left'].length != 0">
+                                                        <button [disabled]="state == 'confirmed'"
+                                                            *ngFor="let tooth of listType['up_left']"
+                                                            (click)="onToothSelected(tooth)"
+                                                            [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                            type="button"
+                                                            class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                    </div>
+                                                    <div *ngIf="listType['down_right'].length != 0">
+                                                        <button [disabled]="state == 'confirmed'"
+                                                            *ngFor="let tooth of listType['down_right']"
+                                                            (click)="onToothSelected(tooth)"
+                                                            [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                            type="button"
+                                                            class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                    </div>
+                                                    <div *ngIf="listType['down_left'].length != 0">
+                                                        <button [disabled]="state == 'confirmed'"
+                                                            *ngFor="let tooth of listType['down_left']"
+                                                            (click)="onToothSelected(tooth)"
+                                                            [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                            type="button"
+                                                            class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                    </div>
+                                                </ng-container>
+                                            </td>
+                                            <ng-template #other_content>
+                                                <td>
+                                                    <div>
+                                                        <button [disabled]="state == 'confirmed'"
+                                                            *ngFor="let tooth of teeth" (click)="onToothSelected(tooth)"
+                                                            [ngClass]="isToothSelected(tooth)? 'btn-primary':'btn-light'"
+                                                            type="button"
+                                                            class="btn btn-sm mr-1 mb-1">{{tooth.name}}</button>
+                                                    </div>
+                                                </td>
+                                            </ng-template>
+
+
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Màu răng chi tiết
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span *ngIf="state == 'confirmed'">{{laboOrder.color}}</span>
+                                                <input *ngIf="state !== 'confirmed'" formControlName='color' type="text"
+                                                    class="form-control">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Số lượng
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="state=='draft'; else quantity">
+                                                    <input class="form-control" formControlName="quantity"
+                                                        tmtautonumeric
+                                                        [options]="{minimumValue: 0, decimalPlaces: 0}" />
+                                                </ng-container>
+                                                <ng-template #quantity>
+                                                    {{quantityFC.value | number}}
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Đơn giá
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="state=='draft'; else priceUnit">
+                                                    <input class="form-control" formControlName="priceUnit"
+                                                        tmtautonumeric
+                                                        [options]="{minimumValue: 0, decimalPlaces: 0}" />
+                                                </ng-container>
+                                                <ng-template #priceUnit>
+                                                    {{priceUnitFC.value | number}}
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Thành tiền
+                                                </label>
+                                            </td>
+                                            <td colspan="1" [ngClass]="{'text-right': state=='draft'}" class=""
+                                                style="width: 100%;">
+                                                <span class="font-weight-600">{{getAmountTotal() | number}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Chỉ định
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="state=='draft'; else indicated">
+                                                    <textarea type="text" formControlName="indicated"
+                                                        class="form-control"></textarea>
+                                                </ng-container>
+                                                <ng-template #indicated>
+                                                    <label style="white-space: pre-line;">
+                                                        {{indicatedFC.value}}
+                                                    </label>
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Ghi chú
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <ng-container *ngIf="state=='draft'; else note">
+                                                    <textarea type="text" formControlName='note'
+                                                        class="form-control"></textarea>
+                                                </ng-container>
+                                                <ng-template #note>
+                                                    <label style="white-space: pre-line;">
+                                                        {{noteFC.value}}
+                                                    </label>
+                                                </ng-template>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div *ngIf="laboOrder?.dateReceipt" class="card border-light mb-3 border-0 mr-2">
+                                <h5 class="card-header border-0">Thông tin bảo hành</h5>
+                                <div class="card-body">
+                                    <table>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Mã bảo hành
+                                                </label>
+                                            </td>
+                                            <td *ngIf="!laboOrder?.dateExport" colspan="1" style="width: 100%;">
+                                                <input type="text" formControlName='warrantyCode' class="form-control">
+                                                <label *ngIf="warrantyCodeFC.errors?.exist" for=""
+                                                    class="text-danger">Mã bảo hành đã tồn tại</label>
+                                            </td>
+                                            <td *ngIf="laboOrder?.dateExport" colspan="1" style="width: 100%;">
+                                                {{laboOrder.warrantyCode}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Hạn bảo hành
+                                                </label>
+                                            </td>
+                                            <td *ngIf="!laboOrder?.dateExport" colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="warrantyPeriodObj">
+                                                </kendo-datepicker>
+                                            </td>
+                                            <td *ngIf="laboOrder?.dateExport" colspan="1" style="width: 100%;">
+                                                {{laboOrder?.warrantyPeriod | date:'dd/MM/yyyy'}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_group o_inner_group o_group_col_6 m-0">
+                            <div class="card border-light mb-3 border-0 mr-2">
+                                <h5 class="card-header border-0">Thông số Labo</h5>
+                                <div class="card-body">
+                                    <table>
+                                        <ng-container *ngIf="state == 'draft' else labo_block">
+                                            <tr>
+                                                <td colspan="2" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Vật liệu
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="row">
+                                                        <div *ngFor="let labo of labos;let i = index" class="col-6">
+                                                            <div class="radio">
+                                                                <input
+                                                                    [attr.disabled]="state == 'confirmed' ? true: null"
+                                                                    formControlName="productId" [value]="labo.id"
+                                                                    type="radio" [id]="'labo'+i">
+                                                                <label class="ml-1" [for]="'labo'+i">
+                                                                    {{labo.name}}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #labo_block>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Vật liệu
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    {{getItem(labos,productId)}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-container *ngIf="state == 'draft' else finishline_block">
+                                            <tr>
+                                                <td colspan="2" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Đường hoàn tất
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="row">
+                                                        <div *ngFor="let finish of finishlines;let i = index"
+                                                            class="col-6">
+                                                            <div class="radio">
+                                                                <input
+                                                                    [attr.disabled]="state == 'confirmed' ? true: null"
+                                                                    formControlName="laboFinishLineId"
+                                                                    [value]="finish.id" type="radio" [id]="'finish'+i">
+                                                                <label class="ml-1" [for]="'finish'+i">
+                                                                    {{finish.name}}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #finishline_block>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Đường hoàn tất
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    {{getItem(finishlines,laboFinishLineId)}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-container *ngIf="state == 'draft' else bite_block">
+                                            <tr>
+                                                <td colspan="2" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Khớp cắn
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="row">
+                                                        <div *ngFor="let bite of biteJoints;let i = index"
+                                                            class="col-6">
+                                                            <div class="radio">
+                                                                <input
+                                                                    [attr.disabled]="state == 'confirmed' ? true: null"
+                                                                    formControlName="laboBiteJointId" [value]="bite.id"
+                                                                    type="radio" [id]="'bite'+i">
+                                                                <label class="ml-1" [for]="'bite'+i">
+                                                                    {{bite.name}}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #bite_block>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Khớp cắn
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    {{getItem(biteJoints,laboBiteJointId)}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-container *ngIf="state == 'draft' else bridge_block">
+                                            <tr>
+                                                <td colspan="2" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Kiểu nhịp
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <div class="row">
+                                                        <div *ngFor="let bridge of bridges;let i = index" class="col-6">
+                                                            <div class="radio">
+                                                                <input
+                                                                    [attr.disabled]="state == 'confirmed' ? true: null"
+                                                                    formControlName="laboBridgeId" [value]="bridge.id"
+                                                                    type="radio" [id]="'bridge'+i">
+                                                                <label class="ml-1" [for]="'bridge'+i">
+                                                                    {{bridge.name}}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #bridge_block>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Kiểu nhịp
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    {{getItem(bridges,laboBridgeId)}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-container *ngIf="state == 'draft' else attach_block">
+                                            <tr>
+                                                <td colspan="2" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Gửi kèm
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <button [disabled]="state == 'confirmed'"
+                                                        *ngFor="let attach of attachs"
+                                                        (click)="onAttachSelected(attach)"
+                                                        [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'"
+                                                        type="button" class="btn btn-sm mr-1 mt-1 border-primary">
+                                                        {{attach.name}}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #attach_block>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Gửi kèm
+                                                    </label>
+                                                </td>
+                                                <td colspan="1">
+                                                    <button [disabled]="state == 'confirmed'"
+                                                        *ngFor="let attach of laboOrderProducts"
+                                                        [ngClass]="isAttachSelected(attach)? 'btn-primary':'btn-light'"
+                                                        type="button" class="btn btn-sm mr-1 mt-1 border-primary">
+                                                        {{attach.name}}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-container *ngIf="state=='draft'; else technicalNote">
+                                            <tr>
+                                                <td colspan="2" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Ghi chú kĩ thuật
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="width: 100%">
+                                                    <textarea formControlName='technicalNote' type="text"
+                                                        class="form-control"></textarea>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #technicalNote>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Ghi chú kĩ thuật
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%">
+                                                    <span style="white-space: pre-line;">
+                                                        {{technicalNoteFC.value}}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card border-light border-0 mb-3">
+                                <h5 class="card-header border-0">Hình ảnh</h5>
+                                <div class="card-body">
+                                    <div class="image mt-2">
+                                        <div class="o_attachments_previews">
+                                            <ng-container formArrayName="images">
+                                                <div [formGroupName]="i"
+                                                    *ngFor="let img of imagesFA.controls; let i=index"
+                                                    class=" o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                                                    <div class="o_attachment_wrap" (click)="onViewImg(img.value)">
+                                                        <div class="o_image_box">
+                                                            <div class="o_attachment_image" id="{{img.value.name}}">
+                                                                <img width="100%"
+                                                                    [src]="img.value.url + '?width=240&height=240)'"
+                                                                    alt="">
+                                                            </div>
+                                                            <div class="o_image_overlay o_attachment_view">
+                                                                <span *ngIf="true"
+                                                                    class="fa fa-times o_attachment_delete_cross"
+                                                                    (click)="onRemoveImg(i)"
+                                                                    title="Delete {{img.value.name}}"></span>
+                                                                <span
+                                                                    class="o_attachment_title text-white">{{img.value.name}}</span>
+                                                                <a class="o_attachment_download"
+                                                                    (click)="stopPropagation($event)"
+                                                                    href="{{img.value.url}}" target="_blank">
+                                                                    <i aria-label="Download"
+                                                                        class="fa fa-download text-white"
+                                                                        role="img"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="true"
+                                                    class="o_attachment mt-1 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+                                                    <div class="btn-img" (click)="inputFile.click()">
+                                                        <div class="o_image_box">
+                                                            <div
+                                                                class="o_attachment_image d-flex align-items-center justify-content-center">
+                                                                <img style="max-width: 100px;max-height: 100px;"
+                                                                    src="/assets/images/placeholder.png" alt="">
+                                                                <input [disabled]="laboOrder?.dateExport" #inputFile
+                                                                    class="o_input_file d-none" type="file"
+                                                                    multiple="multiple" accept="image/*"
+                                                                    (change)="onFileChange($event)">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button *ngIf="!laboOrder?.dateExport" type="button" class="btn btn-primary" (click)="onSave()"
+        accesskey="s">Lưu</button>
+    <button *ngIf="state == 'draft'" type="button" class="btn btn-primary" (click)="onConfirm()" accesskey="s">Đặt
+        hàng</button>
+    <button *ngIf="state == 'confirmed' && !laboOrder?.dateReceipt" type="button" class="btn btn-danger"
+        (click)="onCancel()" accesskey="s">Hủy phiếu</button>
+    <button *ngIf="id" type="button" class="btn btn-secondary o_form_button_cancel" (click)="printLaboOrder()"
+        accesskey="p">In phiếu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="onClose()" accesskey="q">Đóng</button>
+</footer>

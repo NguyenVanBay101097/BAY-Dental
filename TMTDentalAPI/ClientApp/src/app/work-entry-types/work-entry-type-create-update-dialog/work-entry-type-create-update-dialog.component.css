@@ -1,0 +1,84 @@
+.o_form_view .o_form_sheet_bg .o_form_sheet {
+    min-width: 400px;
+    max-width: 1000px;
+    min-height: auto;
+}
+
+.color-table {
+    width: 100%;
+    margin: 0 auto;
+    background-color: #d5d5d52b;
+}
+
+.swatch {
+    width: 50px;
+    height: 50px;
+    padding: 15px;
+    margin: 15px;
+    position: relative;
+    border-radius: 4px;
+}
+
+.show {
+    display: block !important;
+}
+
+.color_span {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    display: none;
+}
+
+.color_span>i {
+    font-size: 30px;
+}
+
+.rosered {
+    background-color: #DB003B;
+}
+
+.red {
+    background-color: #DB022B;
+}
+
+.orange {
+    background-color: #EB4F0D;
+}
+
+.orangeyellow {
+    background-color: #FA8F0E;
+}
+
+.rosepink {
+    background-color: #F45375;
+}
+
+.tulip {
+    background-color: #D23C88;
+}
+
+.vibepurple {
+    background-color: #BA0A80;
+}
+
+.purple {
+    background-color: #911C7E;
+}
+
+.yellow {
+    background-color: #FEC121;
+}
+
+.limon {
+    background-color: #CDCF00;
+}
+
+#cancunblue {
+    background-color: #06A2A8;
+}
+
+#azulejosblue {
+    background-color: #52BDD3;
+}

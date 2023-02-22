@@ -1,0 +1,526 @@
+﻿using ApplicationCore.Utilities;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using TMTDentalAPI.JobFilters;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace TMTDentalAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CustomerReceiptReportsController : BaseApiController
+    {
+        private readonly ICustomerReceiptReportService _customerReceiptReportService;
+        private readonly IProductService _productService;
+        private readonly IViewRenderService _viewRenderService;
+        private IConverter _converter;
+        public CustomerReceiptReportsController(ICustomerReceiptReportService customerReceiptReportService, IProductService productService,
+            IViewRenderService viewRenderService, IConverter converter)
+        {
+            _productService = productService;
+            _customerReceiptReportService = customerReceiptReportService;
+            _viewRenderService = viewRenderService;
+            _converter = converter;
+        }
+
+        [HttpGet]
+        [CheckAccess(Actions = "Report.CustomerReceiptReports")]
+        public async Task<IActionResult> GetReportPaged([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetPagedResultAsync(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCustomerReceiptForTime([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCustomerReceiptForTime(val);
+            return Ok(res);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCustomerReceiptForTimeDetail([FromQuery] CustomerReceiptTimeDetailFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCustomerReceiptForTimeDetail(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCountCustomerReceipt(CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCountCustomerReceipt(val);
+            return Ok(res);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCountCustomerReceiptNoTreatment(CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCountCustomerReceiptNotreatment(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetCount(CustomerReceiptReportFilter val)
+        {
+            var res = await _customerReceiptReportService.GetCountTime(val);
+            return Ok(res);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcelReportOverview(CustomerReceiptReportFilter val)
+        {
+            val.Limit = int.MaxValue;
+            var stream = new MemoryStream();
+            var data = await _customerReceiptReportService.GetPagedResultAsync(val);
+            byte[] fileContent;
+
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoTiepNhan");
+
+                worksheet.Cells["A1:I1"].Value = "BÁO CÁO TỔNG QUAN TIẾP NHẬN";
+                //worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(Color.Blue);
+                worksheet.Cells["A1:I1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:I1"].Merge = true;
+                worksheet.Cells["A1:I1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:I1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:I1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+
+                if(val.DateFrom.HasValue && val.DateTo.HasValue)
+                    worksheet.Cells["A2:I2"].Value = $"Từ ngày {val.DateFrom.Value.ToShortDateString()} đến ngày {val.DateTo.Value.ToShortDateString()}";
+                else
+                    worksheet.Cells["A2:I2"].Value = $"Từ ngày {data.Items.LastOrDefault().DateWaiting.Value.ToShortDateString()} đến ngày {data.Items.FirstOrDefault().DateWaiting.Value.ToShortDateString()} ";
+              
+                worksheet.Cells["A2:I2"].Merge = true;
+                worksheet.Cells["A2:I2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+
+                worksheet.Cells[4, 1].Value = "Ngày tiếp nhận";
+                worksheet.Cells[4, 2].Value = "Khách hàng";
+                worksheet.Cells[4, 3].Value = "Dịch vụ";
+                worksheet.Cells[4, 4].Value = "Bác sĩ";
+                worksheet.Cells[4, 5].Value = "Giờ tiếp nhận";
+                worksheet.Cells[4, 6].Value = "Thời gian phục vụ";
+                worksheet.Cells[4, 7].Value = "Loại Khám";            
+                worksheet.Cells[4, 8].Value = "Kết quả khám mới";
+                worksheet.Cells[4, 9].Value = "Trạng thái";
+
+                worksheet.Cells["A4:I4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:I4"].Style.Font.Size = 14;
+                worksheet.Cells["A4:I4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells["A4:I4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:I4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:I4"].Style.Font.Color.SetColor(Color.White);
+
+                var row = 5;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.DateWaiting;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 2].Value = item.Partner.Name;
+                    worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 3].Value = item.Products;
+                    worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 4].Value = item.DoctorName;
+                    worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 5].Value = item.DateWaiting;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "HH:mm";
+                    worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 6].Value = item.MinuteTotal.HasValue ? $"{item.MinuteTotal} phút" : null;
+                    worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 7].Value = item.IsRepeatCustomer == true ? "Tái khám" : "Khám mới";
+                    worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 8].Value = item.IsRepeatCustomer == false && item.State == "done" ? (item.IsNoTreatment == true ? "Không điều trị" : "Có Điều trị" ) : null ;
+                    worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 9].Value = item.State == "waiting" ? "Chờ khám" : (item.State == "examination" ? "Đang khám" : "Hoàn thành");
+                    worksheet.Cells[row, 9].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcelReportForTime(CustomerReceiptReportFilter val)
+        {
+            val.Limit = int.MaxValue;
+            var stream = new MemoryStream();
+            var data = await _customerReceiptReportService.GetCustomerReceiptForTime(val);
+            byte[] fileContent;
+
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoTiepNhan_TheoGioTiepNhan");
+
+                worksheet.Cells["A1:J1"].Value = "BÁO CÁO TIẾP NHẬN THEO GIỜ TIẾP NHẬN  ";
+                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(Color.Blue);
+                worksheet.Cells["A1:J1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:J1"].Merge = true;
+                worksheet.Cells["A1:j1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:J1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:J1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+
+                if (val.DateFrom.HasValue && val.DateTo.HasValue)
+                    worksheet.Cells["A2:J2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                else
+                    worksheet.Cells["A2:J2"].Value = "";
+             
+                worksheet.Cells["A2:J2"].Style.Numberformat.Format = "dd/mm/yyyy";
+                worksheet.Cells["A2:J2"].Merge = true;
+                worksheet.Cells["A2:J2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                worksheet.Cells["A4:I4"].Value = "Giờ";
+                worksheet.Cells["A4:I4"].Style.Font.Size = 14;
+                worksheet.Cells["A4:I4"].Merge = true;
+                worksheet.Cells["J4:J4"].Value = "Tổng số lượng";
+                worksheet.Cells["J4:J4"].Style.Font.Size = 14;
+                //worksheet.Cells["A4:J4"].Merge = true;
+                worksheet.Cells["A4:J4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:J4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells["A4:J4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:J4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:J4"].Style.Font.Color.SetColor(Color.White);
+
+
+                var row = 5;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = $"{item.Time}:00 - {item.Time}:59";
+                    worksheet.Cells[$"A{row}:A{row}"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[$"B{row}:J{row}"].Merge = true;
+                    worksheet.Cells[$"B{row}:J{row}"].Value = item.TimeRangeCount;
+                    //worksheet.Cells[$"B{row}:J{row}"].Style.Numberformat.Format = "#,###,###";
+                    worksheet.Cells[$"B{row}:J{row}"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    //worksheet.Cells[row, 1].Style.Font.Color.SetColor(Color.Blue);
+                    //worksheet.Cells[row, 10].Value = $"{item.TimeRangeCount}";
+                    var childs = await _customerReceiptReportService.GetCustomerReceiptForTimeDetail(new CustomerReceiptTimeDetailFilter
+                    { 
+                        Offset = val.Offset,
+                        Limit = int.MaxValue,
+                        CompanyId = val.CompanyId,
+                        DateFrom = val.DateFrom,
+                        DateTo = val.DateTo,
+                        Time = item.Time
+                    });
+
+                    row ++;
+                    if (childs.Items.Any())
+                    {
+                        worksheet.Cells[row, 2].Value = "Ngày tiếp nhận";
+                        worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 3].Value = "Khách hàng";
+                        worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 4].Value = "Dịch vụ";
+                        worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 5].Value = "Bác sĩ";
+                        worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 6].Value = "Giờ tiếp nhận";
+                        worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 7].Value = "Thời gian phục vụ";
+                        worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 8].Value = "Loại Khám";
+                        worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 9].Value = "Kết quả khám mới";
+                        worksheet.Cells[row, 9].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        worksheet.Cells[row, 10].Value = "Trạng thái";
+                        worksheet.Cells[row, 10].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+                        worksheet.Cells[$"B{row}:J{row}"].Style.Font.Bold = true;
+                        worksheet.Cells[$"B{row}:J{row}"].Style.Font.Size = 14;
+                        worksheet.Cells[$"B{row}:J{row}"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        worksheet.Cells[$"B{row}:J{row}"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#DDEBF7"));
+
+                        var rowEnd = row + childs.Items.Count();
+                        worksheet.Cells[$"A{row}:A{rowEnd}"].Merge = true;
+
+                        row++;
+
+                        foreach (var itemChild in childs.Items)
+                        {
+                            worksheet.Cells[row, 2].Value = itemChild.DateWaiting;
+                            worksheet.Cells[row, 2].Style.Numberformat.Format = "dd/mm/yyyy";
+                            worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 3].Value = itemChild.Partner.Name;
+                            worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 4].Value = itemChild.Products;
+                            worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 5].Value = itemChild.DoctorName;
+                            worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 6].Value = itemChild.DateWaiting;
+                            worksheet.Cells[row, 6].Style.Numberformat.Format = "HH:mm";
+                            worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 7].Value = itemChild.MinuteTotal.HasValue ? $"{itemChild.MinuteTotal} phút" : null;
+                            worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 8].Value = itemChild.IsRepeatCustomer == true ? "Tái khám" : "Khám mới";
+                            worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 9].Value = itemChild.IsRepeatCustomer == false && itemChild.State == "done" ? (itemChild.IsNoTreatment == true ? "Không điều trị" : "Có Điều trị") : null;
+                            worksheet.Cells[row, 9].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            worksheet.Cells[row, 10].Value = itemChild.State == "waiting" ? "Chờ khám" : (itemChild.State == "examination" ? "Đang khám" : "Hoàn thành");
+                            worksheet.Cells[row, 10].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                            row++;
+                        }
+
+
+                    }
+                    else
+                    {
+                        //row++;
+                    }
+
+                }
+                                           
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcelReportTimeService(CustomerReceiptReportFilter val)
+        {
+            val.Limit = int.MaxValue;
+            var stream = new MemoryStream();
+            var data = await _customerReceiptReportService.GetPagedResultAsync(val);
+            byte[] fileContent;
+
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoTiepNhan_PhucVu");
+
+                worksheet.Cells["A1:H1"].Value = "BÁO CÁO TIẾP NHẬN THEO THỜI GIAN PHỤC VỤ";
+                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(Color.Blue);
+                worksheet.Cells["A1:H1"].Style.Font.Size = 14; 
+                worksheet.Cells["A1:H1"].Merge = true;
+                worksheet.Cells["A1:H1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:H1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:H1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+
+                if(val.DateFrom.HasValue && val.DateTo.HasValue)
+                    worksheet.Cells["A2:H2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                else
+                    worksheet.Cells["A2:H2"].Value = @$"{(data.Items.LastOrDefault().DateWaiting.HasValue ? "Từ ngày " + data.Items.LastOrDefault().DateWaiting.Value.ToShortDateString() : "")}  {(data.Items.FirstOrDefault().DateWaiting.HasValue ? "đến ngày " + data.Items.FirstOrDefault().DateWaiting.Value.ToShortDateString() : "")}";
+
+                worksheet.Cells["A2:H2"].Merge = true;
+                worksheet.Cells["A2:H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                worksheet.Cells[4, 1].Value = "Ngày tiếp nhận";
+                worksheet.Cells[4, 2].Value = "Khách hàng";
+                worksheet.Cells[4, 3].Value = "Dịch vụ";
+                worksheet.Cells[4, 4].Value = "Bác sĩ";
+                worksheet.Cells[4, 5].Value = "Loại Khám";
+                worksheet.Cells[4, 6].Value = "Thời gian phục vụ";
+                worksheet.Cells[4, 7].Value = "Thời gian chờ khám";
+                worksheet.Cells[4, 8].Value = "Thời gian khám";
+
+                worksheet.Cells["A4:H4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:H4"].Style.Font.Size = 14;
+                worksheet.Cells["A4:H4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells["A4:H4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:H4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:H4"].Style.Font.Color.SetColor(Color.White);
+                var row = 5;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.DateWaiting;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 2].Value = item.Partner.Name;
+                    worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 3].Value = item.Products;
+                    worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 4].Value = item.DoctorName;
+                    worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 5].Value = item.IsRepeatCustomer == true ? "Tái khám" : "Khám mới";
+                    worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 6].Value = item.MinuteTotal.HasValue ? $"{item.MinuteTotal} phút" : null;
+                    worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 7].Value = item.MinuteWaiting.HasValue ? $"{item.MinuteWaiting} phút" : null;
+                    worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 8].Value = item.MinuteExamination.HasValue ? $"{item.MinuteExamination} phút" : null;
+                    worksheet.Cells[row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ExportExcelReportNoTreatment(CustomerReceiptReportFilter val)
+        {
+            val.Limit = int.MaxValue;
+            var stream = new MemoryStream();
+            var data = await _customerReceiptReportService.GetPagedResultAsync(val);
+            byte[] fileContent;
+
+
+            using (var package = new ExcelPackage(stream))
+            {
+                var worksheet = package.Workbook.Worksheets.Add("BaoCaoTiepNhan_KhongDieuTri");
+
+                worksheet.Cells["A1:G1"].Value = "BÁO CÁO TIẾP NHẬN KHÔNG ĐIỀU TRỊ";
+                worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(Color.Blue);
+                worksheet.Cells["A1:G1"].Style.Font.Size = 14;
+                worksheet.Cells["A1:G1"].Merge = true;
+                worksheet.Cells["A1:G1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                worksheet.Cells["A1:G1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:G1"].Style.Font.Color.SetColor(System.Drawing.ColorTranslator.FromHtml("#6ca4cc"));
+
+                worksheet.Cells["A2:G2"].Value = @$"{(val.DateFrom.HasValue ? "Từ ngày " + val.DateFrom.Value.ToShortDateString() : "")}  {(val.DateTo.HasValue ? "đến ngày " + val.DateTo.Value.ToShortDateString() : "")}";
+                worksheet.Cells["A2:G2"].Merge = true;
+                worksheet.Cells["A2:G2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                worksheet.Cells[4, 1].Value = "Ngày tiếp nhận";
+                worksheet.Cells[4, 2].Value = "Khách hàng";
+                worksheet.Cells[4, 3].Value = "Dịch vụ";
+                worksheet.Cells[4, 4].Value = "Bác sĩ";
+                worksheet.Cells[4, 5].Value = "Giờ tiếp nhận";
+                worksheet.Cells[4, 6].Value = "Thời gian phục vụ";
+                worksheet.Cells[4, 7].Value = "Lý do không phục vụ";
+
+                worksheet.Cells["A4:G4"].Style.Font.Bold = true;
+                worksheet.Cells["A4:G4"].Style.Font.Size = 14;
+                worksheet.Cells["A4:G4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells["A4:G4"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A4:G4"].Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#2F75B5"));
+                worksheet.Cells["A4:G4"].Style.Font.Color.SetColor(Color.White);
+
+                var row = 5;
+                foreach (var item in data.Items)
+                {
+                    worksheet.Cells[row, 1].Value = item.DateWaiting;
+                    worksheet.Cells[row, 1].Style.Numberformat.Format = "dd/mm/yyyy";
+                    worksheet.Cells[row, 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 2].Value = item.Partner.Name;
+                    worksheet.Cells[row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 3].Value = item.Products;
+                    worksheet.Cells[row, 3].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 4].Value = item.DoctorName;
+                    worksheet.Cells[row, 4].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 5].Value = item.DateWaiting;
+                    worksheet.Cells[row, 5].Style.Numberformat.Format = "HH:mm";
+                    worksheet.Cells[row, 5].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 6].Value = $"{item.MinuteTotal} phút";
+                    worksheet.Cells[row, 6].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    worksheet.Cells[row, 7].Value = item.Reason;
+                    worksheet.Cells[row, 7].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    row++;
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                package.Save();
+
+                fileContent = stream.ToArray();
+            }
+
+            string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            stream.Position = 0;
+
+            return new FileContentResult(fileContent, mimeType);
+        }
+
+        private FileContentResult Pdfbase(string html, string fileName, string TitleBottom = "")
+        {
+            var globalSettings = new GlobalSettings
+            {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Landscape,
+                PaperSize = PaperKind.A4,
+                Margins = new MarginSettings { Top = 10 },
+                DocumentTitle = "PDF Report"
+            };
+            var objectSettings = new ObjectSettings
+            {
+                PagesCount = true,
+                HtmlContent = html,
+                WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/css", "print.css") },
+                FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = $@"{TitleBottom}", Right = "Page [page] of [toPage]" }
+            };
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = globalSettings,
+                Objects = { objectSettings }
+            };
+            var file = _converter.Convert(pdf);
+            return File(file, "application/pdf", $@"{fileName}.pdf");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedPdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedPdf", data);
+            return Pdfbase(html, "Tổng quan tiếp nhận", "TongQuanTiepNhan");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedForTimePdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetCustomerReceiptForTimePdf(val);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedForTimePdf", data);
+            return Pdfbase(html, "Báo cáo Tiếp nhận theo giờ", "Tiepnhantheogio");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedFortimeServicePdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedFortimeServicePdf", data);
+            return Pdfbase(html, "Báo cáo Tiếp nhận theo thời gian phục vụ", "Tiepnhanthoigianphucvu");
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ReportPagedForNoTreatmentPdf([FromQuery] CustomerReceiptReportFilter val)
+        {
+            var data = await _customerReceiptReportService.GetPagedResultPdf(val);
+            var html = _viewRenderService.Render("CustomerReceiptReport/ReportPagedForNoTreatmentPdf", data);
+            return Pdfbase(html, "Báo cáo Tiếp nhận không điều trị", "Tiepnhankhongdieutri");
+        }
+
+      
+
+    }
+}

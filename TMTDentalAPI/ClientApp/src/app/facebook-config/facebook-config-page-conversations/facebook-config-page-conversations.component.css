@@ -1,0 +1,45 @@
+.conversation {
+    padding: 20px;
+}
+
+.conversation .col-left {
+    width: 30%;
+    flex-shrink: 0;
+    /* border-left: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9; */
+    height: 100%;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.conversation .col-right {
+    width: 70%;
+    height: 100%;
+    background: #fff;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    margin-right: 17px;
+}
+
+.avatar img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.content h5 {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+.content .snippet {
+    font-size: 12px;
+}
+
+.meta .time_latest_message {
+    font-size: 12px;
+}

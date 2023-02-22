@@ -1,0 +1,62 @@
+<form class="o_form_view" [formGroup]="formGroup">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="oe_title">
+                <label class="o_form_label oe_edit_only">Tên dịch vụ</label>
+                <h1>
+                    <input type="text" name="name" class="form-control" placeholder="Tên dịch vụ" formControlName="name"
+                        #nameInput>
+                </h1>
+            </div>
+
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Nhóm dịch vụ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <div class="d-flex">
+                                    <kendo-combobox [data]="filteredCategories" [textField]="'completeName'"
+                                        [filterable]="true" #categCbx formControlName="categ" [valueField]="'id'">
+                                    </kendo-combobox>
+                                    <!-- <a class="btn btn-sm btn-light" (click)="quickCreateCateg()">
+                                        <span class="k-icon k-i-plus"></span>
+                                    </a> -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Mã dịch vụ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" class="form-control" formControlName="defaultCode" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Giá bán
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="listPrice">
+                                </kendo-numerictextbox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

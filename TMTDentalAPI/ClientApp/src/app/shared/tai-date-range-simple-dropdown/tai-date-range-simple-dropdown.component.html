@@ -1,0 +1,41 @@
+<div ngbDropdown #myDrop="ngbDropdown" [autoClose]="false">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" id="sortMenu" ngbDropdownAnchor (click)="myDrop.toggle()">
+        <i class="fas fa-filter"></i>
+        {{title}}:
+        <span *ngIf="dateFrom && dateTo">{{dateFrom | date: 'shortDate'}} - {{dateTo | date: 'shortDate'}}</span>
+        <span *ngIf="dateFrom && !dateTo">{{dateFrom | date: 'shortDate'}} - ...</span>
+        <span *ngIf="!dateFrom && dateTo">... - {{dateTo | date: 'shortDate'}}</span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="sortMenu" class="o_advance_search_dropdown_container">
+        <button class="dropdown-item" *ngFor="let option of quickOptions" type="button"
+            (click)="quickOptionClick(option)">{{option.text}}</button>
+        <div class="dropdown-divider"></div>
+        <div class="px-4" [formGroup]="formGroup">
+            <div class="form-group">
+                <label>Từ ngày</label>
+                <div>
+                    <kendo-datepicker formControlName="dateFrom">
+                    </kendo-datepicker>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Đến ngày</label>
+                <div>
+                    <kendo-datepicker formControlName="dateTo">
+                    </kendo-datepicker>
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary mr-2 btn-sm" (click)="onSearch()">
+                    Áp dụng
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm mr-2" (click)="onClear()">
+                    Hủy lọc
+                </button>
+                <button type="button" class="btn btn-light btn-sm mr-2" (click)="myDrop.toggle()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

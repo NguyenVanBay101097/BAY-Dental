@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Record>
+    <Id>sample.loai_thu_chi_chi_1</Id>
+    <Name>Tiền điện phòng khám</Name>
+    <Code>EVN</Code>
+  </Record>
+  <Record>
+    <Id>sample.loai_thu_chi_chi_2</Id>
+    <Name>Tiền nước phòng khám</Name>
+    <Code>WATER</Code>
+  </Record>
+  <Record>
+    <Id>sample.loai_thu_chi_chi_3</Id>
+    <Name>Tiền rác phòng khám</Name>
+    <Code>TRASH</Code>
+  </Record>
+  <Record>
+    <Id>sample.loai_thu_chi_chi_4</Id>
+    <Name>Dịch vụ vệ sinh</Name>
+    <Code>CLEAN</Code>
+  </Record>
+  <Record>
+    <Id>sample.loai_thu_chi_chi_5</Id>
+    <Name>Văn phòng phẩm</Name>
+    <Code>VPP</Code>
+  </Record>
+</Data>

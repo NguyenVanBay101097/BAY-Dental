@@ -1,0 +1,63 @@
+<div class="p-2 d-flex bg-white">
+    <div class="d-flex flex-fill">
+        <div class="mr-1">
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onDateSearchChange($event)"></app-date-range-picker-filter>
+        </div>
+        <div class="mr-1">
+            <kendo-combobox (valueChange)="onSateChange($event)" [data]="states" [textField]="'name'" placeholder="Tất cả trạng thái" [valueField]="'value'">
+            </kendo-combobox>
+        </div>
+    </div>
+    <div class="flex-fill">
+        <div class="o_searchview">
+            <i class="o_searchview_icon fa fa-search"></i>
+            <div class="o_searchview_input_container">
+                <input class="o_searchview_input" placeholder="Tìm kiếm theo mã yêu cầu..." type="text" [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <kendo-grid [data]="gridData" [pageSize]="limit" class="cursor-pointer" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)" (cellClick)="onUpdate($event)">
+        <kendo-grid-column field="date" title="Ngày yêu cầu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Ngày xuất" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.picking?.date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Phiếu điều trị" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <a *ngIf="dataItem.saleOrder" [routerLink]="['/sale-orders', dataItem.saleOrder.id]" class="text-primary">
+                    {{dataItem.saleOrder.name}}
+                </a>
+            </ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column title="Phiếu xuất" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span>{{dataItem.pickingName}}</span>
+            </ng-template>
+        </kendo-grid-column> -->
+        <kendo-grid-column field="name" title="Mã yêu cầu" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column title="Người yêu cầu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.userName}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Bác sĩ" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.employeeName}}
+            </ng-template>1
+        </kendo-grid-column>
+        <kendo-grid-column title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.state =="confirmed" ? "Đang yêu cầu" : (dataItem.state == "done" ? "Đã xuất" : "")}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

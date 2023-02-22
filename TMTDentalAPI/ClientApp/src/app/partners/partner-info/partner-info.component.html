@@ -1,0 +1,214 @@
+<!-- <div>
+    <button title="Thanh toán" (click)="registerPayment(partnerId)" class="btn btn-primary btn-sm">Thanh toán</button>
+</div> -->
+<div *ngIf="!partner.supplier && partner.customer" class="d-flex">
+    <div class="o_form_view o_form_container" *ngIf="partner">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tên
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.name}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Tuổi
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span
+                                class="o_field_char o_field_widget">{{partner.birthYear ? getAge(partner.birthYear) : ''}}
+                                &nbsp;
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Giới tính
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{getGender(partner.gender)}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{address}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Tiểu sử bệnh
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{getHistories()}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Tiểu sử khác
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.medicalHistory}} &nbsp;</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Mã
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.ref}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.phone}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Email
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.email}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Nhóm
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{getCategories()}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Nghề nghiệp
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.jobTitle}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="partner.zaloId">
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Zalo Id
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.zaloId}} &nbsp;</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div *ngIf="partner.supplier && !partner.customer" class="d-flex">
+    <div class="o_form_view o_form_container" *ngIf="partner">
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Tên
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.name}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.phone}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{address}} &nbsp;</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Mã
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.ref}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Fax
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.fax}} &nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label">
+                                Email
+                            </label>
+                        </td>
+                        <td style="width: 100%;" class="pb-0">
+                            <span class="o_field_char o_field_widget">{{partner.email}} &nbsp;</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

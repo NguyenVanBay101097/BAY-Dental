@@ -1,0 +1,26 @@
+.table .th-light th{
+    font-weight: normal;
+}
+
+.table .th-light{
+    background-color: #F8F9FA;
+    border-color: #F8F9FA;
+}
+
+.o_form_view .o_form_statusbar{
+    align-items: center;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    border: none;
+}
+
+.o_form_view .o_form_statusbar{
+    border-bottom: none;
+    margin: 0;
+    padding: 16px 16px 0 16px;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet{
+    padding-top: 0;
+}

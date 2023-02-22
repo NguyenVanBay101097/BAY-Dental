@@ -1,0 +1,53 @@
+.form-check-input:checked+.form-check-label {
+    position: relative;
+}
+
+.form-check-input:checked+.form-check-label::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f00c";
+    color: #fff;
+    font-weight: 900;
+    position: absolute;
+    top: 2px;
+    left: 7px;
+    font-size: 16px;
+}
+
+.check-label {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+}
+
+.color-dady {
+    position: relative;
+    width: 30px;
+    border-radius: 5px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.color-dady last-child {
+    margin-right: 0;
+    margin-left: 10px;
+}
+
+.color-check {
+    position: absolute;
+    color: white;
+    left: 7px;
+    top: 2px;
+    display: none;
+}
+
+.d-display {
+    display: block !important;
+}
+
+.table-tbody-ver-align-middle tbody > tr > td {
+    vertical-align:  top !important;
+}
+
+.table thead th{
+    vertical-align: middle !important;
+}

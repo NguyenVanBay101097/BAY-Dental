@@ -1,0 +1,14 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title || 'Lỗi!'}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body">
+    <p>{{body || 'Có lỗi xảy ra'}}</p>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

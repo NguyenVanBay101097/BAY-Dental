@@ -1,0 +1,35 @@
+@media only screen and (max-width: 1511px) {
+    .btn-edit{
+        margin-top: 0.25rem;
+    }
+}
+
+@media only screen and (max-width: 1293px) {
+    .cbx-account {
+        margin-top: 0.25rem;
+    }
+}
+
+.card-wrapper {
+    flex: 0 0 260px;
+    margin-right: 5px;
+}
+
+.t-search {
+    min-width: 300px;
+}
+
+.summary-item {
+    /* flex: 0 0 150px;
+    margin-right: 5px; */
+    margin-right: 0.5rem;
+    width: 30%;
+}
+
+.list-summary-item {
+    width: 60%;
+}
+
+.opacity-8 {
+    opacity: .8;
+}

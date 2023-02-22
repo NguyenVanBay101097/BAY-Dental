@@ -1,0 +1,82 @@
+.appointment-state {
+    padding: 15px;
+  }
+  
+  .edit_remove_action button {
+    background: none;
+    border: none;
+    margin-right: 5px;
+    border-style: none;
+    padding: 0;
+    outline: none;
+  }
+  
+  .dropdown-toggle::after {
+    display: none;
+  }
+  
+  .dropdown-wrapper {
+    width: 220px;
+  }
+  
+  textarea.ng-invalid {
+    border: 1px solid red;
+    box-shadow: none;
+  }
+  
+  .style-header {
+    background-color: whitesmoke;
+    font-weight: 600;
+    padding: 8px 12px;
+  }
+  
+  .dropdown-wrapper {
+    width: 180px;
+    padding-top: 0;
+  }
+  
+  .form-check-inline .form-check-input {
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+    }
+
+  input[type="radio"] {
+    visibility: hidden;
+    height: 0;
+    width: 0;
+  }
+
+  .prescription-useAt{
+    padding: 6px;
+  }
+  
+  
+  label.form-check-label-radio {
+    display: table-cell;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #efefef;
+    color: black;
+    transition: all .2s ease-out;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 100%;
+    margin: 0;
+    margin-top: 0.45rem;
+    -webkit-transition: all .2s ease-out;
+    -moz-transition: all .2s ease-out;
+    -ms-transition: all .2s ease-out;
+    -o-transition: all .2s ease-out;
+}
+  
+  input[type="radio"]:checked+label {
+    background-color: #007bff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: aliceblue;
+    width: 100%;
+  }
+
+
+  

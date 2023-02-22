@@ -1,0 +1,27 @@
+.filter-label {
+    font-weight: 500;
+    padding: 0.5rem 0;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.filter-container {
+    width: 450px;
+}
+
+.filter-content {
+    display: flex;
+}
+
+.btn-filter
+{
+    border-color: hsl(210deg 11% 15% / 15%);
+    font-weight: bold;
+}

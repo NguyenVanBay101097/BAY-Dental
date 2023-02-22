@@ -1,0 +1,22 @@
+.filter {
+    margin-top: -.5rem!important;
+}
+
+.filter>* {
+    margin-top: .5rem!important;
+}
+
+.filter-search {
+    /* max-width: 335px; */
+    width: 255px;
+}
+
+.service-filter .k-multiselect-wrap.k-floatwrap{
+    display: flex !important;
+}
+.k-multiselect-wrap{
+    display: flex !important;
+}
+.service-filter{
+    min-width: 395px;
+}

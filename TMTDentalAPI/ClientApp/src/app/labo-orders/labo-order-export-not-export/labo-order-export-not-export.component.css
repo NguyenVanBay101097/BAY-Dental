@@ -1,0 +1,5 @@
+@media screen and (min-width: 1200px) {
+    .o_searchview_input {
+        width: 350px !important;
+    }
+}

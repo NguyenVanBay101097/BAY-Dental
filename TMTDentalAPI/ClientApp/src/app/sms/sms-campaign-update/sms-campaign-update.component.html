@@ -1,0 +1,107 @@
+<div *ngIf="campaign">
+    <h4>
+        {{campaign.name}}
+    </h4>
+    <div class="o_form_view">
+        <table class="o_group o_inner_group o_group_col_12" [formGroup]="formGroup">
+            <tbody>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">Tên chiến dịch</label>
+                    </td>
+                    <td class="pr-0">
+                        <span *ngIf="!isEditting">{{campaign.name}}</span>
+                        <div *ngIf="isEditting">
+                            <input *ngIf="isEditting" class="form-control" formControlName="name" />
+                            <div *ngIf="f.name.errors && (f.name.touched || f.name.dirty || submitted)"
+                                class="text-danger">
+                                <div *ngIf="f.name.errors.required">Nhập tên chiến dịch</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <label class="o_form_label">Thời gian chạy</label>
+                    </td>
+                    <td class="pr-0">
+                        <span *ngIf="!isEditting">
+                            <div>{{campaign.displayTypeDate}}</div>
+                            <div *ngIf="campaign.typeDate == 'period'">{{campaign.dateStart | date: 'shortDate'}} - {{campaign.dateEnd | date: 'shortDate'}}</div>
+                        </span>
+                        <div *ngIf="isEditting">
+                            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                                <input type="radio" class="btn-check" formControlName="typeDate" id="unlimited"
+                                    value="unlimited" autocomplete="off">
+                                <label class="btn btn-sm btn-outline-primary" for="unlimited">Vô thời hạn</label>
+                                <input type="radio" class="btn-check" formControlName="typeDate" id="period"
+                                    value="period" autocomplete="off">
+                                <label class="btn btn-sm btn-outline-primary" for="period">Khoảng thời gian</label>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="(isEditting && getValueFormControl('typeDate') == 'period')">
+                    <td class="o_td_label">
+                        <label class="o_form_label">Từ ngày</label>
+                    </td>
+                    <td class="pr-0">
+                        <kendo-datepicker style="width: 100%"
+                            formControlName="dateStartObj">
+                        </kendo-datepicker>
+                    </td>
+                </tr>
+                <tr *ngIf="(isEditting && getValueFormControl('typeDate') == 'period')">
+                    <td class="o_td_label">
+                        <label class="o_form_label">Đến ngày</label>
+                    </td>
+                    <td class="pr-0">
+                        <kendo-datepicker style="width: 100%"
+                            formControlName="dateEndObj">
+                        </kendo-datepicker>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="o_td_label">
+                        <div class="d-flex align-items-center">
+                            <label class="o_form_label">Hạn mức gửi tin</label>
+                            <span class="text-primary t-tooltip" placement="right" ngbTooltip="0 là không giới hạn">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="pr-0">
+                        <span *ngIf="!isEditting">{{campaign.limitMessage | number}}</span>
+                        <div *ngIf="isEditting">
+                            <div class="d-flex align-items-center">
+                                <kendo-numerictextbox style="width: 150px;" [min]="0" [format]="'n0'" formControlName="limitMessage">
+                                </kendo-numerictextbox>
+                                <div class="mx-2">SMS</div>
+                            </div>
+                            <div *ngIf="f.limitMessage.errors && (f.limitMessage.touched || f.limitMessage.dirty)"
+                                class="text-danger">
+                                <div *ngIf="f.limitMessage.errors.required">Nhập hạn mức gửi tin</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <!-- <tr>
+                    <td class="o_td_label ">
+                        <label class="o_form_label mt-2">Hạn mức còn lại</label>
+                    </td>
+                    <td>
+                        <span class="o_form_label" *ngIf="f.limitMessage.value==0">Không giới hạn</span>
+                        <span class="o_form_label" *ngIf="f.limitMessage.value!=0">
+                            {{campaign ? (f.limitMessage.value - campaign.totalMessage) : 0}}
+                        </span>
+                    </td>
+                </tr> -->
+            </tbody>
+        </table>
+    </div>
+    <div class="float-right">
+        <button class="btn btn-sm btn-primary" *ngIf="!isEditting" (click)="onEdit()">Sửa</button>
+        <button class="btn btn-sm btn-primary mr-2" *ngIf="isEditting" (click)="onSave()">Lưu</button>
+        <button class="btn btn-sm btn-secondary" *ngIf="isEditting" (click)="onCancel()">Hủy</button>
+    </div>
+</div>

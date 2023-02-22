@@ -1,0 +1,69 @@
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+    flex: 1 1 100%;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control:focus {
+    box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+tbody>.cursor:hover {
+    background-color: #c1c1c1;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.size-text-14 {
+    font-size: 13.5px;
+    border-radius: 0;
+}
+
+.sticky-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    /* Don't collapse */
+    border-spacing: 0 !important;
+}
+
+.sticky-table .sticky-th {
+    /* Apply both top and bottom borders to the <th> */
+    position: sticky !important;
+    top: 0 !important;
+    background-color: #f9f9f9 !important;
+    border-top: 1px solid #dee2e6 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-td {
+    /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
+    border-bottom: 1px solid #dee2e6 !important;
+    border-right: 1px solid #dee2e6 !important;
+}
+
+.sticky-table .sticky-th:first-child,
+.sticky-table .sticky-td:first-child {
+    /* Apply a left border on the first <td> or <th> in a row */
+    border-left: 1px solid #dee2e6 !important;
+}

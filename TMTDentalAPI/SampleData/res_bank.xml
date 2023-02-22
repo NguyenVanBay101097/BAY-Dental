@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+		<record index="1">
+			<BIC>Vietcombank </BIC>
+			<Name> Ngân hàng TMCP Ngoại thương Việt Nam</Name>
+		</record>
+		<record index="2">
+			<BIC>Vietinbank </BIC>
+			<Name> Ngân hàng TMCP Công Thương Việt Nam</Name>
+		</record>
+		<record index="3">
+			<BIC>BIDV </BIC>
+			<Name> Ngân hàng TMCP Đầu tư và Phát triển Việt Nam</Name>
+		</record>
+		<record index="4">
+			<BIC>Techcombank </BIC>
+			<Name> Ngân hàng TMCP Kỹ Thương Việt Nam</Name>
+		</record>
+		<record index="5">
+			<BIC> ACB </BIC>
+			<Name> Ngân hàng Á Châu</Name>
+		</record>
+		<record index="6">
+			<BIC>MB </BIC>
+			<Name> Ngân hàng TMCP Quân Đội</Name>
+		</record>
+		<record index="7">
+			<BIC>VPBank </BIC>
+			<Name> Ngân hàng TMCP Việt Nam Thịnh Vượng</Name>
+		</record>
+		<record index="8">
+			<BIC>Agribank </BIC>
+			<Name> Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam</Name>
+		</record>
+		<record index="9">
+			<BIC>SHB </BIC>
+			<Name> Ngân hàng TMCP Sài Gòn – Hà Nội</Name>
+		</record>
+		<record index="10">
+			<BIC>Sacombank </BIC>
+			<Name> Ngân hàng TMCP Sài Gòn Thương Tín</Name>
+		</record>
+		<record index="11">
+			<BIC>HDBank </BIC>
+			<Name> Ngân hàng TMCP phát triển Tp.HCM</Name>
+		</record>
+		<record index="12">
+			<BIC>PVCombank </BIC>
+			<Name> Ngân hàng TMCP Đại Chúng Việt Nam</Name>
+		</record>
+		<record index="13">
+			<BIC>Oceanbank </BIC>
+			<Name> Ngân hàng TM TNHH Một Thành Viên Đại Dương</Name>
+		</record>
+		<record index="14">
+			<BIC>LienVietPostBank </BIC>
+			<Name> Ngân hàng TMCP Bưu điện Liên Việt</Name>
+		</record>
+		<record index="15">
+			<BIC>TPBank </BIC>
+			<Name> Ngân hàng TMCP Tiên Phong</Name>
+		</record>
+		<record index="16">
+			<BIC>VIB </BIC>
+			<Name> Ngân hàng TMCP Quốc Tế Việt Nam</Name>
+		</record>
+		<record index="17">
+			<BIC>MSB Maritime Bank </BIC>
+			<Name> Ngân hàng TMCP Hàng Hải Việt Nam</Name>
+		</record>
+		<record index="18">
+			<BIC>Eximbank </BIC>
+			<Name> Ngân hàng TMCP Xuất nhập khẩu Việt Nam</Name>
+		</record>
+		<record index="19">
+			<BIC>ABBank </BIC>
+			<Name> Ngân hàng TMCP An Bình</Name>
+		</record>
+		<record index="20">
+			<BIC>OCB </BIC>
+			<Name> Ngân hàng TMCP Phương Đông</Name>
+		</record>
+		<record index="21">
+			<BIC>NASB </BIC>
+			<Name> Ngân hàng TMCP Bắc Á</Name>
+		</record>
+		<record index="22">
+			<BIC>DongA Bank </BIC>
+			<Name> Ngân hàng TMCP Đông Á</Name>
+		</record>
+		<record index="23">
+			<BIC>VietABank </BIC>
+			<Name> Ngân hàng TMCP Việt Á</Name>
+		</record>
+		<record index="24">
+			<BIC>BAOVIET Bank </BIC>
+			<Name> Ngân hàng TMCP Bảo Việt</Name>
+		</record>
+		<record index="25">
+			<BIC>SAIGONBANK </BIC>
+			<Name> NGÂN HÀNG TMCP SÀI GÒN CÔNG THƯƠNG</Name>
+		</record>
+		<record index="26">
+			<BIC>NamABank </BIC>
+			<Name> Ngân hàng TMCP Nam Á</Name>
+		</record>
+		<record index="27">
+			<BIC>GPBank </BIC>
+			<Name> Ngân hàng TM TNHH MTV Dầu Khí Toàn Cầu.</Name>
+		</record>
+		<record index="28">
+			<BIC>KienLongBank </BIC>
+			<Name> Kiên Long</Name>
+		</record>
+		<record index="29">
+			<BIC>VCCB </BIC>
+			<Name> Bản Việt</Name>
+		</record>
+		<record index="30">
+			<BIC>PG Bank </BIC>
+			<Name> Xăng dầu Petrolimex</Name>
+		</record>
+		<record index="31">
+			<BIC>VBSP </BIC>
+			<Name> Ngân hàng Chính sách Xã hội Việt Nam</Name>
+		</record>
+		<record index="32">
+			<BIC>VDB </BIC>
+			<Name> Ngân hàng Phát triển Việt Nam</Name>
+		</record>
+		<record index="33">
+			<BIC>Co</BIC>
+			<Name>opBank </Name>
+		</record>
+		<record index="34">
+			<BIC>DaiAbank </BIC>
+			<Name> Ngân hàng TMCP Đại Á</Name>
+		</record>
+		<record index="35">
+			<BIC>NCB </BIC>
+			<Name> NH TMCP Quốc Dân</Name>
+		</record>
+		<record index="36">
+			<BIC>Western Bank </BIC>
+			<Name> Ngân hàng Phương Tây</Name>
+		</record>
+		<record index="37">
+			<BIC>SCB </BIC>
+			<Name> Ngân hàng TMCP Sài Gòn</Name>
+		</record>
+		<record index="38">
+			<BIC>VietBank </BIC>
+			<Name> Ngân Hàng TMCP Việt Nam Thương Tín</Name>
+		</record>
+		<record index="39">
+			<BIC>Trustbank </BIC>
+			<Name> Ngân hàng Đại Tín</Name>
+		</record>
+		<record index="40">
+			<BIC>ANZ </BIC>
+			<Name> ANZ Việt Nam</Name>
+		</record>
+		<record index="41">
+			<BIC>Deutsche Bank </BIC>
+			<Name> Deutsche Bank Việt Nam</Name>
+		</record>
+		<record index="42">
+			<BIC>Citibank </BIC>
+			<Name> Ngân hàng Citibank Việt Nam</Name>
+		</record>
+		<record index="43">
+			<BIC>HSBC </BIC>
+			<Name> Ngân hàng TNHH MTV HSBC Việt Nam</Name>
+		</record>
+		<record index="44">
+			<BIC>Standard Chartered </BIC>
+			<Name> Standard Chartered</Name>
+		</record>
+		<record index="45">
+			<BIC>HLBVN </BIC>
+			<Name> Ngân hàng Hong Leong Việt Nam</Name>
+		</record>
+		<record index="46">
+			<BIC>BIDC </BIC>
+			<Name> Ngân hàng Đầu tư và Phát triển Campuchia</Name>
+		</record>
+		<record index="47">
+			<BIC>CIB </BIC>
+			<Name> Crédit Agricole</Name>
+		</record>
+		<record index="48">
+			<BIC>Mizuho </BIC>
+			<Name> Ngân hàng Mizuho</Name>
+		</record>
+		<record index="49">
+			<BIC>Woori </BIC>
+			<Name> Ngân hàng Woori Việt Nam</Name>
+		</record>
+		<record index="50">
+			<BIC>UOB </BIC>
+			<Name> Ngân hàng UOB Việt Nam</Name>
+		</record>
+		<record index="51">
+			<BIC>CIMB </BIC>
+			<Name> Ngân hàng CIMB Việt Nam</Name>
+		</record>
+		<record index="52">
+			<BIC>CB </BIC>
+			<Name> Ngân hàng Xây dựng</Name>
+		</record>
+		<record index="53">
+			<BIC>SeABank </BIC>
+			<Name> Ngân hàng Đông Nam Á</Name>
+		</record>
+</data>

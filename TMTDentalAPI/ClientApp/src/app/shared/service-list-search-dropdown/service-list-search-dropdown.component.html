@@ -1,0 +1,31 @@
+<div>
+    <div class="position-relative _wrapper">
+        <input #searchInput (focus)="forCusEmit($event)"
+            [placeholder]="placeHolder ? placeHolder : 'Tìm kiếm và thêm dịch vụ [F2]'" id="typeahead-template"
+            [(ngModel)]="model" type="text" class="form-control input-search"
+            (selectItem)="onSelectValue($event, searchInput)" popupClass="abc" [ngbTypeahead]="search"
+            [resultTemplate]="rt" [inputFormatter]="formatter" />
+        <span class="fas fa-search search-icon"></span>
+    </div>
+
+    <div class="position-relative">
+        <ng-template #rt let-r="result" let-t="term">
+            <div class="d-flex justify-content-between">
+                <ng-container *ngIf="r.error; else elseTemplateResult">
+                    <ng-container *ngIf="isQuickCreate; else elseTemplate">
+                        <span>{{model}}</span>
+                        <i class="fas fa-plus"></i>
+                    </ng-container>
+                    <ng-template #elseTemplate>
+                        <span>Không tìm thấy kết quả tìm kiếm</span>
+                    </ng-template>
+                </ng-container>
+                <ng-template #elseTemplateResult>
+                    <ngb-highlight class="service-name mr-2" style="flex: 1 1 100%" [result]="r.name" [term]="t"></ngb-highlight>
+                    <span style="flex: 0 0 80px;" class="mr-2">{{r.uom?.name}}</span>
+                    <span style="flex: 0 0 80px" class="text-right">{{r.listPrice | number}}</span>
+                </ng-template>
+            </div>
+        </ng-template>
+    </div>
+</div>

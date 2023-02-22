@@ -1,0 +1,103 @@
+.flex-0-0-auto {
+    flex: 0 0 auto;
+}
+
+.flex-1-1-100 {
+    flex: 1 1 100%;
+}
+
+.delete-icon {
+    border: 1px solid transparent;
+}
+
+.delete-icon:hover {
+    border: 1px solid hsl(0deg 0% 0% / 13%);
+    color: red;
+    cursor: pointer;
+}
+
+.active {
+    border-color: #007BFF !important;
+    background-color: #F5FAFF;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.payment-methods {
+    display: flex;
+}
+
+.payment-methods button {
+    flex: 0 0 150px;
+}
+
+.custom-control-label {
+    font-weight: 600;
+}
+
+.custom-switch .custom-control-label::before {
+    left: 10.75rem;
+    width: 2.25rem;
+}
+
+.custom-switch .custom-control-label::after {
+    left: calc(10.75rem + 2px);
+}
+
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
+    background-color: #fff;
+    -webkit-transform: translateX(calc(0.75rem + 7px));
+    transform: translateX(calc(0.75rem + 7px));
+}
+
+.form-check-input {
+    margin-left: 0.75rem;
+}
+
+
+.payment-methods {
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-methods:hover {
+    cursor: pointer;
+}
+
+.payment-methods button {
+    width: calc(25% - 10px);
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.payment-title {
+    color: #7f7f7f;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+}
+
+.journal-input-number {
+    width: 30%;
+}
+
+.btn.disabled, .btn:disabled, .btn.disabled .pointer, .btn:disabled .pointer {
+    cursor: default;
+}
+
+.icon-img {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.icon-img-active {
+    filter:  invert(30%) sepia(51%) saturate(3516%) hue-rotate(200deg) brightness(103%) contrast(107%);
+}

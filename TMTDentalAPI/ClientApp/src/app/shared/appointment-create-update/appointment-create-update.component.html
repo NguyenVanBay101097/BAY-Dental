@@ -1,0 +1,219 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ngbAutofocus
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <table class="o_group o_inner_group o_group_col_12">
+                    <tbody class="w-100">
+                        <tr>
+                            <th>
+                                <h5>Thông tin cơ bản</h5>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Khách hàng <span class="text-danger">*</span></label>
+                            </td>
+                            <td colspan="1">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1 mr-2">
+                                        <kendo-combobox formControlName="partner" [filterable]="true"
+                                            [data]="customerSimpleFilter" (valueChange)="onChangePartner()" #partnerCbx
+                                            [valueField]="'id'" [textField]="'displayName'">
+                                        </kendo-combobox>
+                                    </div>
+                                    <div>
+                                        <a title="Thêm khách hàng" class=" btn btn-primary"
+                                            (click)="quickCreateCustomerModal()">
+                                            <i class="fas fa-plus text-white"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div *ngIf="f.partner.errors && submitted" class="text-danger">
+                                    <div *ngIf="f.partner.errors.required">Chọn khách hàng</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Số điện thoại</label>
+                            </td>
+                            <td colspan="1">
+                                {{f.partner.value ? f.partnerPhone.value : ''}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Bác sĩ</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-combobox formControlName="doctor" [filterable]="true" [data]="filteredEmployees"
+                                    #doctorCbx [valueField]="'id'" [textField]="'name'">
+                                </kendo-combobox>
+                                <div *ngIf="f.doctor.errors && submitted" class="text-danger">
+                                    <div *ngIf="f.doctor.errors.required">Chọn bác sĩ</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [class.d-none]="type =='receive'">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Ngày hẹn</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
+                                </kendo-datepicker>
+                                <div *ngIf="f.dateObj.errors && submitted" class="text-danger">
+                                    <div *ngIf="f.dateObj.errors.required">Chọn ngày hẹn</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr [class.d-none]="type =='receive'">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Giờ hẹn</label>
+                            </td>
+                            <td colspan="1">
+                                <div class="d-flex justify-content-between">
+                                    <div class="mr-2">
+                                        <!-- <select class="form-control btn-sm" style="width: 150px;"
+                                            formControlName="appTime">
+                                            <option [value]="i" *ngFor="let i of timeList">
+                                                {{i}}</option>
+                                        </select> -->
+                                        <kendo-timepicker formControlName="timeObj" format="HH:mm"></kendo-timepicker>
+                                        <div *ngIf="f.timeObj.errors && submitted" class="text-danger">
+                                            <div *ngIf="f.timeObj.errors.required">Chọn giờ hẹn</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="mr-1 text-time p-1">Dự kiến</span>
+                                        <input class="form-control" formControlName="timeExpected" tmtautonumeric
+                                            [options]="{minimumValue: 0, decimalPlaces: 0}" />
+                                        <span class="mr-1 text-time p-1">Phút</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <h5>Thông tin nâng cao</h5>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="1">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                        formControlName="isRepeatCustomer">
+                                    <label class="form-check-label" for="exampleCheck1">Khách tái khám</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Dịch vụ</label>
+                            </td>
+                            <td colspan="1">
+                                <kendo-multiselect [data]="filteredServices" [valueField]="'id'" [textField]="'name'"
+                                    [placeholder]="'Chọn dịch vụ'" formControlName="services" [filterable]="true"
+                                    #serviceMultiSelect>
+                                    <!-- <ng-template kendoMultiSelectTagTemplate let-dataItem>
+                                        <div class="template">
+                                            <span [title]="dataItem.name">{{dataItem.name}}</span>
+                                        </div>
+                                    </ng-template> -->
+                                </kendo-multiselect>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Nội dung</label>
+                            </td>
+                            <td colspan="1">
+                                <textarea class="form-control" rows="5" formControlName="note"
+                                    [placeholder]="'Nhập nội dung'"></textarea>
+                            </td>
+                        </tr>
+                        
+                        <tr *ngIf="appointId && stateControl == 'cancel'">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Lý do</label>
+                            </td>
+                            <td colspan="1">
+                                <textarea class="form-control" rows="3" formControlName="reason"></textarea>
+                                <div *ngIf="f.reason.errors && submitted"
+                                    class="text-danger">
+                                    <div *ngIf="f.reason.errors.required">Nhập lý do</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Nhãn màu</label>
+                            </td>
+                            <td colspan="1" style="width:100%">
+                                <div class="d-flex">
+                                    <ng-container *ngFor="let item of [].constructor(4); index as i">
+                                        <div>
+                                            <button (click) = "clickColor(i)" 
+                                            class="btn btn-item-color border" [ngClass]="'appointment_color_' + i">
+                                                <i *ngIf="i == codeColorSelected" class="fas fa-check text-light"></i>
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="d-flex mt-2">
+                                    <ng-container *ngFor="let item of [].constructor(4); index as i">
+                                        <div>
+                                            <button (click) = "clickColor(i + 4)" 
+                                            class="btn btn-item-color border" [ngClass]="'appointment_color_'+(i+4)">
+                                                <i *ngIf="i + 4 == codeColorSelected" class="fas fa-check text-light"></i>
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div *ngIf="submitted && codeColorSelected == undefined" class="text-danger">
+                                    Chọn nhãn màu
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="appointId">
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">Trạng thái</label>
+                            </td>
+                            <td colspan="1">
+                                <select class="form-control mr-1" formControlName="state"
+                                    (change)="onChange($event.target.value)">
+                                    <option value="confirmed">Đang hẹn</option>
+                                    <option value="done">Đã đến</option>
+                                    <option value="cancel">Hủy hẹn</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary mr-2" (click)="onSave()">
+        Lưu</button>
+    <button *ngIf="!appointId" type="button" class="btn btn-primary mr-2" (click)="onSavePrint()">
+        Lưu và in</button>
+    <button *ngIf="appointId" type="button" class="btn btn-danger mr-2 ml-0" (click)="onDelete()">
+        Xóa</button>
+    <!-- <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onDuplicate()">
+        Sao chép</button> -->
+    <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onDuplicate()">
+        Tạo mới</button>
+    <button *ngIf="appointId" type="button" class="btn btn-secondary mr-2 ml-0" (click)="onPrint()">
+        In phiếu</button>
+    <button type="button" class="btn btn-light mr-2 ml-0" (click)="activeModal.dismiss()">
+        Đóng</button>
+</div>

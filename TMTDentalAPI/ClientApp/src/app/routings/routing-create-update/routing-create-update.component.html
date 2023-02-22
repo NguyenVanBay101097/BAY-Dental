@@ -1,0 +1,112 @@
+<div class="o_control_panel o_breadcrumb_full">
+    <ol class="breadcrumb">
+        <li>
+            <a routerLink="/routings">Quy trình dịch vụ</a>
+        </li>
+        <li class="active">
+            {{routingForm.get('nameGet').value}}
+        </li>
+    </ol>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="!id" (click)="onSave()" accesskey="s">
+                    Lưu</button>
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="id" (click)="onUpdate()" accesskey="s">
+                    Lưu</button>
+                <button type="button" class="btn btn-light btn-sm" *ngIf="id" (click)="onNew()" accesskey="c">
+                    Thêm mới</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+    </div>
+</div>
+
+
+<div class="k-overlay" *ngIf="opened"></div>
+<div kendoWindowContainer></div>
+
+<form class="o_form_view o_form_editable" [formGroup]="routingForm" #form="ngForm">
+    <div class="o_form_sheet_bg">
+        <div class="o_form_sheet">
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Dịch vụ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <kendo-combobox [data]="filteredProducts" [textField]="'name'" [filterable]="true"
+                                    #productCbx formControlName="product" [valueField]="'id'">
+                                </kendo-combobox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label">
+                                    Mã quy trình
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                <input type="text" name="name" class="form-control" formControlName="name">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="o_notebook">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                            aria-controls="home" aria-selected="true">Công đoạn</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="mb-2">
+                            <button type="button" class="btn btn-secondary btn-sm" (click)="showAddLineWindow()"
+                                accesskey="a">
+                                Thêm</button>
+                        </div>
+                        <div>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Công đoạn</th>
+                                        <th>Ghi chú</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="lines">
+                                    <ng-container *ngFor="let line of lines.controls; let i=index">
+                                        <tr [formGroupName]="i">
+                                            <td>{{line.get('product').value ? line.get('product').value.name : ''}}</td>
+                                            <td>{{line.get('note').value}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-light mr-2"
+                                                    (click)="editLine(line)">Sửa</button>
+                                                <button type="button" class="btn btn-sm btn-light"
+                                                    (click)="deleteLine(i)">Xóa</button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

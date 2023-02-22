@@ -1,0 +1,79 @@
+﻿    <table border="0" cellpadding="5" cellspacing="1" style="width:100%">
+        <tbody>
+            <tr>
+                <td style="width:100px"><img alt="{{o.company.name}}" class="img-fluid" src="{{o.company.logo ?? '/assets/images/placeholder.png'}}" style="width:150px" /></td>
+                <td>
+                    <strong>{{o.company.name}}</strong><br />
+                    Địa chỉ: {{o.company.address}}<br />
+                    ĐT: {{o.company.phone}}<br />
+                    Email: {{o.company.email}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="text-align:center">BIÊN LAI THANH TOÁN</h3>
+
+    <p style="text-align:center">Ngày {{o.date.day}} tháng {{o.date.month}} năm {{o.date.year}}</p>
+
+    <table cellpadding="3" cellspacing="1" style="width:100%">
+        <tbody>
+            <tr>
+                <td style="width:150px"><strong>Khách hàng</strong></td>
+                <td>{{o.order?.partner?.display_name}}</td>
+            </tr>
+            <tr>
+                <td><strong>Điện thoại</strong></td>
+                <td>{{o.order?.partner?.phone}}</td>
+            </tr>
+            <tr>
+                <td><strong>Địa chỉ</strong></td>
+                <td>{{o.order?.partner?.address}}</td>
+            </tr>
+            <tr>
+                <td><strong>Ngày thanh toán</strong></td>
+                <td>{{o.date | date.to_string '%d/%m/%Y'}}</td>
+            </tr>
+            <tr>
+                <td><strong>Phương thức thanh toán</strong></td>
+                <td>{{o.journal_lines_display}}</td>
+            </tr>
+            <tr>
+                <td><strong>Số tiền</strong></td>
+                <td>{{o.amount | math.format "N0"}}</td>
+            </tr>
+            <tr>
+                <td><strong>Dịch vụ thực hiện</strong></td>
+                <td>{{o.lines_display}}</td>
+            </tr>
+            <tr>
+                <td><strong>Nội dung</strong></td>
+                <td>{{o.note}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table border="0" cellpadding="0" cellspacing="1" style="width:100%">
+        <tbody>
+            <tr>
+                <td style="text-align:center">
+                    <strong>Khách hàng</strong><br />
+                    <em>(Ký, họ tên)</em>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <strong>{{o.order?.partner?.name | string.upcase}}</strong>
+                </td>
+                <td style="text-align:center">
+                    <strong>Nhân viên</strong><br />
+                    <em>(Ký, họ tên)</em>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <strong>{{u.name | string.upcase}}</strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>

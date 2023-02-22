@@ -1,0 +1,4 @@
+.disabled, .disabled:hover {
+    color: #e5e5e5!important;
+    cursor: default;
+}

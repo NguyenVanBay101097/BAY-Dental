@@ -1,0 +1,153 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="PrescriptionForm" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mb-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tên
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="name" />
+                                    <div *ngIf="f.name.errors && submitted"
+                                        class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tên</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Lời dặn
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="note" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <div>
+                        <div class="position-relative search-products">
+                            <input #searchInput
+                            [placeholder]="'Tìm kiếm và thêm dịch vụ'" id="typeahead-template"  type="text" class="form-control"
+                            (selectItem)="onSelectValue($event, searchInput)" [ngbTypeahead]="searchProductsTypeahead"
+                            [resultTemplate]="rt" [inputFormatter]="formatter" />
+                        
+                            <ng-template #rt let-r="result" let-t="term">
+                                <ngb-highlight [result]="r.name" [term]="t"></ngb-highlight>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <table class="table table-sm table-tbody-ver-align-middle mt-2">
+                        <thead>
+                            <tr>
+                                <th>Tên thuốc</th>
+                                <th>Ngày uống</th>
+                                <th>Mỗi lần</th>
+                                <th>Số ngày</th>
+                                <th>Số lượng</th>
+                                <th>Sử dụng</th>
+                                <th>#</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="lines">
+                            <ng-container *ngFor="let item of lines.controls; let i = index;">
+                                <tr [formGroupName]="i">
+                                    <td>
+                                        <!-- <kendo-combobox [data]="filteredProducts" [textField]="'name'"
+                                            formControlName="product" [kendoDropDownFilter]="filterSettings"
+                                            [allowCustom]="true"
+                                            [valueField]="'id'" (valueChange)="onChangeProduct($event, item)">
+                                        </kendo-combobox> -->
+                                        {{item.get('product').value?.name}}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-control mr-1" style="width: 100px"
+                                                formControlName="numberOfTimes" tmtautonumeric
+                                                [options]="{ minimumValue: 0, decimalPlaces: 0 }"
+                                                (input)="updateQuantity(item)" />
+                                            <span>Lần</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-control mr-1" style="width: 100px"
+                                                formControlName="amountOfTimes" tmtautonumeric
+                                                [options]="{ minimumValue: 0 }" (input)="updateQuantity(item)" />
+                                            <span>{{item.get('productUoM').value?.name}}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input class="form-control" style="width: 100px"
+                                            formControlName="numberOfDays" tmtautonumeric
+                                            [options]="{ minimumValue: 0, decimalPlaces: 0 }"
+                                            (input)="updateQuantity(item)" />
+                                    </td>
+                                    <td>
+                                        <input class="form-control" style="width: 100px"
+                                            formControlName="quantity" tmtautonumeric
+                                            [options]="{ minimumValue: 0 }" />
+                                    </td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <div>
+                                                <app-toa-thuoc-line-useat-popover [item]="item" [index]="i" class="ml-3"
+                                                    (useAtFormGroup)="onChangeUseAt(i,$event)">
+                                                </app-toa-thuoc-line-useat-popover>
+                                            </div>
+
+                                            <div class="ml-2">
+                                                <span>
+                                                    {{item.get('useAt').value != 'other' ?
+                                                    getUsedAt(item.get('useAt').value) : item.get('note').value}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <!-- <select class="form-control" formControlName="useAt">
+                                            <option value="after_meal">Sau khi ăn</option>
+                                            <option value="before_meal">Trước khi ăn</option>
+                                            <option value="in_meal">Trong khi ăn</option>
+                                            <option value="after_wakeup">Sau khi thức dậy</option>
+                                            <option value="before_sleep">Trước khi đi ngủ</option>
+                                        </select> -->
+                                    </td>
+                                    <td>
+                                        <button type="button" title="Hủy" class="btn btn-danger"
+                                            (click)="deleteLine(i)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

@@ -1,0 +1,106 @@
+﻿@model Umbraco.Web.Models.ContentEditing.ServiceReportPrint
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+
+}
+
+@functions{
+    public string showTeethList(string toothType)
+    {
+        switch (toothType)
+        {
+            case "whole_jaw":
+                return "Nguyên hàm";
+            case "upper_jaw":
+                return "Hàm trên";
+            case "lower_jaw":
+                return "Hàm dưới";
+            default:
+                return "";
+        }
+    }
+}
+
+<div class="text-center">
+    <div class="text-3xl font-semibold">@Model.Title</div>
+    <div>
+        @((Model.DateFrom.HasValue? "Từ ngày " + Model.DateFrom.Value.ToString("dd/MM/yyyy") : "") +
+            (Model.DateFrom.HasValue ? " Đến ngày " + Model.DateTo.Value.ToString("dd/MM/yyyy") : ""))
+    </div>
+</div>
+
+<div class="mt-3">
+    @foreach (var item in Model.data)
+    {
+        <table class="table table-sm table-bordered mb-5 border-top-0">
+            <tbody>
+                <tr>
+                    <td width="120"><strong>@(Model.type == "time"?"Ngày": "Dịch vụ")</strong></td>
+                    <td width="550" class="text-right" colspan="4"><strong>Số lượng</strong></td>
+                    <td width="460" class="text-right" colspan="4"><strong>Tổng tiền</strong></td>
+                </tr>
+                <tr>
+                    <td width="120">@(Model.type == "time"? item.Date.Value.ToString("dd/MM/yyyy") : item.Name)</td>
+                    <td width="550" class="text-right" colspan="4">@item.Quantity.ToString("n0")</td>
+                    <td width="460" class="text-right" colspan="4">@item.TotalAmount.ToString("n0")</td>
+                </tr>
+                <tr>
+                    <td width="120"><strong>Ngày tạo</strong></td>
+                    <td width="150"><strong>Khách hàng</strong></td>
+                    <td width="150"><strong>Dịch vụ</strong></td>
+                    <td width="150"><strong>Bác sĩ</strong></td>
+                    <td width="120"><strong>ĐVT</strong></td>
+                    <td width="100"><strong>Răng</strong></td>
+                    <td width="100" class="text-right"><strong>Số lượng</strong></td>
+                    <td width="120" class="text-right"><strong>Thành tiền</strong></td>
+                    <td width="120"><strong>Trạng thái</strong></td>
+                    <td width="120"><strong>Phiếu điều trị</strong></td>
+                </tr>
+                @foreach (var line in item.Lines)
+                {
+            <tr>
+                <td width="120">@(!line.Date.HasValue ? "" : line.Date.Value.ToString("dd/MM/yyyy"))</td>
+                <td width="150">@line.OrderPartnerDisplayName</td>
+                <td width="150">@line.Name</td>
+                <td width="150">@(line.EmployeeName)</td>
+                <td width="120">@(line.ProductUOM != null ? line.ProductUOM.Name : "")</td>
+                <td width="100">
+                    @if (line.ToothType == "manual")
+                    {
+                        @string.Join(", ", line.Teeth.Select(x => x.Name))
+                    }
+                    else
+                    {
+                        @showTeethList(line.ToothType)
+                    }
+                </td>
+                <td width="100" class="text-right">@string.Format(culture, "{0:n0}", @line.ProductUOMQty)</td>
+                <td width="120" class="text-right">@string.Format(culture, "{0:n0}", line.PriceSubTotal)</td>
+                <td width="120">@(line.State == "done" ? "Hoàn thành" : (line.State == "cancel" ? "Ngừng dịch vụ" : "Đang điều trị"))</td>
+                <td width="120">@line.OrderName</td>
+            </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <div class="clearfix"></div>
+</div>
+
+<div class="d-flex mt-2">
+    <div class="col-6">
+
+    </div>
+    <div class="col-6">
+        <div class="text-center">
+            <div>Ngày @DateTime.Now.Day, tháng @DateTime.Now.Month, năm @DateTime.Now.Year.</div>
+            <span class="font-semibold">Người lập báo cáo</span> <br />
+            <i>(Ký và ghi họ tên)</i> <br />
+            <span></span> <br />
+            <span></span> <br />
+            <span></span> <br />
+            <span class="font-semibold">@(Model.User != null && !string.IsNullOrEmpty(Model.User.Name)? Model.User.Name.ToUpper() : "")</span>
+        </div>
+    </div>
+</div>

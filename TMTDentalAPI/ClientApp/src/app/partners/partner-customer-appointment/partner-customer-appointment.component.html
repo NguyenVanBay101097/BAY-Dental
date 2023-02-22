@@ -1,0 +1,54 @@
+<div class="px-3 py-3">
+    <div class="mb-2 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-primary">
+            Lịch hẹn
+          </h5>
+        <button type="button" class="btn btn-primary" (click)="dialogAppointment(null)" accesskey="c">
+            <i class="fas fa-plus"></i> Thêm lịch hẹn
+        </button>
+    </div>
+    <div>
+        <div class="o_content">
+            <kendo-grid class="grid-data" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="name" title="Mã lịch hẹn" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="date" title="Ngày hẹn" width="120">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.date | date:'HH:mm EEEE, dd/MM/yyyy'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="doctorName" title="Bác sĩ" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="note" title="Nội dung" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column title="Loại khám" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <label>{{ dataItem.isRepeatCustomer ? "Tái khám" : "Khám mới" }}</label>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="stateDisplay" title="Trạng thái" width="100">
+                </kendo-grid-column>
+                <kendo-grid-column field="reason" title="Lý do" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column title="Nhãn màu" width="100" class="text-center">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <div class="btn btn-item-color border" [ngClass]="'appointment_color_'+ (dataItem.color || 0)"></div>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="id" width="150">
+                    <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+                        Thao tác
+                    </ng-template>
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <button class="btn btn-success mr-2" title="Sửa" (click)="dialogAppointment(dataItem)">
+                            <span class="far fa-edit"></span></button>
+                        <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteAppointment(dataItem)">
+                            <span class="far fa-trash-alt"></span></button>
+                        <button class="btn btn-secondary" (click)="onPrint(dataItem.id)">
+                            <i class="fas fa-print"></i></button>
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

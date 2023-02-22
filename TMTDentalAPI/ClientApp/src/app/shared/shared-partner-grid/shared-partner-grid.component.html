@@ -1,0 +1,6 @@
+<kendo-grid [selectable]="true" [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="onPageChange($event)" (selectionChange)="onSelectionChange($event)">
+    <kendo-grid-column field="displayName" title="Tên" width="200"></kendo-grid-column>
+    <kendo-grid-column field="phone" title="Điện thoại" width="150"></kendo-grid-column>
+    <kendo-grid-column field="email" title="Email" width="150"></kendo-grid-column>
+</kendo-grid>

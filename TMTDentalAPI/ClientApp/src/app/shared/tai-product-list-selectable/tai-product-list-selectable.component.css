@@ -1,0 +1,20 @@
+.cate-item:not(.active):hover {
+    background-color: rgb(230, 226, 226);
+    cursor: pointer;
+}
+
+li {
+    cursor: pointer;
+}
+
+.cate-item:first-child {
+    border-top: none;
+}
+
+.list-group-item {
+    border-radius: 0px !important;
+}
+
+.border_products{
+    border: 1px solid #dee2e6;
+}

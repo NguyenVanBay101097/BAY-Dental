@@ -1,0 +1,55 @@
+<header class="modal-header">
+    <h5 class="modal-title">Chi tiết nhận Labo<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_12">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày nhận thực tế</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="dateReceipt"></kendo-datepicker>
+                                    <div *ngIf="f.dateReceipt.errors && submitted" class="text-danger">
+                                        <div *ngIf="f.dateReceipt.errors.required">Chọn ngày nhận thực tế</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Mã bảo hành</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" formControlName="warrantyCode">
+                                    <div *ngIf="f.warrantyCode.errors && submitted" class="text-danger">
+                                        <div *ngIf="f.warrantyCode.errors.required">Nhập mã bảo hành</div>
+                                        <div *ngIf="f.warrantyCode.errors?.exist">Mã bảo hành đã tồn tại</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Hạn bảo hành</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-datepicker formControlName="warrantyPeriodObj"></kendo-datepicker>
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" accesskey="s" (click)="onSave()">Lưu</button>
+    <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
+</div>

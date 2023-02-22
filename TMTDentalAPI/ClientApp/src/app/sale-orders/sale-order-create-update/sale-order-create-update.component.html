@@ -1,0 +1,119 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a [routerLink]="['/partners/customer/' + saleOrder?.partnerId + '/treatment']">Phiếu điều trị</a>
+            </li>
+            <li class="active">
+                <span *ngIf="saleOrder && saleOrder.id">{{saleOrder?.name}}</span>
+                <span *ngIf="!saleOrder">Mới</span>
+            </li>
+        </ol>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <div class="o_form_buttons_view">
+                    <a [routerLink]="['/partners/customer/' + customerId + '/treatment']"
+                        class="btn btn-secondary mr-1">
+                        Trở lại
+                    </a>
+                    <!-- <button type="button" class="btn btn-primary" accesskey="s"
+                        *ngIf="saleOrder && saleOrder.state == 'draft'" (click)="onSave()">
+                        Lưu
+                    </button>
+                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'"
+                        class="btn btn-primary" (click)="onSaveConfirm()">
+                        Lưu và xác nhận
+                    </button> -->
+                    <button type="button" accesskey="1" *ngIf="saleOrder && saleOrder.state == 'draft'"
+                        class="btn btn-primary" (click)="onSaveConfirm()">
+                        Xác nhận
+                    </button>
+                    <button *ngIf="saleOrder && ['sale', 'done'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-primary" (click)="actionSaleOrderPayment()">
+                        Thanh toán
+                    </button>
+                    <button *ngIf="saleOrder && saleOrder.id" type="button" class="btn btn-secondary" (click)="printSaleOrder()">
+                        In phiếu
+                    </button>
+                    <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-danger" (click)="actionCancel()">
+                        Hủy phiếu
+                    </button>
+                    <!-- <button *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1" type="button"
+                        class="btn btn-success" (click)="actionDone()">
+                        Hoàn thành
+                    </button> -->
+                    <!-- <button *ngIf="saleOrder && ['done'].indexOf(saleOrder.state) !== -1" type="button" class="btn btn-success btn-sm" (click)="actionUnlock()">
+                        Chưa hoàn thành
+                    </button> -->
+                </div>
+            </div>
+        </div>
+        <div class="o_cp_right" *ngIf="saleOrder && ['sale'].indexOf(saleOrder.state) !== -1">
+            <button (click)="createProductToaThuoc()" type="button" class="btn btn-primary ml-auto mr-1">
+                Tạo đơn thuốc
+            </button>
+            <button type="button" (click)="dialogAppointment()" class="btn btn-primary">
+                Tạo lịch hẹn
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="o_content" *ngIf="saleOrder">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_notebook d-flex flex-column">
+                    <ul ngbNav #nav="ngbNav" [activeId]="route.fragment | async" class="nav-tabs">
+                        <li [ngbNavItem]="'services'">
+                            <a ngbNavLink routerLink="." [fragment]="'services'">Dịch vụ</a>
+                            <ng-template ngbNavContent>                      
+                            <app-sale-order-service-list #serviceListComp [saleOrder]="saleOrder"
+                                (updateOrderEvent)="onUpdateOrder($event)" (insurancePayment)="insurancePayment()">
+                            </app-sale-order-service-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'process-service'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'process-service'">Đợt khám</a>
+                            <ng-template ngbNavContent>
+                                <app-treatment-process-service-list [saleOrderId]="saleOrder.id">
+                                </app-treatment-process-service-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'prescription'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'prescription'">Đơn thuốc</a>
+                            <ng-template ngbNavContent>
+                                <app-partner-customer-toathuoc-list #toathuocComp [saleOrderId]="saleOrder.id">
+                                </app-partner-customer-toathuoc-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'payment'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'payment'">Lịch sử thanh toán</a>
+                            <ng-template ngbNavContent>
+                                <app-sale-order-payment-list *ngIf="saleOrderId" #paymentComp
+                                    [saleOrderId]="saleOrder.id" (hasDeletePayment)="onCancelPayment()">
+                                </app-sale-order-payment-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'product-request'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'product-request'">Yêu cầu vật tư</a>
+                            <ng-template ngbNavContent>
+                                <app-sale-order-product-request-list [saleOrderId]="saleOrder.id">
+                                </app-sale-order-product-request-list>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="'image'" *ngIf="saleOrder.state != 'draft'">
+                            <a ngbNavLink routerLink="." [fragment]="'image'">Hình ảnh</a>
+                            <ng-template ngbNavContent>
+                                <app-sale-order-image [saleOrderId]="saleOrder.id">
+                                </app-sale-order-image>
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="nav"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

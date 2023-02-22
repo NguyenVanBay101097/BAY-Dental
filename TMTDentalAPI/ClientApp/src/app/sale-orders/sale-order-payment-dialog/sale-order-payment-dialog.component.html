@@ -1,0 +1,425 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" ngbAutofocus aria-label="Close"
+        (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="paymentForm" [class.ng-submitted]="submitted">
+        <div [class.d-none]="this.step != 1">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet m-0">
+                    <div class="o_group m-0">
+                        <table class="o_group o_inner_group o_group_col_6 m-0">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">
+                                            Ngày thanh toán
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker formControlName="date"></kendo-datepicker>
+                                        <div *ngIf="paymentFC.date.errors && submitted"
+                                            class="text-danger">
+                                            <div *ngIf="paymentFC.date.errors.required">Chọn ngày thanh toán</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6 mt-0">
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label" colspan="1">
+                                        <label class="o_form_label">
+                                            Tiền dịch vụ còn lại
+                                        </label>
+                                    </td>
+                                    <td class="text-danger pr-0" colspan="1">{{amountResidual | number}}</td>
+                                </tr>
+                                <tr *ngIf="partnerDebt > 0">
+                                    <td class="o_td_label" colspan="1">
+                                        <label class="o_form_label">
+                                            Công nợ hiện tại
+                                        </label>
+                                    </td>
+                                    <td class="text-danger pr-0" colspan="1">{{partnerDebt | number}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group mb-0">
+                        <h5 class="mb-3">Thanh toán dịch vụ</h5>
+                        <div class="custom-control custom-switch pl-0 mb-2">
+                            <input type="checkbox" formControlName="isPaymentForService" (change)="changePaymentForService($event)"
+                                class="custom-control-input" id="customSwitch1">
+                            <label class="custom-control-label" for="customSwitch1">Chi tiết dịch vụ</label>
+                        </div>
+                        <table *ngIf="isPaymentForServiceValue" class="table table-bordered mb-2">
+                            <thead class="bg-light">
+                                <th class="text-left">Dịch vụ</th>
+                                <th class="text-right">Số tiền</th>
+                                <th class="text-right">Đã trả</th>
+                                <th class="text-right">Còn thiếu</th>
+                                <th class="text-right">Thanh toán</th>
+                            </thead>
+                            <tbody formArrayName="lines">
+                                <ng-container *ngFor="let line of linesFC.controls; let i=index">
+                                    <tr [formGroupName]="i">
+                                        <td class="text-left">{{ line.get('saleOrderLine').value.name }}</td>
+                                        <td class="text-right">{{ line.get('saleOrderLine').value.priceTotal | number }}
+                                        </td>
+                                        <td class="text-right">{{ line.get('saleOrderLine').value.amountPaid | number }}
+                                        </td>
+                                        <td class="text-right">{{ line.get('saleOrderLine').value.amountResidual |
+                                            number }}</td>
+                                        <td class="text-right w-25">
+                                            <input class="form-control text-right" formControlName="amount"
+                                                (change)="changeMoneyLine()" tmtautonumeric
+                                                [options]="{maximumValue: line.get('saleOrderLine').value.amountResidual,minimumValue: 0,decimalPlaces:0}" />
+
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label" colspan="1">
+                                        <label class="o_form_label">
+                                            Số tiền
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input class="form-control text-right" formControlName="amount" 
+                                        [options]="{maximumValue: defaultVal.amount,minimumValue: 0, decimalPlaces: 0}" 
+                                        tmtautonumeric [disableControl]="isPaymentForServiceValue" />
+                                        <div *ngIf="paymentFC.amount.errors && submitted"
+                                            class="text-danger">
+                                            <div *ngIf="paymentFC.amount.errors.required">Nhập số tiền</div>
+                                            <div *ngIf="paymentFC.amount.errors.min">Nhập số tiền lớn hơn 0</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td class="o_td_label" colspan="1">
+                                        <label class="o_form_label">
+                                            Nội dung
+                                        </label>
+                                    </td>
+                                    <td class="pr-0">
+                                        <input type="text" class="form-control" formControlName="note">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="o_group" [class.d-none]="partnerDebt == 0">
+                        <div class="form-check pl-0">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                <h5>Thanh toán công nợ</h5>
+                            </label>
+                            <input (change)="changeDebtPayment($event.target.checked)" formControlName="isDebtPayment"
+                                class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        </div>
+                        <div [class.d-none]="!isDebtPaymentValue">
+
+                            <div class="d-flex justify-content-between">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td class="o_td_label" colspan="1">
+                                                <label class="o_form_label">
+                                                    Số tiền
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input class="form-control text-right" formControlName="debtAmount"
+                                                    tmtautonumeric [options]="{maximumValue: partnerDebt,minimumValue: 0,decimalPlaces:0}" />
+                                                <div *ngIf="paymentFC.debtAmount.errors && submitted"
+                                                    class="text-danger">
+                                                    <div *ngIf="paymentFC.debtAmount.errors.required">Nhập số tiền</div>
+                                                    <div *ngIf="paymentFC.debtAmount.errors.min">Nhập số tiền lớn hơn 0
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td class="o_td_label" colspan="1">
+                                                <label class="o_form_label">
+                                                    Nội dung
+                                                </label>
+                                            </td>
+                                            <td class="pr-0">
+                                                <input type="text" class="form-control" formControlName="debtNote">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="o_group m-0">
+                        <table class="o_group o_inner_group o_group_col_6">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex mb-3">
+                                                    <div class="w-50">
+                                                        <span class="h5 mb-0">Tổng tiền khách trả </span>
+                                                        <span class="text-muted">(Tiền mặt)</span>
+                                                    </div>
+                                                    <div class="d-flex w-50 justify-content-end align-items-center">
+                                                        <div class="icon-img icon-img-active mr-2"
+                                                            style="background-image: url(../../../../assets/icons/money_cash.svg);"></div>
+                                                        <div>
+                                                            <h5 class="text-right text-primary mb-0">
+                                                                {{getAmountTotalPayment() | number}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <div class="w-50">
+                                                    </div>
+                                                    <div class="w-50 text-right">
+                                                        <button type="button" class="btn btn-outline-primary" (click)="nextStep()">Phương
+                                                            thức khác
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [class.d-none]="this.step == 1">
+            <div class="o_form_sheet_bg">
+                <div class="o_form_sheet">
+                    <div class="o_group m-0">
+                        <div class="row">
+                            <div class="o_group o_inner_group col-8 pr-3 m-0">
+                                <h5>Thanh toán dịch vụ</h5>
+                                <table class="mb-2 o_group o_inner_group o_group_col_12">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Khách cần trả
+                                                </label>
+                                            </td>
+                                            <td colspan="1" class="text-primary text-right">
+                                                <h5>{{amount | number}}</h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                    Số tiền
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="float: right;">
+                                                <input class="form-control text-right" style="max-width: 200px" [ngModelOptions]="{standalone: true}"
+                                                    [(ngModel)]="userAmountPayment" name="amountPayment" tmtautonumeric
+                                                    [options]="{maximumValue: userAmountPaymentMax,minimumValue: 0,decimalPlaces:0}" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="card p-3">
+                                    <div class="journal-btn mb-3">
+                                        <div class="payment-methods">
+                                            <ng-container *ngFor="let item of paymentMethods">
+                                                <button *ngIf="item.type != 'advance'"
+                                                    [disabled]="isHasJournalFilter(item.type)"
+                                                    [ngClass]="{'active': isHasJournalFilter(item.type)}"
+                                                    class="btn border d-flex flex-column align-items-center p-0 justify-content-center"
+                                                    (click)="selectJournalFilter(item)">
+                                                    <div>
+                                                        <label class="pointer my-1">{{item.name}}</label>
+                                                        <div [ngClass]="{'icon-img-active': isHasJournalFilter(item.type)}"
+                                                            class="icon-img"
+                                                            style="background-image: url(../../../../assets/icons/money_{{item.type}}.svg);">
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                                <ng-container *ngIf="item.type == 'advance'">
+                                                    <button [disabled]="isHasJournalFilter(item.type)"
+                                                        [ngClass]="{'active': isHasJournalFilter(item.type)}"
+                                                        class="btn border d-flex flex-column align-items-center p-0 justify-content-center"
+                                                        (click)="selectJournalFilter(item)" container="body"
+                                                        popoverClass="popover-sm" placement="top" [ngbPopover]="popContent"
+                                                        triggers="mouseenter:mouseleave">
+                                                        <div>
+                                                            <label class="pointer my-1">{{item.name}}</label>
+                                                            <div [ngClass]="{'icon-img-active': isHasJournalFilter(item.type)}"
+                                                            class="icon-img"
+                                                            style="background-image: url(../../../../assets/icons/money_{{item.type}}.svg);">
+                                                        </div>
+                                                        <label class="mb-0">TƯHC: {{advanceAmount | number}}</label>
+                                                        </div>
+                                                        <ng-template #popContent>
+                                                            <span>
+                                                                Tạm ứng hiện có: {{advanceAmount | number}}
+                                                            </span>
+                                                        </ng-template>
+                                                    </button>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="journalLines.controls.length > 0" class="journal-input">
+                                        <table class="table mb-0">
+                                            <tbody formArrayName="journalLines">
+                                                <ng-container *ngFor="let item of journalLines.controls; let i = index">
+                                                    <tr [formGroupName]="i">
+                                                        <td style="vertical-align: unset;" class="w-25">
+                                                            <strong>{{getPaymentMethod(item.get('type').value)?.name || 'Tiền mặt'}}</strong>
+                                                        </td>
+                                                        <td class="w-50" style="vertical-align: unset;">
+                                                            <div [class.d-none]="item.get('journals').value.length <= 1">
+                                                                <kendo-combobox  [placeholder]="'Tài khoản thu'" style="min-width: 200px;" 
+                                                                [data]="item.get('journals').value" [textField]="'name'" formControlName="journal"
+                                                                [valueField]="'id'" [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }">
+                                                                <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                                                    <div>
+                                                                        <div *ngIf="dataItem.type !== 'cash'">{{dataItem.displayType}}</div>
+                                                                        <div>
+                                                                            <strong>{{dataItem.name}}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-template>
+                                                                </kendo-combobox>
+                                                                <div class="text-danger" 
+                                                                *ngIf="journalLines.controls[i].get('journal').errors && submitted">
+                                                                    <div *ngIf="journalLines.controls[i].get('journal').errors.required">Chọn tài khoản</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="w-25">
+                                                            <div class="d-flex align-items-center" >
+                                                                <div class="text-right" style="min-width: 100px;">
+                                                                    {{item.get('amount').value | number}}
+                                                                </div>
+                                                                <a class="ml-3 text-danger" *ngIf="item.get('type').value != 'cash'" (click)="removeJounalSelected(i)">
+                                                                    <i class="far fa-trash-alt"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="paymentFC.isDebtPayment.value">
+                                    <h5 class="mb-4 mt-3">Thanh toán công nợ</h5>
+                                    <table class="m-0 o_group o_inner_group o_group_col_12">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label">
+                                                        Khách cần trả
+                                                    </label>
+                                                </td>
+                                                <td colspan="1" class="text-primary text-right">
+                                                    <h5>{{debtAmount | number}}</h5>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <kendo-combobox style="width: 250px" [data]="cashBankJournals" [textField]="'name'"
+                                                        [valueField]="'id'" formControlName="debtJournal">
+                                                    </kendo-combobox>
+                                                    <div class="text-danger" *ngIf="paymentFC.debtJournal.errors && submitted">
+                                                        <div *ngIf="paymentFC.debtJournal.errors.required">Chọn tài khoản</div>
+                                                    </div>
+                                                </div>
+                                                <div>{{debtAmount | number}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+    
+                            </div>
+                            <div class="o_group o_inner_group col-4 mt-0">
+                                <div class="card bg-light">
+                                    <div class="p-3">
+                                        <table class="table mb-0">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="border-0">
+                                                        <h6 class="mb-0"> Tổng tiền khách cần trả</h6>
+                                                    </td>
+                                                    <td class="border-0">
+                                                        <h6 class="mb-0 text-right text-primary">{{ this.getAmountTotalPayment() |
+                                                            number}}</h6>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0"> Tổng tiền khách đưa</h6>
+                                                    </td>
+                                                    <td>
+                                                        <h6 class="mb-0 text-right text-primary">{{ +this.amountTotalJournalPayment +
+                                                            (getValueForm('isDebtPayment') ? this.debtAmount : 0) |
+                                                            number}}</h6>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let item of CombineAllJournalSelected">
+                                                    <td>{{getPaymentMethod(item.type)?.name || 'Tiền mặt'}}</td>
+                                                    <td class="text-right">{{item.amount | number}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <h6 class="mb-0"> Còn thiếu</h6>
+                                                    </td>
+                                                    <td>
+                                                        <h6 class="mb-0 text-right text-primary">{{this.getAmountTotalPayment() -
+                                                            this.amountTotalJournalPayment - (getValueForm('isDebtPayment') ? this.debtAmount : 0) | number}}</h6>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" *ngIf="this.step == 2" class="btn btn-secondary mr-2" (click)="backPreviousStep()" [disabled]="loading">Trở
+        lại</button>
+    <button type="button" class="btn btn-primary" (click)="save()" [disabled]="loading" accesskey="s">Thanh
+        toán</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">Đóng</button>
+</footer>

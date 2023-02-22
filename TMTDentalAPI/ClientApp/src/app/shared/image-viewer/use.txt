@@ -1,0 +1,5 @@
+viewImage(attachment: IrAttachmentBasic) {
+    var modalRef = this.modalService.open(ImageViewerComponent, { windowClass: 'o_image_viewer o_modal_fullscreen' });
+    modalRef.componentInstance.attachments = this.getAttachmentsPreviews();
+    modalRef.componentInstance.attachmentSelected = attachment;
+  }

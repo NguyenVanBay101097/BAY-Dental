@@ -1,0 +1,137 @@
+.report-title {
+    padding: 10px 15px;
+    height: 10%;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 24px;
+    color: #0B92F3;
+}
+
+.report-content {
+    width: 100%;
+    height: 90%;
+    color: #007bff;
+}
+
+.vector-debit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #4097E7 33.64%, rgba(110, 178, 240, 0.64) 89.71%);
+    opacity: 0.8;
+}
+
+.vector-credit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #5056F9 33.64%, rgba(114, 119, 249, 0.64) 89.71%);
+    opacity: 0.8;
+}
+
+.vector-initialBalance {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #4AC5AE 33.64%, rgba(121, 217, 199, 0.64) 89.71%);
+    opacity: 0.8;
+}
+
+.vector-countSaleOrder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: -50%;
+    right: -50%;
+    background: linear-gradient(139.84deg, #FFAA62 33.64%, rgba(255, 197, 149, 0.64) 89.71%);
+    opacity: 0.8;
+}
+
+.report-debit {
+    position: relative;
+    overflow: hidden;
+    background: #4097E7;
+    border-radius: 8px;
+}
+
+.report-credit {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #5056F9;
+}
+
+.report-initialBalance {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #4AC5AE;
+}
+
+.report-countSaleOrder {
+    position: relative;
+    overflow: hidden;
+    background: #FFAA62;
+    border-radius: 8px;
+}
+
+.shape-cone {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 70px solid transparent;
+    border-right: 70px solid transparent;
+    border-top: 100px solid;
+    background: linear-gradient(139.84deg, #5056F9 33.64%, rgba(114, 119, 249, 0.64) 89.71%);
+    border-radius: 50%;
+}
+
+.content-title {
+    left: 0;
+    top: 25%;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 23px;
+    color: #FFFFFF;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: pre;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.content-content {
+    font-style: normal;
+    font-weight: 500;
+    left: 0;
+    top: 50%;
+    font-size: 20px;
+    line-height: 23px;
+    color: #FFFFFF;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: pre;
+    overflow: hidden;
+    vertical-align: middle;
+    margin-top: 5px;
+}
+
+.t_amount {
+    font-size: 1.25rem;
+}
+
+ .t_title {
+    color: #0B92F3;
+ }

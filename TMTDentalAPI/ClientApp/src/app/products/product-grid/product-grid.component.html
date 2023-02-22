@@ -1,0 +1,34 @@
+<kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="true" [loading]="loading"
+    (pageChange)="onPageChange($event)">
+    <kendo-grid-column field="name" [hidden]="hiddenColumns.indexOf('name') > -1" [title]="nameTitle || 'Tên sản phẩm'">
+    </kendo-grid-column>
+    <kendo-grid-column field="defaultCode" [hidden]="hiddenColumns.indexOf('defaultCode') > -1"
+        [title]="defaultCodeTitle || 'Mã sản phẩm'">
+    </kendo-grid-column>
+    <kendo-grid-column field="categName" [hidden]="hiddenColumns.indexOf('categName') > -1"
+        [title]="categTitle || 'Nhóm sản phẩm'">
+    </kendo-grid-column>
+    <kendo-grid-column field="listPrice" [hidden]="hiddenColumns.indexOf('listPrice') > -1" class="text-right"
+        title="Giá bán">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{dataItem.listPrice | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="qtyAvailable" [hidden]="hiddenColumns.indexOf('qtyAvailable') > -1" class="text-right"
+        title="Tồn kho">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            {{(dataItem.type == 'product' ? dataItem.qtyAvailable : 0) | number}}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="id" [hidden]="hiddenColumns.indexOf('id') > -1">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+            Thao tác
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            <button class="btn btn-light btn-sm mr-2" (click)="editBtnClick(dataItem)">
+                <span class="fa fa-edit"></span> Sửa</button>
+            <button class="btn btn-light btn-sm" (click)="deleteBtnClick(dataItem)">
+                <span class="fa fa-trash"></span> Xóa</button>
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

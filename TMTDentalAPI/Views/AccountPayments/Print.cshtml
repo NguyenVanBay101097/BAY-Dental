@@ -1,0 +1,231 @@
+﻿@model Umbraco.Web.Models.ContentEditing.AccountPaymentPrintVM
+@using Umbraco.Web.Models.ContentEditing;
+@{
+    var configPrint = ViewData["ConfigPrint"] as ConfigPrintDisplay;
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+
+
+}
+
+<div>
+    @if (!configPrint.IsInfoCompany)
+    {
+        <div class="d-flex mb-2">
+            @if (!string.IsNullOrEmpty(Model.CompanyLogo))
+            {
+                <img class="img-fluid me-3 w-25" src="@Model.CompanyLogo" alt="@Model.CompanyName">
+            }
+            <div>
+                <div class="text-xl font-semibold">@Model.CompanyName</div>
+                @if (!string.IsNullOrEmpty(Model.CompanyAddress))
+                {
+                    <div>Địa chỉ: @Model.CompanyAddress</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.CompanyPhone))
+                {
+                    <div>ĐT: @Model.CompanyPhone</div>
+                }
+                @if (!string.IsNullOrEmpty(Model.CompanyEmail))
+                {
+                    <div>Email: @Model.CompanyEmail</div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="text-center mb-2">
+        <div class="text-3xl font-semibold">BIÊN LAI THANH TOÁN</div>
+        <div>Ngày @Model.PaymentDate.Day tháng @Model.PaymentDate.Month năm @Model.PaymentDate.Year </div>
+        <div class="font-semibold">Số: @Model.PaymentName</div>
+        @*<div class="font-semibold">Số: @Model.Name</div>*@
+    </div>
+    <div class="o_form_view mb-2">
+        <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Ngày thanh toán
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:dd/MM/yyyy}", Model.PaymentDate))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Phương thức
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.JournalName)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Loại:
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @if (Model.PaymentType == "inbound")
+                                {
+                                    <span>Hoàn tiền</span>
+                                }
+                                else
+                                {
+                                    <span>Trả tiền</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Số tiền
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:0,0}", Model.Amount))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Bằng chữ:
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(string.Format(culture, "{0:0,0}", Model.AmountText))</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Nội dung:
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.Communication)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="o_group o_inner_group o_group_col_6">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Nhà cung cấp:
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.PartnerName)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Địa chỉ:
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.PartnerAddress)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Số điện thoại:
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.PartnerPhone)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                @*<table class="o_group o_inner_group col-8">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@Model.PartnerDisplayName</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.PartnerPhone))
+                    {
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help">
+                                    Điện thoại
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">@(Model.PartnerPhone)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">@Model.PartnerAddress</td>
+                    </tr>
+
+                </tbody>
+            </table>*@
+        </div>
+    </div>
+    @*<table class="table table-sm table-bordered mb-2">
+            <thead>
+                <tr>
+                    <th>Số phiếu điều trị</th>
+                    <th>Ngày lập phiếu</th>
+                    <th class="text-right">Tổng tiền</th>
+                    <th class="text-right">Tổng thanh toán</th>
+                    <th class="text-right">Còn lại</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.SaleOrders)
+                {
+                    <tr>
+                        <td>@(item.Name)</td>
+                        <td>@(string.Format(culture, "{0:dd/MM/yyyy}", item.DateOrder))</td>
+                        <td class="text-right">@(item.AmountTotal.HasValue && item.AmountTotal != 0 ? string.Format(culture, "{0:0,0}", item.AmountTotal.Value) : "0")</td>
+                        <td class="text-right">@(string.Format(culture, "{0:0,0}", (item.AmountTotal.HasValue && item.Residual.HasValue && (item.AmountTotal - item.Residual) != 0 ? (item.AmountTotal - item.Residual) : 0)))</td>
+                        <td class="text-right">@(item.Residual.HasValue && item.Residual.Value != 0 ? string.Format(culture, "{0:0,0}", item.Residual.Value) : "0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>*@
+    <div class="d-flex">
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold"> Người lập phiếu</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">
+                    @if (Model.PaymentType == "inbound")
+                    {
+                        @(!string.IsNullOrEmpty(Model.PartnerName) ? Model.PartnerName.ToUpper() : "")
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(Model.UserName) ? Model.UserName.ToUpper() : "")
+                    }
+                </span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="text-center">
+                <span class="font-semibold"> Người nhận tiền</span> <br />
+                <i>(Ký, họ tên)</i> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span></span> <br />
+                <span class="font-semibold">
+                    @if (Model.PaymentType == "inbound")
+                    {
+                        @(!string.IsNullOrEmpty(Model.UserName) ? Model.UserName.ToUpper() : "")
+                    }
+                    else
+                    {
+                        @(!string.IsNullOrEmpty(Model.PartnerName) ? Model.PartnerName.ToUpper() : "")
+                    }
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

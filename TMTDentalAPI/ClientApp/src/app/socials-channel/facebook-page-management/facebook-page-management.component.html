@@ -1,0 +1,23 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <div class="mr-3">
+            <img *ngIf="page.avatar" [src]="page.avatar" width="50" height="50">
+        </div>
+        <div class="_titleAndNav">
+            <div class="_titleRow">
+                <h4 class="mb-0">{{page.pageName}}</h4>
+            </div>
+            <div class="_navMenuRow">
+                <ul class="nav">
+                    <!-- <li class="nav-item">
+                        <a routerLinkActive="active" [routerLink]="['customers']">Người tương tác</a>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <router-outlet></router-outlet>
+</div>

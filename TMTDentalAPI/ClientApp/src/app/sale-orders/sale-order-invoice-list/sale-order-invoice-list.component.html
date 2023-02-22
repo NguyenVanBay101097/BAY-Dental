@@ -1,0 +1,44 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">Hóa đơn</li>
+        </ol>
+        <div class="o_cp_searchview">
+        </div>
+        <div class="o_cp_left">
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [loading]="loading">
+        <kendo-grid-column field="name" title="Số hóa đơn" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="invoiceDate" title="Ngày hóa đơn" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.invoiceDate | date : 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="invoiceUserName" title="Người tạo" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="amountTotalSigned" title="Tổng tiền" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountTotalSigned | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="amountResidualSigned" title="Còn nợ" class="text-right" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amountResidualSigned | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="state" title="Trạng thái" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{stateGet(dataItem.state)}}
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

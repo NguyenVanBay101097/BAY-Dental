@@ -1,0 +1,181 @@
+<div class="container">
+    <!-- <div class="mt-2 d-flex flex-row summary flex-wrap">
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Tổng sổ quỹ </label>
+            <h5 class="text-success">{{totalCashBook[0]?.totalAmount || 0 | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ tiền mặt </label>
+            <h5 class="text-success">{{totalCashBook[1]?.totalAmount || 0 | number}}</h5>
+        </div>
+        <div class="p-3 mr-2 mb-2 border rounded bg-white text-center d-flex flex-column mw-200">
+            <label style="font-weight: 600;"> Quỹ ngân hàng </label>
+            <h5 class="text-success">{{totalCashBook[2]?.totalAmount || 0 | number}}</h5>
+        </div>
+    </div> -->
+
+    <kendo-combobox [data]="filteredJournals" class="mb-2" [textField]="'name'" [valueField]="'id'" [filterable]="true"
+        (selectionChange)="onSelectChange($event)" #journalCbx [placeholder]="'Phương thức'">
+    </kendo-combobox>
+
+    <div class="row mb-2">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title text-primary"> Tồn quỹ </h5>
+                </div>
+                <div class="card-body o_form_view">
+                    <table class="o_group o_inner_group m-0">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Đầu ngày</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookBalanceReport?.begin || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Tổng thu trong ngày</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookBalanceReport?.totalThu ||0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Tổng chi trong ngày</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookBalanceReport?.totalChi || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Chênh lệch trong ngày</label>
+                                </td>
+                                <td class="text-right pr-0">{{(cashBookBalanceReport?.totalThu - cashBookBalanceReport?.totalChi) || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Cuối ngày</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookBalanceReport?.totalAmount || 0 | number}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title text-primary"> Các khoản thu </h5>
+                </div>
+                <div class="card-body o_form_view">
+                    <table class="o_group o_inner_group m-0">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Khách hàng thanh toán dịch vụ và thuốc</label>
+                                    <span class="text-primary t-tooltip ml-1" placement="top"
+                                        ngbTooltip="Không bao gồm tiền khách hàng thanh toán bằng phương thức Ghi công nợ và Tạm ứng">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                    </span>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.customerIncomeTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Khách hàng đóng tạm ứng</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.advanceIncomeTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Thu công nợ khách hàng</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.debtIncomeTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Thu công nợ bảo hiểm</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.insuranceIncomeTotal | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Nhà cung cấp hoàn tiền</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.supplierIncomeTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Thu ngoài</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.otherIncomeTotal || 0 | number}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title text-primary"> Các khoản chi </h5>
+                </div>
+                <div class="card-body o_form_view">
+                    <table class="o_group o_inner_group m-0">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Thanh toán cho nhà cung cấp</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.supplierExpenseTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Hoàn tạm ứng cho khách hàng</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.advanceExpenseTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Chi lương nhân viên</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.salaryExpenseTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Hoa hồng người giới thiệu</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.commissionExpenseTotal || 0 | number}}</td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label w-auto">
+                                    <label class="o_form_label">Chi ngoài</label>
+                                </td>
+                                <td class="text-right pr-0">{{cashBookDataReport?.otherExpenseTotal || 0 | number}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <kendo-grid #grid [data]="gridData" [pageable]="pagerSettings" [skip]="skip" [pageSize]="limit" [resizable]="true"
+        [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="name" title="Nội dung" width="250">
+        </kendo-grid-column>
+        <kendo-grid-column field="journalName" title="Phương thức" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="accountName" title="Loại thu chi" width="150">
+        </kendo-grid-column>
+        <kendo-grid-column field="amount" title="Số tiền" class="text-right" width="150">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.amount | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="partnerName" title="Đối tác" width="180">
+        </kendo-grid-column>
+    </kendo-grid>
+</div>

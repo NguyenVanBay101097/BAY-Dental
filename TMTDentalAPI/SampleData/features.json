@@ -1,0 +1,1643 @@
+[
+  {
+    "Name": "Điều trị",
+    "Functions": [
+      {
+        "Name": "Khách hàng/Nhà cung cấp",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.Partner.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.Partner.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.Partner.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.Partner.Delete"
+          },
+          {
+            "Name": "Xuất excel",
+            "Permission": "Basic.Partner.Export"
+          },
+          {
+            "Name": "Thông tin liên hệ",
+            "Permission": "Basic.Partner.ContactInfo"
+          }
+        ]
+      },
+      {
+        "Name": "Phiếu điều trị",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.SaleOrder.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.SaleOrder.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.SaleOrder.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.SaleOrder.Delete"
+          },
+          {
+            "Name": "In phiếu",
+            "Permission": "Basic.SaleOrder.Print"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Basic.SaleOrder.Cancel"
+          },
+          {
+            "Name": "Giảm tiền dịch vụ",
+            "Permission": "Basic.SaleOrder.DiscountLine"
+          },
+          {
+            "Name": "Giảm tiền phiếu điều trị",
+            "Permission": "Basic.SaleOrder.DiscountOrder"
+          },
+          {
+            "Name": "Thanh toán",
+            "Permission": "Basic.SaleOrderPayment.Full"
+          }
+        ]
+      },
+      {
+        "Name": "Tư vấn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.Advisory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.Advisory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.Advisory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.Advisory.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Lịch hẹn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.Appointment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.Appointment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.Appointment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.Appointment.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Tiếp nhận khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.CustomerReceipt.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.CustomerReceipt.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.CustomerReceipt.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.CustomerReceipt.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Đợt khám",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.DotKham.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.DotKham.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.DotKham.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.DotKham.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Thanh toán",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.AccountPayment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.AccountPayment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.AccountPayment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.AccountPayment.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Yêu cầu vật tư",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.ProductRequest.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.ProductRequest.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.ProductRequest.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.ProductRequest.Delete"
+          },
+          {
+            "Name": "Xuất kho",
+            "Permission": "Basic.ProductRequest.Done"
+          }
+        ]
+      },
+      {
+        "Name": "Khách hàng tạm ứng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Basic.PartnerAdvance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Basic.PartnerAdvance.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Basic.PartnerAdvance.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Basic.PartnerAdvance.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bán Thuốc",
+    "Functions": [
+      {
+        "Name": "Đơn thuốc",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Medicine.ToaThuoc.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Medicine.ToaThuoc.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Medicine.ToaThuoc.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Medicine.ToaThuoc.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Hóa Đơn thuốc",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Medicine.MedicineOrder.Read"
+          },
+          {
+            "Name": "Thanh toán",
+            "Permission": "Medicine.MedicineOrder.Payment"
+          },
+          {
+            "Name": "Hủy thanh toán",
+            "Permission": "Medicine.MedicineOrder.Cancel"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Mua hàng",
+    "Functions": [
+      {
+        "Name": "Mua/trả hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Purchase.Order.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Purchase.Order.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Purchase.Order.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Purchase.Order.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Kho",
+    "Functions": [
+      {
+        "Name": "Phiếu nhập/xuất",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Picking.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Picking.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Picking.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Picking.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Tiêu chí kiểm kho",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.StockInventoryCriteria.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.StockInventoryCriteria.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.StockInventoryCriteria.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.StockInventoryCriteria.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Kiểm kho",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Stock.Inventory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Stock.Inventory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Stock.Inventory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Stock.Inventory.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Lương",
+    "Functions": [
+      {
+        "Name": "Bảng lương",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.HrPayslipRun.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.HrPayslipRun.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.HrPayslipRun.Update"
+          },
+          {
+            "Name": "In",
+            "Permission": "Salary.HrPayslipRun.Print"
+          },
+          {
+            "Name": "Xuất file",
+            "Permission": "Salary.HrPayslipRun.Export"
+          },
+          {
+            "Name": "Hủy",
+            "Permission": "Salary.HrPayslipRun.Cancel"
+          }
+        ]
+      },
+      {
+        "Name": "Chấm công",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.ChamCong.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.ChamCong.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.ChamCong.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.ChamCong.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý tạm ứng - chi lương",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.SalaryPayment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Salary.SalaryPayment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Salary.SalaryPayment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Salary.SalaryPayment.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo thanh toán lương",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Salary.AccountCommonPartnerReport"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Labo",
+    "Functions": [
+      {
+        "Name": "Quản lý phiếu Labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.LaboOrder.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Labo.LaboOrder.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Labo.LaboOrder.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Labo.LaboOrder.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Labo.LaboOrder.Cancel"
+          }
+        ]
+      },
+      {
+        "Name": "Đơn hàng Labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.OrderLabo.Read"
+          },
+          {
+            "Name": "Nhận Labo",
+            "Permission": "Labo.OrderLabo.Update"
+          }
+        ]
+      },
+      {
+        "Name": "Xuất Labo cho khách",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.ExportLabo.Read"
+          },
+          {
+            "Name": "Xuất Labo",
+            "Permission": "Labo.ExportLabo.Update"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý bảo hành",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Labo.LaboWarranty.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Labo.LaboWarranty.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Labo.LaboWarranty.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Labo.LaboWarranty.Delete"
+          },
+          {
+            "Name": "Hủy phiếu",
+            "Permission": "Labo.LaboWarranty.Cancel"
+          },
+          {
+            "Name": "Xuất Excel",
+            "Permission": "Labo.LaboWarranty.Export"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Danh mục",
+    "Functions": [
+      {
+        "Name": "Nhãn khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.PartnerCategory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.PartnerCategory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.PartnerCategory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.PartnerCategory.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhãn khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.SurveyTag.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.SurveyTag.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.SurveyTag.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.SurveyTag.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Chẩn đoán răng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.ToothDiagnosis.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.ToothDiagnosis.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.ToothDiagnosis.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.ToothDiagnosis.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nguồn khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.PartnerSource.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.PartnerSource.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.PartnerSource.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.PartnerSource.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Dịch vụ, vật tư, thuốc, vật liệu Labo, gửi kèm Labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Products.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Products.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Products.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Products.Delete"
+          },
+          {
+            "Name": "Giá vốn",
+            "Permission": "Catalog.Products.StandardPrice"
+          }
+        ]
+      },
+      {
+        "Name": "Nhóm dịch vụ, vật tư, thuốc",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.ProductCategory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.ProductCategory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.ProductCategory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.ProductCategory.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Đơn thuốc mẫu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.SamplePrescription.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.SamplePrescription.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.SamplePrescription.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.SamplePrescription.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Tiểu sử bệnh",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.History.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.History.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.History.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.History.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Danh xưng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.PartnerTitle.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.PartnerTitle.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.PartnerTitle.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.PartnerTitle.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Chức vụ nhân viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Hr.Job.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Hr.Job.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Hr.Job.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Hr.Job.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhân viên",
+        "Ops": [
+          {
+            "Name": "Thông tin tính lương",
+            "Permission": "Catalog.Employee.Salary.Update"
+          },
+          {
+            "Name": "Cấu hình hoa hồng",
+            "Permission": "Catalog.Employee.Commission.Update"
+          },
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Employee.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Employee.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Employee.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Employee.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Người giới thiệu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Agent.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Agent.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Agent.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Agent.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Insurance.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Insurance.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Insurance.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Insurance.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Bảng hoa hồng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.Commission.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.Commission.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.Commission.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.Commission.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Đường hoàn tất Labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboFinishLine.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboFinishLine.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboFinishLine.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboFinishLine.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Kiểu nhịp Labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboBridge.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboBridge.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboBridge.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboBridge.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Khớp cắn Labo",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Catalog.LaboBiteJoint.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Catalog.LaboBiteJoint.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Catalog.LaboBiteJoint.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Catalog.LaboBiteJoint.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Cấu hình",
+    "Functions": [
+      {
+        "Name": "Chi nhánh",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "System.Company.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "System.Company.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "System.Company.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "System.Company.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhóm quyền",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "System.ApplicationRole.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "System.ApplicationRole.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "System.ApplicationRole.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "System.ApplicationRole.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Cấu hình chung",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "System.Config"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Sổ quỹ",
+    "Functions": [
+      {
+        "Name": "Dữ liệu sổ quỹ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.Read"
+          },
+          {
+            "Name": "Xuất file",
+            "Permission": "Account.Export"
+          }
+        ]
+      },
+      {
+        "Name": "Phiếu thu/chi",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.PhieuThuChi.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Account.PhieuThuChi.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Account.PhieuThuChi.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Account.PhieuThuChi.Delete"
+          },
+          {
+            "Name": "In phiếu",
+            "Permission": "Account.PhieuThuChi.Print"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thu chi",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Account.LoaiThuChi.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Account.LoaiThuChi.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Account.LoaiThuChi.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Account.LoaiThuChi.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Báo cáo",
+    "Functions": [
+      {
+        "Name": "Báo cáo tổng quan",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Overview"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo tổng quan ngày",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.DayOverview"
+          }
+        ]
+      },
+      {
+        "Name": "Kết quả kinh doanh",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Financial"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo doanh thu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Revenue"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo dịch vụ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Sale"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.PartnerOldNew"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo Tiếp nhận",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.CustomerReceiptReports"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo Công nợ bảo hiểm",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.ResInsuranceReports"
+          }
+        ]
+      },
+      {
+        "Name": "Công nợ nhà cung cấp",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.AccountPartner"
+          }
+        ]
+      },
+      {
+        "Name": "Xuất nhập tồn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.Stock"
+          }
+        ]
+      },
+      {
+        "Name": "Thống kê nguồn khách hàng",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Report.PartnerSource"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Marketing",
+    "Functions": [
+      {
+        "Name": "Chương trình khuyến mãi",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SaleCoupon.SaleCouponProgram.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SaleCoupon.SaleCouponProgram.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SaleCoupon.SaleCouponProgram.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SaleCoupon.SaleCouponProgram.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thẻ thành viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Card.Type.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Card.Type.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Card.Type.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Card.Type.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý thẻ thành viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Card.Card.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Card.Card.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Card.Card.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Card.Card.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Loại thẻ ưu đãi dịch vụ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "ServiceCard.Type.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Type.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Type.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Type.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý thẻ ưu đãi dịch vụ",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "ServiceCard.Card.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "ServiceCard.Card.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "ServiceCard.Card.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "ServiceCard.Card.Delete"
+          }
+        ]
+      }
+
+      //{
+      //  "Name": "Coupon",
+      //  "Ops": [
+      //    {
+      //      "Name": "Xem",
+      //      "Permission": "SaleCoupon.SaleCoupons.Read"
+      //    },
+      //    {
+      //      "Name": "Thêm",
+      //      "Permission": "SaleCoupon.SaleCoupons.Create"
+      //    }
+      //  ]
+      //}
+    ]
+  },
+  //{
+  //  "Name": "Thẻ tiền mặt",
+  //  "Functions": [
+  //    {
+  //      "Name": "Đơn bán thẻ",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "ServiceCard.Order.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "ServiceCard.Order.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "ServiceCard.Order.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "ServiceCard.Order.Delete"
+  //        }
+  //      ]
+  //    },
+  //    {
+  //      "Name": "Loại thẻ",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "ServiceCard.Type.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "ServiceCard.Type.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "ServiceCard.Type.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "ServiceCard.Type.Delete"
+  //        }
+  //      ]
+  //    },
+  //    {
+  //      "Name": "Danh sách thẻ",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "ServiceCard.Card.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "ServiceCard.Card.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "ServiceCard.Card.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "ServiceCard.Card.Delete"
+  //        }
+  //      ]
+  //    }
+  //  ]
+  //},
+  //{
+  //  "Name": "Thành viên",
+  //  "Functions": [
+  //    {
+  //      "Name": "Thẻ thành viên",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "LoyaltyCard.CardCard.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "LoyaltyCard.CardCard.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "LoyaltyCard.CardCard.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "LoyaltyCard.CardCard.Delete"
+  //        }
+  //      ]
+  //    },
+  //    {
+  //      "Name": "Loại thẻ thành viên",
+  //      "Ops": [
+  //        {
+  //          "Name": "Xem",
+  //          "Permission": "LoyaltyCard.CardType.Read"
+  //        },
+  //        {
+  //          "Name": "Thêm",
+  //          "Permission": "LoyaltyCard.CardType.Create"
+  //        },
+  //        {
+  //          "Name": "Cập nhật",
+  //          "Permission": "LoyaltyCard.CardType.Update"
+  //        },
+  //        {
+  //          "Name": "Xóa",
+  //          "Permission": "LoyaltyCard.CardType.Delete"
+  //        }
+  //      ]
+  //    }
+  //  ]
+  //},
+  {
+    "Name": "Đơn vị tính",
+    "Functions": [
+      {
+        "Name": "Đơn vị tính",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "UoM.UoMs.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "UoM.UoMs.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "UoM.UoMs.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "UoM.UoMs.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Nhóm đơn vị tính",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "UoM.UoMCategory.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "UoM.UoMCategory.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "UoM.UoMCategory.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "UoM.UoMCategory.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  
+  {
+    "Name": "SMS Brandname",
+    "Functions": [
+      {
+        "Name": "Danh sách Brandname",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Account.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Account.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Account.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SMS.Account.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Quản lý chiến dịch",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Campaign.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Campaign.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Campaign.Update"
+          }
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SMS.Campaign.Delete"
+          //}
+        ]
+      },
+      {
+        "Name": "Quản lý tin nhắn",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Message.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Message.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Message.Update"
+          }
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SMS.Campaign.Delete"
+          //}
+        ]
+      },
+      {
+        "Name": "Quản lý tin nhắn mẫu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Template.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Template.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Template.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SMS.Template.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Thiết lập tin nhắn tự động",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "SMS.Config.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "SMS.Config.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "SMS.Config.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "SMS.Config.Delete"
+          }
+        ]
+      },
+      {
+        "Name": "Báo cáo",
+        "Ops": [
+          {
+            "Name": "Xem thống kê tin nhắn",
+            "Permission": "SMS.Report.AllMessage"
+          },
+          {
+            "Name": "Xem báo cáo",
+            "Permission": "SMS.Report.AllSMS"
+          }
+          //{
+          //  "Name": "Thêm",
+          //  "Permission": "SMS.Report.Create"
+          //},
+          //{
+          //  "Name": "Cập nhật",
+          //  "Permission": "SMS.Report.Update"
+          //},
+          //{
+          //  "Name": "Xóa",
+          //  "Permission": "SMS.Report.Delete"
+          //}
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Khảo sát đánh giá",
+    "Functions": [
+      {
+        "Name": "Danh sách công việc",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Assignment.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Assignment.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Assignment.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Assignment.Delete"
+          },
+          {
+            "Name": "Hủy khảo sát",
+            "Permission": "Survey.Assignment.DeleteUserInput"
+          }
+        ]
+      },
+      {
+        "Name": "Khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.UserInput.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.UserInput.Create"
+          }
+        ]
+      },
+      {
+        "Name": "Câu hỏi khảo sát",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Survey.Question.Read"
+          },
+          {
+            "Name": "Thêm",
+            "Permission": "Survey.Question.Create"
+          },
+          {
+            "Name": "Cập nhật",
+            "Permission": "Survey.Question.Update"
+          },
+          {
+            "Name": "Xóa",
+            "Permission": "Survey.Question.Delete"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Hoa hồng",
+    "Functions": [
+      {
+        "Name": "Người giới thiệu",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Comission.Agent"
+          }
+        ]
+      },
+      {
+        "Name": "Nhân viên",
+        "Ops": [
+          {
+            "Name": "Xem",
+            "Permission": "Comission.Employee"
+          }
+        ]
+      }
+    ]
+  }
+
+]

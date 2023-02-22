@@ -1,0 +1,3 @@
+.textarea-required.ng-touched.ng-dirty.ng-invalid, .textarea-required.ng-touched.ng-invalid {
+    border: 1px solid red;
+}

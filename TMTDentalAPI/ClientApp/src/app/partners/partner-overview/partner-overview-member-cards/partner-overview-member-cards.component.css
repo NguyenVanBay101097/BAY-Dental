@@ -1,0 +1,14 @@
+.card-body-item {
+    background-color: #F9FBFF;
+    border-left: 4px solid #2395FF;
+    border-radius: 6px;
+    padding:10px
+}
+
+.opacity-8 {
+    opacity: 0.8
+}
+
+.text-gray{
+    color: #929CA9;
+}

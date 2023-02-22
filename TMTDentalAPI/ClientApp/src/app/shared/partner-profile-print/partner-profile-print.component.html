@@ -1,0 +1,124 @@
+<div id="printPartnerDiv" *ngIf="partnerPrint" style="display: none;">
+    <div class="o_form_view o_print">
+        <div class="text-center">
+            <h5 class="mb-0">{{partnerPrint.company.name}}</h5>
+            <div>Địa chỉ: {{partnerPrint.company.address}}</div>
+            <div *ngIf="partnerPrint.company.phone">ĐT: {{partnerPrint.company.phone}}</div>
+            <div *ngIf="partnerPrint.company.email">Email: {{partnerPrint.company.email}}</div>
+        </div>
+        <div class="text-center">
+            <h1>HỒ SƠ KHÁCH HÀNG</h1>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Khách hàng
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{partnerPrint.partner.displayName}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Địa chỉ
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{partnerPrint.partner.address}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Giới tính
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{partnerPrint.partner.gender}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Ngày sinh
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{partnerPrint.partner.dateOfBirth}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label o_form_label_help">
+                                Điện thoại
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">
+                            {{partnerPrint.partner.phone}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h5>Lịch sử điều trị</h5>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Bác sĩ</th>
+                        <th>Chỉ định</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let service of partnerPrint.serviceList; let i=index">
+                        <td>
+                            <span>{{ service.dateOrder | date: 'shortDate' }}</span>
+                        </td>
+                        <td>
+                            <span>{{ service.userName }}</span>
+                        </td>
+                        <td>
+                            <span>{{ service.productName }} </span>
+                            <span *ngIf="service.teeth.length"> ({{getTeethDisplay(service.teeth)}})</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h5>Lịch sử thanh toán</h5>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Phương thức</th>
+                        <th class="text-right">Số tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let payment of partnerPrint.paymentList; let i=index">
+                        <td>
+                            <span>{{ payment.paymentDate | date: 'shortDate' }}</span>
+                        </td>
+                        <td>
+                            <span>{{ payment.journalName }}</span>
+                        </td>
+                        <td class="text-right">
+                            <span>{{ payment.amount | number }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

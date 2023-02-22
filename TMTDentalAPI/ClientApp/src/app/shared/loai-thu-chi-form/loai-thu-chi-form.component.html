@@ -1,0 +1,104 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="accountForm" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mã loại {{type}}
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="code" />
+                                    <div *ngIf="f.code.errors && submitted"
+                                        class="text-danger">
+                                        <div *ngIf="f.code.errors.required">Nhập mã loại {{type}}</div>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label for="o_field_input_46" class="o_form_label">
+                                        Tên loại {{type}}
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input class="form-control" formControlName="name" />
+                                    <div *ngIf="f.name.errors && submitted"
+                                        class="text-danger">
+                                        <div *ngIf="f.name.errors.required">Nhập tên loại {{type}}</div>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                    </label>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Ghi chú
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <textarea class="form-control" formControlName="note"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label"></td>
+                                <td colspan="1" style="width: 100%;">
+                                    <div class="d-flex">
+                                        <div class="form-check mr-2">
+                                            <input class="form-check-input" type="checkbox"
+                                                formControlName="isAccounting" id="isAccounting">
+                                            <label class="form-check-label" for="isAccounting">
+                                                Hạch toán kết quả kinh doanh
+                                            </label>
+                                        </div>
+                                        <div class="icon-hover">
+                                            <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave"
+                                                placement="top" [autoClose]="true" [ngbPopover]="popContent"></i>
+                                        </div>
+                                        <ng-template #popContent>
+                                            Hạch toán vào chỉ tiêu {{type == 'thu' ? 'thu nhập' : 'chi phí'}} khác trong
+                                            báo cáo kết quả kinh doanh
+                                        </ng-template>
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="save()" accesskey="s">
+        Lưu
+    </button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="cancel()" accesskey="q">
+        Đóng
+    </button>
+</footer>

@@ -1,0 +1,26 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li class="active">Xuất Labo</li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="not-export" class="nav-link px-3 py-1" routerLinkActive="active">Chưa xuất</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="exported" class="nav-link px-3 py-1" routerLinkActive="active">Đã xuất</a>
+                    </li>
+                    
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

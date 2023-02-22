@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Umbraco.Web.Models.ContentEditing.SalaryPaymentPrintVm>
+
+@{
+    Layout = "~/Views/Shared/_PrintLayout.cshtml";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<style>
+    .page-break {
+        page-break-before: always;
+    }
+
+        .page-break:first-child {
+            page-break-before: avoid;
+        }
+</style>
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var item in Model)
+    {
+        <div class="o_form_view page-break">
+            <div class="media mb-2">
+                @if (!string.IsNullOrEmpty(item.Company.Logo))
+                {
+                    <img class="mr-3" src="@item.Company.Logo" style="max-width: 200px" alt="@item.Company.Name">
+                }
+                <div class="media-body">
+                    <h4 class="mt-0">@item.Company.Name</h4>
+                    @if (!string.IsNullOrEmpty(item.Company.Address))
+                    {
+                        <div>Địa chỉ: @item.Company.Address</div>
+                    }
+                    @if (!string.IsNullOrEmpty(item.Company.Phone))
+                    {
+                        <div>Điện thoại: @item.Company.Phone</div>
+                    }
+                    @if (!string.IsNullOrEmpty(item.Company.Email))
+                    {
+                        <div>Email: @item.Company.Email</div>
+                    }
+                </div>
+            </div>
+            <div class="text-center">
+                @if (item.Type == "advance")
+                {
+                    <h2>PHIẾU TẠM ỨNG</h2>
+                }
+                else
+                {
+                    <h2>PHIẾU CHI LƯƠNG</h2>
+                }
+                <span>Số: @item.Name - Ngày: @item.Date.ToString("dd/MM/yyyy")</span>
+            </div>
+            <div class="o_group">
+                <table class="o_group o_inner_group o_group_col_9 ">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Người nhận
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(item.Employee != null ? item.Employee.Name : "")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Số tiền
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(item.Amount > 0 ? string.Format(culture, "{0:0,0}", item.Amount) : "0")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Phương thức
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(item.journal.Name)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Bằng chữ
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @(item.AmountText)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="o_td_label">
+                                <label class="o_form_label o_form_label_help font-weight-bold">
+                                    Nội dung
+                                </label>
+                            </td>
+                            <td colspan="1" style="width: 100%;">
+                                @item.Reason
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="row">
+                <div class="col-6">
+
+                </div>
+                <div class="col-6 text-center">
+                    @(string.Format(culture, "{0:dddd}", DateTime.Now)), Ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year
+                </div>
+            </div>
+            <div class="row font-weight-bold">
+                <div class="col-6 text-center">
+                    Người lập phiếu
+                </div>
+                <div class="col-6 text-center">
+                    Người lao động
+                </div>
+            </div>
+        </div>
+    }
+}

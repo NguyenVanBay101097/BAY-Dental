@@ -1,0 +1,59 @@
+<header class="modal-header">
+    <h4 class="modal-title">Sửa thông tin<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body  o_act_window">
+    <form class="o_form_view" [formGroup]="editForm" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <!-- <p class="text-danger" *ngIf="error">{{error}}</p> -->
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Tài khoản</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" formControlName="userName"
+                                    disabled=true />
+                                <div *ngIf="f.userName.errors && submitted" class="text-danger">
+                                    <div *ngIf="f.userName.errors.required">Nhập tài khoản</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Tên</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" formControlName="name" />
+                                <div *ngIf="f.name.errors && submitted" class="text-danger">
+                                    <div *ngIf="f.name.errors.required">Nhập tên</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="email" formControlName="email" />
+                                <div *ngIf="f.email.errors && submitted" class="text-danger">
+                                    <div *ngIf="f.email.errors.required">Nhập email</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <app-image-file-upload (uploaded)="onAvatarUploaded($event)"
+                            [imageId]="editForm.get('avatar').value" [width]="200" [height]="200">
+                        </app-image-file-upload>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="submit()">
+        Lưu
+    </button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q"><span>Đóng</span></button>
+</footer>

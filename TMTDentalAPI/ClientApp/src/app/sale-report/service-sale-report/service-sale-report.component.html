@@ -1,0 +1,74 @@
+<div class="container py-3">
+    <div class="form-inline">
+        <app-date-range-picker-filter [showClearButton]="false" #dateRange [ranges]="ranges" [opens]="'right'" class="mr-2 mb-2" [startDate]="filter.dateOrderFrom" [endDate]="filter.dateOrderTo" (searchChange)="onSearchDateChange($event)" opens="right"></app-date-range-picker-filter>
+        <kendo-combobox [placeholder]="'Tất cả chi nhánh'" class="mb-2 mr-2" [valueField]="'id'" [(ngModel)]="filter.companyId" [textField]="'name'"
+            [filterable]="true" [valuePrimitive]="true" [data]="companies" (valueChange)="onSelectCompany($event)" #companyCbx>
+        </kendo-combobox>
+        <kendo-combobox [placeholder]="'Tất cả bác sĩ'" [disabled]="isDisabledDoctors" [(ngModel)]="filter.employeeId" class="mb-2 mr-2" [valueField]="'id'" [textField]="'name'"
+            [filterable]="true" [data]="employees" [valuePrimitive]="true" (valueChange)="onSelectEmployee($event)" #empCbx>
+        </kendo-combobox>
+        <div class="dropdown mr-2 mb-2">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-download"></i> Xuất File</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" (click)="onExportExcel()">Xuất Excel</a>
+                <a class="dropdown-item" (click)="onExportPDF()">Xuất PDF</a>
+            </div>
+        </div>
+        <button class="btn btn-primary mb-2" (click)="onPrint()">In báo cáo</button>
+        <input class="form-control filter-search ml-auto mb-2" placeholder="Tìm kiếm theo mã, họ tên khách hàng" type="text" [(ngModel)]="filter.partnerName" (ngModelChange)="this.searchUpdate.next($event)">
+    </div>
+    <div class="mb-2 mr-2 d-flex">
+        <div>
+          <kendo-multiselect class="service-filter" [data]="filteredServices" [valueField]="'id'" [textField]="'name'"
+          [(ngModel)]="filter.serviceIds" [valuePrimitive]="true" #serviceMultiSelect
+          [placeholder]="'Tất cả dịch vụ'" [filterable]="true" (valueChange)="onChangeServiceSelected($event)">
+      </kendo-multiselect>
+        </div>
+      </div>
+    <div>
+        <kendo-grid [resizable]="true" #grid [loading]="loading" [data]="gridData" [pageSize]="this.filter.limit" [skip]="this.filter.offset" [pageable]="pagerSettings" (pageChange)="pageChange($event)">
+            <kendo-grid-column field="date" title="Ngày tạo" width="110">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.date | date: 'dd/MM/yyyy'}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="Khách hàng" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.orderPartnerDisplayName || ''}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="name" title="Dịch vụ" width="200">
+            </kendo-grid-column>
+            <kendo-grid-column field="employee" title="Bác sĩ" width="150">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.employeeName || ''}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column title="ĐVT" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.productUOMName || ''}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="teethDisplay" title="Răng" width="80">
+            </kendo-grid-column>
+            <kendo-grid-column c field="productUOMQty" class="text-right" [headerClass]="'text-right'" title="Số lượng" width="90">
+            </kendo-grid-column>
+            <kendo-grid-column class="text-right" [headerClass]="'text-right'" field="priceSubTotal" title="Thành tiền" width="110">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.priceSubTotal | number}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="state" title="Trạng thái" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{stateDisplay[dataItem.state] || "Đang điều trị"}}
+                </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="order" title="Phiếu điều trị" width="120">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                    {{dataItem.orderName || ''}}
+                </ng-template>
+            </kendo-grid-column>
+        </kendo-grid>
+    </div>
+</div>

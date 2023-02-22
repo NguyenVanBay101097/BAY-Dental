@@ -1,0 +1,33 @@
+<!-- <kendo-numerictextbox
+            [spinners]="false"
+            [step]="1"
+            class="btn btn-sm" (valueChange)="valueButton" ></kendo-numerictextbox> -->
+<!-- <input type="button" > -->
+<button tabindex="0" [ngbPopover]="popContentDiscountDefault" #popOver="ngbPopover" [autoClose]="'outside'" placement="bottom" type="button" class="btn btn-sm button-border-bottom">
+    <div *ngIf="discountTypeValue !== 'fixed'"> {{discountValue}} %</div>
+    <div *ngIf="discountTypeValue !== 'percentage'">{{discountFixedValue | number}} </div>
+</button>
+<ng-template #popContentDiscountDefault>
+    <form [formGroup]="formGroup">
+        <div class="form-group">
+            <div class="d-flex">
+                <kendo-numerictextbox [class.d-none]="discountTypeValue !== 'percentage'" (valueChange)="onChangeDiscount()" [min]="0" [max]="100" formControlName="DiscountPercent" [autoCorrect]="true" [spinners]="false">
+                </kendo-numerictextbox>
+                <kendo-numerictextbox [format]="'n0'" (valueChange)="onChangeDiscount()" [min]="0" [autoCorrect]="true" [class.d-none]="discountTypeValue !== 'fixed'" [spinners]="false" formControlName="DiscountFixed">
+                </kendo-numerictextbox>
+
+            </div>
+            <div class="mt-1">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" formControlName="DiscountType" (change)="onChangeDiscountType($event.target.value)" id="percentage" value="percentage">
+                    <label class="form-check-label" for="percentage">%</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" formControlName="DiscountType" (change)="onChangeDiscountType($event.target.value)" id="fixed" value="fixed">
+                    <label class="form-check-label" for="fixed">VNĐ</label>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- <button type="button" class="btn btn-primary btn-sm" (click)="applyDiscount()"  accesskey="s">Áp dụng</button>           -->
+</ng-template>

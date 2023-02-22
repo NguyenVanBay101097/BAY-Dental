@@ -1,0 +1,70 @@
+<div class="reports-section">
+    <div class=" report-boxes gridViewReport d-flex justify-content-between">
+        <div class="report-box">
+            <div class="box-item">
+                <div class="box-item-content">
+                    <div class=" mr-2 px-2 py-1">
+                        <h5 class="mb-0 title-box">Khách hàng phát sinh PĐT mới</h5>
+                        <div>
+                            <ng-container *ngIf="dataCustomer?.length; else elseTemplate">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div style="position: relative;height: 200px;">
+                                        <canvas baseChart
+                                            [type]="'pie'"
+                                            [options]="pieCustomerOptions"
+                                            [plugins]="pieCustomerPlugins"
+                                            [labels]="pieCustomerLabels"
+                                            [datasets]="pieCustomerDatasets">
+                                        </canvas>
+                                    </div>
+                                </div>
+                                <div class="link-details">
+                                    <a (click)="redirectTo('partner-report-overview')">Chi tiết</a>
+                                </div> 
+                            </ng-container>
+                            <ng-template #elseTemplate>
+                                <div class="text-center pt-5">
+                                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="report-box">
+            <div class="box-item">
+                <div class="box-item-content">
+                    <div class="mr-2 px-2 py-1">
+                        <h5 class="mb-0 title-box">Tiếp nhận khách khám mới</h5>
+                        <div>
+                            <ng-container *ngIf="dataNoTreatment?.length; else elseTemplate">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <div style="position: relative;height: 200px;">
+                                            <canvas baseChart
+                                                [type]="'pie'"
+                                                [options]="pieReceiptOptions"
+                                                [plugins]="pieReceiptPlugins"
+                                                [labels]="pieReceiptLabels"
+                                                [datasets]="pieReceiptDatasets">
+                                            </canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="link-details">
+                                    <a (click)="redirectTo('customer-receipt-overview')">Chi tiết</a>
+                                </div>
+                            </ng-container>
+                            <ng-template #elseTemplate>
+                                <div class="text-center pt-5">
+                                    <img src="./../../../assets/icons/NoData.svg" class="img-nodata ">
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

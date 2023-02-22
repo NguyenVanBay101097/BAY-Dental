@@ -1,0 +1,38 @@
+<header class="modal-header">
+    <h5 class="modal-title">Thêm kết nối<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="pages row">
+    <div class="col-md-3">
+        <div class="card left">
+            <span class="mid">Xin chào</span>
+            <img class="mid" src="{{DataUser[0].picture}}" alt="">
+            <b class="mid">{{DataUser[0].name}}</b>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card right">
+            <span class="mid">Chọn trang bạn muốn kết nối</span>
+            <div class="card mid" *ngFor="let item of DataFanpages; let i = index"
+                [class.selected]="item === selectedPage"
+                (click)="selectPage(item)">
+                <table>
+                    <tr>
+                        <td width=1%>
+                            <img src="{{item.picture}}" alt="">
+                        </td>
+                        <td style="text-align: left;">
+                            <b>{{item.name}}</b>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

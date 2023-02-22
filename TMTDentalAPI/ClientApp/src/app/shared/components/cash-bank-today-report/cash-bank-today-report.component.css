@@ -1,0 +1,10 @@
+.border_bottom {
+    border-bottom: 2px solid #7c7f81;
+    padding: 5px;
+}
+
+.table td, .table th {
+    vertical-align: top;
+    border-top: none;
+    padding: 5px;
+}

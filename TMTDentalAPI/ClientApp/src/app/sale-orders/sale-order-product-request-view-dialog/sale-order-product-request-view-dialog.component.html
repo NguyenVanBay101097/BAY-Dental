@@ -1,0 +1,104 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" ngbAutofocus class="close" data-dismiss="modal" aria-label="Close"
+        (click)="activateModal.dismiss()" tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view" *ngIf="productRequest">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_statusbar">
+                <div class="o_statusbar_status o_field_widget o_readonly_modifier">
+                    <button [disabled]="productRequest.state == 'done'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequest.state == 'done'"
+                        [class.btn-secondary]="productRequest.state == 'done'" type="button">
+                        Đã xuất
+                    </button>
+                    <button [disabled]="productRequest.state == 'confirmed'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequest.state == 'confirmed'"
+                        [class.btn-secondary]="productRequest.state == 'confirmed'" type="button">
+                        Đang yêu cầu
+                    </button>
+                    <button *ngIf="productRequest.state == 'cancel'" [disabled]="productRequest.state == 'cancel'" class="btn o_arrow_button disabled"
+                        [class.btn-primary]="productRequest.state == 'cancel'"
+                        [class.btn-secondary]="productRequest.state == 'cancel'" type="button">
+                        Đã hủy
+                    </button>
+                </div>
+            </div>
+            <div class="o_form_sheet">
+                <h3>{{productRequest?.name}}</h3>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>
+                                        {{(productRequest ? productRequest.date : '') | date: 'shortDate'}}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="productRequest && productRequest.state == 'done'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Ngày xuất</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>
+                                        {{(productRequest ? productRequest.picking.date : '') | date: 'shortDate'}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Người yêu cầu</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{productRequest && productRequest.user ? productRequest.user.name:
+                                        ''}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Bác sĩ chỉ định</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <span>{{productRequest && productRequest.employee ?
+                                        productRequest.employee.name : ''}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table table-sm ">
+                    <thead class="th-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Vật tư</th>
+                            <th>Đơn vị tính</th>
+                            <th class="text-right">Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="productRequest && productRequest.lines">
+                        <tr *ngFor="let item of productRequest.lines; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{item && item.product ? item.product.name : ''}}</td>
+                            <td>{{item && item.producUOM ? item.producUOM.name : ''}}</td>
+                            <td class="text-right">{{item ? item.productQty : 0}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button *ngIf="productRequest && productRequest.state == 'confirmed'" type="button" class="btn btn-danger mr-2"
+        (click)="actionCancel()">Hủy yêu cầu</button>
+    <button type="button" class="btn btn-secondary mr-2" (click)="activateModal.dismiss()">Đóng</button>
+</div>

@@ -1,0 +1,59 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel o_breadcrumb_full">
+        <ol class="breadcrumb">
+            <li>
+                <a routerLink="/partners/customers">Khách hàng</a>
+            </li>
+            <li *ngIf="partner" class="active">
+                <a>{{partner.displayName}}</a>
+            </li>
+        </ol>
+        <div>
+            <div class="o_cp_buttons">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a routerLink="overview" class="nav-link px-3 py-1" routerLinkActive="active">Hồ sơ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="advisories" class="nav-link px-3 py-1" routerLinkActive="active">Tình trạng răng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a *ngIf="treatment" routerLink="treatment" class="nav-link px-3 py-1" routerLinkActive="active">Phiếu điều trị</a>
+                    </li>
+                    <li class="nav-item">
+                        <a *ngIf="advances" routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="debt" class="nav-link px-3 py-1" routerLinkActive="active">Sổ công nợ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="quotations" class="nav-link px-3 py-1" routerLinkActive="active">Báo giá</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a routerLink="advances" class="nav-link px-3 py-1" routerLinkActive="active">Tạm ứng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="quotations" class="nav-link px-3 py-1" routerLinkActive="active">Tư vấn</a>
+                    </li> -->
+                    <!-- <li class="nav-item">
+                        <a routerLink="appointment" class="nav-link px-3 py-1" routerLinkActive="active">Lịch hẹn</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a *ngIf="labo_orders" routerLink="labo-orders" class="nav-link px-3 py-1" routerLinkActive="active">Labo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="other-info" class="nav-link px-3 py-1" routerLinkActive="active">Thông tin khác</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <router-outlet></router-outlet>
+</div>

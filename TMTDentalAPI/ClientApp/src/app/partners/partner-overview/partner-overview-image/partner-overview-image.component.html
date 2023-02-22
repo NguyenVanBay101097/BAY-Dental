@@ -1,0 +1,44 @@
+<div class="d-flex flex-column partner-overview p-3 h-100">
+    <div class="o_chatter oe_chatter h-100">
+        <div class="o_mail_chatter_attachments h-100">
+            <div class="o_chatter_attachment h-100 d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="text-title-1">
+                        Hình ảnh
+                    </h5>
+                    <div>
+                        <button class="btn float-right btn-img-customer" (click)="inputFile.click()">
+                            <i class="far fa-image"></i>
+                            <span class="font-weight-600">
+                                Thêm hình
+                            </span>
+                        </button>
+                        <input #inputFile class="o_input_file" multiple="multiple" name="ufile" type="file"
+                            accept="image/*" (change)="addPartnerImages($event)">
+                    </div>
+                </div>
+                <div class="w-100 view-img overflow-auto">
+                    <div class="o_AttachmentList_partialList">
+                        <div [attr.title]="img.name" *ngFor="let img of imagesPreview;let i = index"
+                            class="o_Attachment">
+                            <div [ngStyle]="{'background-image':'url('+img.url+')'}" (click)="viewImage(img)" [attr.data-mimetype]="img.mineType"
+                                class="o_Attachment_image o_image o-attachment-viewable o-details-overlay o-small">
+                                <div class="o_Attachment_imageOverlay">
+                                    <div class="o_Attachment_details o_Attachment_imageOverlayDetails">
+                                        <div class="o_Attachment_filename">{{img.name}}</div>
+                                    </div>
+                                    <div class="o_Attachment_actions">
+                                        <div title="Remove" class="o_Attachment_action o_Attachment_actionUnlink"
+                                            (click)="deletePartnerImages(i, $event)">
+                                            <i class="fa fa-times"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

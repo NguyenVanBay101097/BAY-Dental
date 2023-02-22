@@ -1,0 +1,21 @@
+.custom-input {
+    cursor: pointer;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.clear:hover {
+    opacity: 0.8;
+}
+
+.title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+:host .input-group {
+    min-width: 213px;
+}

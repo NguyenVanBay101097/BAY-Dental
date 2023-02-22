@@ -1,0 +1,24 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="o_content" style="padding: 15px">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet">
+            <label for="formGroupExampleInput">Kịch bản chạy vào </label>
+            <kendo-timepicker style="margin: 0 5px 0 5px;" formControlName="sheduleStart">
+            </kendo-timepicker>
+            <label for="formGroupExampleInput"> mỗi ngày</label>
+            <div *ngIf="sheduleStartControl.invalid && (sheduleStartControl.touched || submited)">
+                <label *ngIf="sheduleStartControl.errors.required" style="color: red;">Thời gian không được bỏ
+                    trống</label>
+            </div>
+        </div>
+    </form>
+</div>
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

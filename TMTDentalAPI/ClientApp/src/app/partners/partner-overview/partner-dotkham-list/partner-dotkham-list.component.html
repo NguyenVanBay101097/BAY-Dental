@@ -1,0 +1,26 @@
+<div class="kendo-grid-data">
+    <kendo-grid [data]="dotkhams" [height]="300" [resizable]="true">
+        <kendo-grid-column [headerStyle]="{'color': 'black', 'font-weight':'600','line-height': '1em'}" field="date" title="Ngày khám" width="100">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.date | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="saleOrderName" title="Số phiếu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <a class="text-primary" [routerLink]="['/sale-orders/form']" [queryParams]='{id: dataItem.saleOrderId}'>{{dataItem.saleOrderName}}</a>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="name" title="Đợt khám" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column [headerStyle]="{'color': 'black','font-weight':'600','line-height': '1em'}" field="doctor" title="Bác sĩ" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                {{dataItem.doctor? dataItem.doctor.name : ''}}
+            </ng-template>
+        </kendo-grid-column>
+
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-partner-dotkham-detail [dotkhamId]="dataItem.id">
+            </app-partner-dotkham-detail>
+        </div>
+    </kendo-grid>
+</div>

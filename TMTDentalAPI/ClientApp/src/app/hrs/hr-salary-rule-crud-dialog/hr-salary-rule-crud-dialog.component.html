@@ -1,0 +1,103 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="RuleForm">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet" style=" min-height: auto;">
+                <div class="oe_title">
+                    <label class="o_form_label oe_edit_only">Tên quy tắc lương</label>
+                    <h1>
+                        <input type="text" name="name" class="form-control" formControlName="name" #nameInput required>
+                    </h1>
+                </div>
+                <div class="o_group">
+                    <table class="o_group o_inner_group o_group_col_6 w-50">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Cách tính</label>
+                                </td>
+                                <td class="w-100" colspan="1">
+                                    <select (change)='amountSelectChange($event)' formControlName='amountSelect'
+                                        class="form-control">
+                                        <option *ngFor="let item of listAmountSelect" [value]="item.value">
+                                            {{item.text}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'fix'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Số tiền</label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="amountFix">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Phần trăm</label>
+                                </td>
+                                <td colspan="1">
+                                    <kendo-numerictextbox [min]="0" formControlName="amountPercentage">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'code'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Công thức</label>
+                                </td>
+                                <td colspan="1">
+                                    <select formControlName='amountCodeCompute' class="form-control">
+                                        <option *ngFor="let item of listamountCodeCompute" [value]="item.value">
+                                            {{item.text}}</option>
+                                    </select>
+                                    <div style="color: #908080; text-align: center;">
+                                        {{getCodeDescription()}}
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="this.form.get('amountSelect').value == 'percent'">
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Dựa trên </label>
+                                </td>
+                                <td colspan="1">
+                                    <select formControlName='amountPercentageBase' class="form-control">
+                                        <option *ngFor="let item of listamountPercentageBase"
+                                            [value]="item.value">{{item.text}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">Thứ tự</label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="sequence">
+                                    </kendo-numerictextbox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <div>
+        <button type="button" class="btn btn-primary btn-sm mr-2" (click)="onSave()" accesskey="s">Lưu</button>
+        <button type="button" class="btn btn-light btn-sm mr-2" (click)="activeModal.dismiss()"
+            accesskey="q">Đóng</button>
+    </div>
+</div>

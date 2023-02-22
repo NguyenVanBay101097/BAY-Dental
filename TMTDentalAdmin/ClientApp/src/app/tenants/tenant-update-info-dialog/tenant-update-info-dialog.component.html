@@ -1,0 +1,104 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Họ tên</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <input type="text" class="form-control" formControlName="name" required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Email</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <input type="email" class="form-control" placeholder="Dùng để reset mật khẩu"
+                                        formControlName="email" required />
+                                    <div *ngIf="email.invalid && (email.dirty || email.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="email.errors.required">
+                                            Email is required.
+                                        </div>
+                                        <div *ngIf="email.errors.email">
+                                            Email is not valid.
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Điện thoại</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <input type="tel" class="form-control" formControlName="phone" required />
+                                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)"
+                                        class="alert alert-danger">
+                                        <div *ngIf="phone.errors.required">
+                                            Phone is required.
+                                        </div>
+                                        <div *ngIf="phone.errors.pattern">
+                                            Phone is not valid.
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Tên phòng khám</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <input type="text" class="form-control" formControlName="companyName" required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Địa chỉ</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <input type="text" class="form-control" formControlName="address" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Nguồn khách hàng</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <input type="text" class="form-control" formControlName="customerSource" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="o_td_label">
+                                    <label class="o_form_label">Người triển khai</label>
+                                </td>
+                                <td style="width: 100%">
+                                    <!-- <input type="text" class="form-control" formControlName="supporterName" /> -->
+                                    <kendo-combobox class="form-control" [data]="filterdEmployees" [textField]="'name'"
+                                        [filterable]="true" #empCbx formControlName="employeeAdmin" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

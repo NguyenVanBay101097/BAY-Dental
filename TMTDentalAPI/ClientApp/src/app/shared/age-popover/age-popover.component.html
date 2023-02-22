@@ -1,0 +1,28 @@
+<button #popOver="ngbPopover" type="button" class="btn btn-primary" [popoverTitle]="popTitle" [autoClose]="'outside'"
+    [ngbPopover]="popContent" popoverClass="popover-md">
+    <i class="fas fa-birthday-cake text-white"></i>
+</button>
+
+<ng-template #popTitle>
+    <div class="d-flex align-items-center">
+        <span> Nhập tuổi </span>
+        <button type="button" class="close ml-auto" (click)="onCancle()" tabindex="-1">×</button>
+    </div>
+</ng-template>
+
+<ng-template #popContent let-mytags="mytags">
+    <div class="pop_content mb-2">
+        <label class="pop_title" for="age"> Số tuổi </label>
+        <kendo-numerictextbox [(ngModel)]="age" [min]="0" [max]="100" [spinners]="false" [format]="'n0'"
+            [autoCorrect]="true">
+        </kendo-numerictextbox>
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">
+            Lưu
+        </button>
+        <button type="button" class="btn btn-secondary ml-2" (click)="onCancle()" accesskey="q">
+            Đóng
+        </button>
+    </div>
+</ng-template>

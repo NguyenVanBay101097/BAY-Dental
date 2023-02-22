@@ -1,0 +1,53 @@
+.appointment {
+    margin-top: 1px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    padding: 15px;
+    justify-content: space-between;
+    background-color: white;
+}
+
+.appointment-create {
+    width: 100%;
+    background-color: #fafafa;
+    margin: 0 10px 8px 10px;
+    min-height: 50px;
+}
+
+.btn-edit {
+    margin: 15px;
+}
+
+.o_view_controller {
+    position: initial !important;
+}
+
+.color-confirmed {
+    color: #2395FF; /* đang hẹn */
+}
+
+.color-arrived {
+    color: #28A745; /* đã đến */
+}
+
+.color-cancel {
+    color: #EB3B5B; /* hủy hẹn */
+}
+
+.color-overdue {
+    color: #FFC107; /* quá hạn */
+}
+
+.grid-data{
+    max-height: 400px;
+}
+
+.btn-item-color {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    padding: 0;
+}
+

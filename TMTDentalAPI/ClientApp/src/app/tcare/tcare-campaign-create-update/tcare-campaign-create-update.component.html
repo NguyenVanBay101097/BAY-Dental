@@ -1,0 +1,67 @@
+<div>
+    <div [formGroup]="formCampaign">
+        <!-- <div class="o_statusbar_buttons">
+            <input type="text" (blur)="onSave()" class="form-control o_statusbar_input_title " formControlName="name">
+        </div> -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex">
+                <span class="mr-2">Gửi sau </span>
+                <!-- <kendo-timepicker [disabled]="campaign.active" (valueChange)="onChange($event)" style="width: 100px;"
+                    formControlName="scheduleStart">
+                </kendo-timepicker> -->
+                <kendo-numerictextbox style="width: 80px;" class="small" [disabled]="campaign.active" formControlName="sheduleStartNumber" [min]="0" [max]="100" [format]="'n1'">
+                </kendo-numerictextbox>
+                <select style="width: 80px;" [attr.disabled]="campaign.active ? '' : null" class="form-control mx-1 small" formControlName="sheduleStartType">
+                    <option value="hour">giờ</option>
+                    <option value="minute">phút</option>
+                </select>
+                <span>khi kịch bản khởi chạy</span>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary btn-sm" (click)="onSave()">Lưu chiến dịch</button>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="mr-2">
+                Nhãn chiến dịch
+                <i class="fas fa-question-circle text-primary" placement="bottom" triggers="mouseenter:mouseleave"
+                    ngbPopover="Nhãn chiến dịch dùng để tự động gán nhãn cho khách hàng sau khi gửi tin thành công"
+                    popoverTitle="Nhãn chiến dịch"></i>
+            </span>
+            <div class="input-group">
+                <kendo-combobox class="form-control" [data]="filterdTags" [textField]="'name'" [filterable]="true"
+                    #tagCbx formControlName="tagId" [valueField]="'id'" [valuePrimitive]="true"
+                    aria-label="Recipient's username" aria-describedby="basic-addon2">
+                </kendo-combobox>
+                <div class="input-group-append">
+                    <button (click)="quickAddTagDialog()" class="btn btn-primary input-group-text" id="basic-addon2">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-2 graph_icon_sidebar">
+        <div id="sidebarContainer" class="border shadow-sm">
+            <div>
+                <div>
+                    <div class="my-1"><b style="font-size: 0.9rem;">Gửi tin</b></div>
+                    <div class="border p-1" id="sidebarContainer_sequences"></div>
+                </div>
+                <div>
+                    <div class="my-1"><b style="font-size: 0.9rem;">Điều kiện</b></div>
+                    <div class="border p-1" id="sidebarContainer_goals"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-10 graph_content">
+        <div id="graphContainer" class="graph_container"
+            style="background-image: url('./assets/editors/images/grid.gif');">
+        </div>
+    </div>
+</div>

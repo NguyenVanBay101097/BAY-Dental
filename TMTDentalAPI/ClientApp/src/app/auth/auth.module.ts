@@ -1,0 +1,22 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { AuthRoutingModule } from './auth-routing.module';
+import { LoginComponent } from './login/login.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '@progress/kendo-angular-dropdowns';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ExpireComponent } from './expire/expire.component';
+import { NotAvaliableComponent } from './not-avaliable/not-avaliable.component';
+
+@NgModule({
+  declarations: [LoginComponent, ForgotPasswordComponent, ResetPasswordComponent, ExpireComponent, NotAvaliableComponent],
+  imports: [
+    CommonModule,
+    AuthRoutingModule,
+    ReactiveFormsModule,
+    SharedModule,
+  ]
+})
+export class AuthModule { }

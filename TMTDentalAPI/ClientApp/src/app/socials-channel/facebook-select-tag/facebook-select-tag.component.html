@@ -1,0 +1,12 @@
+<kendo-multiselect
+    [data]="listTags"
+    textField="name"
+    valueField="id"
+    [allowCustom]="true"
+    [filterable]="true"
+    [(ngModel)]="selectedTags"
+    [valueNormalizer]="valueNormalizer"
+    (filterChange)="filterChangeTag($event); this.searchTagUpdate.next($event);"
+    (valueChange)="valueChangeTag()"
+>
+</kendo-multiselect>

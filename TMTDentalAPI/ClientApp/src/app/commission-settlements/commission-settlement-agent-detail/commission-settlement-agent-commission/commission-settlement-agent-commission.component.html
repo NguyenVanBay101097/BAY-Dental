@@ -1,0 +1,258 @@
+<div class="o_wrapper">
+    <div class="o_wrapper-left">
+        <div class="card">
+            <div class="card-header d-flex-between-center">
+                <h4 class="mb-0">
+                    {{agentObj?.name}}
+                </h4>
+                <button type="button" class="btn btn-primary" (click)="editAgent()">
+                    <i class="fas fa-pencil-alt mr-1"></i>
+                    Sửa
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div class="card border-light border-0 m-0">
+                    <div class="card-body p-0">
+                        <h5 class="title-header py-2">Thông tin chung</h5>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Phân loại</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.classifyDisplay}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Giới tính</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span *ngIf="agentObj && agentObj.gender === 'male'">Nam</span>
+                                        <span *ngIf="agentObj && agentObj.gender === 'female'">Nữ</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Ngày sinh</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span *ngIf="agentObj?.birthDay">{{agentObj?.birthDay}}</span>
+                                        <span *ngIf="agentObj?.birthMonth">/{{agentObj?.birthMonth}}</span>
+                                        <span *ngIf="agentObj?.birthYear">/{{agentObj?.birthYear}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Nghề nghiệp</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.jobTitle}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5 class="title-header py-2">Thông tin liên lạc</h5>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Số điện thoại</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.phone}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Email</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.email}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Địa chỉ</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.address}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5 class="title-header py-2">Tài khoản ngân hàng</h5>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Tên ngân hàng</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.bank?.name}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Chi nhánh</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.bankBranch}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Số tài khoản</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.accountNumber}}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Chủ tài khoản</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.accountHolder}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h5 class="title-header py-2">Hoa hồng người giới thiệu</h5>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label">Bảng hoa hồng</label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <span>{{agentObj?.commission?.name}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="o_wrapper-right">
+        <div class="o_wrapper-right-content">
+            <div>
+                <div class="o_aggregate_col">
+                    <div class="o_aggregate">
+                        <h6>Lợi nhuận tính hoa hồng</h6>
+                        <h4 class="text-primary">
+                            {{totalAmountAgent?.totalBaseAmount || 0 | number }}
+                        </h4>
+                    </div>
+                </div>
+                <div class="o_aggregate_col">
+                    <div class="o_aggregate">
+                        <h6>Tiền hoa hồng</h6>
+                        <h4 class="o_value text-primary">
+                            {{totalAmountAgent?.totalComissionAmount || 0 | number }}
+                        </h4>
+                    </div>
+                </div>
+                <div class="o_aggregate_col">
+                    <div class="o_aggregate">
+                        <h6>Hoa hồng đã chi</h6>
+                        <h4 class="text-primary">
+                            {{amountDebit?.amountDebitTotal || 0 | number}}
+                        </h4>
+                    </div>
+                </div>
+                <div class="o_aggregate_col">
+                    <div class="o_aggregate">
+                        <h6>Còn lại</h6>
+                        <h4 class="text-primary">
+                            {{(totalAmountAgent?.totalComissionAmount - amountDebit?.amountDebitTotal) || 0 | number}}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+                
+            <div class="o_filter">
+                <div class="o_filter_left">
+                    <div class="mr-2">
+                        <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
+                            (searchChange)="onSearchDateChange($event)">
+                        </app-date-range-picker-filter>
+                    </div>
+                    <button type="button" class="btn btn-primary mr-2" (click)="exportExcelFile()">
+                        <i class="fas fa-download mr-2"></i>Xuất Excel
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="actionPayment()">
+                        Chi hoa hồng
+                    </button>
+                </div>
+                <div class="o_filter_right">
+                    <div class="o_searchview">
+                        <input class="o_searchview_input"
+                            placeholder="Tìm kiếm theo khách hàng, dịch vụ, phiếu điều trị" type="text"
+                            [(ngModel)]="search" (ngModelChange)="this.searchUpdate.next($event)" />
+                        <span class="o_searchview_icon fas fa-search"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="other_view">
+                <div class="form-check mr-2">
+                    <input class="form-check-input" type="checkbox" (change)="checkCommissionDisplay($event)"
+                        id="IscommissionDisplay">
+                    <label class="form-check-label" for="IscommissionDisplay">
+                        <strong>Hiển thị các khoản thu dịch vụ không tính hoa hồng</strong>
+                    </label>
+                </div>
+                <div class="icon-hover">
+                    <i class="fas fa-info-circle text-primary" triggers="mouseenter:mouseleave" placement="top"
+                        [autoClose]="true" [ngbPopover]="popContent"></i>
+                </div>
+                <ng-template #popContent>
+                    Các khoản thu của dịch vụ có tỉ lệ % hoa hồng là 0%
+                </ng-template>
+            </div>
+            <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
+                [loading]="loading" (pageChange)="pageChange($event)">
+                <kendo-grid-column field="date" title="Ngày thanh toán" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{ dataItem.date | date : 'shortDate' }}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="100">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        <a *ngIf="dataItem.saleOrderId" [routerLink]="['/sale-orders/', dataItem.saleOrderId]"
+                            class="text-primary">{{dataItem.invoiceOrigin}}</a>
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="partnerName" title="Khách hàng" width="150">
+                </kendo-grid-column>
+                <kendo-grid-column field="productName" title="Dịch vụ" width="200">
+                </kendo-grid-column>
+                <kendo-grid-column field="uomName" title="Đơn vị tính" width="120">
+                </kendo-grid-column>
+                <kendo-grid-column field="totalAmount" title="Số tiền thanh toán" width="150" class="text-right">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{dataItem.totalAmount | number}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="baseAmount" title="Lợi nhuận tính hoa hồng" class="text-right" width="200">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{ dataItem.baseAmount || 0 | number }}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="percentage" title="% hoa hồng" class="text-right" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{ dataItem.percentage || 0 | number }}%
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="amount" title="Tiền hoa hồng" class="text-right" width="150">
+                    <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                        {{ dataItem.amount || 0 | number }}
+                    </ng-template>
+                </kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+.form-check-inline {
+    display: -webkit-inline-box;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    padding-left: 0;
+    margin-right: 0rem;
+}
+
+
+input[type="radio"] {
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}
+
+
+label.form-check-label-radio {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  background-color: #efefef;
+  color: black;
+  transition: all .3s ease-out;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+input[type="radio"]:checked+label {
+  background-color: #007bff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: aliceblue;
+
+}
+
+input[value="off"][type="radio"]:checked+label {
+  background-color: #ec173a;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: aliceblue;
+
+}
+
+
+.button-border-bottom {
+  border: 1px solid #cfcfcf;
+  border-top-style: none !important;
+  border-right-style: none !important;
+  border-left-style: none !important;
+  -webkit-align-items: baseline;
+  align-items: baseline;
+  display: inline-flex;
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+}
+.form-check-input{
+  padding: 5px 10px;
+  border-radius: 5px;
+}

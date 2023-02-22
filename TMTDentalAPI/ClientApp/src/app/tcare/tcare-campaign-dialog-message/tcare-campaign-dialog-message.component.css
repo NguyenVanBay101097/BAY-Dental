@@ -1,0 +1,25 @@
+.textbox-tag {
+    border: 1px solid wheat;
+    background-color: #e4e7eb;
+    min-height: 222px;
+    max-height: 222px;
+    overflow-y: scroll;
+}
+
+.tag {
+    background-color: white;
+    margin: 5px;
+    border-radius: 3px;
+    min-height: 30px;
+    padding: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tag:hover {
+    background-color: #f3f7ff;
+}
+
+.tag .fa-times:hover {
+    opacity: 1;
+}

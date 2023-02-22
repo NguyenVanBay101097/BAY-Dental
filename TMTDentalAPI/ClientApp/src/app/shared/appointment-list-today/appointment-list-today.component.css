@@ -1,0 +1,209 @@
+.appointments-today {
+  padding: 15px;
+}
+
+.appointments-today-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #fff;
+  padding-bottom: 15px;
+}
+
+.appointments-today-section .appointments-section-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 32px 24px 0 24px;
+  background-color: #fff;
+}
+
+.has-search {
+  flex: 1 1 300px;
+  position: relative;
+}
+
+.has-search .form-control {
+  padding-left: 2rem;
+}
+
+.has-search .form-control:focus {
+  box-shadow: none !important;
+}
+
+.has-search .form-control-feedback {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2.375rem;
+  text-align: center;
+  pointer-events: none;
+  color: #aaa;
+}
+
+.info_nav {
+  list-style: none;
+  color: #929daa;
+  font-size: 14px;
+  padding: 0;
+}
+
+.info_nav li i {
+  margin-right: 10px;
+}
+
+.icon-more {
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  background-color: transparent;
+  border: none;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.appointments-today-filter-state {
+  padding-top: 10px;
+}
+
+.appointments-today-filter-state button {
+  padding: 3px 8px;
+  margin-right: 5px;
+  border-radius: 16px;
+  font-size: 14px;
+  border: none;
+  background: #f2f7ff;
+  color: #1a6de3;
+}
+
+.appointments-today-filter-state button:last-child {
+  padding: 3px 8px;
+  margin-right: 5px;
+  border-radius: 16px;
+  font-size: 14px;
+  border: none;
+  background: #f2f7ff;
+  color: #1a6de3;
+  margin-top: 2px;
+}
+
+.appointments-today-filter-state button span {
+  color: #828588;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.appointment-today-items {
+  min-height: 25vh;
+  max-height: 30vh;
+  position: relative;
+  overflow: auto;
+}
+
+.appointment-today-box {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.appointment-today-box div.show-on-hover {
+  visibility: hidden;
+}
+
+.appointment-today-box:hover div.show-on-hover {
+  visibility: visible;
+}
+
+.box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.box-header .appointment-state {
+  font-size: 14px;
+  line-height: 35px;
+  /* font-weight: 700; */
+  margin: 0;
+}
+
+.box-content {
+  background: #E5F2FF;
+  border-radius: 4px;
+}
+
+.appointment-today-box .box-content {
+  width: 100%;
+  padding: 0 10px 0 10px;
+}
+
+.appointment-today-box_examination {
+  background-color: #f3f9ff;
+}
+
+.appointment-today-box_arrived {
+  background-color: #f3fff6;
+}
+
+.appointment-today-box_cancel {
+  background-color: #fff3f3;
+}
+
+.appointment-manipulation {
+  display: flex;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  padding-top: 10px;
+  font-size: 14px;
+  position: relative;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  color: #fff !important;
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+}
+
+.appointment-state .status {
+  font-size: 12px;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  color: #fff;
+  /* background: #2395ff; */
+}
+
+.event-confirmed .box-header .appointment-state .status {
+  background-color: #2395FF;
+}
+
+.event-done .box-header .appointment-state .status{
+  background-color: #28A745;
+}
+
+.event-cancel .box-header .appointment-state .status{
+  background-color: #EB3B5B;
+}
+
+.box-content.event-confirmed {
+  border-left: 3px solid #2395FF;
+}
+
+.box-content.event-done {
+  border-left: 3px solid #28A745;
+}
+
+.box-content.event-cancel {
+  border-left: 3px solid #EB3B5B;
+}
+
+.btn-item-color {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 0;
+}

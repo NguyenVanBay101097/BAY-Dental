@@ -1,0 +1,7 @@
+.o_td_label {
+    min-width: 180px;
+}
+
+.o_td_label .o_form_label {
+    font-weight: 500;
+}

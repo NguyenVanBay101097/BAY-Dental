@@ -1,0 +1,153 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view o_form_editable" [formGroup]="myForm" (submit)="onSave()" [class.ng-submitted]="submitted">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_group mb-2 row">
+                    <div class="d-flex">
+                        <table class="o_group o_inner_group o_group_col_6" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_left">
+                                        <label class="o_form_label">
+                                            Khách hàng
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                        <a class="text-primary"
+                                            (click)="viewPartner()">{{f.customer?.value?.displayName}}</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="o_td_label o_td_label_left">
+                                        <label class="o_form_label">
+                                            Người tạo
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;" class=".o_td_control_left">
+                                        <kendo-combobox formControlName="employeeAdvisory" [filterable]="true" #empCbx
+                                            class="mr-1" [data]="filterData" [textField]="'name'" [valueField]="'id'">
+                                        </kendo-combobox>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="o_group o_inner_group o_group_col_6 ml-auto" style="width:100%">
+                            <tbody>
+                                <tr>
+                                    <td colspan="1" class="o_td_label">
+                                        <label class="o_form_label o_form_label_help">
+                                            Ngày tạo
+                                        </label>
+                                    </td>
+                                    <td colspan="1" style="width: 100%;">
+                                        <kendo-datepicker [format]="'dd/MM/yyyy'" formControlName="dateObj">
+                                        </kendo-datepicker>
+                                        <div *ngIf="f.dateObj.errors && submitted" class="text-danger">
+                                            <div *ngIf="f.dateObj.errors.required">Chọn ngày tạo</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mb-2">
+                        <h5>SƠ ĐỒ VỊ TRÍ RĂNG</h5>
+                        <div>
+                            <!-- nhóm răng-->
+                            <div class="mb-2 d-flex">
+                                <div class="form-check t-form-check mr-2" *ngFor="let item of filteredToothCategories">
+                                    <input class="form-check-input" type="radio" [id]="'toothCategoryId_' + item.id"
+                                        [value]="item.id" formControlName="toothCategoryId"
+                                        (change)="onChangeToothCategory(item)">
+                                    <label class="form-check-label" [for]="'toothCategoryId_' + item.id">
+                                        {{item.name}}
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- loại răng chọn -->
+                            <div>
+                                <ng-container *ngFor="let item of toothTypeDict">
+                                    <input [value]="item.value" class="btn-check" type="radio"
+                                        [attr.disabled]="getValueFormControl('toothCategoryId') == null && item.value != 'manual' ? true: null"
+                                        formControlName="toothType" [id]="'toothType_' + item.value" autocomplete="off"
+                                        (change)="onChangeToothType(item.value)">
+                                    <label class="btn btn-outline-primary mr-1"
+                                        [ngClass]="getValueFormControl('toothCategoryId') == null && item.value != 'manual' ? 'disabled' : ''"
+                                        [for]="'toothType_' + item.value">{{item.name}}</label>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="text-center">
+                                <ng-container *ngFor="let cate of filteredToothCategories">
+                                    <div *ngIf="getValueFormControl('toothCategoryId') == cate.id">
+                                        <ng-container *ngFor="let listTooth of cate.teeth">
+                                            <div class="my-2">
+                                                <app-teeth-chart [isDisabled]="teethDisabled" [teeth]="listTooth"
+                                                    [(selectedKeys)]="toothSelectedIds">
+                                                </app-teeth-chart>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+
+                                <div *ngIf="getValueFormControl('toothType') == 'manual'
+                                    && toothSelectedIds.length == 0
+                                    && submitted" class="text-danger">
+                                    Chọn răng
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <h5>Chẩn đoán răng</h5>
+                        <div>
+                            <kendo-multiselect [filterable]="true" class="mr-3" [data]="toothDianosisSource"
+                                [allowCustom]="true" [valueNormalizer]="valueNormalizer"
+                                (filterChange)="this.searchUpdateToothDianosis.next($event)" [filterable]="true"
+                                [textField]="'name'" [valueField]="'id'" formControlName="toothDiagnosis">
+                            </kendo-multiselect>
+                            <div *ngIf="f.toothDiagnosis.value.length == 0 && submitted" class="text-danger">
+                                Chọn chẩn đoán răng
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <h5>Dịch vụ</h5>
+                        <div>
+                            <kendo-multiselect [filterable]="true" class="mr-3" [data]="productSource"
+                                [filterable]="true" (filterChange)="this.searchUpdateProduct.next($event)"
+                                [textField]="'name'" [valueField]="'id'" formControlName="product">
+                                <ng-template kendoMultiSelectItemTemplate let-dataItem>
+                                    <div class="d-flex justify-content-between">
+                                        <div style="width: 450px">{{dataItem.name}}</div>
+                                        <div style="width: 150px">{{dataItem.uomName? dataItem.uomName : ''}}</div>
+                                    </div>
+                                </ng-template>
+                            </kendo-multiselect>
+                        </div>
+
+                    </div>
+                    <div class="mb-2">
+                        <h5>Ghi chú tiểu sử răng</h5>
+                        <textarea formControlName="note" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-primary" (click)="resetForm()" accesskey="s">Nhập lại</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

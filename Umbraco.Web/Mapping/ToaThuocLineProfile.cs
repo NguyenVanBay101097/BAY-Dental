@@ -1,0 +1,31 @@
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Models.PrintTemplate;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Umbraco.Web.Models.ContentEditing;
+
+namespace Umbraco.Web.Mapping
+{
+    public class ToaThuocLineProfile : Profile
+    {
+        public ToaThuocLineProfile()
+        {
+            CreateMap<ToaThuocLine, ToaThuocLineDisplay>();
+
+            CreateMap<ToaThuocLineDisplay, ToaThuocLine>()
+                .ForMember(x => x.Id, x => x.Ignore())
+                .ForMember(x => x.Product, x => x.Ignore())
+                .ForMember(x => x.ToaThuoc, x => x.Ignore())
+                .ForMember(x => x.ToInvoiceQuantity, x => x.Ignore());
+
+            CreateMap<ToaThuocLine, ToaThuocLinePrintViewModel>();
+
+            CreateMap<ToaThuocLine, ToaThuocLinePrintTemplate>();
+
+            CreateMap<ToaThuocLineSave, ToaThuocLine>()
+                .ForMember(x => x.Id, x => x.Ignore());
+        }
+    }
+}

@@ -1,0 +1,50 @@
+<header class="modal-header">
+    <h5 class="modal-title mr-auto">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view o_form_nosheet o_form_editable" [formGroup]="formGroup">
+        <div class="o_field_image o_field_widget oe_avatar">
+            <img class="img img-fluid" alt="Avatar" *ngIf="profile.avatar" [src]="profile.avatar">
+        </div>
+        <div class="o_title">
+            <h1>
+                <span class="o_field_widget o_required_modifier">{{profile.name}}</span>
+            </h1>
+        </div>
+        <div class="o_group">
+            <table class="o_group o_inner_group o_group_col_6">
+                <tbody>
+                    <tr>
+                        <td colspan="1" class="o_td_label">
+                            <label class="o_form_label">
+                                Khách hàng liên kết
+                            </label>
+                        </td>
+                        <td colspan="1" style="width: 100%;">                          
+                            <div class="d-flex">
+                                <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true"
+                                    #partnerCbx formControlName="partner" [valueField]="'id'">
+                                    <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                    <span>{{dataItem.name}} ({{dataItem.phone}})</span>
+                                    </ng-template>
+                                </kendo-combobox>
+                                <a class="btn btn-sm btn-light" (click)="quickCreateCus()">
+                                    <span class="k-icon k-i-plus"></span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

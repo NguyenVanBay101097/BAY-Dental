@@ -1,0 +1,48 @@
+<div class="o_cp_controller">
+    <div class="o_control_panel">
+        <ol class="breadcrumb">
+            <li class="active">
+                Thống kê khách hàng cũ mới
+            </li>
+        </ol>
+        <div class="o_cp_searchview">
+            <div class="o_cp_searchview_group">
+
+            </div>
+        </div>
+        <div class="o_cp_left">
+            <div class="o_cp_buttons">
+                <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo" (searchChange)="onSearchDateChange($event)"></app-date-range-picker-filter>
+            </div>
+            <div class="o_cp_sidebar">
+            </div>
+        </div>
+        <div class="o_cp_right">
+            <div class="d-flex">
+                <kendo-combobox [data]="listCompanies" style="font-size: 0.8rem;min-width: 200px;" [placeholder]="'Tất cả chi nhánh'" (valueChange)="changeCompany($event)" class="cbbox-sm" [textField]="'name'" [valueField]="'id'" [popupSettings]="{width: 'auto'}">
+                </kendo-combobox>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings" [loading]="loading" (pageChange)="pageChange($event)">
+        <kendo-grid-column field="weekOfYear" title="Tuần">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <span>Tuần {{dataItem.weekOfYear}}, {{dataItem.year}}</span>
+                <!-- <div>
+                    (Từ ngày {{dataItem.weekStart | date
+                    : 'shortDate'}} đến ngày {{dataItem.weekEnd | date:'shortDate'}})
+                </div> -->
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="totalNewPartner" title="Số lượng khách hàng mới">
+        </kendo-grid-column>
+        <kendo-grid-column field="totalOldPartner" title="Số lượng khách hàng cũ">
+        </kendo-grid-column>
+        <div *kendoGridDetailTemplate="let dataItem">
+            <app-sale-report-partner-detail [details]="dataItem.orderLines"></app-sale-report-partner-detail>
+        </div>
+    </kendo-grid>
+</div>

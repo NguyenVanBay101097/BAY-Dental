@@ -1,0 +1,287 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCancel()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_content">
+        <div class="o_form_view ng-untouched ng-pristine ng-valid">
+            <div class="o_form_sheet_bg">
+                <form class="o_form_view" [formGroup]="formGroup">
+                    <div class="o_form_sheet_bg">
+
+                        <div class="o_form_sheet">
+                            <div class="oe_title">
+                                <h1>
+                                    <span>{{laboOrder.name}}</span>
+                                </h1>
+                            </div>
+                            <div class="o_group">
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Labo
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filteredLabos" [textField]="'name'" [filterable]="true" #laboCbx formControlName="product" [valueField]="'id'">
+                                                    </kendo-combobox>
+                                                    <!-- <a title="Cập nhật labo" class="pl-2 py-1" type="button" *ngIf="labo" (click)="updateSupplierModal()">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                    </a>
+                                                    <a type="button" title="Thêm labo" class="pl-2 py-1" (click)="quickCreateSupplier()">
+                                                        <i class="fas fa-plus"></i>
+                                                    </a> -->
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Nhà cung cấp
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div class="d-flex">
+                                                    <kendo-combobox [data]="filteredPartners" [textField]="'name'" [filterable]="true" #partnerCbx formControlName="partner" [valueField]="'id'">
+                                                    </kendo-combobox>
+                                                    <!-- <a title="Cập nhật labo" class="pl-2 py-1" type="button" *ngIf="partner" (click)="updateSupplierModal()">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                    </a>
+                                                    <a type="button" title="Thêm labo" class="pl-2 py-1" (click)="quickCreateSupplier()">
+                                                        <i class="fas fa-plus"></i>
+                                                    </a> -->
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">Răng</label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <div *ngIf="saleOrderLine">
+                                                    <button *ngFor="let rang of saleOrderLine.teeth" (click)="onSelected(rang)" class="btn btn-outline-secondary mr-1" [ngClass]="{'active': isSelected(rang)}">
+                                                        {{rang.name}}</button>
+                                                </div>
+                                            </td>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label o_form_label_help">
+                                                    Màu sắc
+                                                </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <input type="text" class="form-control" formControlName="color">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1" class="o_td_label">
+                                                    <label class="o_form_label o_form_label_help">
+                                                    Ghi chú
+                                                </label>
+                                                </td>
+                                                <td colspan="1" style="width: 100%;">
+                                                    <textarea class="form-control" formControlName="note"></textarea>
+                                                </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                                <table class="o_group o_inner_group o_group_col_6">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Ngày gửi
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="dateOrderObj">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                    Ngày nhận
+                                                </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="datePlannedObj">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label o_form_label_help">
+                                                Số lượng
+                                              </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="quantity">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                Đơn giá
+                                              </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-numerictextbox [min]="0" [format]="'n0'" formControlName="priceUnit">
+                                                </kendo-numerictextbox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                Thành tiền
+                                              </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <span>{{getPriceSubTotal() | number}}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                Mã bảo hành
+                                              </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <input type="text" class="form-control" formControlName="warrantyCode" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="1" class="o_td_label">
+                                                <label class="o_form_label">
+                                                Hạn bảo hành
+                                              </label>
+                                            </td>
+                                            <td colspan="1" style="width: 100%;">
+                                                <kendo-datepicker formControlName="warrantyPeriodObj">
+                                                </kendo-datepicker>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+
+                <div id="printLaboOrderDiv" *ngIf="laboOrderPrint" style="display: none;">
+                    <div class="o_form_view o_print">
+                        <div class="text-center">
+                            <h5 class="mb-0">{{laboOrderPrint.companyName}}</h5>
+                            <div *ngIf="laboOrderPrint.companyAddress">{{laboOrderPrint.companyAddress}}</div>
+                            <!-- <div>ĐT: {{laboOrderPrint.companyPhone}} - Email: {{laboOrderPrint.companyEmail}}</div> -->
+                        </div>
+                        <div class="text-center">
+                            <h1>PHIẾU LABO</h1>
+                            <span>Số phiếu: {{laboOrderPrint.name}} - Ngày gửi:
+                                {{laboOrderPrint.dateOrder | date: 'short'}}</span>
+                        </div>
+                        <div class="o_group">
+                            <table class="o_group o_inner_group o_group_col_6">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Nhà cung cấp
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            {{laboOrderPrint.partnerName}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Địa chỉ
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            {{laboOrderPrint.partnerAddress}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="o_group o_inner_group o_group_col_6">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label">
+                                            <label class="o_form_label o_form_label_help">
+                                                Điện thoại
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 100%;">
+                                            {{laboOrderPrint.partnerPhone}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Loại labo</th>
+                                        <th class="text-right">Số lượng</th>
+                                        <th class="text-right">Đơn giá</th>
+                                        <th class="text-right">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let line of laboOrderPrint.orderLines; let i=index">
+                                        <td>{{ line.productName }}</td>
+                                        <td class="text-right">{{ line.productQty | number }}</td>
+                                        <td class="text-right">{{ line.priceUnit | number }}</td>
+                                        <td class="text-right">{{ line.priceSubtotal | number }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="o_group o_inner_group oe_subtotal_footer oe_right">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="1" class="o_td_label" style="width: 50%;">
+                                            <label class="o_form_label oe_subtotal_footer_separator">
+                                                Tổng tiền
+                                            </label>
+                                        </td>
+                                        <td colspan="1" style="width: 50%;">
+                                            <span class="oe_subtotal_footer_separator o_form_field o_form_field_number">{{laboOrderPrint.amountTotal | number}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="text-center font-weight-bold">
+                                    Nhà cung cấp
+                                </div>
+                            </div>
+                            <div class="col-sm">
+                                <div class="text-center font-weight-bold">
+                                    Người lập
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary btn-sm" accesskey="s" (click)="onSave()">
+        Lưu</button>
+    <button type="button" class="btn btn-secondary btn-sm o_form_button_cancel" (click)="onCancel()" accesskey="q">Đóng</button>
+</footer>

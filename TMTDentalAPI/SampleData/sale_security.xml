@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <record model="ir.rule" id="sale.sale_order_comp_rule">
+      <field name="name">sale_order multi-company</field>
+      <field name="model_id" ref="sale.model_sale_order"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.sale_order_line_comp_rule">
+      <field name="name">sale_order_line multi-company</field>
+      <field name="model_id" ref="sale.model_sale_order_line"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.appointment_comp_rule">
+      <field name="name">Appointment multi-company</field>
+      <field name="model_id" ref="sale.model_appointment"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.dot_kham_comp_rule">
+      <field name="name">Đợt khám multi-company</field>
+      <field name="model_id" ref="sale.model_dot_kham"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="sale.toa_thuoc_comp_rule">
+      <field name="name">Toa thuốc multi-company</field>
+      <field name="model_id" ref="sale.model_toa_thuoc"/>
+      <field name="global" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="base.employee_comp_rule">
+      <field name="name">Employee multi-company</field>
+      <field name="model_id" ref="base.model_employee"/>
+      <field name="global" eval="True"/>
+    </record>
+  </data>
+</odoo>

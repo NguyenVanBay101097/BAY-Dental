@@ -1,0 +1,208 @@
+<div class="o_control_panel">
+    <ol class="breadcrumb">
+        <li class="active">Khách hàng</li>
+    </ol>
+    <div class="o_cp_searchview">
+        <div class="o_searchview">
+            <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo mã, họ tên, SĐT, số ID thẻ"
+                [(ngModel)]="this.filter.search" (ngModelChange)="this.searchUpdate.next($event)" />
+            <span class="o_searchview_icon fas fa-search"></span>
+        </div>
+    </div>
+    <div class="o_cp_left">
+        <div class="o_cp_buttons">
+            <div class="o_form_buttons_view">
+                <button *ngIf="canAdd" type="button" accesskey="c" class="btn btn-primary"
+                    (click)="createItem()">Thêm</button>
+            </div>
+        </div>
+        <div class="o_cp_sidebar">
+        </div>
+    </div>
+    <div class="o_cp_right">
+        <div class="w-100">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="mr-1 w-100" *ngIf="canFilterPartnerCategory">
+                    <kendo-multiselect  [data]="filteredCategs" [valueField]="'id'" [textField]="'name'" 
+                        [placeholder]="'Lọc theo nhãn'" [filterable]="true" (valueChange)="onCategChange($event)"
+                        #categMst>
+                    </kendo-multiselect>
+                </div>
+                <div ngbDropdown>
+                    <button type="button" id="dropdownBasic1" ngbDropdownToggle class="btn btn-secondary">
+                        Mở rộng
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <button type="button" (click)="setupAutoCodeCustomer()" ngbDropdownItem>
+                            Cập nhật mã tự động
+                        </button>
+                        <button *ngIf="canImport" type="button" (click)="importFromExcel()" ngbDropdownItem>
+                            Import
+                        </button>
+                        <button *ngIf="canExport" type="button" (click)="exportPartnerExcelFile()" ngbDropdownItem>
+                            Xuất file Excel
+                        </button>
+                        <button *ngIf="canUpdateExcel" type="button" (click)="updateFromExcel()" ngbDropdownItem>
+                            Cập nhật Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-lg-between w-100 mt-1">
+                <kendo-combobox style="width: 230px;" (selectionChange)="onStateSelect($event)" [value]="filterState[0]"
+                    placeholder="Trạng thái theo dõi" class="mr-1" [data]="filterState" [textField]="'name'"
+                    [valueField]="'value'">
+                </kendo-combobox>
+                <kendo-combobox style="width: 250px;" [popupSettings]="cbxPopupSettings" class="mr-1"
+                    [placeholder]="'Tất cả dự kiến thu'" [data]="OrderResiduals" [valueField]="'value'"
+                    [textField]="'text'" (valueChange)="onResidualSelect($event)">
+                </kendo-combobox>
+                <kendo-combobox style="width: 230px;" [popupSettings]="cbxPopupSettings" class="mr-1"
+                    [placeholder]="'Tất cả công nợ'" [data]="totalDebits" [valueField]="'value'" [textField]="'text'"
+                    (valueChange)="onDebitSelect($event)">
+                </kendo-combobox>
+                <!-- <kendo-combobox style="width: 250px;" [filterable]="true" #cbxLevel [popupSettings]="cbxPopupSettings" [placeholder]="'Tất cả hạng thành viên'" [data]="memberLevels" [valueField]="'id'" [textField]="'name'" (valueChange)="onMemberLevelSelect($event)">
+                </kendo-combobox> -->
+                <kendo-combobox style="width: 250px;" [filterable]="true" #cbxMember [popupSettings]="cbxPopupSettings"
+                    [placeholder]="'Tất cả thẻ thành viên'" [data]="memberCards" [valueField]="'id'"
+                    [textField]="'name'" (valueChange)="onMemberSelect($event)">
+                </kendo-combobox>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="o_content">
+    <div class="d-flex justify-content-between py-2 px-3 order-state">
+        <div>
+            <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="" type="radio"
+                class="btn-check hidden hide" name="orderStates" id="all" autocomplete="off" [checked]="true">
+            <label class="btn btn-outline-primary mr-2 mb-0" for="all">Tất cả</label>
+            <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="sale" type="radio"
+                class="btn-check hidden hide" name="orderStates" id="sale" autocomplete="off" [checked]="true">
+            <label class="btn btn-outline-primary mr-2 mb-0" for="sale">Đang điều trị</label>
+            <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="done" type="radio"
+                class="btn-check hidden hide" name="orderStates" id="done" autocomplete="off" [checked]="true">
+            <label class="btn btn-outline-primary mr-2 mb-0" for="done">Hoàn thành</label>
+            <input [(ngModel)]="filter.orderState" (ngModelChange)="refreshData()" value="draft" type="radio"
+                class="btn-check hidden hide" name="orderStates" id="draft" autocomplete="off" [checked]="true">
+            <label class="btn btn-outline-primary mr-2 mb-0" for="draft">Chưa phát sinh</label>
+        </div>
+        <div>
+            <div ngbDropdown [autoClose]="'outside'">
+                <button class="btn btn-outline-primary" ngbDropdownToggle type="button" id="dropdownMenuButton1">
+                    <i class="fas fa-cog ml-1"></i> Tùy chọn hiển thị
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownMenuButton1">
+                    <div ngbDropdownItem *ngFor="let item of columnMenuItems">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                [checked]="visibleColumns.indexOf(item.field) !== -1" [attr.id]="item.field"
+                                [attr.data-field]="item.field" (change)="onCheckColumn($event)" />
+                            <label class="form-check-label" [for]="item.field">
+                                {{item.text}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <kendo-grid [data]="gridData" [pageable]="pagerSettings" (pageChange)="onPageChange($event)" [loading]="loading"
+        [skip]="this.filter.offset" [pageSize]="this.filter.limit" #grid>
+        <kendo-grid-column class="" field="name" title="Họ tên" width="250">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <div [ngClass]="'pl-1 d-flex o_tag_bordercolor_' + dataItem.memberLevel?.color"
+                    [ngStyle]="{'border-left': '4px solid white'}" class="">
+                    <div class="customer-avatar">
+                        <img style="border-radius: 50%;"
+                            [src]="dataItem.avatar || '../../../assets/icons/none_person.svg'" alt="">
+                    </div>
+                    <div>
+                        <a class="text-primary" title="Xem hồ sơ khách hàng"
+                            [routerLink]="['/partners/customer/' + dataItem.id]">
+                            {{dataItem.name}}
+                        </a>
+                        <div *ngIf="dataItem.ref">
+                            <span>{{dataItem.ref}}</span>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </kendo-grid-column>
+        <!-- <kendo-grid-column *ngFor="let col of gridSettings.columnsConfig" [field]="col.field" [title]="col.title"
+            [width]="col._width" [hidden]="col.hidden"
+            [format]="col.format">
+        </kendo-grid-column> -->
+        <kendo-grid-column *ngIf="showInfo" field="phone" [hidden]="visibleColumns.indexOf('phone') == -1"
+            title="Điện thoại" width="130"></kendo-grid-column>
+        <kendo-grid-column field="dateOfBirth" [hidden]="visibleColumns.indexOf('birthday') == -1" title="Ngày sinh"
+            width="130"></kendo-grid-column>
+        <!-- <kendo-grid-column field="Ref" title="Mã KH" width="120"></kendo-grid-column> -->
+        <kendo-grid-column field="age" [hidden]="visibleColumns.indexOf('age') == -1" title="Tuổi" width="60">
+        </kendo-grid-column>
+        <kendo-grid-column field="appointmentDate" [hidden]="visibleColumns.indexOf('appointmentDate') == -1"
+            title="Ngày hẹn gần nhất" width="160">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.appointmentDate | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="saleOrderDate" [hidden]="visibleColumns.indexOf('saleOrderDate') == -1"
+            title="Ngày điều trị gần nhất" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{dataItem.saleOrderDate | date: 'shortDate'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="orderState" [hidden]="visibleColumns.indexOf('orderState') == -1"
+            title="Tình trạng điều trị" width="160">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{orderStateDisplay[dataItem.orderState] || 'Chưa phát sinh'}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="orderResidual" [hidden]="visibleColumns.indexOf('orderResidual') == -1"
+            class="text-right" title="Dự kiến thu" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{(dataItem.orderResidual || 0) | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="totalDebit" [hidden]="visibleColumns.indexOf('debt') == -1" class="text-right"
+            title="Công nợ" width="120">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                {{(dataItem.totalDebit || 0) | number}}
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="cardTypeName" [hidden]="visibleColumns.indexOf('cardType') == -1"
+            title="Thẻ thành viên" width="150">
+        </kendo-grid-column>
+        <!-- <kendo-grid-column field="GenderDisplay" title="Giới tính" width="90"></kendo-grid-column>
+        <kendo-grid-column field="Address" title="Địa chỉ" width="300"></kendo-grid-column> -->
+        <kendo-grid-column field="categories" title="Nhãn khách hàng"
+            [hidden]="visibleColumns.indexOf('categPartner') == -1" width="200">
+            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                <app-partner-category-popover [tags]="dataItem.categories" (onSave)="dataItem.categories = $event"
+                    [rowPartnerId]="dataItem.id">
+                </app-partner-category-popover>
+            </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="companyName" [hidden]="visibleColumns.indexOf('companyName') == -1"
+            title="Chi nhánh tạo" width="120">
+        </kendo-grid-column>
+        <kendo-grid-column field="Id" title="Thao tác" width="180">
+            <ng-template kendoGridCellTemplate let-dataItem>
+                <!-- <button class="btn btn-info mr-2" title="In Hồ sơ khách hàng" (click)="printItem(dataItem)">
+                    <span class="fas fa-print"></span></button> -->
+                <button class="btn btn-success mr-2" title="Sửa" (click)="editItem(dataItem)">
+                    <i class="far fa-edit"></i></button>
+                <button class="btn btn-danger mr-2" title="Xóa" (click)="deleteItem(dataItem)">
+                    <i class="far fa-trash-alt"></i></button>
+                <button *ngIf="dataItem.active == true" (click)="onClickActive(dataItem)" class="btn btn-danger"><i
+                        title="Ngưng theo dõi" class="fas fa-eye-slash"></i></button>
+                <button *ngIf="dataItem.active == false" (click)="onClickActive(dataItem)" class="btn btn-success"><i
+                        title="Theo dõi" class="fas fa-eye"></i></button>
+            </ng-template>
+        </kendo-grid-column>
+    </kendo-grid>
+    <app-partner-profile-print></app-partner-profile-print>
+
+</div>

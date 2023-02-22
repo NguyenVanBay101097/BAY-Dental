@@ -1,0 +1,2125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="ngb.alert.close" datatype="html">
+        <source>Close</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/alert/alert.d.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.carousel.previous" datatype="html">
+        <source>Previous</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/carousel/carousel.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.carousel.next" datatype="html">
+        <source>Next</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/carousel/carousel.d.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.datepicker.previous-month" datatype="html">
+        <source>Previous month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation.d.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.datepicker.next-month" datatype="html">
+        <source>Next month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation.d.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation.d.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.datepicker.select-month" datatype="html">
+        <source>Select month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation-select.d.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation-select.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.datepicker.select-year" datatype="html">
+        <source>Select year</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation-select.d.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/datepicker/datepicker-navigation-select.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.first" datatype="html">
+        <source>««</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.previous" datatype="html">
+        <source>«</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.next" datatype="html">
+        <source>»</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.last" datatype="html">
+        <source>»»</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.first-aria" datatype="html">
+        <source>First</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.previous-aria" datatype="html">
+        <source>Previous</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.next-aria" datatype="html">
+        <source>Next</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.pagination.last-aria" datatype="html">
+        <source>Last</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/pagination/pagination.d.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.progressbar.value" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{getPercentValue()}}"/>%</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/progressbar/progressbar.d.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.increment-hours" datatype="html">
+        <source>Increment hours</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.HH" datatype="html">
+        <source>HH</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.hours" datatype="html">
+        <source>Hours</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.decrement-hours" datatype="html">
+        <source>Decrement hours</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.increment-minutes" datatype="html">
+        <source>Increment minutes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.MM" datatype="html">
+        <source>MM</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.minutes" datatype="html">
+        <source>Minutes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.decrement-minutes" datatype="html">
+        <source>Decrement minutes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.increment-seconds" datatype="html">
+        <source>Increment seconds</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.SS" datatype="html">
+        <source>SS</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.seconds" datatype="html">
+        <source>Seconds</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.decrement-seconds" datatype="html">
+        <source>Decrement seconds</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.PM" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ i18n.getAfternoonPeriod() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.timepicker.AM" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ i18n.getMorningPeriod() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/timepicker/timepicker.d.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ngb.toast.close-aria" datatype="html">
+        <source>Close</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@ng-bootstrap/ng-bootstrap/toast/toast.d.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4e9993e088a293543eb0c2801343518c115b6f20" datatype="html">
+        <source>NO DATA FOUND</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/autocomplete.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The text displayed in the popup when there are no items</note>
+        <note priority="1" from="meaning">kendo.autocomplete.noDataText</note>
+      </trans-unit>
+      <trans-unit id="7cf49cc2d50eebd29f8d61564512383caaaac7a6" datatype="html">
+        <source>clear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/autocomplete.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The title of the clear button</note>
+        <note priority="1" from="meaning">kendo.autocomplete.clearTitle</note>
+      </trans-unit>
+      <trans-unit id="2b6e00c74a6d9c98c03a6274d0224e9bd457ff89" datatype="html">
+        <source>NO DATA FOUND</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/combobox.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The text displayed in the popup when there are no items</note>
+        <note priority="1" from="meaning">kendo.combobox.noDataText</note>
+      </trans-unit>
+      <trans-unit id="069e8fae80677e3e785861123bef446b3ff41ab4" datatype="html">
+        <source>clear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/combobox.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/multiselect.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The title of the clear button</note>
+        <note priority="1" from="meaning">kendo.combobox.clearTitle</note>
+      </trans-unit>
+      <trans-unit id="4fc2f70c9c8cf7b18affd6b938105996d6ac3306" datatype="html">
+        <source>NO DATA FOUND</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/dropdownlist.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The text displayed in the popup when there are no items</note>
+        <note priority="1" from="meaning">kendo.dropdownlist.noDataText</note>
+      </trans-unit>
+      <trans-unit id="3cc1323f79a5fe012960578e513f8a35b2af1e96" datatype="html">
+        <source>NO DATA FOUND</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dropdowns/dist/es2015/multiselect.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The text displayed in the popup when there are no items</note>
+        <note priority="1" from="meaning">kendo.multiselect.noDataText</note>
+      </trans-unit>
+      <trans-unit id="0fa71630d40c425b9c366afd7f6c3cecc5bef59d" datatype="html">
+        <source>increment</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/slider/slider.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The title of the **Increase** button of the Slider.</note>
+        <note priority="1" from="meaning">kendo.slider.increment</note>
+      </trans-unit>
+      <trans-unit id="042c26f68d78afd6834ea46a5f7533850fe8c800" datatype="html">
+        <source>decrement</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/slider/slider.component.d.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <note priority="1" from="description">The title of the **Decrease** button of the Slider.</note>
+        <note priority="1" from="meaning">kendo.slider.decrement</note>
+      </trans-unit>
+      <trans-unit id="481eb98e9cd8ef8e8b22051796441901e883763d" datatype="html">
+        <source>Drag</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/slider/slider.component.d.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <note priority="1" from="description">The title of the drag handle of the Slider.</note>
+        <note priority="1" from="meaning">kendo.slider.dragHandle</note>
+      </trans-unit>
+      <trans-unit id="155f0a38198ffbf0429c5dbf9765e74f246a8617" datatype="html">
+        <source>ON</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/switch/switch.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The **On** label of the Switch.</note>
+        <note priority="1" from="meaning">kendo.switch.on</note>
+      </trans-unit>
+      <trans-unit id="79df1a6d2b35c32b2948e3cee56dd3ffe28127bc" datatype="html">
+        <source>OFF</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/switch/switch.component.d.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <note priority="1" from="description">The **Off** label of the Switch.</note>
+        <note priority="1" from="meaning">kendo.switch.off</note>
+      </trans-unit>
+      <trans-unit id="0fc68540ffa04fdc246cf6cf8a1fed085f8b19a5" datatype="html">
+        <source>Increase value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/numerictextbox/numerictextbox.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The title for the **Increment** button in the NumericTextBox</note>
+        <note priority="1" from="meaning">kendo.numerictextbox.increment</note>
+      </trans-unit>
+      <trans-unit id="df4751834075bf970c77d0da2c960b4e19a6b0dd" datatype="html">
+        <source>Decrease value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-inputs/dist/es2015/numerictextbox/numerictextbox.component.d.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <note priority="1" from="description">The title for the **Decrement** button in the NumericTextBox</note>
+        <note priority="1" from="meaning">kendo.numerictextbox.decrement</note>
+      </trans-unit>
+      <trans-unit id="2df64767cd895a8fabe3e18b94b5b6b6f9e2e3f0" datatype="html">
+        <source>TODAY</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/calendar/calendar.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The label for the today button in the calendar header</note>
+        <note priority="1" from="meaning">kendo.calendar.today</note>
+      </trans-unit>
+      <trans-unit id="a55944f9de69e7cc86b91200fe96f980a947d704" datatype="html">
+        <source>Increase value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/dateinput/dateinput.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The label for the **Increment** button in the DateInput</note>
+        <note priority="1" from="meaning">kendo.dateinput.increment</note>
+      </trans-unit>
+      <trans-unit id="0eded761107e6dad120997006a7f915bade9b15c" datatype="html">
+        <source>Decrease value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/dateinput/dateinput.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The label for the **Decrement** button in the DateInput</note>
+        <note priority="1" from="meaning">kendo.dateinput.decrement</note>
+      </trans-unit>
+      <trans-unit id="91a84f2d4871dbe7e90d84865d4a4d83c8ae041e" datatype="html">
+        <source>TODAY</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datepicker/datepicker.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The label for the today button in the calendar header</note>
+        <note priority="1" from="meaning">kendo.datepicker.today</note>
+      </trans-unit>
+      <trans-unit id="f6c28c2d80dbe993c4b33f4dc4010364f41cc2ae" datatype="html">
+        <source>Toggle calendar</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datepicker/datepicker.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The label for the toggle button in the datepicker component</note>
+        <note priority="1" from="meaning">kendo.datepicker.toggle</note>
+      </trans-unit>
+      <trans-unit id="4c3bf42192220c7611c09ece1c5de14855139dd0" datatype="html">
+        <source>Set</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The Accept button text in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.accept</note>
+      </trans-unit>
+      <trans-unit id="93c2a9c3aa49f56e452c0aecbaabe3bb33fa4222" datatype="html">
+        <source>Set time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Accept button in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.acceptLabel</note>
+      </trans-unit>
+      <trans-unit id="132eefca16bd41d489b4647724b91e93793603aa" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The Cancel button text in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.cancel</note>
+      </trans-unit>
+      <trans-unit id="2cf6f4ca4470810944b4016c9b6f87943d3390ab" datatype="html">
+        <source>Cancel changes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Cancel button in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.cancelLabel</note>
+      </trans-unit>
+      <trans-unit id="bbc99bb74ae75a503bd813aad0c7253d3553e923" datatype="html">
+        <source>Now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">The Now button text in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.now</note>
+      </trans-unit>
+      <trans-unit id="df1a696f318275aa934e27850920889d494c2740" datatype="html">
+        <source>Select now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Now button in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.nowLabel</note>
+      </trans-unit>
+      <trans-unit id="f2c196786ed2d3ecb2369750c36aac9a4053fb30" datatype="html">
+        <source>Toggle time list</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timepicker.component.d.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">The label for the toggle button in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.timepicker.toggle</note>
+      </trans-unit>
+      <trans-unit id="5bb17f81ae8dbc109499ce3792afffa6b7cef855" datatype="html">
+        <source>Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <note priority="1" from="description">The Date tab text in the datetimepicker popup header</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.dateTab</note>
+      </trans-unit>
+      <trans-unit id="2a400c9e364a4c6d83ac39b5513c962805db54b2" datatype="html">
+        <source>Date tab</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Date tab in the datetimepicker popup header</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.dateTabLabel</note>
+      </trans-unit>
+      <trans-unit id="e9b2b760a6916040e7520a9a2926d65de175944d" datatype="html">
+        <source>Time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <note priority="1" from="description">The Time tab text in the datetimepicker popup header</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.timeTab</note>
+      </trans-unit>
+      <trans-unit id="13bf7e3a1036140119732c6d5952f7a20c22999e" datatype="html">
+        <source>Time tab</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Time tab in the datetimepicker popup header</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.timeTabLabel</note>
+      </trans-unit>
+      <trans-unit id="60296a83f0d3e3d07aaba87c4f8e91b0aca3c22a" datatype="html">
+        <source>Toggle popup</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <note priority="1" from="description">The label for the toggle button in the datetimepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.toggle</note>
+      </trans-unit>
+      <trans-unit id="4359b59db7ded88e106ada877e744c71b188f8f9" datatype="html">
+        <source>Set</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <note priority="1" from="description">The Accept button text in the datetimepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.accept</note>
+      </trans-unit>
+      <trans-unit id="cbea4571cca81ad9767a6b29f0287d1f3f6372dc" datatype="html">
+        <source>Set</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Accept button in the datetimepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.acceptLabel</note>
+      </trans-unit>
+      <trans-unit id="17ab795d6f7527dd962a309759ca58cb4edd7e52" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <note priority="1" from="description">The Cancel button text in the datetimepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.cancel</note>
+      </trans-unit>
+      <trans-unit id="ba26795ab9f4c21d66b17549ba854a96fcdac1f9" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Cancel button in the datetimepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.cancelLabel</note>
+      </trans-unit>
+      <trans-unit id="7172e7e9a1741f6b63439ec89e498c995cb23b0d" datatype="html">
+        <source>NOW</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <note priority="1" from="description">The Now button text in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.now</note>
+      </trans-unit>
+      <trans-unit id="52d90641b26b1ce4c011cadf0437ce36c1dac1d5" datatype="html">
+        <source>Select now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Now button in the timepicker component</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.nowLabel</note>
+      </trans-unit>
+      <trans-unit id="7ee30b9ae5918cc544fbd87a4135694397aeefaf" datatype="html">
+        <source>TODAY</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/datetimepicker/datetimepicker.component.d.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+        <note priority="1" from="description">The label for the today button in the calendar header</note>
+        <note priority="1" from="meaning">kendo.datetimepicker.today</note>
+      </trans-unit>
+      <trans-unit id="063d99483243b27bc8282abfb5f2c76877e1112e" datatype="html">
+        <source>TODAY</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/calendar/multiview-calendar.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The label for the today button in the calendar header</note>
+        <note priority="1" from="meaning">kendo.multiviewcalendar.today</note>
+      </trans-unit>
+      <trans-unit id="e783e2af4828224b846fa92148ea1cc52b21bb13" datatype="html">
+        <source>Navigate to previous view</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/calendar/multiview-calendar.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The label for the previous button in the Multiview calendar</note>
+        <note priority="1" from="meaning">kendo.multiviewcalendar.prevButtonTitle</note>
+      </trans-unit>
+      <trans-unit id="3e3a529a242f39d22f841c3bd8045ec75b696b7a" datatype="html">
+        <source>Navigate to next view</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/calendar/multiview-calendar.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The label for the next button in the Multiview calendar</note>
+        <note priority="1" from="meaning">kendo.multiviewcalendar.nextButtonTitle</note>
+      </trans-unit>
+      <trans-unit id="801811aa1609e3f173c86baa82cee037f75a215f" datatype="html">
+        <source>Set</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timeselector.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The Accept button text in the timeselector component</note>
+        <note priority="1" from="meaning">kendo.timeselector.accept</note>
+      </trans-unit>
+      <trans-unit id="b4b1e5ac55f0330f6c4e32b866ae4339ad969978" datatype="html">
+        <source>Set time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timeselector.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Accept button in the timeselector component</note>
+        <note priority="1" from="meaning">kendo.timeselector.acceptLabel</note>
+      </trans-unit>
+      <trans-unit id="3004d7704ffa6202a3b3925fcea490e486203a3e" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timeselector.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The Cancel button text in the timeselector component</note>
+        <note priority="1" from="meaning">kendo.timeselector.cancel</note>
+      </trans-unit>
+      <trans-unit id="08dfbdfffd662371a6ff4c0b6ed82b9faa48143b" datatype="html">
+        <source>Cancel changes</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timeselector.component.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Cancel button in the timeselector component</note>
+        <note priority="1" from="meaning">kendo.timeselector.cancelLabel</note>
+      </trans-unit>
+      <trans-unit id="98cba1ae36a7bbe15e1bac1837e07922ec109e7d" datatype="html">
+        <source>Now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timeselector.component.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">The Now button text in the timeselector component</note>
+        <note priority="1" from="meaning">kendo.timeselector.now</note>
+      </trans-unit>
+      <trans-unit id="08e6a8a51d970609e138950fdd89c5cf201869f3" datatype="html">
+        <source>Select now</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-dateinputs/dist/es2015/timepicker/timeselector.component.d.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">The label for the Now button in the timeselector component</note>
+        <note priority="1" from="meaning">kendo.timeselector.nowLabel</note>
+      </trans-unit>
+      <trans-unit id="30bcb3a2fbc22fcab6ca805e74b90adb8ba1ae96" datatype="html">
+        <source>Drag a column header and drop it here to group by that column</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The label visible in the Grid group panel when it is empty</note>
+        <note priority="1" from="meaning">kendo.grid.groupPanelEmpty</note>
+      </trans-unit>
+      <trans-unit id="ff9cfd4bf3e40305db251f2b6961796c0550b4b0" datatype="html">
+        <source>No records available.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The label visible in the Grid when there are no records</note>
+        <note priority="1" from="meaning">kendo.grid.noRecords</note>
+      </trans-unit>
+      <trans-unit id="b405dfc5ee42415daa08d54847d3010de1821111" datatype="html">
+        <source>Go to the first page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The label for the first page button in Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerFirstPage</note>
+      </trans-unit>
+      <trans-unit id="47aa4fe05f5a2577d3336971d7c44ce48802b860" datatype="html">
+        <source>Go to the previous page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <note priority="1" from="description">The label for the previous page button in Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerPreviousPage</note>
+      </trans-unit>
+      <trans-unit id="90031133fca899b4e491d9fc51128c1a184afb30" datatype="html">
+        <source>Go to the next page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">The label for the next page button in Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerNextPage</note>
+      </trans-unit>
+      <trans-unit id="fe84f2ea868286ce03e50b6e55558c16d675c753" datatype="html">
+        <source>Go to the last page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">The label for the last page button in Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerLastPage</note>
+      </trans-unit>
+      <trans-unit id="89c1f616c25bb610824cd8a26473a03921df48bd" datatype="html">
+        <source>Page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">The label before the current page number in the Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerPage</note>
+      </trans-unit>
+      <trans-unit id="0c9abe48f5d4bd2cb51846712e41864fc64aad6a" datatype="html">
+        <source>of</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <note priority="1" from="description">The label before the total pages number in the Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerOf</note>
+      </trans-unit>
+      <trans-unit id="7c1704d11bfb77340485acd891439c2b6c6616ca" datatype="html">
+        <source>items</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <note priority="1" from="description">The label after the total pages number in the Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerItems</note>
+      </trans-unit>
+      <trans-unit id="3331fe7ec45f299afaa4c1e08ea25c493eda9144" datatype="html">
+        <source>items per page</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <note priority="1" from="description">The label for the page size chooser in the Grid pager</note>
+        <note priority="1" from="meaning">kendo.grid.pagerItemsPerPage</note>
+      </trans-unit>
+      <trans-unit id="21a04b7b090dac60e0449cb6e435b7e879173c75" datatype="html">
+        <source>Filter</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <note priority="1" from="description">The label of the filter cell or icon</note>
+        <note priority="1" from="meaning">kendo.grid.filter</note>
+      </trans-unit>
+      <trans-unit id="8b31e1604d10a2f8709dcb1ed5c237e33cffc135" datatype="html">
+        <source>Is equal to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <note priority="1" from="description">The text of the equal filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterEqOperator</note>
+      </trans-unit>
+      <trans-unit id="d46e14d35d89d2fadf5c852abf5557643510a013" datatype="html">
+        <source>Is not equal to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <note priority="1" from="description">The text of the not equal filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterNotEqOperator</note>
+      </trans-unit>
+      <trans-unit id="078c50eb1fe8b2b43fcc40c5e7f4493152310c2f" datatype="html">
+        <source>Is null</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <note priority="1" from="description">The text of the is null filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterIsNullOperator</note>
+      </trans-unit>
+      <trans-unit id="70b39eeaf2674907b2e59b414baf17e032b464dc" datatype="html">
+        <source>Is not null</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+        <note priority="1" from="description">The text of the is not null filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterIsNotNullOperator</note>
+      </trans-unit>
+      <trans-unit id="a4e77e444b4e9b63851ac818e20136212b06c750" datatype="html">
+        <source>Is empty</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+        <note priority="1" from="description">The text of the is empty filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterIsEmptyOperator</note>
+      </trans-unit>
+      <trans-unit id="dee7553c341248e90aef4a8e7438c52e667e68be" datatype="html">
+        <source>Is not empty</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <note priority="1" from="description">The text of the is not empty filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterIsNotEmptyOperator</note>
+      </trans-unit>
+      <trans-unit id="da43b363b636156e3ccdbb64a0788bdeab51e992" datatype="html">
+        <source>Starts with</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <note priority="1" from="description">The text of the starts with filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterStartsWithOperator</note>
+      </trans-unit>
+      <trans-unit id="5b568a46d2e34ebde7dd53a7e599cbbb7dc6bae1" datatype="html">
+        <source>Contains</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <note priority="1" from="description">The text of the contains filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterContainsOperator</note>
+      </trans-unit>
+      <trans-unit id="be06aa4fde7fa722c9de5a45f241ff595071d718" datatype="html">
+        <source>Does not contain</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <note priority="1" from="description">The text of the does not contain filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterNotContainsOperator</note>
+      </trans-unit>
+      <trans-unit id="a54b2ecffb41f0603ceedc7ea5a40b7d130e2fa1" datatype="html">
+        <source>Ends with</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+        <note priority="1" from="description">The text of the ends with filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterEndsWithOperator</note>
+      </trans-unit>
+      <trans-unit id="68471603db771d0304d02fe086da9701c16911c3" datatype="html">
+        <source>Is greater than or equal to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <note priority="1" from="description">The text of the greater than or equal filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterGteOperator</note>
+      </trans-unit>
+      <trans-unit id="ae68acc0e18252a348bdfb32112996d81e5305de" datatype="html">
+        <source>Is greater than</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+        <note priority="1" from="description">The text of the greater than filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterGtOperator</note>
+      </trans-unit>
+      <trans-unit id="e48d50a6422c616a00b95025adc5283aff4fa8cb" datatype="html">
+        <source>Is less than or equal to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+        <note priority="1" from="description">The text of the less than or equal filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterLteOperator</note>
+      </trans-unit>
+      <trans-unit id="c4d58f0e509cb7e37014715dd91546a724210d70" datatype="html">
+        <source>Is less than</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+        <note priority="1" from="description">The text of the less than filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterLtOperator</note>
+      </trans-unit>
+      <trans-unit id="d5f1e9028bc60c30e8f8e0f9cfeb872512446cea" datatype="html">
+        <source>Is True</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+        <note priority="1" from="description">The text of the IsTrue boolean filter option</note>
+        <note priority="1" from="meaning">kendo.grid.filterIsTrue</note>
+      </trans-unit>
+      <trans-unit id="6d34731320e2536fd78f4a9e08f0b8dcd01edf3d" datatype="html">
+        <source>Is False</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+        <note priority="1" from="description">The text of the IsFalse boolean filter option</note>
+        <note priority="1" from="meaning">kendo.grid.filterIsFalse</note>
+      </trans-unit>
+      <trans-unit id="4da1456a62bafe2614ed2bc05a2c790a64a4dd0b" datatype="html">
+        <source>(All)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+        <note priority="1" from="description">The text of the (All) boolean filter option</note>
+        <note priority="1" from="meaning">kendo.grid.filterBooleanAll</note>
+      </trans-unit>
+      <trans-unit id="d7dac1bbc2372d578a9d2bca099de766043aed7e" datatype="html">
+        <source>Is after or equal to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+        <note priority="1" from="description">The text of the after or equal date filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterAfterOrEqualOperator</note>
+      </trans-unit>
+      <trans-unit id="bff777df0d0831cc02679227422fab4ef2763fa9" datatype="html">
+        <source>Is after</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+        <note priority="1" from="description">The text of the after date filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterAfterOperator</note>
+      </trans-unit>
+      <trans-unit id="35ef5cf367670f15432c9f8761bc85fbdb2b1830" datatype="html">
+        <source>Is before</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+        <note priority="1" from="description">The text of the before date filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterBeforeOperator</note>
+      </trans-unit>
+      <trans-unit id="27a6b29ffbc1eb498de8d7af20051461a2e842ec" datatype="html">
+        <source>Is before or equal to</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+        <note priority="1" from="description">The text of the before or equal date filter operator</note>
+        <note priority="1" from="meaning">kendo.grid.filterBeforeOrEqualOperator</note>
+      </trans-unit>
+      <trans-unit id="4f1c08d0b056646cdb668da669e2e15825adfe4d" datatype="html">
+        <source>Filter</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">100</context>
+        </context-group>
+        <note priority="1" from="description">The text of the filter button</note>
+        <note priority="1" from="meaning">kendo.grid.filterFilterButton</note>
+      </trans-unit>
+      <trans-unit id="06e4e4dadede6f91f261cdbb7fb174246a135238" datatype="html">
+        <source>Clear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">103</context>
+        </context-group>
+        <note priority="1" from="description">The text of the clear filter button</note>
+        <note priority="1" from="meaning">kendo.grid.filterClearButton</note>
+      </trans-unit>
+      <trans-unit id="f73fbcc2f813d469e4a34491950ca01ea1ac8f60" datatype="html">
+        <source>And</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+        <note priority="1" from="description">The text of the And filter logic</note>
+        <note priority="1" from="meaning">kendo.grid.filterAndLogic</note>
+      </trans-unit>
+      <trans-unit id="04e64780de0fc1c3a9986997e0808ec53a5f2a63" datatype="html">
+        <source>Or</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">109</context>
+        </context-group>
+        <note priority="1" from="description">The text of the Or filter logic</note>
+        <note priority="1" from="meaning">kendo.grid.filterOrLogic</note>
+      </trans-unit>
+      <trans-unit id="781c049cc69efc30bc8053af9ace3cb4b04bd438" datatype="html">
+        <source>Loading</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
+        <note priority="1" from="description">The loading text</note>
+        <note priority="1" from="meaning">kendo.grid.loading</note>
+      </trans-unit>
+      <trans-unit id="3596c6b21d39223adc5c352daec9938474a8cc0d" datatype="html">
+        <source>Column Menu</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+        <note priority="1" from="description">The title of the column menu icon</note>
+        <note priority="1" from="meaning">kendo.grid.columnMenu</note>
+      </trans-unit>
+      <trans-unit id="9b841399fbb3d81f2401f98b4f4763834b72a1e5" datatype="html">
+        <source>Columns</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu for the columns item</note>
+        <note priority="1" from="meaning">kendo.grid.columns</note>
+      </trans-unit>
+      <trans-unit id="f356cae509dec3dc1b7156326b9a0328a79c62a8" datatype="html">
+        <source>Lock</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu for the lock item</note>
+        <note priority="1" from="meaning">kendo.grid.lock</note>
+      </trans-unit>
+      <trans-unit id="f33355540003068372e39ba7f3def794869ea9f8" datatype="html">
+        <source>Unlock</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu for the unlock item</note>
+        <note priority="1" from="meaning">kendo.grid.unlock</note>
+      </trans-unit>
+      <trans-unit id="a692ba271be066ce379f942ff67094e1ea989f4c" datatype="html">
+        <source>Sortable</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">127</context>
+        </context-group>
+        <note priority="1" from="description">The label of the sort icon</note>
+        <note priority="1" from="meaning">kendo.grid.sortable</note>
+      </trans-unit>
+      <trans-unit id="96beffd8446c5455f3bbdc313c946db32df7dcc2" datatype="html">
+        <source>Sort Ascending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu for the sort ascending item</note>
+        <note priority="1" from="meaning">kendo.grid.sortAscending</note>
+      </trans-unit>
+      <trans-unit id="208d0538d4c2537a1cbf456941e34a2884053d52" datatype="html">
+        <source>Sort Descending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">133</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu for the sort descending item</note>
+        <note priority="1" from="meaning">kendo.grid.sortDescending</note>
+      </trans-unit>
+      <trans-unit id="947c64329461efd9f8a9aa2c51acbbd099170aa5" datatype="html">
+        <source>Sorted Ascending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+        <note priority="1" from="description">The status announcement when a column is sorted ascending</note>
+        <note priority="1" from="meaning">kendo.grid.sortedAscending</note>
+      </trans-unit>
+      <trans-unit id="092a688d1b2b6d873bdc29beaaf43c3f45336581" datatype="html">
+        <source>Sorted Descending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+        <note priority="1" from="description">The status announcement when a column is sorted descending</note>
+        <note priority="1" from="meaning">kendo.grid.sortedDescending</note>
+      </trans-unit>
+      <trans-unit id="66e99ea340974022c07c52a6f668f5573e7edab0" datatype="html">
+        <source>Not Sorted</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+        <note priority="1" from="description">The status announcement when a column is no longer sorted</note>
+        <note priority="1" from="meaning">kendo.grid.sortedDefault</note>
+      </trans-unit>
+      <trans-unit id="04600bd6e362cf9da9f7f9c4666eab2c88eb6a90" datatype="html">
+        <source>Apply</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">145</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu or column chooser for the columns apply button</note>
+        <note priority="1" from="meaning">kendo.grid.columnsApply</note>
+      </trans-unit>
+      <trans-unit id="94d3b472d99994a5cca9930afd4cf0ac2774c382" datatype="html">
+        <source>Reset</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-grid/dist/es2015/grid.component.d.ts</context>
+          <context context-type="linenumber">148</context>
+        </context-group>
+        <note priority="1" from="description">The text shown in the column menu or column chooser for the columns reset button</note>
+        <note priority="1" from="meaning">kendo.grid.columnsReset</note>
+      </trans-unit>
+      <trans-unit id="45d19d9b3ef76d141ff0e2d0fc223f0fa947bb55" datatype="html">
+        <source>All events</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The All events text displayed in the timeline views when there is no vertical grouping.</note>
+        <note priority="1" from="meaning">kendo.scheduler.allEvents</note>
+      </trans-unit>
+      <trans-unit id="e61f2c1a0414bc2137acd254acf1e80e12a3e7ff" datatype="html">
+        <source>all day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The all day text displayed in the day and week views.</note>
+        <note priority="1" from="meaning">kendo.scheduler.allDay</note>
+      </trans-unit>
+      <trans-unit id="8d2df501dbf1d7110b31000c6e0bb5f2f7a73f25" datatype="html">
+        <source>Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The date header text displayed in the agenda view.</note>
+        <note priority="1" from="meaning">kendo.scheduler.dateHeader</note>
+      </trans-unit>
+      <trans-unit id="0b9f46b7397825c376c9bfdb240e6adc50595ac4" datatype="html">
+        <source>Time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <note priority="1" from="description">The time header text displayed in the agenda view.</note>
+        <note priority="1" from="meaning">kendo.scheduler.timeHeader</note>
+      </trans-unit>
+      <trans-unit id="a458e323a0bd2340993beb65206a75e51d9a697f" datatype="html">
+        <source>Delete</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">The delete icon title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteTitle</note>
+      </trans-unit>
+      <trans-unit id="8702ed2955b31f24baf4651a5867bff8a75126f2" datatype="html">
+        <source>Event</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">The event header text displayed in the agenda view.</note>
+        <note priority="1" from="meaning">kendo.scheduler.eventHeader</note>
+      </trans-unit>
+      <trans-unit id="2ebb83a1a2f679e77d3b218501dad8bccdc0a58e" datatype="html">
+        <source>Next</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">The title of the navigation next button.</note>
+        <note priority="1" from="meaning">kendo.scheduler.nextTitle</note>
+      </trans-unit>
+      <trans-unit id="2ffa7eebcba58b882fc7e4f84bc42d52f6c387ad" datatype="html">
+        <source>Previous</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <note priority="1" from="description">The title of the navigation previous button.</note>
+        <note priority="1" from="meaning">kendo.scheduler.previousTitle</note>
+      </trans-unit>
+      <trans-unit id="3744a237fcc462c5a6e6d02cc34c685b4612672c" datatype="html">
+        <source>Show full day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <note priority="1" from="description">The text of the show full day button displayed in the footer of the day, week and timeline views.</note>
+        <note priority="1" from="meaning">kendo.scheduler.showFullDay</note>
+      </trans-unit>
+      <trans-unit id="be7a47bb38902473d3c58ced7bd607ce10e9efc0" datatype="html">
+        <source>Show business hours</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <note priority="1" from="description">The text of the show work day button displayed in the footer of the day, week and timeline views.</note>
+        <note priority="1" from="meaning">kendo.scheduler.showWorkDay</note>
+      </trans-unit>
+      <trans-unit id="d82a4f28a9981df444a5dc3581002c21e9691d43" datatype="html">
+        <source>Today</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <note priority="1" from="description">The today button text displayed in the navigation.</note>
+        <note priority="1" from="meaning">kendo.scheduler.today</note>
+      </trans-unit>
+      <trans-unit id="d94740e45bae6fa585efd5f8d5162aac5729240a" datatype="html">
+        <source>TODAY</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <note priority="1" from="description">The text of today&apos;s date in the header of the Calendar.</note>
+        <note priority="1" from="meaning">kendo.scheduler.calendarToday</note>
+      </trans-unit>
+      <trans-unit id="95294711f9c0d5dc43a3801e1fb33ff009cd2f9f" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <note priority="1" from="description">The day view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.dayViewTitle</note>
+      </trans-unit>
+      <trans-unit id="9454696588264b0a4dc173ae30287b5daf5a005f" datatype="html">
+        <source>Multi-Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <note priority="1" from="description">The multi day view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.multiDayViewTitle</note>
+      </trans-unit>
+      <trans-unit id="278707809b2044247aea90cd6fa16f5e36360bff" datatype="html">
+        <source>Week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+        <note priority="1" from="description">The week view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.weekViewTitle</note>
+      </trans-unit>
+      <trans-unit id="4e676d2adc2867a6f9f0268d944fa9b243a0342c" datatype="html">
+        <source>Work Week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+        <note priority="1" from="description">The work week view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.workWeekViewTitle</note>
+      </trans-unit>
+      <trans-unit id="ef42d2bdf6b5e730464f7c5bba7f9f691af487f7" datatype="html">
+        <source>Month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <note priority="1" from="description">The month view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.monthViewTitle</note>
+      </trans-unit>
+      <trans-unit id="c3b0e12d3dffb7e0e4ad26366076b3a4145d1ccd" datatype="html">
+        <source>Timeline</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <note priority="1" from="description">The timeline view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.timelineViewTitle</note>
+      </trans-unit>
+      <trans-unit id="6364c05e2771666adb47b133f925a89f2cbc7694" datatype="html">
+        <source>Timeline Week</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <note priority="1" from="description">The timeline week view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.timelineWeekViewTitle</note>
+      </trans-unit>
+      <trans-unit id="c9caadeeb4298daf969b6849d82906526b17287d" datatype="html">
+        <source>Timeline Month</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <note priority="1" from="description">The timeline month view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.timelineMonthViewTitle</note>
+      </trans-unit>
+      <trans-unit id="d8496db2e58fbcb49d4a962f466c7181136a394b" datatype="html">
+        <source>Agenda</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+        <note priority="1" from="description">The agenda view title.</note>
+        <note priority="1" from="meaning">kendo.scheduler.agendaViewTitle</note>
+      </trans-unit>
+      <trans-unit id="f0c4e5b754f09725afce28e7d7068f35b858136c" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Cancel&apos; displayed in scheduler.</note>
+        <note priority="1" from="meaning">kendo.scheduler.cancel</note>
+      </trans-unit>
+      <trans-unit id="501d4926870f59c6e28dc979f29c90d3353e6dd5" datatype="html">
+        <source>All Day Event</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;All Day event&apos; displayed in the scheduler event editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editorEventAllDay</note>
+      </trans-unit>
+      <trans-unit id="a6fe39f81a8dab506648aee70e5271c8e4b7459d" datatype="html">
+        <source>Description</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Description&apos; displayed in the scheduler event editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editorEventDescription</note>
+      </trans-unit>
+      <trans-unit id="09968e651cd9c911504e9b0637988edf5cab6f1c" datatype="html">
+        <source>End in different Time Zone</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Use separate Start and End Time Zones&apos; displayed in the scheduler event editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editorEventSeparateTimeZones</note>
+      </trans-unit>
+      <trans-unit id="bf8df58c304deb2a94f51f48679085969a89b0e5" datatype="html">
+        <source>Specify Time Zone</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Time Zone&apos; displayed in the scheduler event editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editorEventTimeZone</note>
+      </trans-unit>
+      <trans-unit id="9f7df90df3ce014c3f31fd58c295079df2018366" datatype="html">
+        <source>Event</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">100</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Event&apos; displayed as title of the scheduler event editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editorTitle</note>
+      </trans-unit>
+      <trans-unit id="e424d1bb72fabf05780214e8adac996805f172ac" datatype="html">
+        <source>Repeat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">103</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorRepeat</note>
+      </trans-unit>
+      <trans-unit id="d902290d2ee048dd4c04015388b1419bd7319297" datatype="html">
+        <source>day(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;day(s)&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorDailyInterval</note>
+      </trans-unit>
+      <trans-unit id="178b1746e470c53796d23ca6679b5dbeb541f354" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">109</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorDailyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="6c7d5458c9e73ed2ba5db7d27f90c54b22e65bb8" datatype="html">
+        <source>week(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;week(s)&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorWeeklyInterval</note>
+      </trans-unit>
+      <trans-unit id="6c9ac15982b8767f300f958a584dd61e2badc218" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorWeeklyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="7d47cd2c34022c3d730fe5535fe6d5772e259100" datatype="html">
+        <source>Repeat on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">118</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat on&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorWeeklyRepeatOn</note>
+      </trans-unit>
+      <trans-unit id="e9c50e6d1046b52f72b5b57def511d2639f41c49" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">121</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Day&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorMonthlyDay</note>
+      </trans-unit>
+      <trans-unit id="4e8829d18918c60a930c9bc1222a385da0328824" datatype="html">
+        <source>month(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;month(s)&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorMonthlyInterval</note>
+      </trans-unit>
+      <trans-unit id="a4d8135703345b071c369b698c4cccd04d88e9e4" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">127</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorMonthlyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="a5edb3aa4326d98a824044cd1e7097296a164bd1" datatype="html">
+        <source>Repeat on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat on&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorMonthlyRepeatOn</note>
+      </trans-unit>
+      <trans-unit id="13a98c0f4d00f0231244181f3b11680e041d004b" datatype="html">
+        <source>of</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">133</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;of&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorYearlyOf</note>
+      </trans-unit>
+      <trans-unit id="b50a62cd37f139cccf32a0337f64759df6c2d26e" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorYearlyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="06852b1d73720228cae4f93944cacbd4e5f8350c" datatype="html">
+        <source>Repeat on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat on&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorYearlyRepeatOn</note>
+      </trans-unit>
+      <trans-unit id="3aa2820cc946cd5d3c3b6aab3373eaa6b9c404fb" datatype="html">
+        <source>year(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;year(s)&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorYearlyInterval</note>
+      </trans-unit>
+      <trans-unit id="bbaafa8ff78cf75fdbd992be947fe00f997f6e64" datatype="html">
+        <source>Daily</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">145</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Daily&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorFrequenciesDaily</note>
+      </trans-unit>
+      <trans-unit id="65d8df3c16d1d27fae45bf68b17a4608ee6a6a29" datatype="html">
+        <source>Monthly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">148</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Monthly&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorFrequenciesMonthly</note>
+      </trans-unit>
+      <trans-unit id="16da1a785f3ff5dc02af3822c8e3ede77fac8643" datatype="html">
+        <source>Never</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Never&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorFrequenciesNever</note>
+      </trans-unit>
+      <trans-unit id="208423d471dc351046a5f44215e683d2fc3d0045" datatype="html">
+        <source>Weekly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">154</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Weekly&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorFrequenciesWeekly</note>
+      </trans-unit>
+      <trans-unit id="05941c17c2a1103f0609e74a154a908d8055dbae" datatype="html">
+        <source>Yearly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">157</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Yearly&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorFrequenciesYearly</note>
+      </trans-unit>
+      <trans-unit id="edbc4f6e22e62b48a01a064e11d0d16b34a0200c" datatype="html">
+        <source>First</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">160</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;First&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorOffsetPositionsFirst</note>
+      </trans-unit>
+      <trans-unit id="5bc0dbc945d780455bc967dc3690456cbb5cc908" datatype="html">
+        <source>Second</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">163</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Second&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorOffsetPositionsSecond</note>
+      </trans-unit>
+      <trans-unit id="7db9a1dcc928a557ecdf987e9a513d999308e458" datatype="html">
+        <source>Third</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Third&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorOffsetPositionsThird</note>
+      </trans-unit>
+      <trans-unit id="5eab7aca02ce9226be42b48bf20d9dfa7b0866d8" datatype="html">
+        <source>Fourth</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">169</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Fourth&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorOffsetPositionsFourth</note>
+      </trans-unit>
+      <trans-unit id="a2c19b0030dc10e94ad96261dd96f34e0b39fd00" datatype="html">
+        <source>Last</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">172</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Last&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorOffsetPositionsLast</note>
+      </trans-unit>
+      <trans-unit id="34c1dbeea117aa993dcbd25fed7eab0618d9c078" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">175</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Day&apos; displayed in the repeat by section of the monthly recurrence pattern.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorWeekdaysDay</note>
+      </trans-unit>
+      <trans-unit id="6c1ce6b9c46f38effb21b847e8facdff0b664fd3" datatype="html">
+        <source>Weekday</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">178</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Weekday&apos; displayed in the repeat by section of the monthly recurrence pattern.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorWeekdaysWeekday</note>
+      </trans-unit>
+      <trans-unit id="e77ed57c2a07d35094d021dce41e6917fd7922c9" datatype="html">
+        <source>Weekend Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">181</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Weekend Day&apos; displayed in the repeat by section of the monthly recurrence pattern.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorWeekdaysWeekendday</note>
+      </trans-unit>
+      <trans-unit id="827f090f4bcd1f8e6a845000a7498027b5a85cfc" datatype="html">
+        <source>After</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">184</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;After&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorEndAfter</note>
+      </trans-unit>
+      <trans-unit id="620365df1f319c842f25ca8cbd27c338063eefe7" datatype="html">
+        <source>occurrence(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">187</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;occurrence(s)&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorEndOccurrence</note>
+      </trans-unit>
+      <trans-unit id="335767a9cc38a3e50fe8af40810efec20f9eab20" datatype="html">
+        <source>End</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">190</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;End&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorEndLabel</note>
+      </trans-unit>
+      <trans-unit id="997d0ed8354147e84ea1175fad9ba2a9efc80caa" datatype="html">
+        <source>Never</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">193</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Never&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorEndNever</note>
+      </trans-unit>
+      <trans-unit id="ef00f9208fcc3149d1fa32a9eda8afb5f37e3e02" datatype="html">
+        <source>On</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">196</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;On&apos; displayed in the scheduler recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.scheduler.recurrenceEditorEndOn</note>
+      </trans-unit>
+      <trans-unit id="875ea861307672d789084939f4d51956587885f6" datatype="html">
+        <source>Delete</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">199</context>
+        </context-group>
+        <note priority="1" from="description">The text of the &apos;Delete&apos; button displayed in the scheduler remove confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.destroy</note>
+      </trans-unit>
+      <trans-unit id="20accdc4b9ee24a5d1c94221d05fa0cb71ee9b6b" datatype="html">
+        <source>Are you sure you want to delete this event?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">202</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Are you sure you want to delete this event?&apos; displayed in scheduler remove confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteConfirmation</note>
+      </trans-unit>
+      <trans-unit id="e807f1ee07fc419c8a36e7ede511ac92c1142185" datatype="html">
+        <source>Do you want to edit only this event occurrence or the whole series?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">205</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Do you want to edit only this event occurrence or the whole series?&apos; displayed in the scheduler recurring confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editRecurringConfirmation</note>
+      </trans-unit>
+      <trans-unit id="ecc5321d8daa1a219287ce11b152f2f0122967b5" datatype="html">
+        <source>Edit current occurrence</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">208</context>
+        </context-group>
+        <note priority="1" from="description">The text of the &apos;Edit current occurrence&apos; button displayed in the scheduler recurring confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editOccurrence</note>
+      </trans-unit>
+      <trans-unit id="c5e428fad50c320e1cfbbd2ef597dcde755671b3" datatype="html">
+        <source>Edit the series</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">211</context>
+        </context-group>
+        <note priority="1" from="description">The text of the &apos;Edit the series&apos; button displayed in the scheduler recurring confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.editSeries</note>
+      </trans-unit>
+      <trans-unit id="5dcd0042184961bf24c6f7d0f7a2dcd21e146a00" datatype="html">
+        <source>Do you want to delete only this event occurrence or the whole series?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">214</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Do you want to delete only this event occurrence or the whole series?&apos; displayed in the scheduler recurring confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteRecurringConfirmation</note>
+      </trans-unit>
+      <trans-unit id="be085922c17b8f26ed6076c377a4b27e822b9b90" datatype="html">
+        <source>Delete current occurrence</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">217</context>
+        </context-group>
+        <note priority="1" from="description">The text of the &apos;Delete current occurrence&apos; button displayed in the scheduler recurring confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteOccurrence</note>
+      </trans-unit>
+      <trans-unit id="c586d733f2b6c2e6453eb56edc90305a33a082c2" datatype="html">
+        <source>Delete the series</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">220</context>
+        </context-group>
+        <note priority="1" from="description">The text similar of the &apos;Delete the series&apos; button displayed in the scheduler recurring confirmation dialog.</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteSeries</note>
+      </trans-unit>
+      <trans-unit id="2884f479dc7ed9a2f6d7a0e1f31ac3cf36c8e5bd" datatype="html">
+        <source>Delete Event</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">223</context>
+        </context-group>
+        <note priority="1" from="description">The title of the remove confirmation dialog, similar to &apos;Delete Event&apos;.</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteDialogTitle</note>
+      </trans-unit>
+      <trans-unit id="f1f8d324f5872adf6e5f000972aa484de5db5857" datatype="html">
+        <source>Delete Recurring Item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">226</context>
+        </context-group>
+        <note priority="1" from="description">The title of the recurring remove confirmation dialog, similar to &apos;Delete Recurring Item&apos;</note>
+        <note priority="1" from="meaning">kendo.scheduler.deleteRecurringDialogTitle</note>
+      </trans-unit>
+      <trans-unit id="72c6e48e403f55b0b42190d96dc013e2a359a92d" datatype="html">
+        <source>Edit Recurring Item</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/scheduler.component.d.ts</context>
+          <context context-type="linenumber">229</context>
+        </context-group>
+        <note priority="1" from="description">The title of the recurring edit confirmation dialog, similar to &apos;Edit Recurring Item&apos;</note>
+        <note priority="1" from="meaning">kendo.scheduler.editRecurringDialogTitle</note>
+      </trans-unit>
+      <trans-unit id="0bddaa66242efa61597c2f4ea98fa691334f7fba" datatype="html">
+        <source>Repeat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.repeat</note>
+      </trans-unit>
+      <trans-unit id="c18849e2cc957d8bbf3733a1f4f01fec4297e5a1" datatype="html">
+        <source>day(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;day(s)&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.dailyInterval</note>
+      </trans-unit>
+      <trans-unit id="cbf6305b6f982851bbdda0effa9e867ff03cc1bf" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.dailyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="b3ff8ea01cbbce5dc48f1a03009554bdd8359e1a" datatype="html">
+        <source>week(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;week(s)&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.weeklyInterval</note>
+      </trans-unit>
+      <trans-unit id="1d44b28d927b787264bfd885753bd6ad00caed66" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.weeklyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="3f4e866782d53b9ff28ce8b97c44db237849b9e5" datatype="html">
+        <source>Repeat on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat on&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.weeklyRepeatOn</note>
+      </trans-unit>
+      <trans-unit id="9b85d49beeaad4557a98421bad0f102dfe19ba70" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Day&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.monthlyDay</note>
+      </trans-unit>
+      <trans-unit id="1eac62ae640aaf56db966bac5d9defe3a5076465" datatype="html">
+        <source>month(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;month(s)&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.monthlyInterval</note>
+      </trans-unit>
+      <trans-unit id="02d0f950f5c74847b3be5a2a04bd4d11878eda11" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.MonthlyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="169305ece1aba4f5581c9b1b940bab5804daf01a" datatype="html">
+        <source>Repeat on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat on&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.MonthlyRepeatOn</note>
+      </trans-unit>
+      <trans-unit id="ba75a08b97b5b627aa68f65fdf9c98b21929cb3c" datatype="html">
+        <source>of</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;of&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.yearlyOf</note>
+      </trans-unit>
+      <trans-unit id="7638896f73774502fe218d831c6e4707592e234f" datatype="html">
+        <source>Repeat every</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat every&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.yearlyRepeatEvery</note>
+      </trans-unit>
+      <trans-unit id="36609e797ac0037a4cb28e5edd5cf62b34df21e7" datatype="html">
+        <source>Repeat on</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Repeat on&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.yearlyRepeatOn</note>
+      </trans-unit>
+      <trans-unit id="f004fd135763238a1a36974157f3c81769b6dee5" datatype="html">
+        <source>year(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;year(s)&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.yearlyInterval</note>
+      </trans-unit>
+      <trans-unit id="ef1ce06afabfee613af8f110c4ab674f5fa92b57" datatype="html">
+        <source>Daily</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Daily&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.frequenciesDaily</note>
+      </trans-unit>
+      <trans-unit id="ba4e5b19269d9b3c39474d65f05a2cfc4b15a0a7" datatype="html">
+        <source>Monthly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Monthly&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.frequenciesMonthly</note>
+      </trans-unit>
+      <trans-unit id="723a98aacd5cc73a6423fca02ea2b173b0e2ef85" datatype="html">
+        <source>Never</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Never&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.frequenciesNever</note>
+      </trans-unit>
+      <trans-unit id="69cc53104d25196d6431f2e6d37fa3ca438e8822" datatype="html">
+        <source>Weekly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Weekly&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.frequenciesWeekly</note>
+      </trans-unit>
+      <trans-unit id="9de8b986ab1e23269af6abed9fb18e03c0d916a0" datatype="html">
+        <source>Yearly</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Yearly&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.frequenciesYearly</note>
+      </trans-unit>
+      <trans-unit id="f9f9f8f6aa1a8463e81f7f201f464f484843a02a" datatype="html">
+        <source>Second</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Second&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.offsetPositionsSecond</note>
+      </trans-unit>
+      <trans-unit id="e76984e59c331ac74006431f71ccc7950675d9cf" datatype="html">
+        <source>Third</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Third&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.offsetPositionsThird</note>
+      </trans-unit>
+      <trans-unit id="c503cb891337b37a76a61a258032a2ddc1ec5869" datatype="html">
+        <source>Fourth</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Fourth&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.offsetPositionsFourth</note>
+      </trans-unit>
+      <trans-unit id="a62b5bb6052a923af022ed8c0b1d587b660d958b" datatype="html">
+        <source>Last</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Last&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.offsetPositionsLast</note>
+      </trans-unit>
+      <trans-unit id="f731992eeb337a99d57983e713c332ee6ea03e70" datatype="html">
+        <source>Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Day&apos; displayed in the repeat by section of the monthly recurrence pattern.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.weekdaysDay</note>
+      </trans-unit>
+      <trans-unit id="eb0ba470e5b8f94939407df263ef047e10c8266f" datatype="html">
+        <source>Weekday</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Weekday&apos; displayed in the repeat by section of the monthly recurrence pattern.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.weekdaysWeekday</note>
+      </trans-unit>
+      <trans-unit id="34227d6c9ee22456265afb53fa38f94c6e4b7b72" datatype="html">
+        <source>Weekend Day</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Weekend Day&apos; displayed in the repeat by section of the monthly recurrence pattern.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.weekdaysWeekendday</note>
+      </trans-unit>
+      <trans-unit id="b56082650444a62a435cfedc82813d37cb767403" datatype="html">
+        <source>After</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;After&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.endAfter</note>
+      </trans-unit>
+      <trans-unit id="413b2e9c172d3c7a567ff2e28e1e480f1e38ae72" datatype="html">
+        <source>occurrence(s)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;occurrence(s)&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.endOccurrence</note>
+      </trans-unit>
+      <trans-unit id="b6f9f854e17a2c659bfe1062bb3fb0d54ac9afc8" datatype="html">
+        <source>End</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;End&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.EndLabel</note>
+      </trans-unit>
+      <trans-unit id="3ce2bd2fcf23742bbc5f194d167743842ee061a2" datatype="html">
+        <source>Never</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">94</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;Never&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.endNever</note>
+      </trans-unit>
+      <trans-unit id="d938bdb9e6b20644db88cd8c0d9d236ae64cd1cf" datatype="html">
+        <source>On</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-scheduler/dist/es2015/editing/recurrence/recurrence-editor.component.d.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+        <note priority="1" from="description">The text similar to &apos;On&apos; displayed in the recurrence editor.</note>
+        <note priority="1" from="meaning">kendo.recurrenceeditor.endOn</note>
+      </trans-unit>
+      <trans-unit id="262a7a2e1c2c01f72e494499e4031ca52bfb6c62" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">The text for the Cancel button</note>
+        <note priority="1" from="meaning">kendo.upload.cancel</note>
+      </trans-unit>
+      <trans-unit id="47d53c4c549530374586d580a1fffb90509aa114" datatype="html">
+        <source>Clear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">The text for the Clear button</note>
+        <note priority="1" from="meaning">kendo.upload.clearSelectedFiles</note>
+      </trans-unit>
+      <trans-unit id="ed0e4f0924eb8ac2dfc0a30d0852da2f0a356e8f" datatype="html">
+        <source>Drop files here to upload</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">The drop zone hint</note>
+        <note priority="1" from="meaning">kendo.upload.dropFilesHere</note>
+      </trans-unit>
+      <trans-unit id="30d5eeceb66bae90056d593fcf90eecd851b36a4" datatype="html">
+        <source>Done</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <note priority="1" from="description">The header status message after file upload completion</note>
+        <note priority="1" from="meaning">kendo.upload.headerStatusUploaded</note>
+      </trans-unit>
+      <trans-unit id="be0775f64ce53906c132f6b5a50280ff5b948b35" datatype="html">
+        <source>Uploading...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">The header status message during file upload</note>
+        <note priority="1" from="meaning">kendo.upload.headerStatusUploading</note>
+      </trans-unit>
+      <trans-unit id="8292c7f6c967dcade8639d0dd477a67ad08457c7" datatype="html">
+        <source>File type not allowed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">The text for the invalid allowed extensions restriction message</note>
+        <note priority="1" from="meaning">kendo.upload.invalidFileExtension</note>
+      </trans-unit>
+      <trans-unit id="6dd7e145884074d6d0bf5302dd13b63a02c9b949" datatype="html">
+        <source>Invalid file(s). Please check file upload requirements.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">The text for the invalid files message</note>
+        <note priority="1" from="meaning">kendo.upload.invalidFiles</note>
+      </trans-unit>
+      <trans-unit id="1d3c53a4169aceb03929a0dcdd2f4c5436aa4470" datatype="html">
+        <source>File size too large.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <note priority="1" from="description">The text for the invalid max file size restriction message</note>
+        <note priority="1" from="meaning">kendo.upload.invalidMaxFileSize</note>
+      </trans-unit>
+      <trans-unit id="dde6c68c96cf06aab654c8054c516d0d12f6309a" datatype="html">
+        <source>File size too small.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <note priority="1" from="description">The text for the invalid min file size restriction message</note>
+        <note priority="1" from="meaning">kendo.upload.invalidMinFileSize</note>
+      </trans-unit>
+      <trans-unit id="1e81e5de447f5792cd15c18c435360a7b946ac70" datatype="html">
+        <source>Remove</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <note priority="1" from="description">The text for the Remove button</note>
+        <note priority="1" from="meaning">kendo.upload.remove</note>
+      </trans-unit>
+      <trans-unit id="9150dfa816d23dfa75f231ca6f053f5e0ae26713" datatype="html">
+        <source>Retry</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <note priority="1" from="description">The text for the Retry button</note>
+        <note priority="1" from="meaning">kendo.upload.retry</note>
+      </trans-unit>
+      <trans-unit id="24063b06532dc5303d28524d6245ba6d3eed80c1" datatype="html">
+        <source>Select files...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <note priority="1" from="description">The text for the Select button</note>
+        <note priority="1" from="meaning">kendo.upload.select</note>
+      </trans-unit>
+      <trans-unit id="3449491aa76964a8dceb9ed3957b6fc4c17f568f" datatype="html">
+        <source>Upload</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">node_modules/@progress/kendo-angular-upload/dist/es2015/upload.component.d.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <note priority="1" from="description">The text for the Upload files button</note>
+        <note priority="1" from="meaning">kendo.upload.uploadSelectedFiles</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

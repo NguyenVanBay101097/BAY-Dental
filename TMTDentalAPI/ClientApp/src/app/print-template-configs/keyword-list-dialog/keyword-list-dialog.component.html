@@ -1,0 +1,99 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+<div class="modal-body o_act_window">
+    <div class="o_form_view">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <div class="o_searchview">
+                    <input class="o_searchview_input" placeholder="Tìm kiếm từ khóa" type="text" [(ngModel)]="search"
+                        (ngModelChange)="this.searchUpdate.next($event)" />
+                    <span class="o_searchview_icon fas fa-search"></span>
+                </div>
+                <div *ngFor="let box of boxKeyWordList" class="box mt-4">
+                    <h5 class="box-title text-center">
+                        {{box.text}}
+                    </h5>
+                    <div *ngIf="box.value.length" class="col-12 d-flex">
+                        <div class="col-6">
+                            <table class="w-100">
+                                <tr>
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
+                                            Diễn giải
+                                        </label>
+                                    </td>
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
+                                            Mã
+                                        </label>
+                                    </td>
+                                    <td style="width:70px" colspan="1" class="o_td_label o_td_label_sm">
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let item of box.value | slice: 0: box.value.length/2 + 0.5 ">
+                                    <td colspan="1">
+                                        {{item.text}}
+                                    </td>
+                                    <td colspan="1">
+                                        {{item.value}}
+                                    </td>
+                                    <td colspan="1" class="d-flex justify-content-end">
+                                        <button (click)="onSelectKeyWord(item)"
+                                            class="btn btn-outline-primary">Chọn</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-6">
+                            <table class="w-100" *ngIf="box.value.length > 1">
+                                <tr>
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
+                                            Diễn giải
+                                        </label>
+                                    </td>
+                                    <td style="width:50%" colspan="1" class="o_td_label o_td_label_sm">
+                                        <label class="o_form_label">
+                                            Mã
+                                        </label>
+                                    </td>
+                                    <td style="width:70px" colspan="1" class="o_td_label o_td_label_sm">
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let item of box.value | slice: -box.value.length/2">
+                                    <td colspan="1">
+                                        {{item.text}}
+                                    </td>
+                                    <td colspan="1">
+                                        {{item.value}}
+                                    </td>
+                                    <td class="d-flex justify-content-end" colspan="1">
+                                        <button (click)="onSelectKeyWord(item)"
+                                            class="btn btn-outline-primary">Chọn</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div *ngIf="box.links" class="pl-4">
+                        <div *ngFor="let link of box.links">
+                            <h6>{{link.text}}</h6>
+                            <div><a target="_blank" href="{{link.value}}">{{link.value}}</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="this.type == 'tmp_sale_order'">
+                    <button class="btn btn-primary" (click)="copyText()">Copy html sơ đồ răng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <!-- <button type="button" class="btn btn-primary" accesskey="s" (click)="">Lưu</button> -->
+    <button type="button" class="btn btn-secondary" accesskey="q" (click)="activeModal.dismiss()">Đóng</button>
+</div>

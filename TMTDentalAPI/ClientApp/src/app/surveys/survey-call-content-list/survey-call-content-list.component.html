@@ -1,0 +1,83 @@
+<!-- <kendo-grid [data]="gridData" [loading]="loading" (edit)="editHandler($event)" [navigable]="true" (cancel)="cancelHandler($event)" (save)="saveHandler($event)" (add)="addHandler($event)">
+    <kendo-grid-column title="Cuộc gọi" width="80">
+        <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+            lần {{rowIndex
+            < 0 ? 1 : rowIndex + 1}} </ng-template>
+                <ng-template kendoGridFooterTemplate let-dataItem>
+                    <button *ngIf="surveyStatus != 'done' && view ==false" kendoGridAddCommand title="Thêm cuộc gọi" class="btn btn-secondary btn-sm mr-2">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Nội dung" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{dataItem.name}}
+        </ng-template>
+        <ng-template kendoGridEditTemplate let-dataItem="dataItem" let-column="column" let-formGroup="formGroup">
+            <input class="form-control" [formControl]="formGroup.get(column.field)" required />
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column title="Thao tác" width="100" *ngIf="surveyStatus != 'done' && view == false">
+        <ng-template kendoGridCellTemplate let-isNew="isNew" let-dataItem let-rowIndex="rowIndex">
+            <div>
+                <button kendoGridEditCommand [primary]="true" [id]="'edit'+dataItem.id" class="btn btn-success btn-sm mr-2">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button kendoGridSaveCommand class="btn btn-primary btn-sm mr-2" [disabled]="formGroup?.invalid"><i
+                        class="fas fa-save"></i>
+                </button>
+                <button class="btn btn-secondary btn-sm" kendoGridCancelCommand>
+                    <i class="fas fa-window-close"></i>
+                </button>
+            </div>
+        </ng-template>
+    </kendo-grid-column>
+
+</kendo-grid> -->
+
+<table class="table-sm table table-bordered table-hover">
+    <thead>
+        <th width="100">Cuộc gọi</th>
+        <th width="400">Nội dung</th>
+        <th *ngIf="surveyStatus != 'done'" width="150">Thao tác</th>
+    </thead>
+    <tbody>
+        <tr *ngFor="let item of data; let i = index">
+            <td>Lần {{i + 1}}</td>
+            <td>
+                <ng-container *ngIf="i == editedRowIndex && this.isEditing; else editTemplate">
+                    <div [formGroup]="formGroup">
+                        <input #nameInput class="form-control" (keydown.enter)="saveHandler(i)" formControlName='name' required />
+                    </div>
+                </ng-container>
+                <ng-template #editTemplate>
+                    {{item.name}}
+                </ng-template>
+            </td>
+            <td *ngIf="surveyStatus != 'done'">
+                <div>
+                    <button *ngIf="!isEditing || i !== editedRowIndex" (click)="editHandler(i, item)" [id]="'edit'+item.id" class="btn btn-success btn-sm mr-2">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button *ngIf="!isEditing || i !== editedRowIndex" title="Xóa" (click)="removeHandler(i, item)" class="btn btn-danger btn-sm mr-2">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+                    <button *ngIf="isEditing && i == editedRowIndex" title="Lưu" (click)="saveHandler(i)" class="btn btn-primary btn-sm mr-2"><i
+                        class="fas fa-save"></i>
+                </button>
+                    <button *ngIf="isEditing && i == editedRowIndex" title="Hủy bỏ" (click)="cancelHandler(item, i)" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-window-close"></i>
+                </button>
+                </div>
+            </td>
+        </tr>
+        <tr *ngIf="surveyStatus != 'done' && view ==false">
+            <td colspan="3">
+                <button (click)="addHandler()" title="Thêm cuộc gọi" class="btn btn-secondary btn-sm mr-2">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,134 @@
+<header class="modal-header">
+    <h4 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()" tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <div class="o_form_view" [formGroup]="userForm" #form="ngForm" autocomplete="off">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <app-image-file-upload (uploaded)="onAvatarUploaded($event)" [imageId]="userForm.get('avatar').value" [width]="200" [height]="200">
+                </app-image-file-upload>
+                <div class="oe_title">
+                    <label class="o_form_label">Tên</label>
+                    <h1>
+                        <input type="text" class="form-control" placeholder="Tên" formControlName="name" #nameInput>
+                    </h1>
+                </div>
+
+                <div class="o_group mt-0 mb-0">
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Điện thoại
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="tel" (focusout)="onFocusoutPhoneNumber($event)" class="form-control" formControlName="phoneNumber" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Email
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="email" (focusout)="onFocusoutEmail($event)" class="form-control" formControlName="email" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="o_group o_inner_group o_group_col_6">
+                        <tbody>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Tài khoản
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="text" class="form-control" id="userName" maxlength="256" formControlName="userName" autocomplete="nope" />
+                                    <label *ngIf="userNameFC.errors?.pattern" class="text-danger m-0" for="userName">Trường tài khoản là bắt buộc , không quá 256 kí tự và  không có khoảng trắng </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Mật khẩu
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <input type="password" class="form-control" formControlName="passWord" autocomplete="new-password" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="o_group mt-0">
+                    <table class="o_group o_inner_group">
+                        <tbody>
+                            <td colspan="2" style="width: 100%;">
+                                <div class="o_horizontal_separator">
+                                    Đa chi nhánh
+                                </div>
+                            </td>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chi nhánh cho phép
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listCompanies" [textField]="'name'" [valueField]="'id'" formControlName="companies">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Chi nhánh hiện tại
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-combobox [data]="listCompanies" [textField]="'name'" #companyCbx formControlName="company" [valueField]="'id'">
+                                    </kendo-combobox>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- <table class="o_group o_inner_group">
+                        <tbody>
+                            <td colspan="2" style="width: 100%;">
+                                <div class="o_horizontal_separator">
+                                    Nhóm quyền
+                                </div>
+                            </td>
+                            <tr>
+                                <td colspan="1" class="o_td_label">
+                                    <label class="o_form_label">
+                                        Nhóm quyền
+                                    </label>
+                                </td>
+                                <td colspan="1" style="width: 100%;">
+                                    <kendo-multiselect [data]="listGroups" [textField]="'name'" [valueField]="'id'"
+                                        formControlName="groups">
+                                    </kendo-multiselect>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()" accesskey="q">Đóng</button>
+</footer>

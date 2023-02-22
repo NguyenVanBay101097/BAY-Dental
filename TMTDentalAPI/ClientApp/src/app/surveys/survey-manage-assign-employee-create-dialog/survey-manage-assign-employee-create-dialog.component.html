@@ -1,0 +1,66 @@
+<header class="modal-header">
+    <h5 class="modal-title">{{title}}<span class="o_subtitle text-muted small"></span></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss()"
+        tabindex="-1">×</button>
+</header>
+
+<div class="modal-body o_act_window">
+    <form class="o_form_view" [formGroup]="formGroup">
+        <div class="o_form_sheet_bg">
+            <div class="o_form_sheet">
+                <button class="btn btn-primary btn-sm" (click)="onAutoAssign()">Phân việc ngẫu nhiên</button>
+                <div class="o_group">
+                    <table class="table table-sm table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nhân viên</th>
+                                <th scope="col">Khách hàng</th>
+                                <th scope="col">Mã khách hàng</th>
+                                <th scope="col">Điện thoại</th>
+                                <th scope="col">Phiếu điều trị</th>
+                                <th scope="col">Ngày tạo phiếu</th>
+                            </tr>
+                        </thead>
+                        <tbody formArrayName="arrs">
+                            <ng-container *ngFor="let arr of arrs.controls;let i=index">
+                                <tr [formGroupName]="i">
+                                    <td>
+                                        <kendo-combobox [data]="filteredEmployees" [textField]="'name'"
+                                            [filterable]="true" #empCbx [valueField]="'id'" formControlName="employee">
+                                        </kendo-combobox>
+                                    </td>
+                                    <td>
+                                        {{arr.get('partnerName') ?
+                                        arr.get('partnerName').value : ''}}
+                                    </td>
+                                    <td>
+                                        {{arr.get('partnerRef') ?
+                                        arr.get('partnerRef').value : ''}}
+                                    </td>
+                                    <td>
+                                        {{arr.get('partnerPhone') ?
+                                        arr.get('partnerPhone').value : ''}}
+                                    </td>
+                                    <td>
+                                        {{arr.get('saleOrderName') ?
+                                        arr.get('saleOrderName').value : ''}}
+                                    </td>
+                                    <td>
+                                        {{arr.get('dateOrder') ?
+                                        (arr.get('dateOrder').value | date:'shortDate') : ''}}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="onSave()" accesskey="s">Lưu</button>
+    <button type="button" class="btn btn-secondary o_form_button_cancel" (click)="activeModal.dismiss()"
+        accesskey="q">Đóng</button>
+</footer>

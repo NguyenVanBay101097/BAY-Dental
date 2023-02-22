@@ -1,0 +1,179 @@
+<div class="p-3">
+    <div class="d-flex">
+        <div class="card-wrapper">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="font-weight-bold">Tổng quỹ tiền mặt</span>
+                        <h4 class="text-warning">{{totalCash | number}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-wrapper">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="font-weight-bold">Tổng quỹ ngân hàng</span>
+                        <h4 class="text-primary">{{totalBank | number}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-wrapper">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <div class="text-center">
+                        <span class="font-weight-bold">Tổng sổ quỹ</span>
+                        <h4 class="text-success">{{(totalCash + totalBank) | number}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="my-3 d-flex justify-content-between">
+        <div class="d-flex align-items-start w-100 flex-wrap">
+            <app-date-range-picker-filter [opens]="'right'" [startDate]="dateFrom" [endDate]="dateTo"
+                (searchChange)="searchChangeDate($event)"></app-date-range-picker-filter>
+            <kendo-combobox class="ml-1 w-auto" [placeholder]="'Loại phiếu'" (valueChange)="onChangePaymentType($event)"
+                [data]="filteredPaymentTypes" [valueField]="'value'" [textField]="'text'" [valuePrimitive]="true"></kendo-combobox>
+            <kendo-multiselect [kendoDropDownFilter]="{ caseSensitive: false, operator: 'contains' }" [placeholder]="'Loại thu chi'" class="ml-1" style="width: 250px;"
+                [data]="filteredAccountCode" [textField]="'name'" [valueField]="'id'" [valuePrimitive]="true"
+                [(ngModel)]="accountIds" (valueChange)="onAccountValueChange($event)"></kendo-multiselect>
+            <button type="button" class="btn btn-primary ml-1" (click)="exportExcelFile()">
+                <i class="fas fa-download ml-2"></i>Xuất file
+            </button>
+            <!-- <button type="button" class="btn btn-primary mr-2" (click)="changeData()">
+                <i class="fas fa-download mr-2"></i>Change Data
+            </button> -->
+        </div>
+        <div class="t-search t-search-left">
+            <div class="o_searchview">
+                <input type="text" class="o_searchview_input" placeholder="Tìm kiếm theo số phiếu, đối tác" [(ngModel)]="search"
+                    (ngModelChange)="this.searchUpdate.next($event)" />
+                <span class="o_searchview_icon fas fa-search"></span>
+            </div>
+        </div>
+    </div>
+    <div>
+        <nav>
+            <div class="nav nav-tabs">
+                <a class="nav-item nav-link" [class.active]="resultSelection=='cash_bank'"
+                    (click)="clickTab('cash_bank')">Tổng sổ quỹ</a>
+                <a class="nav-item nav-link" [class.active]="resultSelection=='cash'" (click)="clickTab('cash')">Tiền
+                    mặt</a>
+                <a class="nav-item nav-link" [class.active]="resultSelection=='bank'" (click)="clickTab('bank')">Ngân
+                    hàng</a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane active">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div [class.d-none]="this.resultSelection != 'bank'">
+                            <button class="btn btn-primary mr-2" (click)="addAccountBank()">
+                                <i class="fas fa-plus-circle mr-1"></i>
+                                Thêm tài khoản ngân hàng
+                            </button>
+                            <kendo-combobox #accountJournalCbx [popupSettings]="cbxPopupSettings" style="width: 250px"
+                                class="mr-2 cbx-account" [data]="listAccounts" filterable="true" textField="name"
+                                [value]="accountJournalSelectedId" valueField="id" placeholder="Tất cả tài khoản"
+                                [valuePrimitive]="true" (selectionChange)="onSelectAccount($event)">
+                                <ng-template kendoComboBoxItemTemplate let-dataItem>
+                                    <div class="pt-2 pb-2">
+                                        <div class="font-weight-bold">{{dataItem.accountNumber || dataItem.name}}</div>
+                                        <div class="opacity-8" *ngIf="dataItem.bankBic">
+                                            {{dataItem.bankBic}}
+                                            <span *ngIf="dataItem.bankBranch">({{dataItem.bankBranch}})</span>
+                                        </div>
+                                        <div class="opacity-8" *ngIf="dataItem.accountHolderName">
+                                            {{dataItem.accountHolderName}}
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </kendo-combobox>
+                            <button *ngIf="this.accountJournalSelectedId" class="btn btn-success btn-edit"
+                                (click)="editAccountBank()">
+                                <i class="far fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-2 list-summary-item">
+                        <div class="summary-item">
+                            <div class="text-center">
+                                <span class="font-weight-bold">Quỹ đầu kỳ</span>
+                                <h4 class="text-primary">{{(summarySearchResult ? summarySearchResult.begin : 0) |
+                                    number}}</h4>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="text-center">
+                                <span class="font-weight-bold">Tổng thu</span>
+                                <h4 class="text-primary">{{(summarySearchResult ? summarySearchResult.totalThu : 0) |
+                                    number}}</h4>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="text-center">
+                                <span class="font-weight-bold">Tổng chi</span>
+                                <h4 class="text-danger">{{(summarySearchResult ? -summarySearchResult.totalChi : 0) |
+                                    number}}</h4>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="text-center" style="position: relative;">
+                                <ng-template #popContent>
+                                    <span>
+                                        Chênh lệch thu chi
+                                    </span>
+                                </ng-template>
+                                <span class="font-weight-bold mr-1">Chênh lệch</span>
+                                <i class="fas fa-info-circle text-primary" popoverClass="popover-sm" placement="top"
+                                    [ngbPopover]="popContent" triggers="mouseenter:mouseleave"></i>
+
+                                <h4 class="text-warning">{{getDifferentThuChi() |
+                                    number}}</h4>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="text-center">
+                                <span *ngIf="resultSelection == 'cash'" class="font-weight-bold">
+                                    Tồn quỹ tiền mặt
+                                </span>
+                                <span *ngIf="resultSelection == 'bank'" class="font-weight-bold">
+                                    Tồn quỹ ngân hàng
+                                </span>
+                                <span *ngIf="resultSelection == 'cash_bank'" class="font-weight-bold">
+                                    Tồn sổ quỹ
+                                </span>
+                                <h4 class="text-success">{{(summarySearchResult ? summarySearchResult.totalAmount : 0) |
+                                    number}}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <kendo-grid [data]="gridData" [pageSize]="limit" [skip]="skip" [pageable]="pagerSettings"
+                        [loading]="loading" (pageChange)="pageChange($event)">
+                        <kendo-grid-column field="date" title="Ngày" width="120">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.date | date: 'shortDate'}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="invoiceOrigin" title="Số phiếu" width="120"></kendo-grid-column>
+                        <kendo-grid-column field="name" title="Nội dung" width="200"></kendo-grid-column>
+                        <kendo-grid-column field="journalName" title="Phương thức" width="135"></kendo-grid-column>
+                        <kendo-grid-column field="accountName" title="Loại thu chi" width="120"></kendo-grid-column>
+                        <kendo-grid-column field="amount" title="Số tiền" width="120" class="text-right">
+                            <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+                                {{dataItem.amount | number}}
+                            </ng-template>
+                        </kendo-grid-column>
+                        <kendo-grid-column field="partnerName" title="Đối tác" width="150">
+                        </kendo-grid-column>
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
