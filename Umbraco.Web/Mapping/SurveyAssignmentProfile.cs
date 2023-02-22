@@ -14,7 +14,7 @@ namespace Umbraco.Web.Mapping
         public SurveyAssignmentProfile()
         {
             CreateMap<SurveyAssignment, SurveyAssignmentGridItem>()
-                .ForMember(x => x.SurveyTags, x => x.MapFrom(s => s.UserInput.SurveyUserInputSurveyTagRels.Select(x=>x.SurveyTag.Name).Join(",")));
+                .ForMember(x => x.SurveyTags, x => x.MapFrom(s => string.Join(",",s.UserInput.SurveyUserInputSurveyTagRels.Select(x => x.SurveyTag.Name))));
             CreateMap<SurveyAssignment, SurveyAssignmentDefaultGet>();
             CreateMap<SurveyAssignment, SurveyAssignmentSave>();
 
